@@ -6,6 +6,15 @@
       <path value="$PROJECT_DIR$/vendor/fightbulc/moment" />
     </include_path>
   </component>
+  <component name="PhpProjectServersManager">
+    <servers>
+      <server host="http://sms2.arlgh.com" id="aca1ad54-6c6c-444c-8839-d92a77bfeed5" name="Apache" use_path_mappings="true">
+        <path_mappings>
+          <mapping local-root="$PROJECT_DIR$" remote-root="C:/xampp/htdocs/nmr" />
+        </path_mappings>
+      </server>
+    </servers>
+  </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
   <component name="PhpUnit">
     <phpunit_settings>

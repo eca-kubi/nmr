@@ -1,0 +1,19 @@
+{
+  "name": "nmr",
+  "version": "1.0.0",
+  "description": "TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project.",
+  "main": " ",
+  "dependencies": {
+    "flow-bin": "^0.113.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://appiahmakuta70-outlook.visualstudio.com/ADAMUS%20IT%20APPS/_git/nmr"
+  },
+  "author": "Eric Clinton Appiah-Kubi",
+  "license": "ISC"
+}
