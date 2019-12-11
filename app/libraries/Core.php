@@ -1,9 +1,11 @@
 <?php
+
 /*
  * App Core Class
  * Creates URL & loads core controller
  * URL FORMAT - /controller/method/params
  */
+
 class Core
 {
     protected $currentController = 'Pages';
@@ -13,10 +15,9 @@ class Core
     public function __construct()
     {
         $url = $this->getUrl();
-
         // Look in controllers for first value
         if (isset($url['0'])) {
-            $url['0'] = str_replace(['-','_'], '' , $url['0'] );
+            $url['0'] = str_replace(['-', '_'], '', $url['0']);
             if (file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
                 // If exists, set as controller
                 $this->currentController = ucwords($url[0]);
@@ -25,7 +26,7 @@ class Core
                 require_once '../app/controllers/' . $this->currentController . '.php';
                 $this->currentController = new $this->currentController;
                 if (isset($url[1])) {
-                    $url[1] = str_replace(['-','_'], '' , $url[1] );
+                    $url[1] = str_replace(['-', '_'], '', $url[1]);
                     if (method_exists($this->currentController, $url[1])) {
                         $this->currentMethod = $url[1];
                         unset($url[1]);

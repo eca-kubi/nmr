@@ -16,5 +16,6 @@ class Pages extends Controller
     public function phpinfo(): void
     {
         echo phpinfo();
+        //echo print_r(['todo']);
     }
 }
