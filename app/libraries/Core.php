@@ -10,7 +10,7 @@ class Core
 {
     protected string $currentControllerFile = 'Pages';
     protected object $currentController;
-    protected $currentMethod = 'index';
+    protected string $currentMethod = 'index';
     protected array $params = [];
 
     public function __construct()
@@ -36,8 +36,8 @@ class Core
                         return;
                     } else {
                         $this->currentControllerFile = 'Errors';
-                        require_once '../app/controllers/' . $this->currentController . '.php';
-                        $this->currentController = new $this->currentController;
+                        require_once '../app/controllers/' . $this->currentControllerFile . '.php';
+                        $this->currentController = new $this->currentControllerFile;
                         call_user_func([$this->currentController, $this->currentMethod], 404);
                         return;
                     }
@@ -46,15 +46,15 @@ class Core
                 return;
             } else {
                 $this->currentControllerFile = 'Errors';
-                require_once '../app/controllers/' . $this->currentController . '.php';
-                $this->currentController = new $this->currentController;
+                require_once '../app/controllers/' . $this->currentControllerFile . '.php';
+                $this->currentController = new $this->currentControllerFile;
                 call_user_func([$this->currentController, $this->currentMethod], 404);
                 return;
             }
         }
 
-        require_once '../app/controllers/' . $this->currentController . '.php';
-        $this->currentController = new $this->currentController;
+        require_once '../app/controllers/' . $this->currentControllerFile . '.php';
+        $this->currentController = new $this->currentControllerFile;
         call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
     }
 

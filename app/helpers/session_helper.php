@@ -23,7 +23,7 @@ function logout()
 {
     unset($_SESSION['logged_in_user']);
     session_destroy();
-    redirectToStart();
+    redirect();
 }
 
 

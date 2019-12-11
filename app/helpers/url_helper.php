@@ -1,12 +1,6 @@
 <?php
-function redirect($page)
+function redirect(string $page = ''): void
 {
-    header('location: ' . URL_ROOT . '/' . $page);
+    header('location: ' . HOST . '/' . $page);
     exit;
 }
-
-  // Redirect to start page
-  function redirectToStart(){
-      header('location: ' . HOST);
-      exit;
-  }

@@ -4,16 +4,16 @@ class Pages extends Controller
     public function index(): void
     {
         if (!isLoggedIn()) {
-            redirect(HOST .'/fms/users/login');
+            redirect('fms/users/login/nmr/');
         }
-        redirect('pages/dashboard');
+        redirect('nmr/pages/dashboard');
     }
 
     public function dashboard(): void {
 
     }
 
-    public function phpinfo($a, $b): void
+    public function phpinfo(): void
     {
         echo phpinfo();
     }
