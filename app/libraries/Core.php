@@ -8,21 +8,21 @@
 
 class Core
 {
-    protected string $currentController = 'Pages';
+    protected string $currentControllerFile = 'Pages';
+    protected object $currentController;
     protected $currentMethod = 'index';
     protected array $params = [];
 
     public function __construct()
     {
         $url = $this->getUrl();
-        // Look in controllers for first value
         if (isset($url['0'])) {
             $url['0'] = str_replace(['-', '_'], '', $url['0']);
-            if (file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
-                $this->currentController = ucwords($url[0]);
+            $this->currentControllerFile = ucwords($url[0]);
+            if (file_exists('../app/controllers/' . $this->currentControllerFile . '.php')) {
                 unset($url[0]);
-                require_once '../app/controllers/' . $this->currentController . '.php';
-                $this->currentController = new $this->currentController;
+                require_once '../app/controllers/' . $this->currentControllerFile . '.php';
+                $this->currentController = new $this->currentControllerFile;
                 if (isset($url[1])) {
                     $url[1] = str_replace(['-', '_'], '', $url[1]);
                     if (method_exists($this->currentController, $url[1])) {
@@ -34,23 +34,23 @@ class Core
                         }
                         call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
                         return;
+                    } else {
+                        $this->currentControllerFile = 'Errors';
+                        require_once '../app/controllers/' . $this->currentController . '.php';
+                        $this->currentController = new $this->currentController;
+                        call_user_func([$this->currentController, $this->currentMethod], 404);
+                        return;
                     }
-
-                    $this->currentController = 'Errors';
-                    require_once '../app/controllers/' . $this->currentController . '.php';
-                    $this->currentController = new $this->currentController;
-                    call_user_func([$this->currentController, $this->currentMethod], 404);
-                    return;
                 }
                 call_user_func_array([$this->currentController, $this->currentMethod], []);
                 return;
+            } else {
+                $this->currentControllerFile = 'Errors';
+                require_once '../app/controllers/' . $this->currentController . '.php';
+                $this->currentController = new $this->currentController;
+                call_user_func([$this->currentController, $this->currentMethod], 404);
+                return;
             }
-
-            $this->currentController = 'Errors';
-            require_once '../app/controllers/' . $this->currentController . '.php';
-            $this->currentController = new $this->currentController;
-            call_user_func([$this->currentController, $this->currentMethod], 404);
-            return;
         }
 
         require_once '../app/controllers/' . $this->currentController . '.php';

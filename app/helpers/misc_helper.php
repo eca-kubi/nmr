@@ -131,14 +131,9 @@ function its_logged_in_user($user_id)
     return getUserSession()->user_id === $user_id;
 }
 
-
-/**
- * @param $department_id
- * @return string
- */
-function getDepartment($department_id)
+function getDepartment(string $department_id)
 {
-    $department = (new Department($department_id))->department;
+    $department = Database::getDbh()->where('department_id', $department_id)->getValue('sms.departments', 'department');
     if (!empty($department)) {
         return $department;
     }

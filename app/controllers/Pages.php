@@ -13,9 +13,8 @@ class Pages extends Controller
 
     }
 
-    public function phpinfo(): void
+    public function phpinfo($a, $b): void
     {
         echo phpinfo();
-        //echo print_r(['todo']);
     }
 }
