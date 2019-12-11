@@ -10,7 +10,7 @@ class Core
 {
     protected string $currentController = 'Pages';
     protected $currentMethod = 'index';
-    protected $params = [];
+    protected array $params = [];
 
     public function __construct()
     {
@@ -19,9 +19,7 @@ class Core
         if (isset($url['0'])) {
             $url['0'] = str_replace(['-', '_'], '', $url['0']);
             if (file_exists('../app/controllers/' . ucwords($url[0]) . '.php')) {
-                // If exists, set as controller
                 $this->currentController = ucwords($url[0]);
-                // Unset 0 Index
                 unset($url[0]);
                 require_once '../app/controllers/' . $this->currentController . '.php';
                 $this->currentController = new $this->currentController;
