@@ -1,7 +1,6 @@
 const gulp = require('gulp'), flowRemoveTypes = require('gulp-flow-remove-types'), rename = require('gulp-rename'),
-    browserSync = require('browser-sync').create(),
-    reload = browserSync.reload, settings = require('./settings'), launcher = require('launch-browser'), http = require('http'), httpProxy = require('http-proxy')
-;
+    browserSync = require('browser-sync').create(), reload = browserSync.reload, settings = require('./settings'),
+    launcher = require('launch-browser');
 
 gulp.task('launcher', async function () {
     launcher(settings.urlToPreview, {browser: ['chrome']}, function (e, browser) {
@@ -13,10 +12,6 @@ gulp.task('launcher', async function () {
         });
 
     })
-});
-
-gulp.task('create-proxy', async function () {
-    httpProxy.createProxyServer({target:'http://localhost:80'}).listen(8000);
 });
 
 gulp.task('flow_remove_types', async function () {
@@ -34,8 +29,8 @@ gulp.task('watch', async function () {
         proxy: settings.urlToPreview,
         ghostMode: false
     });
-    gulp.watch('public/custom-assets/js/custom-src.js', gulp.series('flow_remove_types')).on('change', reload);
+    gulp.watch('public/custom-assets/js/custom.js.flow', gulp.series('flow_remove_types')).on('change', reload);
     //gulp.watch('public/custom-assets/css/**/*.css').on('change', reload);
 });
 
-gulp.task('default', gulp.series('watch', 'launcher'));
+gulp.task('default', gulp.series('watch'));

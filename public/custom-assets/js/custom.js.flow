@@ -1,0 +1,4 @@
+let URL_ROOT: string;
+$(function () {
+    URL_ROOT = $("#url_root").val();
+});

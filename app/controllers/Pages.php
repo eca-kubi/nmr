@@ -10,7 +10,8 @@ class Pages extends Controller
     }
 
     public function dashboard(): void {
-
+        $payload['page_title'] = 'Dashboard';
+        $this->view('pages/dashboard', $payload);
     }
 
     public function phpinfo(): void
