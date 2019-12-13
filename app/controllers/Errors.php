@@ -17,7 +17,7 @@ class Errors extends Controller
         );
 
         [$title] = $codes[$status];
-        [$payload['title'], $payload['message']]=  $codes[$status];
+        [$payload['page_title'], $payload['message']]=  $codes[$status];
         ob_start();
         header("HTTP/1.1 $title");
         $this->view('errors/index', $payload);

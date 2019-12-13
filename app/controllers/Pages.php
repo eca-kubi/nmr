@@ -4,13 +4,16 @@ class Pages extends Controller
     public function index(): void
     {
         if (!isLoggedIn()) {
-            redirect('fms/users/login/nmr/');
+            redirect('users/login');
         }
-        redirect('nmr/pages/dashboard');
+        redirect('pages/dashboard');
     }
 
     public function dashboard(): void {
         $payload['page_title'] = 'Dashboard';
+        if (!isLoggedIn()) {
+            redirect('users/login/pages/dashboard');
+        }
         $this->view('pages/dashboard', $payload);
     }
 

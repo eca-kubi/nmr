@@ -4,8 +4,8 @@
     <option name="languageLevel" value="FLOW" />
   </component>
   <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/public/assets/css/adminlte/adminlte-core.min.css" />
     <file url="file://$PROJECT_DIR$/public/assets/css/bootstrap/bootstrap-grid.min.css" />
+    <file url="file://$PROJECT_DIR$/public/assets/css/bootstrap/bootstrap-old.min.css" />
     <file url="file://$PROJECT_DIR$/public/assets/css/bootstrap/bootstrap-reboot.min.css" />
   </component>
 </project>

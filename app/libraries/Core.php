@@ -17,33 +17,29 @@ class Core
     {
         $url = $this->getUrl();
         if (isset($url['0'])) {
-            $url['0'] = str_replace(['-', '_'], '', $url['0']);
-            $this->currentControllerFile = ucwords($url[0]);
+            $this->currentControllerFile = str_replace(['-', '_'], '', ucwords($url['0']));
+            unset($url[0]);
             if (file_exists('../app/controllers/' . $this->currentControllerFile . '.php')) {
-                unset($url[0]);
                 require_once '../app/controllers/' . $this->currentControllerFile . '.php';
                 $this->currentController = new $this->currentControllerFile;
                 if (isset($url[1])) {
-                    $url[1] = str_replace(['-', '_'], '', $url[1]);
-                    if (method_exists($this->currentController, $url[1])) {
-                        $this->currentMethod = $url[1];
-                        unset($url[1]);
-                        $this->params = $url ? array_values($url) : [];
-                        if ($this->currentMethod === 'login') {
-                            $this->params = [implode('/', $this->params)];
-                        }
-                        call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
-                        return;
-                    } else {
-                        $this->currentControllerFile = 'Errors';
-                        require_once '../app/controllers/' . $this->currentControllerFile . '.php';
-                        $this->currentController = new $this->currentControllerFile;
-                        call_user_func([$this->currentController, $this->currentMethod], 404);
-                        return;
-                    }
+                    $this->currentMethod = str_replace(['-', '_'], '', $url[1]);
+                    unset($url[1]);
                 }
-                call_user_func_array([$this->currentController, $this->currentMethod], []);
-                return;
+                if (method_exists($this->currentController, $this->currentMethod)) {
+                    $this->params = $url ? array_values($url) : [];
+                    if ($this->currentMethod === 'login') {
+                        $this->params = [implode('/', $this->params)];
+                    }
+                    call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
+                    return;
+                } else {
+                    $this->currentControllerFile = 'Errors';
+                    require_once '../app/controllers/' . $this->currentControllerFile . '.php';
+                    $this->currentController = new $this->currentControllerFile;
+                    call_user_func([$this->currentController, $this->currentMethod], 404);
+                    return;
+                }
             } else {
                 $this->currentControllerFile = 'Errors';
                 require_once '../app/controllers/' . $this->currentControllerFile . '.php';

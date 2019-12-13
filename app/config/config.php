@@ -8,6 +8,7 @@ define('APP_ROOT', dirname(__FILE__, 2));
 define('SITE_NAME', 'Nzema Monthly Report');
 define('APP_NAME', 'NMR');
 define('APP_VERSION', '3.0.0');
+define('NAVBAR_MT', '109.516px');
 define('PROFILE_PIC_DIR', URL_ROOT . '/public/assets/images/profile_pics/');
 define('DATE_FORMATS', [
     'back_end' => 'Y-m-d',

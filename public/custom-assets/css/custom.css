@@ -9,6 +9,17 @@ body {
     min-height: 100%;
 }
 
+.hop-outer {
+}
+
+.hop-outer {
+    -webkit-transition: .2s linear all;
+    -moz-transition: .2s linear all;
+    -ms-transition: .2s linear all;
+    -o-transition: .2s linear all;
+    transition: .2s linear all;
+}
+
 html {
     /* overflow: scroll;
    overflow-x: hidden; */
@@ -21,7 +32,39 @@ html:hover {
     overflow: auto;
 }
 
+/*::-webkit-scrollbar {
+    width: 0;
+    !* remove scrollbar space *!
+    background: transparent;
+    !* optional: just make scrollbar invisible *!
+}*/
 
+
+td.action {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -7.5px;
+    margin-left: -7.5px;
+    padding-bottom: 0.25rem !important;
+}
+
+.k-detail-cell label {
+    display: inline-block;
+    width: 250px;
+    padding-right: 10px;
+    text-align: right;
+    font-style: normal;
+    font-weight: bold;
+}
+
+.k-detail-cell span.comment {
+    display: inline-block;
+    vertical-align: top !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 15%!important;
+}
 
 .k-tooltip-content {
     text-align: justify !important;
@@ -58,6 +101,10 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
     border-radius: 0 !important;
 }
 
+.has-danger .with-errors li {
+    color: #dc3545 !important;
+}
+
 .form-group.with-addon {
     position: relative;
 }
@@ -78,20 +125,42 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
     cursor: pointer !important;
 }
 
-
-.cursor-disabled {
-    cursor: not-allowed !important;
-}
-
 .form-group.with-addon > .input-group-addon {
     position: absolute;
     top: 34px;
     right: 16px;
 }
 
+.small-box > .inner {
+    height: 8.5em !important;
+}
+
 .sidebar {
     z-index: 1000000
 }
+
+.with-errors {
+    color: #dc3545;
+}
+
+/* Font classes*/
+
+.font-cinzel {
+    font-family: 'Cinzel Decorative', serif
+}
+
+.font-raleway {
+    font-family: Raleway, serif;
+}
+
+.font-mulli {
+    font-family: Muli, serif;
+}
+
+.font-passion-one {
+    font-family: 'Passion One', serif;
+}
+
 
 /* Credit to bootsnipp.com for the css for the color graph */
 .colorgraph {
@@ -103,6 +172,55 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
     background-image: -moz-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
     background-image: -o-linear-gradient(left, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
     background-image: linear-gradient(to right, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
+}
+
+td.action > div {
+    display: none;
+}
+
+td.action > span {
+    display: block;
+}
+
+.dtr-data > .dot-dot-dot {
+    display: none;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    color: #000 !important;
+    background-color: #e4e4e4;
+    border: 1px solid #aaa;
+}
+
+.select2-dropdown .select2-search__field:focus, .select2-search--inline .select2-search__field:focus {
+    border: 0 !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #999;
+}
+
+.select2-container--default .select2-selection--multiple, .select2-selection--single {
+    border-radius: 0 !important;
+}
+
+.select2-selection__choice {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    font-family: Raleway, serif;
+}
+
+.select2-selection__choice__remove {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 15px;
+}
+
+/* .with-errors {
+  display: none;
+} */
+
+[disabled], .select2-container--disabled .select2-selection--single {
+    cursor: not-allowed !important;
 }
 
 .dropdown-submenu {
@@ -128,8 +246,75 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
     padding: 0.5rem !important;
 }
 
+.cursor-disabled {
+    cursor: not-allowed !important;
+}
+
 .wrap {
     white-space: normal
+}
+
+/*.dropdown-divider {
+    margin: 0!important;
+}*/
+.files input {
+    outline: 2px dashed #92b0b3;
+    outline-offset: -10px;
+    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    padding: 120px 0 85px 20%;
+    text-align: center !important;
+    margin: 0;
+    width: 100% !important;
+}
+
+.files input:focus {
+    outline: 2px dashed #92b0b3;
+    outline-offset: -10px;
+    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    border: 1px solid #92b0b3;
+}
+
+.files {
+    position: relative
+}
+
+.files:after {
+    pointer-events: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 50px;
+    right: 0;
+    height: 56px;
+    content: "";
+    background-image: url("/public/assets/images/arrow-down.png");
+    display: block;
+    margin: 0 auto;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+.color input {
+    background-color: #f1f1f1;
+}
+
+.files:before {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    pointer-events: none;
+    width: 100%;
+    right: 0;
+    height: 57px;
+    content: " or drag it here. ";
+    display: block;
+    margin: 0 auto;
+    color: #2ea591;
+    font-weight: 600;
+    text-transform: capitalize;
+    text-align: center;
 }
 
 @media (max-width: 992px) {
@@ -163,6 +348,29 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
     color: cadetblue !important;
 }
 
+/* shards */
+
+/*
+.k-edit-field > input[type=text] {
+    width: 100% !important;
+    padding-left: 1rem !important;
+    position: relative !important;
+}
+
+.k-edit-label {
+    position: relative !important;
+}
+
+.k-edit-label.k-check {
+    position: absolute !important;
+}*/
+
+/*noinspection CssInvalidPropertyValue*/
+/*#section_6 {
+    height: -webkit-fill-available
+}*/
+
+
 /* Backgrounds patterns */
 
 .pattern-1 {
@@ -178,6 +386,27 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
     background-position: center;
 }
 
+.bg-nzema-mine {
+    background-image: url('/public/assets/images/bgs/Nzema-mine.jpg');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+}
+
+/* plugin fixes */
+.dropdown:not(.exclude-hover):hover > .dropdown-menu {
+    display: block;
+}
+
+.dropdown:not(.exclude-hover) > .dropdown-toggle:active {
+    /*Without this, clicking will make it sticky*/
+    pointer-events: none;
+}
+
+li.selected .dropdown-item.selected {
+    background-color: #9FB7FF
+}
+
 .dropdown-menu {
     margin-top: 0;
     z-index: 100000;
@@ -191,6 +420,30 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
     z-index: auto;
 }
 
+.text-no-decoration a:hover {
+    text-decoration: none !important;
+}
+
+.multiselect-container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+}
+
+/*select[multiple='multiple'] {
+    display: none;
+}*/
+
+.dtr-title::after {
+    content: ':'
+}
+
+.km-actionsheet .k-grid-delete {
+    background-color: #dc3545 !important;
+}
+
+.k-grid .k-edit-cell .k-tooltip {
+    white-space: nowrap;
+}
 
 td[data-role=editable]{
     position: relative;
@@ -211,6 +464,11 @@ html {
 
 :-moz-ui-invalid {
     box-shadow: none;
+}
+
+td:nth-child(4) {
+    position: relative;
+    overflow: visible;
 }
 
 .navbar-nav a {
@@ -246,8 +504,16 @@ a.k-link.k-state-active {
     width: 650px !important;
 }
 
+.bs-select a.dropdown-item.active {
+
+}
+
 .nav-link:hover {
     background-color: unset;
+}
+
+.completed {
+    color: #000;
 }
 
 .close-jq-toast-single {
@@ -270,6 +536,13 @@ a.k-link.k-state-active {
 .k-edit-label {
     padding: 0.65em 0 0;
 }
+
+/*th {
+    white-space: normal!important;
+    text-overflow: clip!important;
+    overflow-wrap: break-word!important;
+}*/
+/* shim */
 
 /* Portrait phones and smaller */
 
