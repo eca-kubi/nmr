@@ -1,5 +1,10 @@
 <?php
 
+use diversen\sendfile;
+use FileUpload\File;
+use FileUpload\PathResolver;
+use FileUpload\FileSystem;
+use FileUpload\FileUploadFactory;
 use Moment\CustomFormats\MomentJs;
 use Moment\Moment;
 use Moment\MomentException;
@@ -700,7 +705,7 @@ function getActiveApplicants()
             ->getValue('salary_advance sa', 'concat_ws(" ", first_name, last_name)', null);
     } catch (Exception $e) {
     }
-    return $active_applicants?: [];
+    return $active_applicants ?: [];
 }
 
 function nullableStringConverter($nullableString, $nullOutput, $trueOutput, $falseOutput)
@@ -728,121 +733,51 @@ function requestApprovalNotification($applicant, $manager, $subject, $data)
     }
 }
 
-function updateSalaryAdvance($is_bulk = false)
+function sendFile(string $file_name)
 {
-    $db = Database::getDbh();
-    $current_user = getUserSession();
-    $is_secretary = isSecretary($current_user->user_id);
-    $hr = new User(getCurrentHR());
-    $fmgr = new User(getCurrentFgmr());
-    $gm = new User(getCurrentGM());
-    $finance_officer = new User(getFinanceOfficer());
-    $errors = ['errors' => [['message' => 'Update failed.']]];
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
-        $id_salary_advance = $_POST['id_salary_advance'];
-        $salary_advance = $db->where('id_salary_advance', $id_salary_advance)->getOne('salary_advance');
-        if ($salary_advance) {
-            $applicant = new User($salary_advance['user_id']);
-            $hod = new User(getCurrentManager($applicant->department_id));
-            $request_number = $salary_advance['request_number'];
-            $subject = "Salary Advance Application ($request_number)";
-            $link = $is_bulk?  URL_ROOT . '/salary-advance/bulk-requests/' . $request_number :  URL_ROOT . '/salary-advance/single-requests/' . $request_number;
-            $data = ['ref_number' => $request_number, 'link' => $link, 'recipient_id' => $salary_advance['user_id'], 'applicant_id' => $applicant->user_id];
-            if ($is_secretary) {
-                $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
-                    'amount_requested' => $_POST['amount_requested']
-                ]);
-                if (!$update_success) {
-                    $errors['errors'][0]['message'] = 'The record failed to update';
-                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-                    return;
-                }
-            } elseif ($current_user->user_id === $hod->user_id && $salary_advance['hod_approval'] === null) {
-                // Current user is the hod
-                $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
-                    'hod_id' => $current_user->user_id,
-                    'hod_approval' => $_POST['hod_approval'],
-                    'hod_comment' => filter_var($_POST['hod_comment'], FILTER_SANITIZE_STRING),
-                    'hod_approval_date' => now()
-                ]);
-                if ($update_success) {
-                    $data['approval'] = $_POST['hod_approval'];
-                    $data['comment'] = $_POST['hod_comment'];
-                    requestApprovalNotification($applicant, $hr, $subject, $data);
-                } else {
-                    $errors['errors'][0]['message'] = 'The record failed to update';
-                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-                    return;
-                }
-            } elseif ($salary_advance['hod_approval'] && ($salary_advance['hr_approval'] === null) && $hr->user_id === $current_user->user_id) {
-                $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
-                    'hr_id' => $current_user->user_id,
-                    'hr_approval' => $_POST['hr_approval'],
-                    'hr_comment' => filter_var($_POST['hr_comment'], FILTER_SANITIZE_STRING),
-                    'hr_approval_date' => now(),
-                    'amount_payable' => $_POST['amount_payable']
-                ]);
-                if ($update_success) {
-                    $data['approval'] = $_POST['hr_approval'];
-                    $data['comment'] = $_POST['hr_comment'];
-                    requestApprovalNotification($applicant, $gm, $subject, $data);
-                } else {
-                    $errors['errors'][0]['message'] = 'The record failed to update';
-                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-                    return;
-                }
-            } elseif ($salary_advance['hr_approval'] && ($salary_advance['gm_approval'] === null) && $gm->user_id === $current_user->user_id) {
-                $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
-                    'gm_id' => $current_user->user_id,
-                    'gm_approval' => $_POST['gm_approval'],
-                    'gm_comment' => filter_var($_POST['gm_comment'], FILTER_SANITIZE_STRING),
-                    'gm_approval_date' => now()
-                ]);
-                if ($update_success) {
-                    $data['approval'] = $_POST['gm_approval'];
-                    $data['comment'] = $_POST['gm_comment'];
-                    requestApprovalNotification($applicant, $fmgr, $subject, $data);
-                } else {
-                    $errors['errors'][0]['message'] = 'The record failed to update';
-                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-                    return;
-                }
-            } elseif ($salary_advance['gm_approval'] && ($salary_advance['fmgr_approval'] === null) && $fmgr->user_id === $current_user->user_id) {
-                $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
-                    'fmgr_id' => $current_user->user_id,
-                    'fmgr_approval' => $_POST['fmgr_approval'],
-                    'fmgr_comment' => filter_var($_POST['fmgr_comment'], FILTER_SANITIZE_STRING),
-                    'fmgr_approval_date' => now(),
-                    'amount_approved' => $_POST['amount_approved']
-                ]);
-                if ($update_success) {
-                    $data['approval'] = $_POST['fmgr_approval'];
-                    $data['comment'] = $_POST['fmgr_comment'];
-                    $data['body'] = get_include_contents('email_templates/salary-advance/approval', $data);
-                    $email = get_include_contents('email_templates/salary-advance/main', $data);
-                    insertEmail($subject, $email, $applicant->email);
-                } else {
-                    $errors['errors'][0]['message'] = 'The record failed to update';
-                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-                    return;
-                }
-            } elseif ($salary_advance['fmgr_approval'] && $finance_officer->user_id === $current_user->user_id) {
-                $update_success = $db->where('id_salary_advance', $id_salary_advance)->update('salary_advance', [
-                    'finance_officer_id' => $current_user->user_id,
-                    'finance_officer_comment' => filter_var($_POST['finance_officer_comment'], FILTER_SANITIZE_STRING),
-                    'date_received' => now(),
-                    'amount_received' => $_POST['amount_received'],
-                    'received_by' => filter_var($_POST['received_by'], FILTER_SANITIZE_STRING)
-                ]);
-                if (!$update_success) {
-                    $errors['errors'][0]['message'] = 'The record failed to update';
-                    echo json_encode($errors, JSON_THROW_ON_ERROR, 512);
-                    return;
-                }
-            }
-            $updated_record = getSalaryAdvance(['id_salary_advance' => $id_salary_advance, 'deleted' => false]);
-            echo json_encode($updated_record, JSON_THROW_ON_ERROR, 512);
+    if (file_exists($file_name)) {
+        $s = new sendfile();
+        try {
+            $s->send($file_name);
+        } catch (\Exception $e) {
+            echo $e->getMessage();
         }
     }
+}
+
+function readFileMetaData($directory)
+{
+    $file_metadata = [];
+    if (is_dir($directory)) {
+        $files = array_slice(scandir($directory), 2);
+        foreach ($files as $file) {
+            $file_name = $directory . "/$file";
+            $file_type = filetype($file_name) === 'file' ? 'f' : 'd';
+            $file_metadata[] = ['name' => $file, 'type' => $file_type, 'size' => filesize($file_name)];
+        }
+    }
+    return json_encode($file_metadata);
+}
+
+function uploadFile(string $path): File
+{
+    if (!is_dir($path)) mkdir($path, 0777, true);
+        $factory = new FileUploadFactory(
+        new PathResolver\Simple($path),
+        new FileSystem\Simple()
+    );
+    $file_upload_instance = $factory->create($_FILES['file'], $_SERVER);
+    $file_upload_instance->setFileNameGenerator(new CustomFileGenerator(true));
+    [$files] = @$file_upload_instance->processAll();
+    return $files[0];
+}
+
+function createThumbnail($image)
+{
+    $thumbnail_path = THUMBNAIL_PATH . '/' . getUserSession()->staff_id;
+    if (!is_dir($thumbnail_path)) mkdir($thumbnail_path, 0777, true);
+    $image_mgr = new Intervention\Image\ImageManager();
+    $image = $image_mgr->make($image);
+    $image->fit(240, 120);
+    $image->save($thumbnail_path . '/' .$image->basename);
 }

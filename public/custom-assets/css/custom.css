@@ -590,3 +590,10 @@ a.k-link.k-state-active {
 @media (min-width: 1200px) {
 }
 
+/*.k-tool-group.k-button-group:nth-child(1) {
+    margin-bottom: 0.25rem !important;
+}*/
+
+.k-filebrowser .k-tile {
+    height: auto;
+}

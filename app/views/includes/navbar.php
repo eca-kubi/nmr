@@ -154,9 +154,9 @@
                     </a>
                 </li>
                 <li class="nav-item ml-0 ml-sm-4 text-left pr-1 border-right border-warning fa">
-                    <a href="<?php echo site_url('start-page'); ?>"
+                    <a href="<?php echo site_url('pages/dashboard'); ?>"
                        class="ajax-link nav-link btn border-0 text-bold flat text-left font-raleway text-warning">
-                        <i class="fal fa-home ml-4"></i> START PAGE
+                        <i class="fal fa-home ml-4"></i> Start Page
                     </a>
                 </li>
                 <?php $is_secretary = isAssignedAsSecretary($current_user->user_id);

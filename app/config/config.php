@@ -28,7 +28,7 @@ const MEDIA_FILE_TYPES = 'image/*,  video/*, audio/*';
 const PHOTO_FILE_TYPES = 'image/*';
 const VIDEO_FILE_TYPES = 'video/*';
 const AUDIO_FILE_TYPES = 'audio/*';
-const DOC_FILE_TYPES = '.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/msword, application/pdf, text/plain, text/html, application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+const DOC_MIME_TYPES = ['.csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel', 'application/msword', 'application/pdf', 'text/plain', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
 const HTML_NEW_LINE = '<br/>';
 const EMAIL_SUBJECT = 'Nzema Monthly Report';
 const SALT = 'archangel';
@@ -40,3 +40,6 @@ const ADMIN = [
     'Manager'
 ];
 const ROLE_SECRETARY = 'Secretary';
+const FILE_UPLOAD_PATH = APP_ROOT . '/uploads/files';
+const IMAGE_UPLOAD_PATH = APP_ROOT . '/uploads/images';
+const THUMBNAIL_PATH = APP_ROOT . '/uploads/thumbnails';

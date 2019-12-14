@@ -6,7 +6,20 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'diversen\\' => array($vendorDir . '/diversen/http-send-file'),
     'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
+    'Symfony\\Contracts\\Translation\\' => array($vendorDir . '/symfony/translation-contracts'),
+    'Symfony\\Component\\Translation\\' => array($vendorDir . '/symfony/translation'),
+    'Rundiz\\Upload\\' => array($vendorDir . '/rundiz/upload/Rundiz/Upload'),
     'Respect\\Validation\\' => array($vendorDir . '/respect/validation/library'),
+    'Psr\\SimpleCache\\' => array($vendorDir . '/psr/simple-cache/src'),
+    'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
+    'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Moment\\' => array($vendorDir . '/fightbulc/moment/src'),
+    'Intervention\\Image\\' => array($vendorDir . '/intervention/image/src/Intervention/Image'),
+    'Illuminate\\Support\\' => array($vendorDir . '/illuminate/support'),
+    'Illuminate\\Contracts\\' => array($vendorDir . '/illuminate/contracts'),
+    'GuzzleHttp\\Psr7\\' => array($vendorDir . '/guzzlehttp/psr7/src'),
+    'Doctrine\\Common\\Inflector\\' => array($vendorDir . '/doctrine/inflector/lib/Doctrine/Common/Inflector'),
+    '' => array($vendorDir . '/nesbot/carbon/src'),
 );

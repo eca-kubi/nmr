@@ -35,7 +35,86 @@
 
 <script>
     $(function () {
-        $("#editor").kendoEditor();
+        $("#editor").kendoEditor({
+            tools: [
+                "bold",
+                "italic",
+                "underline",
+                "strikethrough",
+                "justifyLeft",
+                "justifyCenter",
+                "justifyRight",
+                "justifyFull",
+                "insertUnorderedList",
+                "insertOrderedList",
+                "indent",
+                "outdent",
+                "createLink",
+                "unlink",
+                "insertImage",
+                "insertFile",
+                "subscript",
+                "superscript",
+                "tableWizard",
+                "createTable",
+                "addRowAbove",
+                "addRowBelow",
+                "addColumnLeft",
+                "addColumnRight",
+                "deleteRow",
+                "deleteColumn",
+                "mergeCellsHorizontally",
+                "mergeCellsVertically",
+                "splitCellHorizontally",
+                "splitCellVertically",
+                "print",
+                "formatting",
+                "cleanFormatting",
+                "fontName",
+                "fontSize",
+                "foreColor",
+                "backColor",
+                "viewHtml",
+            ],
+            imageBrowser: {
+                transport: {
+                    read: {
+                        url: URL_ROOT + "/image-service/read",
+                        dataType: "json"
+                    },
+                    uploadUrl: URL_ROOT + "/image-service/upload",
+                    thumbnailUrl: function(path, file) {
+                        return URL_ROOT + "/image-service/thumbnail-service/?i=" + path + file;
+                    },
+                    imageUrl: function (e) {
+                        return URL_ROOT + "/image-service/images/?i=" + e
+                    }
+                }
+            },
+            fileBrowser: {
+                transport: {
+                    read: {
+                        url: URL_ROOT + "/file-service/read",
+                        dataType: "json"
+                    },
+                    fileUrl: function (e) {
+                        return URL_ROOT + "/file-service/files/?f=" + e;
+                    },
+                    uploadUrl: URL_ROOT + "/file-service/upload",
+                    create: {
+                        url() {
+                            return URL_ROOT + "/file-service/create-directory"
+                        },
+                        dataType: "json"
+                    },
+                },
+                fileTypes: "*.docx, *.doc, *.ppt, *.pptx"
+            },
+            resizable : {
+                content: true,
+                toolbar: true
+            }
+        });
     });
 </script>
 </body>

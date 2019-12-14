@@ -8,35 +8,134 @@ class ComposerStaticInite68da04fbe77a2454cfca7a306502154
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
+        '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'd' => 
+        array (
+            'diversen\\' => 9,
+        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Contracts\\Translation\\' => 30,
+            'Symfony\\Component\\Translation\\' => 30,
         ),
         'R' => 
         array (
+            'Rundiz\\Upload\\' => 14,
             'Respect\\Validation\\' => 19,
+        ),
+        'P' => 
+        array (
+            'Psr\\SimpleCache\\' => 16,
+            'Psr\\Http\\Message\\' => 17,
+            'Psr\\Container\\' => 14,
         ),
         'M' => 
         array (
             'Moment\\' => 7,
         ),
+        'I' => 
+        array (
+            'Intervention\\Image\\' => 19,
+            'Illuminate\\Support\\' => 19,
+            'Illuminate\\Contracts\\' => 21,
+        ),
+        'G' => 
+        array (
+            'GuzzleHttp\\Psr7\\' => 16,
+        ),
+        'D' => 
+        array (
+            'Doctrine\\Common\\Inflector\\' => 26,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'diversen\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/diversen/http-send-file',
+        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Contracts\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation-contracts',
+        ),
+        'Symfony\\Component\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation',
+        ),
+        'Rundiz\\Upload\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/rundiz/upload/Rundiz/Upload',
         ),
         'Respect\\Validation\\' => 
         array (
             0 => __DIR__ . '/..' . '/respect/validation/library',
         ),
+        'Psr\\SimpleCache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
+        ),
+        'Psr\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Psr\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
         'Moment\\' => 
         array (
             0 => __DIR__ . '/..' . '/fightbulc/moment/src',
+        ),
+        'Intervention\\Image\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/intervention/image/src/Intervention/Image',
+        ),
+        'Illuminate\\Support\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/support',
+        ),
+        'Illuminate\\Contracts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/contracts',
+        ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'Doctrine\\Common\\Inflector\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
+        ),
+    );
+
+    public static $fallbackDirsPsr4 = array (
+        0 => __DIR__ . '/..' . '/nesbot/carbon/src',
+    );
+
+    public static $prefixesPsr0 = array (
+        'U' => 
+        array (
+            'UpdateHelper\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/kylekatarnls/update-helper/src',
+            ),
+        ),
+        'F' => 
+        array (
+            'FileUpload\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/gargron/fileupload/src',
+            ),
         ),
     );
 
@@ -45,6 +144,8 @@ class ComposerStaticInite68da04fbe77a2454cfca7a306502154
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInite68da04fbe77a2454cfca7a306502154::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInite68da04fbe77a2454cfca7a306502154::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInite68da04fbe77a2454cfca7a306502154::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInite68da04fbe77a2454cfca7a306502154::$prefixesPsr0;
 
         }, null, ClassLoader::class);
     }

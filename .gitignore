@@ -74,3 +74,4 @@ fabric.properties
 # host.php
 app/config/host.php
 
+/app/uploads/

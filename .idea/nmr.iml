@@ -4,10 +4,27 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/app/uploads" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/diversen/http-send-file" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/inflector" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/fightbulc/moment" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/gargron/fileupload" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/guzzlehttp/psr7" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/support" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/intervention/image" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/kylekatarnls/update-helper" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/nesbot/carbon" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/container" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/http-message" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/simple-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/ralouphie/getallheaders" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/respect/validation" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/rundiz/upload" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-mbstring" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/translation" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/translation-contracts" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -12,7 +12,12 @@
   "require": {
     "ext-json": "*",
     "fightbulc/moment": "1.30.0",
-    "respect/validation": "1.1.31"
+    "respect/validation": "1.1.31",
+    "diversen/http-send-file": "v2.0.3",
+    "gargron/fileupload": "v1.5.1",
+    "intervention/image": "2.5.1",
+    "illuminate/support": "5.7.19",
+    "rundiz/upload": "v2.0.4"
   }
   ,
   "require-dev": {
