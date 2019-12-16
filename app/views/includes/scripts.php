@@ -21,7 +21,7 @@
             cursor: 'default'
         },
         onUnblock: function () {
-            $('.hide-on-init').removeClass('invisible');
+            $(".blockable").removeClass(".d-none");
         }
     });
     $('.blockable').block({

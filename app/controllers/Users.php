@@ -4,7 +4,7 @@ class Users extends Controller
     private array $payload;
     public function login(string $redirect_url=''): void
     {
-        $payload['title'] = 'FMS Login';
+        $payload['title'] = 'NMR Login';
         $payload['redirect_url'] = $redirect_url;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $payload['post'] = validatePost('login_form');

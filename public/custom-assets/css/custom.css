@@ -63,7 +63,7 @@ td.action {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 15%!important;
+    width: 15% !important;
 }
 
 .k-tooltip-content {
@@ -445,7 +445,7 @@ li.selected .dropdown-item.selected {
     white-space: nowrap;
 }
 
-td[data-role=editable]{
+td[data-role=editable] {
     position: relative;
     overflow: visible;
 }
@@ -590,10 +590,30 @@ a.k-link.k-state-active {
 @media (min-width: 1200px) {
 }
 
-/*.k-tool-group.k-button-group:nth-child(1) {
+.k-tool-group.k-button-group:nth-child(1) {
     margin-bottom: 0.25rem !important;
-}*/
+}
 
 .k-filebrowser .k-tile {
     height: auto;
+}
+
+.k-editor-overflow-popup {
+    padding: 0 !important;
+}
+
+.k-editor-overflow-popup .k-overflow-button {
+    padding: 0.5rem !important;
+}
+
+.k-overflow-button span {
+    margin: 0.5rem !important;
+}
+
+.k-overflow-tool-group:not(:last-child) {
+    margin-bottom: 0.25rem !important;
+}
+
+.k-imagebrowser .k-tile strong {
+    clear: both !important;
 }

@@ -17,6 +17,8 @@ class User
     public $department;
     public $department_id;
     public $basic_salary;
+    public $password;
+    public $default_password;
 
     public function __construct($user_id = '')
     {

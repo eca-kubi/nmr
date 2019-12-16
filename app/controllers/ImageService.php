@@ -4,7 +4,7 @@ class ImageService extends Controller
 {
     public function read(): void
     {
-        echo readFileMetaData(IMAGE_UPLOAD_PATH . "/" . getUserSession()->staff_id);
+        echo readFileMetaData(IMAGE_UPLOAD_PATH . "/" . getUserSession()->staff_id . '/' .$_POST['path']);
     }
 
     public function upload(): void

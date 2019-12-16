@@ -23,13 +23,22 @@ gulp.task('flow_remove_types', async function () {
         .pipe(gulp.dest('public/custom-assets/js'));
 });
 
+gulp.task('flow_remove_types_dashboard.php', async function () {
+    gulp.src('app/views/pages/src/dashboard.php')
+        .pipe(flowRemoveTypes({
+            pretty: true
+        }))
+        .pipe(rename('dashboard.php'))
+        .pipe(gulp.dest('app/views/pages/'));
+});
+
 gulp.task('watch', async function () {
     browserSync.init({
         notify: false,
         proxy: settings.urlToPreview,
         ghostMode: false
     });
-    gulp.watch('public/custom-assets/js/custom.js.flow', gulp.series('flow_remove_types')).on('change', reload);
+    gulp.watch('app/views/pages/src', gulp.series('flow_remove_types_dashboard.php')).on('change', reload);
     //gulp.watch('public/custom-assets/css/**/*.css').on('change', reload);
 });
 

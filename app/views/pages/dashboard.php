@@ -4,7 +4,7 @@
 <!-- .content-wrapper -->
 <div class="content-wrapper animated fadeInRight" style="margin-top: <?php //echo NAVBAR_MT; ?>">
     <!-- content -->
-    <section class="content">
+    <section class="content blockable d-none">
         <div class="box-group" id="box_group">
             <div class="box collapsed">
                 <div class="box-header">
@@ -17,7 +17,21 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <textarea name="" id="editor" cols="30" rows="10"></textarea>
+                    <div id="editorTabStrip">
+                        <ul>
+                            <li class="k-state-active">Editor</li>
+                            <li>Preview</li>
+                        </ul>
+                        <div id="editorTab">
+                            <div id="editorActionToolbar"></div>
+                            <div>
+                                <textarea name="" id="editor" cols="30" rows="10"></textarea>
+                            </div>
+                        </div>
+                        <div id="previewTab">
+                            <div id="previewContent"></div>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer d-none"></div>
@@ -34,8 +48,37 @@
 <?php include_once(APP_ROOT . '/views/includes/scripts.php'); ?>
 
 <script>
+    let editor;
     $(function () {
-        $("#editor").kendoEditor({
+        $(".content").kendoRippleContainer();
+        $("#editorTabStrip").kendoTabStrip({
+            select(e) {
+                if (e.contentElement.id === "previewTab") {
+                    $("#previewContent").html(editor.value());
+                }
+            }
+        });
+        $("#editorActionToolbar").kendoToolBar({
+            items: [
+                {
+                    type: "button",
+                    text: "Save Draft",
+                    icon: "save",
+                    click: function (e) {
+
+                    }
+                },
+                {
+                    type: "button",
+                    text: "Clear",
+                    icon: "refresh-clear",
+                    click: function (e) {
+
+                    }
+                }
+            ]
+        });
+        editor = $("#editor").kendoEditor({
             tools: [
                 "bold",
                 "italic",
@@ -83,7 +126,7 @@
                         dataType: "json"
                     },
                     uploadUrl: URL_ROOT + "/image-service/upload",
-                    thumbnailUrl: function(path, file) {
+                    thumbnailUrl: function (path, file) {
                         return URL_ROOT + "/image-service/thumbnail-service/?i=" + path + file;
                     },
                     imageUrl: function (e) {
@@ -110,11 +153,12 @@
                 },
                 fileTypes: "*.docx, *.doc, *.ppt, *.pptx"
             },
-            resizable : {
+            resizable: {
                 content: true,
-                toolbar: true
-            }
-        });
+                //toolbar: true
+            },
+            encoded: false
+        }).data("kendoEditor");
     });
 </script>
 </body>
