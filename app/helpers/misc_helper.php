@@ -774,10 +774,14 @@ function uploadFile(string $path): File
 
 function createThumbnail($image)
 {
-    $thumbnail_path = THUMBNAIL_PATH . '/' . getUserSession()->staff_id;
+    $thumbnail_path = THUMBNAIL_PATH . '/' . uniqueId();
     if (!is_dir($thumbnail_path)) mkdir($thumbnail_path, 0777, true);
     $image_mgr = new Intervention\Image\ImageManager();
     $image = $image_mgr->make($image);
     $image->fit(240, 120);
     $image->save($thumbnail_path . '/' .$image->basename);
+}
+
+function uniqueId() {
+    return getUserSession()->staff_id;
 }
