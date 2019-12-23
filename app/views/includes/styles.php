@@ -14,19 +14,69 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/fonts/font-awesome-pro/css/all.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/fonts/font-awesome-pro/css/v4-shims.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/w3/w3.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/kendo-ui/kendo.bootstrap-v4.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css"/>
-   <!-- <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/css/adminlte/adminlte.css"/>-->
+    <!--<link rel="stylesheet" href="<?php /*echo URL_ROOT;  */?>/public/assets/css/adminlte/adminlte.css"/>-->
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte/adminlte-alpha.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte/box-widget.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte/adminlte-miscellaneous.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/kendo-ui/kendo.bootstrap-v4.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css"/>
-   <!-- <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/css/kendo-ui/kendo.common.min.css"/>
-    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/css/kendo-ui/kendo.rtl.min.css"/>
-    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/css/kendo-ui/kendo.default.min.css"/>
-    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/css/kendo-ui/kendo.mobile.all.min.css"/>-->
-   </head>
+    <script>
+        var events = {};
+        var original = window.addEventListener;
+
+        window.addEventListener = function(type, listener, useCapture) {
+            events[type] = true;
+            return original(type, listener, useCapture);
+        };
+
+        function hasEventBeenAdded(type) {
+            return type in events;
+        }
+    </script>
+    <!-- <link rel="stylesheet" href="<?php /*echo URL_ROOT; */ ?>/public/assets/css/kendo-ui/kendo.common.min.css"/>
+    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */ ?>/public/assets/css/kendo-ui/kendo.rtl.min.css"/>
+    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */ ?>/public/assets/css/kendo-ui/kendo.default.min.css"/>
+    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */ ?>/public/assets/css/kendo-ui/kendo.mobile.all.min.css"/>-->
+    <link rel="stylesheet" href="<?php echo URL_ROOT;  ?>/public/assets/css/overlay-scrollbar/OverlayScrollbars.min.css"/>
+    <script type="text/javascript" src="<?php echo URL_ROOT; ?>/public/assets/js/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="<?php echo URL_ROOT; ?>/public/assets/js/block-ui/block-ui.js"></script>
+    <script>
+        $.blockUI({
+            message: '<i class="fa fa-spinner w3-spin" style="font-size:32px"></i>',
+            css: {
+                padding: 0,
+                margin: 0,
+                width: '0%',
+                top: '40%',
+                left: '50%',
+                textAlign: 'center',
+                color: '#000',
+                border: '0',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                cursor: 'default'
+            },
+            overlayCSS: {
+                backgroundColor: '#000',
+                opacity: 0.0,
+                cursor: 'default'
+            },
+            onUnblock: function () {
+                $(".blockable").removeClass(".d-none");
+            }
+        });
+        $('.blockable').block({
+            message: null,
+            overlayCSS: {
+                backgroundColor: '#000',
+                opacity: 0.0,
+                cursor: 'default'
+            },
+        });
+    </script>
+    <script type="text/javascript" src="<?php echo URL_ROOT; ?>/public/assets/js/overlay-scrollbar/jquery.overlayScrollbars.min.js"></script>
+</head>
 <body class="hold-transition sidebar-mini sidebar-collapse">
-<div class="wrapper" id="list-container">
+<div class="wrapper">

@@ -135,15 +135,15 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
     height: 8.5em !important;
 }
 
-.sidebar {
-    z-index: 1000000
+.main-sidebar {
+    z-index: 10003
 }
 
-.with-errors {
+/*.with-errors {
     color: #dc3545;
 }
 
-/* Font classes*/
+!* Font classes*!
 
 .font-cinzel {
     font-family: 'Cinzel Decorative', serif
@@ -159,7 +159,7 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
 
 .font-passion-one {
     font-family: 'Passion One', serif;
-}
+}*/
 
 
 /* Credit to bootsnipp.com for the css for the color graph */
@@ -174,54 +174,56 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
     background-image: linear-gradient(to right, #c4e17f, #c4e17f 12.5%, #f7fdca 12.5%, #f7fdca 25%, #fecf71 25%, #fecf71 37.5%, #f0776c 37.5%, #f0776c 50%, #db9dbe 50%, #db9dbe 62.5%, #c49cde 62.5%, #c49cde 75%, #669ae1 75%, #669ae1 87.5%, #62c2e4 87.5%, #62c2e4);
 }
 
-td.action > div {
+/*td.action > div {
     display: none;
 }
 
 td.action > span {
     display: block;
-}
+}*/
 
-.dtr-data > .dot-dot-dot {
+/*.dtr-data > .dot-dot-dot {
     display: none;
-}
+}*/
 
-.select2-container--default .select2-selection--multiple .select2-selection__choice {
+/*.select2-container--default .select2-selection--multiple .select2-selection__choice {
     color: #000 !important;
     background-color: #e4e4e4;
     border: 1px solid #aaa;
-}
+}*/
 
-.select2-dropdown .select2-search__field:focus, .select2-search--inline .select2-search__field:focus {
+/*.select2-dropdown .select2-search__field:focus, .select2-search--inline .select2-search__field:focus {
     border: 0 !important;
-}
+}*/
 
-.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+/*.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
     color: #999;
-}
+}*/
 
-.select2-container--default .select2-selection--multiple, .select2-selection--single {
+/*.select2-container--default .select2-selection--multiple, .select2-selection--single {
     border-radius: 0 !important;
-}
+}*/
 
-.select2-selection__choice {
+/*.select2-selection__choice {
     font-size: 1.05rem;
     line-height: 1.7;
     font-family: Raleway, serif;
-}
+}*/
 
-.select2-selection__choice__remove {
+/*.select2-selection__choice__remove {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 15px;
-}
+}*/
 
 /* .with-errors {
   display: none;
 } */
 
+/*
 [disabled], .select2-container--disabled .select2-selection--single {
     cursor: not-allowed !important;
 }
+*/
 
 .dropdown-submenu {
     position: relative;
@@ -328,9 +330,9 @@ td.action > span {
 }
 
 /* Grid columns with no width are collapsed if the space is not enough, thus min-width on the tables is needed */
-.k-grid table {
+/*.k-grid table {
     min-width: 600px;
-}
+}*/
 
 /* Android's default browser doesn't support properly min-width on tables */
 @media screen and (max-width: 699px) {
@@ -393,7 +395,6 @@ td.action > span {
     background-position: center;
 }
 
-/* plugin fixes */
 .dropdown:not(.exclude-hover):hover > .dropdown-menu {
     display: block;
 }
@@ -403,52 +404,60 @@ td.action > span {
     pointer-events: none;
 }
 
+/*
 li.selected .dropdown-item.selected {
     background-color: #9FB7FF
 }
+*/
 
-.dropdown-menu {
+/*.dropdown-menu {
     margin-top: 0;
     z-index: 100000;
-}
+}*/
 
 .nav-sidebar > .nav-item .nav-icon {
     padding: 4px;
 }
 
+/*
 .content-wrapper {
     z-index: auto;
 }
+*/
 
 .text-no-decoration a:hover {
     text-decoration: none !important;
 }
 
+/*
 .multiselect-container {
     padding-left: 3rem;
     padding-right: 3rem;
 }
+*/
 
 /*select[multiple='multiple'] {
     display: none;
 }*/
-
+/*
 .dtr-title::after {
     content: ':'
 }
 
 .km-actionsheet .k-grid-delete {
     background-color: #dc3545 !important;
-}
+}*/
 
 .k-grid .k-edit-cell .k-tooltip {
     white-space: nowrap;
 }
 
+/*
 td[data-role=editable] {
     position: relative;
     overflow: visible;
 }
+*/
 
 html {
     -ms-overflow-style: none;
@@ -466,10 +475,10 @@ html {
     box-shadow: none;
 }
 
-td:nth-child(4) {
+/*td:nth-child(4) {
     position: relative;
     overflow: visible;
-}
+}*/
 
 .navbar-nav a {
     font-size: .9375rem !important;
@@ -502,10 +511,6 @@ a.k-link.k-state-active {
 
 .k-edit-form-container {
     width: 650px !important;
-}
-
-.bs-select a.dropdown-item.active {
-
 }
 
 .nav-link:hover {
@@ -598,7 +603,7 @@ a.k-link.k-state-active {
     height: auto;
 }
 
-.k-editor-overflow-popup {
+/*.k-editor-overflow-popup {
     padding: 0 !important;
 }
 
@@ -608,7 +613,7 @@ a.k-link.k-state-active {
 
 .k-overflow-button span {
     margin: 0.5rem !important;
-}
+}*/
 
 .k-overflow-tool-group:not(:last-child) {
     margin-bottom: 0.25rem !important;
@@ -616,4 +621,58 @@ a.k-link.k-state-active {
 
 .k-imagebrowser .k-tile strong {
     clear: both !important;
+}
+
+.k-editor .k-i-new-chart:before {
+    font-family: "Font Awesome 5 Pro", serif;
+    content: "\f080";
+    font-size: 16px;
+}
+
+.k-sprite-chart {
+    line-height: 1;
+    font-size: 1rem;
+}
+
+#chartsPopup .k-list-scroller {
+    border: 0;
+}
+
+.os-padding {
+    z-index: auto !important;
+}
+
+.wrapper > header {
+    z-index: 10003;
+    position: absolute;
+}
+
+div.k-listbox {
+    width: auto;
+    height: auto;
+}
+
+div.k-listbox li.k-item {
+    white-space: nowrap;
+}
+
+.k-spreadsheet-vaxis {
+    border-width: 0 0 0 1.1px;
+}
+
+header {
+    z-index: 9999999 !important;
+}
+
+aside.main-sidebar {
+    z-index: 9999999 !important;
+}
+
+.k-overlay {
+    z-index: 9999999 !important;
+}
+
+.k-window {
+    z-index: 9999999 !important;
+    height: 90% !important;
 }

@@ -1,0 +1,27 @@
+<script id="chart-s" type="text/x-kendo-template">
+    <span title="New Chart" class="k-widget k-dropdown" unselectable="on" role="listbox" aria-haspopup="true"
+          aria-expanded="false" tabindex="0"
+          aria-label="New Chart" aria-live="polite" aria-disabled="false" aria-busy="false" style="width: auto;">
+        <span unselectable="on" class="k-dropdown-wrap k-state-default">
+            <span unselectable="on" class="k-input">
+                <span class="fa fa-chart-bar" style="line-height: 1em; width: 1.35em;"></span>
+            </span>
+            <span unselectable="on" class="k-select" aria-label="select">
+                <span class="k-icon k-i-arrow-60-down"></span>
+            </span>
+        </span>
+        <select title="New Chart" aria-label="New Chart" data-role="dropdownlist" style="display: none;">
+            <option value="Bar Chart">Bar Chart</option>
+            <option value="Text">Text</option>
+            <option value="Number">Number</option>
+    </select>
+    </span>
+</script>
+
+<script id="charts" type="text/x-kendo-template">
+    <a href='\\#' class='k-button k-button-icon px-4' id="chartsMenuButton" data-tool='charts'><span class='fa fa-chart-pie mx-1'></span> <span class='k-icon k-i-arrow-60-down'></span></a>
+    <div id="chartsPopup">
+        <select id="chartsListBox">
+        </select>
+    </div>
+</script>

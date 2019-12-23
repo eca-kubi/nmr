@@ -37,6 +37,23 @@
                 <div class="box-footer d-none"></div>
                 <!-- /.box-footer-->
             </div>
+            <div class="box collapsed">
+                <div class="box-header">
+                    <h5 class="box-title text-bold d-none"></h5>
+                    <div class="box-tools pull-right d-none">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="spreadSheet" class="w-100"></div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer d-none"></div>
+                <!-- /.box-footer-->
+            </div>
         </div>
     </section>
     <!-- /.content -->
@@ -46,12 +63,28 @@
 </div>
 <!-- /.wrapper -->
 <?php include_once(APP_ROOT . '/views/includes/scripts.php'); ?>
+<?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
 
 <script>
-    let editor;
+
+    let overlayScrollbarsInstance;
     $(function () {
+        let overlayTargets = $("body, .sidebar");
+        overlayTargets.overlayScrollbars({
+            scrollbars: {
+                autoHide: "leave"
+            },
+            callbacks: {
+                onScrollStart() {
+                    $(".k-animation-container").hide();
+                }
+            }
+        });
+        overlayScrollbarsInstance = overlayTargets.overlayScrollbars();
+
         $(".content").kendoRippleContainer();
-        $("#editorTabStrip").kendoTabStrip({
+
+        let tabStrip = $("#editorTabStrip").kendoTabStrip({
             select(e) {
                 if (e.contentElement.id === "previewTab") {
                     $("#previewContent").html(editor.value());
@@ -78,7 +111,7 @@
                 }
             ]
         });
-        editor = $("#editor").kendoEditor({
+        let editor = $("#editor").kendoEditor({
             tools: [
                 "bold",
                 "italic",
@@ -117,7 +150,7 @@
                 "fontSize",
                 "foreColor",
                 "backColor",
-                "viewHtml",
+                "viewHtml"
             ],
             imageBrowser: {
                 transport: {
@@ -159,7 +192,52 @@
             },
             encoded: false
         }).data("kendoEditor");
+
+        let chartMenuCommand = {
+            template: kendo.template($("#charts").html())
+        };
+        let spreadsheet = $("#spreadSheet").kendoSpreadsheet({
+            toolbar: {
+                home: [chartMenuCommand].concat(kendo.spreadsheet.ToolBar.fn.options.tools.home)
+            }
+        }).data("kendoSpreadsheet");
+        let sheet = spreadsheet.activeSheet();
+
+        let chartMenuButton = $("#chartsMenuButton");
+        let chartsPopup = $("#chartsPopup").kendoPopup({
+            anchor: chartMenuButton
+        }).data("kendoPopup");
+
+        $("#chartsListBox").kendoListBox({
+            dataSource: [
+                {id: 1, title: "Gold Produced & Budget Ounces"},
+                {id: 2, title: "Gold Produced & Tons Milled"},
+                {id: 3, title: "Recovery & Head Grade"}
+            ],
+            dataTextField: "title",
+            dataValueField: "id",
+            change(e) {
+                let title = this.dataItem(this.select()).title;
+                drawChart(title);
+            }
+        });
+
+        chartMenuButton.on("click", function () {
+            $("#chartsPopup").data("kendoPopup").toggle();
+        });
+        setTimeout(function () {
+            $("div#spreadSheet").trigger("resize")
+        }, 3000)
     });
+
+    function drawChart(title) {
+        if (title === 'Gold Produced & Budget Ounces') {
+
+        } else if (title === 'Gold Produced & Tons Milled') {
+        } else { //Recovery & Head Grade
+        }
+        alert(title)
+    }
 </script>
 </body>
 </html>

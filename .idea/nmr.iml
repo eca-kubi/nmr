@@ -30,5 +30,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="@types/jquery" level="application" />
     <orderEntry type="library" name="kendo-ui" level="project" />
+    <orderEntry type="library" name="@types/kendo-ui" level="application" />
+    <orderEntry type="library" name="@types/overlayscrollbars" level="application" />
   </component>
 </module>
