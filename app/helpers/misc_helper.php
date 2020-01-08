@@ -785,3 +785,7 @@ function createThumbnail($image)
 function uniqueId() {
     return getUserSession()->staff_id;
 }
+
+function monthName($monthNum) {
+   return (DateTime::createFromFormat('!m', $monthNum))->format('F');
+}

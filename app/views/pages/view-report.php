@@ -8,7 +8,9 @@
         <div class="box-group pt-1" id="box_group">
             <div class="box collapsed">
                 <div class="box-header">
-                    <h5 class="box-title text-bold"><span class="fa fa-wpforms text-warning"></span> <?php echo $report['year'] . ' ' . date($report['month']) . ' Flash Report'?></h5>
+                    <h5 class="box-title text-bold"><span
+                                class="fa fa-wpforms text-warning"></span> <?php echo monthName($report['month']) . ' ' . $report['year'] . ' ' . ' Flash Report' ?>
+                    </h5>
                     <div class="box-tools pull-right d-none">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
