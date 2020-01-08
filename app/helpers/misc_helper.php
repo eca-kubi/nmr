@@ -789,3 +789,7 @@ function uniqueId() {
 function monthName($monthNum) {
    return (DateTime::createFromFormat('!m', $monthNum))->format('F');
 }
+
+function monthNumber($timeString) {
+    return date("m", strtotime($timeString));
+}

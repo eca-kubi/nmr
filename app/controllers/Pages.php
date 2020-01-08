@@ -56,7 +56,7 @@ class Pages extends Controller
         }
         $payload['page_title'] = 'View Report';
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['report_month_input']) && isset($_GET['report_year_input'])) {
-            $payload['report'] = $db->where('month', $_GET['report_month_input'])->where('year', $_GET['report_year_input'])->getOne('nmr_flash_report');
+            $payload['report'] = $db->where('month', monthNumber( $_GET['report_month_input'] . '-'.  $_GET['report_year_input']))->where('year', $_GET['report_year_input'])->getOne('nmr_flash_report');
             $this->view('pages/view-report', $payload);
         } else {
             redirect('pages/reports');
