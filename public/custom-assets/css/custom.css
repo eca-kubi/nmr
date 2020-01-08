@@ -509,9 +509,9 @@ a.k-link.k-state-active {
     white-space: nowrap !important;
 }
 
-.k-edit-form-container {
+/*.k-edit-form-container {
     width: 650px !important;
-}
+}*/
 
 .nav-link:hover {
     background-color: unset;
@@ -634,7 +634,7 @@ a.k-link.k-state-active {
     font-size: 1rem;
 }
 
-#chartsPopup .k-list-scroller {
+#chartsMenuPopup .k-list-scroller {
     border: 0;
 }
 
@@ -674,5 +674,12 @@ aside.main-sidebar {
 
 .k-window {
     z-index: 9999999 !important;
-    height: 90% !important;
+}
+
+.k-spreadsheet-scroller {
+    overflow: hidden;
+}
+
+a.bg-aqua:hover {
+    background-color: #10a8ce!important;
 }

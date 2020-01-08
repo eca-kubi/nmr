@@ -18,10 +18,14 @@
     </span>
 </script>
 
-<script id="charts" type="text/x-kendo-template">
-    <a href='\\#' class='k-button k-button-icon px-4' id="chartsMenuButton" data-tool='charts'><span class='fa fa-chart-pie mx-1'></span> <span class='k-icon k-i-arrow-60-down'></span></a>
-    <div id="chartsPopup">
-        <select id="chartsListBox">
+<script id="chartsMenuTemplate" type="text/x-kendo-template">
+    <a href='\\#' class='k-button k-button-icon px-4' id="chartsMenuButton" title="Charts" data-tool='charts'><span class='fa fa-chart-bar mx-1'></span> <span class='k-icon k-i-arrow-60-down'></span></a>
+    <div id="chartsMenuPopup">
+        <select id="chartsMenuListBox">
         </select>
     </div>
+</script>
+
+<script id="copyToEditor" type="text/x-kendo-template">
+    <a href='\\#' class='k-button k-button-icon px-4' id="copyToEditorButton" title="Copy To Editor" data-tool='copyToEditor'><span class='fa fa-clipboard mx-1'></span></a>
 </script>

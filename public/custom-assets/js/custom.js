@@ -1,5 +1,9 @@
-// 
 let URL_ROOT = "";
+let overlayScrollbarsInstances = [];
+/**
+ * @type {Object.<jQuery>}
+ * */
+let jQSelectors = {};
 const GHS_SYMBOL = "₵";
 let customGH = $.extend(true, {}, kendo.culture(), {
     name: "custom-GH",
@@ -14,16 +18,31 @@ let customGH = $.extend(true, {}, kendo.culture(), {
 
 //add a reference to the custom culture script
 kendo.cultures["custom-GH"] = customGH;
+const CHART_GOLD_PRODUCED_BUDGET_OUNCES = 'GOLD PRODUCED AND BUDGET OUNCES';
+const CHART_GOLD_PRODUCED_TONS_MILLED = 'GOLD PRODUCED AND TONS MILLED';
+const CHART_RECOVERY_HEAD_GRADE = 'RECOVERY AND HEAD GRADE';
 $(function () {
-    jQuery.fx.off = true;
+    //jQuery.fx.off = true;
     URL_ROOT = $('#url_root').val();
     //$('.print-it').printPage();
     $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
+
+    jQSelectors.body = $("body");
+    jQSelectors.sidebar = $(".sidebar");
+    //jQSelectors.emptyChartPlaceholder = $("#emptyChartPlaceHolder");
+    initOverlayScrollbars(jQSelectors['body']);
+    initOverlayScrollbars(jQSelectors['sidebar']);
+    overlayScrollbarsInstances['body'] = jQSelectors['body'].overlayScrollbars();
+    overlayScrollbarsInstances['sidebar'] = jQSelectors['sidebar'].overlayScrollbars();
+
     $(window).on("resize", function () {
         $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
     });
+
+    $(".content").kendoRippleContainer();
+
 // fix column width for tables in collapse
-    $('.hide-child').removeClass('show').trigger('hidden.bs.collapse');
+    //$('.hide-child').removeClass('show').trigger('hidden.bs.collapse');
 });
 
 window.addEventListener("load", function () {
@@ -97,3 +116,33 @@ function createKendoTooltip(target, filter, position = "top") {
         }
     }).data("kendoTooltip");
 }
+
+function initOverlayScrollbars(selector, options = {}) {
+    let defaultOpt = $.extend(options, {
+        scrollbars: {
+            autoHide: "leave"
+        },
+        overflowBehavior: {
+            x: "scroll",
+            y: "scroll"
+        },
+        callbacks: {
+            onScrollStart() {
+                $(".k-animation-container").hide();
+            }
+        }
+    });
+    return $(selector).overlayScrollbars(defaultOpt).overlayScrollbars()
+}
+
+$.fn.outerHTML = function () {
+    // IE, Chrome & Safari will comply with the non-standard outerHTML, all others (FF) will have a fall-back for cloning
+    return (!this.length) ? this : (this[0].outerHTML || (
+        function (el) {
+            var div = document.createElement('div');
+            div.appendChild(el.cloneNode(true));
+            var contents = div.innerHTML;
+            div = null;
+            return contents;
+        })(this[0]));
+};

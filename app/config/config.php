@@ -43,3 +43,7 @@ const ROLE_SECRETARY = 'Secretary';
 const FILE_UPLOAD_PATH = APP_ROOT . '/uploads/files';
 const IMAGE_UPLOAD_PATH = APP_ROOT . '/uploads/images';
 const THUMBNAIL_PATH = APP_ROOT . '/uploads/thumbnails';
+
+// DB Table Names
+const TABLE_NMR_SPREADSHEET_TEMPLATES = 'nmr_spreadsheet_templates';
+const TABLE_NMR_SAVED_SPREADSHEETS = 'nmr_saved_spreadsheets';

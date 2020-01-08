@@ -5,10 +5,10 @@
 <div class="content-wrapper animated fadeInRight" style="margin-top: <?php //echo NAVBAR_MT; ?>">
     <!-- content -->
     <section class="content blockable d-none">
-        <div class="box-group" id="box_group">
+        <div class="box-group pt-1" id="box_group">
             <div class="box collapsed">
                 <div class="box-header">
-                    <h5 class="box-title text-bold d-none"></h5>
+                    <h5 class="box-title text-bold"><span class="fa fa-dashboard text-primary"></span> Dashboard</h5>
                     <div class="box-tools pull-right d-none">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
@@ -17,38 +17,45 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <div id="editorTabStrip">
-                        <ul>
-                            <li class="k-state-active">Editor</li>
-                            <li>Preview</li>
-                        </ul>
-                        <div id="editorTab">
-                            <div id="editorActionToolbar"></div>
-                            <div>
-                                <textarea name="" id="editor" cols="30" rows="10"></textarea>
+                    <div class="row">
+                        <div class="col-6 col-md-6">
+                            <h5 class="mb-2 text-nowrap">
+                                <i class="fa fa-plus-square-o text-success"></i> New Report
+                            </h5>
+                            <!-- small box -->
+                            <div class="small-box show border" style="cursor:pointer" data-url="<?php echo URL_ROOT ?>/pages/new-report">
+                                <div class="inner">
+                                    <h3 class="w3-hide-small ">New Report</h3>
+                                    <h5 class="w3-hide-large w3-hide-medium text-bold">New Report</h5>
+                                    <p>Create a new report.</p>
+                                </div>
+                                <div class="icon text-success">
+                                    <i class="fa fa-plus-square-o"></i>
+                                </div>
+                                <a href="#" class="small-box-footer bg-success">
+                                    <span class="fa fa-chevron-circle-right"></span>
+                                </a>
+                            </div>
+                        </div><div class="col-6 col-md-6">
+                            <h5 class="mb-2 text-nowrap">
+                                <i class="fa fa-eye text-aqua"></i> View Report
+                            </h5>
+                            <!-- small box -->
+                            <div class="small-box show border" style="cursor:pointer" data-url="<?php echo URL_ROOT ?>/pages/reports/">
+                                <div class="inner">
+                                    <h3 class="w3-hide-small ">View Report</h3>
+                                    <h5 class="w3-hide-large w3-hide-medium text-bold">View Report</h5>
+                                    <p>View reports.</p>
+                                </div>
+                                <div class="icon text-aqua">
+                                    <i class="fa fa-eye"></i>
+                                </div>
+                                <a href="#" class="small-box-footer bg-aqua">
+                                    <span class="fa fa-chevron-circle-right"></span>
+                                </a>
                             </div>
                         </div>
-                        <div id="previewTab">
-                            <div id="previewContent"></div>
-                        </div>
                     </div>
-                </div>
-                <!-- /.box-body -->
-                <div class="box-footer d-none"></div>
-                <!-- /.box-footer-->
-            </div>
-            <div class="box collapsed">
-                <div class="box-header">
-                    <h5 class="box-title text-bold d-none"></h5>
-                    <div class="box-tools pull-right d-none">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                            <i class="fa fa-minus"></i>
-                        </button>
-                    </div>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <div id="spreadSheet" class="w-100"></div>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer d-none"></div>
@@ -64,180 +71,12 @@
 <!-- /.wrapper -->
 <?php include_once(APP_ROOT . '/views/includes/scripts.php'); ?>
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
-
 <script>
 
-    let overlayScrollbarsInstance;
     $(function () {
-        let overlayTargets = $("body, .sidebar");
-        overlayTargets.overlayScrollbars({
-            scrollbars: {
-                autoHide: "leave"
-            },
-            callbacks: {
-                onScrollStart() {
-                    $(".k-animation-container").hide();
-                }
-            }
-        });
-        overlayScrollbarsInstance = overlayTargets.overlayScrollbars();
-
-        $(".content").kendoRippleContainer();
-
-        let tabStrip = $("#editorTabStrip").kendoTabStrip({
-            select(e) {
-                if (e.contentElement.id === "previewTab") {
-                    $("#previewContent").html(editor.value());
-                }
-            }
-        });
-        $("#editorActionToolbar").kendoToolBar({
-            items: [
-                {
-                    type: "button",
-                    text: "Save Draft",
-                    icon: "save",
-                    click: function (e) {
-
-                    }
-                },
-                {
-                    type: "button",
-                    text: "Clear",
-                    icon: "refresh-clear",
-                    click: function (e) {
-
-                    }
-                }
-            ]
-        });
-        let editor = $("#editor").kendoEditor({
-            tools: [
-                "bold",
-                "italic",
-                "underline",
-                "strikethrough",
-                "justifyLeft",
-                "justifyCenter",
-                "justifyRight",
-                "justifyFull",
-                "insertUnorderedList",
-                "insertOrderedList",
-                "indent",
-                "outdent",
-                "createLink",
-                "unlink",
-                "insertImage",
-                "insertFile",
-                "subscript",
-                "superscript",
-                "tableWizard",
-                "createTable",
-                "addRowAbove",
-                "addRowBelow",
-                "addColumnLeft",
-                "addColumnRight",
-                "deleteRow",
-                "deleteColumn",
-                "mergeCellsHorizontally",
-                "mergeCellsVertically",
-                "splitCellHorizontally",
-                "splitCellVertically",
-                "print",
-                "formatting",
-                "cleanFormatting",
-                "fontName",
-                "fontSize",
-                "foreColor",
-                "backColor",
-                "viewHtml"
-            ],
-            imageBrowser: {
-                transport: {
-                    read: {
-                        url: URL_ROOT + "/image-service/read",
-                        dataType: "json"
-                    },
-                    uploadUrl: URL_ROOT + "/image-service/upload",
-                    thumbnailUrl: function (path, file) {
-                        return URL_ROOT + "/image-service/thumbnail-service/?i=" + path + file;
-                    },
-                    imageUrl: function (e) {
-                        return URL_ROOT + "/image-service/images/?i=" + e
-                    }
-                }
-            },
-            fileBrowser: {
-                transport: {
-                    read: {
-                        url: URL_ROOT + "/file-service/read",
-                        dataType: "json"
-                    },
-                    fileUrl: function (e) {
-                        return URL_ROOT + "/file-service/files/?f=" + e;
-                    },
-                    uploadUrl: URL_ROOT + "/file-service/upload",
-                    create: {
-                        url() {
-                            return URL_ROOT + "/file-service/create-directory"
-                        },
-                        dataType: "json"
-                    },
-                },
-                fileTypes: "*.docx, *.doc, *.ppt, *.pptx"
-            },
-            resizable: {
-                content: true,
-                //toolbar: true
-            },
-            encoded: false
-        }).data("kendoEditor");
-
-        let chartMenuCommand = {
-            template: kendo.template($("#charts").html())
-        };
-        let spreadsheet = $("#spreadSheet").kendoSpreadsheet({
-            toolbar: {
-                home: [chartMenuCommand].concat(kendo.spreadsheet.ToolBar.fn.options.tools.home)
-            }
-        }).data("kendoSpreadsheet");
-        let sheet = spreadsheet.activeSheet();
-
-        let chartMenuButton = $("#chartsMenuButton");
-        let chartsPopup = $("#chartsPopup").kendoPopup({
-            anchor: chartMenuButton
-        }).data("kendoPopup");
-
-        $("#chartsListBox").kendoListBox({
-            dataSource: [
-                {id: 1, title: "Gold Produced & Budget Ounces"},
-                {id: 2, title: "Gold Produced & Tons Milled"},
-                {id: 3, title: "Recovery & Head Grade"}
-            ],
-            dataTextField: "title",
-            dataValueField: "id",
-            change(e) {
-                let title = this.dataItem(this.select()).title;
-                drawChart(title);
-            }
-        });
-
-        chartMenuButton.on("click", function () {
-            $("#chartsPopup").data("kendoPopup").toggle();
-        });
-        setTimeout(function () {
-            $("div#spreadSheet").trigger("resize")
-        }, 3000)
+        $('.small-box').on('click', (e) => window.location.href = $(e.currentTarget).attr('data-url'))
     });
 
-    function drawChart(title) {
-        if (title === 'Gold Produced & Budget Ounces') {
-
-        } else if (title === 'Gold Produced & Tons Milled') {
-        } else { //Recovery & Head Grade
-        }
-        alert(title)
-    }
 </script>
 </body>
 </html>
