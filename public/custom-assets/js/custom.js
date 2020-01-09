@@ -21,6 +21,7 @@ kendo.cultures["custom-GH"] = customGH;
 const CHART_GOLD_PRODUCED_BUDGET_OUNCES = 'GOLD PRODUCED AND BUDGET OUNCES';
 const CHART_GOLD_PRODUCED_TONS_MILLED = 'GOLD PRODUCED AND TONS MILLED';
 const CHART_RECOVERY_HEAD_GRADE = 'RECOVERY AND HEAD GRADE';
+let monthNames = kendo.cultures.current.calendars.standard.months.names;
 $(function () {
     //jQuery.fx.off = true;
     URL_ROOT = $('#url_root').val();

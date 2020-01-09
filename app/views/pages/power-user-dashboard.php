@@ -8,7 +8,8 @@
         <div class="box-group pt-1" id="box_group">
             <div class="box collapsed">
                 <div class="box-header">
-                    <h5 class="box-title text-bold"><span class="fa fa-dashboard text-warning"></span> Power User Dashboard</h5>
+                    <h5 class="box-title text-bold"><span class="fa fa-dashboard text-warning"></span> Power User
+                        Dashboard</h5>
                     <div class="box-tools pull-right d-none">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
@@ -23,7 +24,8 @@
                                 <i class="fa fa-door-open text-success"></i> Open Submission
                             </h6>
                             <!-- small box -->
-                            <div class="small-box show border" style="cursor:pointer" onclick="openSubmission" id="openSubmission">
+                            <div class="small-box show border" style="cursor:pointer" onclick="openSubmission"
+                                 id="openSubmission">
                                 <div class="inner">
                                     <h4 class="w3-hide-small ">Open Submission</h4>
                                     <h6 class="w3-hide-large w3-hide-medium text-bold">Open Submission</h6>
@@ -97,9 +99,26 @@
     $(function () {
         $('.small-box[data-url]').on('click', (e) => window.location.href = $(e.currentTarget).attr('data-url'));
         $("#openSubmission").on('click', () => {
-            $("<div/>").appendTo("body").kendoDialog({
-                title: 'Open Submissions'
-            });
+            let openSubmission = $("<div/>").appendTo("body").kendoDialog({
+                width: "450px",
+                title: 'Open Submission',
+                content: $("#openSubmissionContent").html(),
+                actions: [
+                    {
+                        text: 'OK', primary: true, action: function () {
+
+                        }
+                    }
+                ],
+                close(e) {
+                    openSubmission.destroy();
+                },
+                initOpen(e) {
+                    $("#targetMonth").kendoComboBox({
+                        dataSource: new kendo.data.DataSource({data: monthNames})
+                    });
+                }
+            }).data('kendoDialog');
         });
     });
 

@@ -19,7 +19,8 @@
 </script>
 
 <script id="chartsMenuTemplate" type="text/x-kendo-template">
-    <a href='\\#' class='k-button k-button-icon px-4' id="chartsMenuButton" title="Charts" data-tool='charts'><span class='fa fa-chart-bar mx-1'></span> <span class='k-icon k-i-arrow-60-down'></span></a>
+    <a href='\\#' class='k-button k-button-icon px-4' id="chartsMenuButton" title="Charts" data-tool='charts'><span
+            class='fa fa-chart-bar mx-1'></span> <span class='k-icon k-i-arrow-60-down'></span></a>
     <div id="chartsMenuPopup">
         <select id="chartsMenuListBox">
         </select>
@@ -27,5 +28,19 @@
 </script>
 
 <script id="copyToEditor" type="text/x-kendo-template">
-    <a href='\\#' class='k-button k-button-icon px-4' id="copyToEditorButton" title="Copy To Editor" data-tool='copyToEditor'><span class='fa fa-clipboard mx-1'></span></a>
+    <a href='\\#' class='k-button k-button-icon px-4' id="copyToEditorButton" title="Copy To Editor"
+       data-tool='copyToEditor'><span class='fa fa-clipboard mx-1'></span></a>
+</script>
+
+<script id="openSubmissionContent" type="text/x-kendo-template">
+    <form id="openSubmissionForm" class="demo-section k-content"
+          action="<?php echo URL_ROOT . '/pages/open-submission/' ?>">
+        <h4><label for="targetYear">Target Year</label></h4>
+        <input id="targetYear" class="k-input" readonly placeholder="Target Year" style="width: 100%;" name="target_year" value="<?php echo date('Y'); ?>"/>
+        <h4 style="margin-top: 1.5em;"><label for="targetMonth">Target Month</label></h4>
+        <input id="targetMonth" placeholder="Select Target Month" style="width: 100%;" name="target_month"/>
+        <!--<button class="k-button k-primary" style="margin-top: 2em; float: right;">
+            Submit
+        </button>-->
+    </form>
 </script>

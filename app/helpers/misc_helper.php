@@ -810,3 +810,14 @@ function currentSubmissionYear() {
     return Database::getDbh()->where('prop', 'nmr_current_submission_year')->getValue('settings', 'value');
 }
 
+function getSubmissions() {
+    try {
+        return Database::getDbh()->where('submitted', 1)->join('users u', 'u.user_id=n.user_id')
+            ->join('departments d', 'u.department_id=d.department_id')
+            ->get('nmr_editor_draft n');
+    } catch (Exception $e) {
+    }
+    return [];
+}
+
+

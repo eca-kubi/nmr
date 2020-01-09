@@ -54,7 +54,6 @@
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
 <script>
     let reports = <?php echo json_encode($reports); ?>;
-    let monthNames = kendo.cultures.current.calendars.standard.months.names;
     $(function () {
         let viewReportForm = $("#viewReportForm");
         if (viewReportForm.length > 0) {

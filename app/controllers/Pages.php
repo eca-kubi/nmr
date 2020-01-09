@@ -118,6 +118,33 @@ class Pages extends Controller
         }
     }
 
+    public function openSubmission()
+    {
+        
+    }
+
+    public function viewSubmissions()
+    {
+        $db = Database::getDbh();
+        if (!isLoggedIn()) {
+            redirect('users/login/pages/view-report/');
+        }
+        $payload['submissions'] = getSubmissions();
+        $payload['page_title'] = 'Report Submission';
+        $this->view('pages/view-submissions', $payload);
+    }
+
+    public function fetchSubmissions()
+    {
+        try {
+            $submissions = Database::getDbh()->where('submitted', 1)->join('users u', 'u.user_id=n.user_id')
+                ->join('departments d', 'u.department_id=d.department_id')
+                ->get('nmr_editor_draft n');
+            echo print_r($submissions);
+        } catch (Exception $e) {
+        }
+    }
+
     public function phpinfo(): void
     {
         echo phpinfo();
