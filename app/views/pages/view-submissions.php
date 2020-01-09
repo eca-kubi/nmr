@@ -24,7 +24,7 @@
                                     <textarea name="content" id="editor" cols="30" rows="10"
                                               style="height: 400px">
                                         <?php foreach ($submissions as $submission) {
-                                            echo "<p class='h3' style='text-align: center'>" .$submission['department'] . "</p>".
+                                            echo "<u><p class='h3' style='text-align: center'>" .$submission['department'] . "</p></u>".
                                                 $submission['content'];
                                         } ?>
 
@@ -49,17 +49,19 @@
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
 <script>
     $(function () {
-        $("#editorActionToolbar").kendoToolBar({
-            items: [
-                {
-                    type: "button",
-                    text: "Close Submission",
-                    icon: "save",
-                    click: function (e) {
+        if (isPowerUser) {
+            $("#editorActionToolbar").kendoToolBar({
+                items: [
+                    {
+                        type: "button",
+                        text: "Close Submission",
+                        icon: "save",
+                        click: function (e) {
+                        }
                     }
-                }
-            ]
-        });
+                ]
+            });
+        }
 
         editor = $("#editor").kendoEditor({
             tools: [
@@ -76,6 +78,7 @@
         }).data("kendoEditor");
 
         editor.document.title = "NZEMA MONTHLY REPORT " + moment().format('MMMM').toUpperCase() + " " + moment().format("Y");
+        editor.body.contentEditable = false;
     });
 
 </script>
