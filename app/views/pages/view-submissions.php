@@ -57,6 +57,29 @@
                         text: "Close Submission",
                         icon: "save",
                         click: function (e) {
+                            let closeSubmission = $("<div/>").appendTo($("body")).kendoDialog({
+                                width: "480px",
+                                title: 'Close Report Submission',
+                                content: 'Users will not be able to submit reports for this month again!<br>Are you sure you want to close submission of reports?',
+                                actions: [
+                                    {
+                                        text: 'OK',
+                                        action: function () {
+                                            closeSubmission.close();
+                                        },
+                                        primary: true
+                                    },
+                                    {
+                                        text: 'Cancel',
+                                        action: function () {
+                                            closeSubmission.close()
+                                        }
+                                    }
+                                ],
+                                close(e) {
+                                    closeSubmission.destroy();
+                                }
+                            }).data("kendoDialog");
                         }
                     }
                 ]

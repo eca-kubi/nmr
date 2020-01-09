@@ -120,7 +120,14 @@ class Pages extends Controller
 
     public function openSubmission()
     {
-        
+        $ret = Database::getDbh()->where('prop', 'nmr_submission_opened')->update('settings', ['value' => 1]);
+        echo $ret;
+    }
+
+    public function closeSubmission()
+    {
+        $ret = Database::getDbh()->where('prop', 'nmr_submission_opened')->update('settings', ['value' => 0]);
+        echo $ret;
     }
 
     public function viewSubmissions()
