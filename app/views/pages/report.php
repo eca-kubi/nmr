@@ -25,8 +25,12 @@
                         <div id="editorTab">
                             <div id="editorActionToolbar"></div>
                             <div style="width: 100%">
-                                <form id="editorForm"><textarea name="editor_content" id="editor" cols="30" rows="10"
-                                             style="height: 400px"></textarea></form>
+                                <form id="editorForm">
+                                    <textarea name="content" id="editor" cols="30" rows="10"
+                                              style="height: 400px"><?php echo isset($content)? $content : ''; ?></textarea>
+                                    <input type="hidden" id="draft_id" name="draft_id"
+                                           value="<?php echo isset($draft_id) ? $draft_id : ''; ?>">
+                                </form>
                             </div>
                         </div>
                         <div id="previewTab">
@@ -110,7 +114,7 @@ echo $spreadsheet_templates; ?>'>
         editorTabStrip = $("#editorTabStrip").kendoTabStrip({
             select(e) {
                 if (e.contentElement.id === "previewTab") {
-                  $("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
+                    $("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
                 }
             }
         });
@@ -132,12 +136,31 @@ echo $spreadsheet_templates; ?>'>
                 {
                     type: "button",
                     text: "Save Draft",
-                    icon: "save"
+                    icon: "save",
+                    click: function (e) {
+                        $.post({
+                            url: URL_ROOT + "/pages/save-draft",
+                            data: $("#editorForm").serialize(),
+                            dataType: 'json'
+                        }).done(function (response, textStatus, jQueryXHR) {
+                            if (response.success) {
+                                let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
+                                if (response.draft_id)
+                                    $('#draft_id').val(response.draft_id);
+                                setTimeout(() => kAlert.close(), 2500);
+                            } else {
+                                let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
+                            }
+                        });
+                    }
                 },
                 {
                     type: "button",
                     text: "Clear",
-                    icon: "refresh-clear"
+                    icon: "refresh-clear",
+                    click: function () {
+                        editor.value("");
+                    }
                 }
             ]
         });

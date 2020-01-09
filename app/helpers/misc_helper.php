@@ -793,3 +793,20 @@ function monthName($monthNum) {
 function monthNumber($timeString) {
     return date("m", strtotime($timeString));
 }
+
+function isPowerUser($user_id) {
+   return Database::getDbh()->where('prop', 'nmr_power_user')->getValue('settings', 'value') == $user_id;
+}
+
+function isSubmissionOpened() {
+    return Database::getDbh()->where('prop', 'nmr_submission_opened')->getValue('settings', 'value');
+}
+
+function currentSubmissionMonth() {
+    return Database::getDbh()->where('prop', 'nmr_current_submission_month')->getValue('settings', 'value');
+}
+
+function currentSubmissionYear() {
+    return Database::getDbh()->where('prop', 'nmr_current_submission_year')->getValue('settings', 'value');
+}
+

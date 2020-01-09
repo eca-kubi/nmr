@@ -160,17 +160,24 @@
                             <i class="fal fa-home ml-4"></i> Start Page
                         </a>
                     </li>
-                    <?php $is_secretary = isAssignedAsSecretary($current_user->user_id);
-                    $is_current_manager = isCurrentManager($current_user->user_id);
-                    $is_finance_officer = isFinanceOfficer($current_user->user_id) ?>
+                    <?php if (isset($is_power_user) && $is_power_user): ?>
+                        <li class="nav-item  mx-2">
+                            <a class="nav-link text-warning  btn border-0 text-bold flat"
+                               href="<?php echo site_url('pages/dashboard') ?>">
+                                <i class="fal fa-user"></i>
+                                Switch to Normal User
+                            </a>
+                        </li>
+                    <?php elseif (isPowerUser($current_user->user_id)): ?>
                     <li class="nav-item  mx-2">
                         <a class="nav-link text-warning  btn border-0 text-bold flat"
-                           href="<?php echo site_url('salary-advance') ?>">
+                           href="<?php echo site_url('pages/power-user-dashboard') ?>">
                             <i class="fal fa-user"></i>
-                            ITEM 1
+                            Switch to Power User
                         </a>
                     </li>
-                    <li class="nav-item dropdown  mx-2">
+                    <?php endif; ?>
+                    <!--<li class="nav-item dropdown  mx-2">
                         <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
                            data-toggle="dropdown">
                             <i class="fal fa-users"></i>
@@ -179,13 +186,13 @@
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
                             style="position:absolute">
                             <li><a class="dropdown-item"
-                                   href="<?php echo site_url('#') ?>">Sub Item 1</a>
+                                   href="<?php /*echo site_url('#') */?>">Sub Item 1</a>
                             </li>
                             <li class="dropdown-divider"></li>
                             <li><a class="dropdown-item"
-                                   href="<?php echo site_url('#') ?>">Sub Item 2</a>
+                                   href="<?php /*echo site_url('#') */?>">Sub Item 2</a>
                             </li>
-                        </ul>
+                        </ul>-->
                     </li>
                 </ul>
             </div>

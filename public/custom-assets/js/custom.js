@@ -146,3 +146,17 @@ $.fn.outerHTML = function () {
             return contents;
         })(this[0]));
 };
+
+function kendoAlert(title, content) {
+    let kAlert = $("<div/>").appendTo("body").kendoDialog({
+        width: "450px",
+        title: title,
+        //closable: false,
+        //modal: false,
+        content: content,
+        close(e) {
+            kAlert.destroy();
+        }
+    }).data("kendoDialog");
+    return kAlert;
+}
