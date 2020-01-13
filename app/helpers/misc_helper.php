@@ -201,6 +201,13 @@ function echoDateOfficial($date, $official = false)
     return '';
 }
 
+function getTime($date) {
+    try {
+       return (new Moment($date))->format('hh:mm a', new MomentJs());
+    } catch (MomentException $e) {
+    }
+    return "";
+}
 
 /**
  * @param $department_id
@@ -800,6 +807,10 @@ function isPowerUser($user_id) {
 
 function isSubmissionOpened() {
     return Database::getDbh()->where('prop', 'nmr_submission_opened')->getValue('settings', 'value');
+}
+
+function isSubmissionClosedByPowerUser() {
+    return Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->getValue('settings', 'value');
 }
 
 function currentSubmissionMonth() {

@@ -683,3 +683,37 @@ aside.main-sidebar {
 a.bg-aqua:hover {
     background-color: #10a8ce!important;
 }
+
+li.nav-item a {
+    color: white;
+}
+
+.nav-item a.text-white:hover {
+    color: gold!important;
+}
+
+[class^="fontastic-"], [class*=" fontastic-"] {
+    height: 20px;
+    width: 20px;
+    display: inline-block;
+    fill: currentColor;
+}
+
+.info-box + .card {
+    height: 180px!important;
+}
+
+a:hover {
+    text-decoration: none!important;
+}
+
+/*@media screen and (max-width: 800px) {
+    html body {
+        font-size: 20px;
+       !* color: red; *!!* In this way, you can easily tell when this is in effect.*!
+    }
+}*/
+/*
+.small-box .icon {
+    font-size: 1rem!important;
+}*/

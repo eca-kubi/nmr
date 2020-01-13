@@ -120,14 +120,24 @@ class Pages extends Controller
 
     public function openSubmission()
     {
-        $ret = Database::getDbh()->where('prop', 'nmr_submission_opened')->update('settings', ['value' => 1]);
-        echo $ret;
+        $currentYear = date('Y');
+        $currentMonth = date('F');
+        if (currentSubmissionYear() !== $currentYear && (currentSubmissionMonth()) !== $currentMonth ) {
+            $ret = Database::getDbh()->where('prop', 'nmr_submission_opened')->update('settings', ['value' => 1]);
+            $ret = $ret && Database::getDbh()->where('prop', 'nmr_current_submission_month')->update('settings', ['value' => $currentMonth]);
+            $ret = $ret && Database::getDbh()->where('prop', 'nmr_current_submission_year')->update('settings', ['value' => $currentYear]);
+            $ret = $ret && Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->update('settings', ['value' => 0]);
+            if ($ret) {
+                echo json_encode(['currentSubmissionYear' => $currentYear, 'currentSubmissionMonth' => $currentMonth, 'isSubmissionClosedByPowerUser' => false]);
+            }
+        }
     }
 
     public function closeSubmission()
     {
         $ret = Database::getDbh()->where('prop', 'nmr_submission_opened')->update('settings', ['value' => 0]);
-        echo $ret;
+        $ret = $ret && Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->update('settings', ['value' => 1]);
+        echo json_encode(['isSubmissionClosedByPowerUser' => true]);
     }
 
     public function viewSubmissions()
@@ -152,6 +162,17 @@ class Pages extends Controller
         }
     }
 
+    public function draftReports()
+    {
+        $db = Database::getDbh();
+        if (!isLoggedIn()) {
+            redirect('users/login/pages/view-report/');
+        }
+        $payload['page_title'] = 'Draft Reports';
+        $payload['drafts'] = Database::getDbh()->where('user_id', getUserSession()->user_id)->get('nmr_editor_draft');
+        $this->view('pages/draft-reports', $payload);
+    }
+
     public function phpinfo(): void
     {
         echo phpinfo();
@@ -160,5 +181,10 @@ class Pages extends Controller
     public function editor(): void
     {
 
+    }
+
+    public function fetchDraft($draft_id)
+    {
+        echo Database::getDbh()->where('draft_id', $draft_id)->getValue('nmr_editor_draft', 'content');
     }
 }

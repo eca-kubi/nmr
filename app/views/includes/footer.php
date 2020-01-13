@@ -12,6 +12,9 @@
 <input type="hidden" id="url_root" value="<?php echo URL_ROOT; ?>">
 <div id="kendoAlert"></div>
 <script>
-    let isPowerUser = Boolean("<?php echo isPowerUser($current_user->user_id) ?>");
-    let isSubmissionOpened = Boolean("<?php echo isSubmissionOpened(); ?>");
+    let isPowerUser = Boolean(<?php echo isPowerUser($current_user->user_id) ?>);
+    let isSubmissionOpened = Boolean(<?php echo isSubmissionOpened(); ?>);
+    let isSubmissionClosedByPowerUser = Boolean(<?php echo isSubmissionClosedByPowerUser(); ?>);
+    let currentSubmissionMonth = "<?php echo currentSubmissionMonth() ?>";
+    let currentSubmissionYear = "<?php echo currentSubmissionYear() ?>";
 </script>

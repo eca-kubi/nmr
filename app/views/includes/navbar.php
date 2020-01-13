@@ -154,15 +154,15 @@
                             <i class="fa fa-angle-double-left  mr-1"></i>Go Back
                         </a>
                     </li>
-                    <li class="nav-item ml-0 ml-sm-4 text-left pr-1 border-right border-warning fa">
-                        <a href="<?php echo site_url('pages/dashboard'); ?>"
-                           class="ajax-link nav-link btn border-0 text-bold flat text-left font-raleway text-warning">
-                            <i class="fal fa-home ml-4"></i> Start Page
+                    <li class="nav-item ml-0 ml-sm-4 text-left pr-1 border-right border-white fa">
+                        <a href="<?php echo isset($is_power_user)? site_url('pages/power-user-dashboard') : site_url('pages/dashboard'); ?>"
+                           class="ajax-link nav-link btn border-0 text-bold flat text-left font-raleway text-white w3-text-hover-amber">
+                            <i class="fa  fa-dashboard ml-4"></i> Dashboard
                         </a>
                     </li>
                     <?php if (isset($is_power_user) && $is_power_user): ?>
                         <li class="nav-item  mx-2">
-                            <a class="nav-link text-warning  btn border-0 text-bold flat"
+                            <a class="nav-link text-white w3-text-hover-amber  btn border-0 text-bold flat"
                                href="<?php echo site_url('pages/dashboard') ?>">
                                 <i class="fal fa-user"></i>
                                 Switch to Normal User
@@ -170,7 +170,7 @@
                         </li>
                     <?php elseif (isPowerUser($current_user->user_id)): ?>
                     <li class="nav-item  mx-2">
-                        <a class="nav-link text-warning  btn border-0 text-bold flat"
+                        <a class="nav-link text-white w3-text-hover-amber  btn border-0 text-bold flat"
                            href="<?php echo site_url('pages/power-user-dashboard') ?>">
                             <i class="fal fa-user"></i>
                             Switch to Power User
@@ -178,7 +178,7 @@
                     </li>
                     <?php endif; ?>
                     <!--<li class="nav-item dropdown  mx-2">
-                        <a class="nav-link dropdown-item text-warning dropdown-toggle btn border-0 text-bold flat"
+                        <a class="nav-link dropdown-item text-white w3-text-hover-amber dropdown-toggle btn border-0 text-bold flat"
                            data-toggle="dropdown">
                             <i class="fal fa-users"></i>
                             ITEM 2
@@ -192,8 +192,8 @@
                             <li><a class="dropdown-item"
                                    href="<?php /*echo site_url('#') */?>">Sub Item 2</a>
                             </li>
-                        </ul>-->
-                    </li>
+                        </ul>
+                    </li> -->
                 </ul>
             </div>
         </nav>

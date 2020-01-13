@@ -161,3 +161,65 @@ function kendoAlert(title, content) {
     }).data("kendoDialog");
     return kAlert;
 }
+
+function showWindow(message, title= "Are You Sure?", template="#confirmationTemplate") {
+
+    var dfd = new jQuery.Deferred();
+    var result = false;
+
+    $("<div id='popupWindow'></div>")
+        .appendTo("body")
+        .kendoWindow({
+            width: "480px",
+            modal: true,
+            title: title,
+            visible: false,
+            close: function (e) {
+                this.destroy();
+                dfd.resolve(result);
+            }
+        }).data('kendoWindow').content($(template).html()).center().open();
+
+    $('.popupMessage').html(message);
+
+    $('#popupWindow .confirm_yes').val('OK');
+    $('#popupWindow .confirm_no').val('Cancel');
+
+    $('#popupWindow .confirm_no').on('click',function () {
+        $('#popupWindow').data('kendoWindow').close();
+    });
+
+    $('#popupWindow .confirm_yes').on('click', function () {
+        result = true;
+        $('#popupWindow').data('kendoWindow').close();
+    });
+
+    return dfd.promise();
+}
+
+// PDF Viewer fromFile method fails with js error, causing inability to programmatically load a file. #5358 . Workaround
+// Use the following overwrite to overcome the issue:
+kendo.pdfviewer.pdfjs.processor.fn._updateDocument = function (file) {
+    if(this.pdf) {
+        this.pdf.loadingTask.destroy();
+    }
+
+    this.file = file;
+};
+/*kendo.pdf.defineFont({
+    "DejaVu Sans"             : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
+    "DejaVu Sans|Bold"        : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",
+    "DejaVu Sans|Bold|Italic" : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+    "DejaVu Sans|Italic"      : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+    "WebComponentsIcons"      : "https://kendo.cdn.telerik.com/2017.1.223/styles/fonts/glyphs/WebComponentsIcons.ttf"
+});*/
+/*
+$.when(showConfirmationWindow('Are you sure?')).then(function(confirmed){
+
+    if(confirmed){
+        alert('OK');
+    }
+    else{
+        alert('Cancel');
+    }
+});*/

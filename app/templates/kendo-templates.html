@@ -38,9 +38,20 @@
         <h4><label for="targetYear">Target Year</label></h4>
         <input id="targetYear" class="k-input" readonly placeholder="Target Year" style="width: 100%;" name="target_year" value="<?php echo date('Y'); ?>"/>
         <h4 style="margin-top: 1.5em;"><label for="targetMonth">Target Month</label></h4>
-        <input id="targetMonth" placeholder="Select Target Month" style="width: 100%;" name="target_month"/>
+        <input id="targetMonth" class="k-input" placeholder="Select Target Month" style="width: 100%;" name="target_month" value="<?php echo date('F'); ?>"/>
         <!--<button class="k-button k-primary" style="margin-top: 2em; float: right;">
             Submit
         </button>-->
     </form>
+</script>
+
+<script id="confirmationTemplate" type="text/x-kendo-template">
+    <div class="popupMessage"></div>
+    </br>
+
+    <div class="dialog_buttons">
+        <input type="button" class="confirm_yes k-button" value="Yes" style="width: 70px" />
+        &nbsp;
+        <input type="button" class="confirm_no k-button" value="No" style="width: 70px" />
+    </div>
 </script>

@@ -207,7 +207,8 @@ echo $spreadsheet_templates; ?>'>
                 "viewHtml"
             ],
             stylesheets: [
-                "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css"
+                "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ],
             imageBrowser: {
                 transport: {
