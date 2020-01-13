@@ -47,3 +47,4 @@ const THUMBNAIL_PATH = APP_ROOT . '/uploads/thumbnails';
 // DB Table Names
 const TABLE_NMR_SPREADSHEET_TEMPLATES = 'nmr_spreadsheet_templates';
 const TABLE_NMR_SAVED_SPREADSHEETS = 'nmr_saved_spreadsheets';
+const ICON_PATH = URL_ROOT . '/public/assets/images/icons/icons.svg';
