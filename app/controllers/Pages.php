@@ -44,32 +44,32 @@ class Pages extends Controller
         $this->view('pages/reports', $payload);
     }
 
-    public function newReport(): void
+    public function newDraft(): void
     {
         if (!isLoggedIn()) {
             redirect('users/login/pages/new-report');
         }
-        $payload['page_title'] = 'New Report';
+        $payload['page_title'] = 'New Draft';
         $db = Database::getDbh();
-        $current_user = getUserSession();
-        if ($draft = $db->where('user_id', $current_user->user_id)->where("month(time_modified) = month(current_date())")->getOne('nmr_editor_draft')) {
-            redirect('/pages/editReport' . $draft['draft_id']);
-        }
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
         $this->view('pages/report', $payload);
     }
 
-    public function editReport($draft_id): void
+    public function editDraft($draft_id): void
     {
         //if (!$draft_id) redirect('errors/index/404');
         if (!isLoggedIn()) {
-            redirect('users/login/pages/edit-report/' . $draft_id);
+            redirect('users/login/pages/edit-draft/' . $draft_id);
         }
-        $payload['page_title'] = 'Edit Report';
-        $payload['draft_id'] = $draft_id;
-        $payload['content'] = Database::getDbh()->where('draft_id', $draft_id)->getValue('nmr_editor_draft', 'content');
         $db = Database::getDbh();
+        $payload['page_title'] = 'Edit Draft';
+        $payload['draft_id'] = $draft_id;
+        $draft = $db->where('draft_id', $draft_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content']);
+        $payload['content'] = $draft['content'];
+        $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
+        $payload['title'] = $draft['title'];
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
+        $payload['edit_draft'] = true;
         $this->view('pages/report', $payload);
     }
 
@@ -94,10 +94,10 @@ class Pages extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db = Database::getDbh();
             $current_user = getUserSession();
-            $draft_id = $_POST['draft_id'];
-            if ($db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has('nmr_editor_draft')) {
+            $draft_id = isset($_POST['draft_id'])? $_POST['draft_id'] : '';
+            if ($draft_id && $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has('nmr_editor_draft')) {
                 $ret = $db->where('draft_id', $draft_id)->update('nmr_editor_draft',
-                    ['content' => $_POST['content'], 'time_modified' => now()]
+                    ['title' => $_POST['title'], 'content' => $_POST['content'], 'time_modified' => now(), 'spreadsheet_content' => $_POST['spreadsheet_content']]
                 );
                 if ($ret)
                     echo json_encode(['success' => true]);
@@ -105,7 +105,9 @@ class Pages extends Controller
                     echo json_encode(['success' => false]);
             } else {
                 $ret = $db->insert('nmr_editor_draft', [
+                    'title' => $_POST['title'],
                     'content' => $_POST['content'],
+                    'spreadsheet_content' => $_POST['spreadsheet_content'],
                     'time_modified' => now(),
                     'user_id' => $current_user->user_id
                 ]);

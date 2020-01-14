@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <h5 class="mb-2 text-nowrap">
-                                <span><svg class="fontastic-draft" style="fill: #dc3545"><use
+                                <span><svg class="fontastic-draft" style="fill: var(--danger)"><use
                                                 xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span> Draft Reports
                             </h5>
                             <!-- small box -->
@@ -32,10 +32,10 @@
                                     <p>View and create draft reports</p>
                                 </div>
                                 <div class="icon text-success">
-                                    <span><svg class="fontastic-draft" style="fill: #dc3545; width: 78px; height: 90px"><use
+                                    <span><svg class="fontastic-draft" style="fill: var(--danger); width: 78px; height: 90px"><use
                                                     xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
                                 </div>
-                                <a href="#" class="small-box-footer" style="background-color: #dc3545">
+                                <a href="#" class="small-box-footer" style="background-color: var(--danger)">
                                     <span class="fa fa-chevron-circle-right"></span>
                                 </a>
                             </div>

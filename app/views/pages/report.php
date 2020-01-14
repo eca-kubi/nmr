@@ -8,7 +8,10 @@
         <div class="box-group pt-1" id="box_group">
             <div class="box collapsed border-primary">
                 <div class="box-header">
-                    <h5 class="box-title text-bold"><span class="fa fa-edit text-primary"></span> Word Editor</h5>
+                    <h5 class="box-title text-bold"><input type="text" id="draftTitleInput"
+                                                           class="k-input <?php echo isset($title) ? '' : 'no-title' ?>"
+                                                           value="<?php echo isset($title) ? $title : 'New Draft' ?>">
+                    </h5>
                     <div class="box-tools pull-right d-none">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
@@ -27,8 +30,12 @@
                             <div style="width: 100%">
                                 <form id="editorForm">
                                     <textarea name="content" id="editor" cols="30" rows="10"
-                                              style="height: 400px"><?php echo isset($content)? $content : ''; ?></textarea>
-                                    <input type="hidden" id="draft_id" name="draft_id"
+                                              style="height: 400px"><?php echo isset($content) ? $content : ''; ?></textarea>
+                                    <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
+                                           value='<?php echo isset($spreadsheet_content) ? $spreadsheet_content : ''; ?>'>
+                                    <input type="hidden" id="title" name="title"
+                                           value="<?php echo isset($title) ? $title : ''; ?>">
+                                    <input type="hidden" id="draftId" name="draft_id"
                                            value="<?php echo isset($draft_id) ? $draft_id : ''; ?>">
                                 </form>
                             </div>
@@ -87,6 +94,9 @@ echo $spreadsheet_templates; ?>'>
     const HEADER_BACKGROUND_COLOR = "#9c27b0";
     const HEADER_BORDER = {color: HEADER_BACKGROUND_COLOR, size: 2};
     let spreadsheetTemplates;
+    /**
+     * @type {kendo.ui.Spreadsheet}
+     * */
     let spreadsheet;
     let chartsTabStrip;
     let editorTabStrip;
@@ -94,6 +104,7 @@ echo $spreadsheet_templates; ?>'>
     let charts = [];
     let editor;
     let firstSheetLoading = true;
+    let editDraft = Boolean(<?php echo isset($edit_draft)? $edit_draft : '' ?>);
     let chartConfiguration = {
         series: {
             goldProducedBudgetOunces: {
@@ -138,20 +149,38 @@ echo $spreadsheet_templates; ?>'>
                     text: "Save Draft",
                     icon: "save",
                     click: function (e) {
-                        $.post({
-                            url: URL_ROOT + "/pages/save-draft",
-                            data: $("#editorForm").serialize(),
-                            dataType: 'json'
-                        }).done(function (response, textStatus, jQueryXHR) {
-                            if (response.success) {
-                                let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
-                                if (response.draft_id)
-                                    $('#draft_id').val(response.draft_id);
-                                setTimeout(() => kAlert.close(), 2500);
-                            } else {
-                                let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
-                            }
+                        let postDfr = jQuery.Deferred();
+                        let postDfrPromise = postDfr.promise();
+                        postDfrPromise.done(function (title) {
+                            spreadsheet.saveJSON().then(function (data) {
+                                $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
+                                $.post({
+                                    url: URL_ROOT + "/pages/save-draft",
+                                    data: $("#editorForm").serialize(),
+                                    dataType: 'json'
+                                }).done(function (response, textStatus, jQueryXHR) {
+                                    if (response.success) {
+                                        let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
+                                        if (response.draft_id)
+                                            $('#draftId').val(response.draft_id);
+                                        setTimeout(() => kAlert.close(), 2500);
+                                    } else {
+                                        let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
+                                    }
+                                });
+                            });
                         });
+                        let draftTitleInput = $("#draftTitleInput");
+                        if (draftTitleInput.hasClass('no-title')) {
+                            kendo.prompt("Enter a title for your draft.", "New Draft").done(function (title) {
+                                $("#draftTitleInput, #title").removeClass('no-title').val(title);
+                                postDfr.resolve(title);
+                            });
+                        } else {
+                            let title = draftTitleInput.val();
+                            $("#title").val(title);
+                            postDfr.resolve(title);
+                        }
                     }
                 },
                 {
@@ -344,8 +373,21 @@ echo $spreadsheet_templates; ?>'>
             chartsMenuPopup.toggle();
         });
 
-
+        if (editDraft) {
+            loadDraft();
+        }
     });
+
+    function loadDraft() {
+        spreadsheet.fromJSON(JSON.parse($("#spreadsheetContent").val()));
+        let sheets = spreadsheet.sheets();
+        for (let i = 0; i < sheets.length; i++) {
+            createChartFromSheet(sheets[i])
+        }
+        updateChartTabs();
+        if (sheets.length > 0)
+            selectChartTab(sheets[0].name());
+    }
 
     function fetchData(sheet, valueRange, fieldRange) {
         let values = valueRange.values();
@@ -688,7 +730,7 @@ echo $spreadsheet_templates; ?>'>
             if (group.children.length > 0) {
                 newGroup.append(...group.children);
             }
-            draw.exportPDF(newGroup, {paperSize: 'A4'}).done(data => kendo.saveAs({
+            draw.exportPDF(newGroup, {paperSize: 'A3'}).done(data => kendo.saveAs({
                 dataURI: data,
                 fileName: sheet.name()
             }))
@@ -710,6 +752,7 @@ echo $spreadsheet_templates; ?>'>
         Array.prototype.map.call(chartsTabStrip.items(), item => chartTabs[item.textContent] = $(item).attr("aria-controls"));
         return chartTabs;
     }
+
 
 </script>
 </body>

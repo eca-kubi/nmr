@@ -347,7 +347,7 @@ td.action > span {
 }
 
 .nav-item:hover > .nav-link {
-    color: cadetblue !important;
+    color: goldenrod !important;
 }
 
 /* shards */
@@ -684,13 +684,15 @@ a.bg-aqua:hover {
     background-color: #10a8ce!important;
 }
 
-li.nav-item a {
-    color: white;
+.nav-item-white {
+    color: white!important;
 }
 
-.nav-item a.text-white:hover {
+/*
+.nav-item-white:hover {
     color: gold!important;
 }
+*/
 
 [class^="fontastic-"], [class*=" fontastic-"] {
     height: 20px;
@@ -706,6 +708,7 @@ li.nav-item a {
 a:hover {
     text-decoration: none!important;
 }
+
 
 /*@media screen and (max-width: 800px) {
     html body {

@@ -154,12 +154,35 @@
                             <i class="fa fa-angle-double-left  mr-1"></i>Go Back
                         </a>
                     </li>
-                    <li class="nav-item ml-0 ml-sm-4 text-left pr-1 border-right border-white fa">
+                    <li class="nav-item ml-0 ml-sm-4 text-left pr-1 border-right border-white">
                         <a href="<?php echo isset($is_power_user)? site_url('pages/power-user-dashboard') : site_url('pages/dashboard'); ?>"
-                           class="ajax-link nav-link btn border-0 text-bold flat text-left font-raleway text-white w3-text-hover-amber">
+                           class="ajax-link nav-link btn border-0 text-bold flat text-left font-raleway nav-item-white w3-text-hover-amber">
                             <i class="fa  fa-dashboard ml-4"></i> Dashboard
                         </a>
                     </li>
+
+                    <?php if (!isset($is_power_user)): ?>
+                        <li class="nav-item dropdown  mx-2">
+                            <a class="nav-link dropdown-item w3-text-hover-amber dropdown-toggle btn border-0 text-bold flat nav-item-white"
+                               data-toggle="dropdown">
+                                <i class="fa fa-file"></i>
+                                Reports
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
+                                style="position:absolute">
+                                <li><a class="dropdown-item"
+                                       href="<?php echo site_url('pages/draft-reports') ?>"><i><svg class="fontastic-draft" style="fill: currentColor; height: 14px; width: 14px"><use
+                                                    xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></i> Draft Reports</a>
+                                </li>
+                                <li><a class="dropdown-item"
+                                       href="<?php echo site_url('#') ?>"><i class="fa fa-check-double"></i> Submitted Reports</a>
+                                </li>
+                                <li><a class="dropdown-item"
+                                       href="<?php echo site_url('#')  ?>"><i class="fa fa-stamp"></i> Approved Reports</a>
+                                </li>
+                            </ul>
+                        </li>
+                    <?php endif ?>
                     <?php if (isset($is_power_user) && $is_power_user): ?>
                         <li class="nav-item  mx-2">
                             <a class="nav-link text-white w3-text-hover-amber  btn border-0 text-bold flat"

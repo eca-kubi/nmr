@@ -7,14 +7,17 @@
     <section class="content blockable d-none">
         <div class="box-group pt-1" id="box_group">
             <div class="box collapsed">
-                <div class="box-header">
-                    <h5 class="box-title text-bold"><span><svg class="fontastic-draft" style="fill: goldenrod"><use
+                <div class="box-header mb-4">
+                    <h5 class="box-title text-bold"><span><svg class="fontastic-draft" style="fill: currentColor"><use
                                         xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
                         Drafts
                     </h5>
-                    <div class="box-tools pull-right d-none">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
-                            <i class="fa fa-minus"></i>
+                    <div class="box-tools pull-right">
+                        <div id="draftToolbar"></div>
+                        <button type="button" class="btn btn-app btn-box-tool btn-outline-light btn-sm"
+                                onclick="window.location.href = '<?php echo URL_ROOT . "/pages/new-draft"; ?>'">
+                            <i class="fa fa-file-word" style="color: goldenrod"></i> <span><i
+                                        class="fa fa-plus text-success"></i> New Draft</span>
                         </button>
                     </div>
                 </div>
@@ -22,31 +25,38 @@
                 <div class="box-body">
                     <div class="row">
 
-                        <?php for ($i = 0; $i< count($drafts); $i++): $draft = $drafts[$i] ?>
-                            <div class="col-md-3 col-sm-6 col-xs-12">
+                        <?php for ($i = 0; $i < count($drafts); $i++): $draft = $drafts[$i] ?>
+                            <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box p-0">
-                                <span class="info-box-icon bg-aqua"><svg class="fontastic-draft"
-                                                                         style="fill: currentColor"><use
-                                            xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
+                                <span class="info-box-icon bg-gray-light border rounded-0 rounded-left"><svg
+                                            class="fontastic-draft"
+                                            style="fill: currentColor"><use
+                                                xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
 
                                     <div class="info-box-content">
                                     <span class="info-box-text text-bold"><?php echo $draft['title'] ?><a href="#"
-                                                                                                    class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
-                                                                                                    data-toggle="dropdown"
-                                                                                                    role="button"></a>
+                                                                                                          class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
+                                                                                                          data-toggle="dropdown"
+                                                                                                          role="button"></a>
                                          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 <!--          <a class="dropdown-item" href="#"><i class="fa fa-play-circle-o"></i> Preview</a>
-                                -->          <a class="dropdown-item" href="<?php echo URL_ROOT . '/pages/editReport/' . $draft['draft_id']; ?>" target="_blank"><i class="fa fa-file-edit"></i> Edit</a>
-                                             <a class="dropdown-item" href="<?php echo URL_ROOT . '/pages/deleteDraft/' . $draft['draft_id']; ?>"><i class="fa fa-trash-o"></i> Delete</a>
+                                -->          <a class="dropdown-item"
+                                                href="<?php echo URL_ROOT . '/pages/edit-draft/' . $draft['draft_id']; ?>"
+                                                target="_blank"><i class="fa fa-file-edit"></i> Edit</a>
+                                             <a class="dropdown-item"
+                                                href="<?php echo URL_ROOT . '/pages/delete-draft/' . $draft['draft_id']; ?>"><i
+                                                         class="fa fa-trash-o"></i> Delete</a>
                                         </div>
                                     </span>
                                         <span class="text-sm"><i
-                                                class="fa fa-calendar"></i> <?php echo echoDateOfficial($draft['time_modified'], true); ?></span>
+                                                    class="fa fa-calendar"></i> <?php echo echoDateOfficial($draft['time_modified'], true); ?></span>
                                         <span style="font-size: 0.7rem;display: block"><i
-                                                class="fa fa-clock-o"></i> <?php echo getTime($draft['time_modified']); ?></span>
-                                        <a href="#" class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
+                                                    class="fa fa-clock-o"></i> <?php echo getTime($draft['time_modified']); ?></span>
+                                        <a href="#"
+                                           class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
                                            data-draft-id="<?php echo $draft['draft_id']; ?>"
-                                           data-toggle="collapse"><i class="fa fa-play-circle-o"></i> Preview</a>
+                                           data-title="<?php echo $draft['title']; ?>"><i
+                                                    class="fa fa-play-circle-o"></i> Preview</a>
                                     </div>
                                     <!-- /.info-box-content -->
                                 </div>
@@ -80,13 +90,16 @@
 <script>
     let previewEditor;
     let draftWindow;
+    /**
+     * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
 
 
     $(function () {
         jQSelectors.draftViewerWindow = $("<div id='draftViewerWindow'/>").appendTo("body");
         jQSelectors.draftPreviewViewer = $("<div id='draftPreviewViewer'/>").appendTo(jQSelectors.draftViewerWindow);
-        jQSelectors.draftPreviewEditor = $("<textarea id='draftPreviewEditor' style='width: 60%;'/>").appendTo("body");
+        jQSelectors.draftPreviewEditor = $("<textarea id='draftPreviewEditor' style='width: 100%;'/>").appendTo("body");
+
         draftWindow = jQSelectors.draftViewerWindow.kendoWindow({
             modal: true,
             visible: false,
@@ -104,7 +117,7 @@
             },
             width: "100%",
             height: 550,
-            scale: 0.82
+            scale: 1,
         }).getKendoPDFViewer();
         setTimeout(function () {
             previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
@@ -115,21 +128,22 @@
                 ]
             }).data("kendoEditor");
 
-        },1000);
+        }, 1000);
 
         $("a.preview-btn").on("click", function (e) {
             let draftId = $(e.currentTarget).data('draftId');
+            let title = $(e.currentTarget).data('title');
             $.get(URL_ROOT + "/pages/fetchDraft/" + draftId).done(function (data, successTextStatus, jQueryXHR) {
 
                 previewEditor.value(data);
-                kendo.drawing.drawDOM($(previewEditor.body), {})
-                    .then(function (group) {
-                        // Render the result as a PDF file
-                        return kendo.drawing.exportPDF(group, {
-                            paperSize: "auto",
-                            margin: "2cm"
-                        });
-                    })
+                kendo.drawing.drawDOM($(previewEditor.body), {
+                    paperSize: 'a3',
+                    margin: "2cm",
+                    multipage: true
+                }).then(function (group) {
+                    // Render the result as a PDF file
+                    return kendo.drawing.exportPDF(group, {});
+                })
                     .done(function (data) {
                         // Save the PDF file
                         /*kendo.saveAs({
@@ -139,7 +153,7 @@
                         });*/
                         draftWindow.center().open();
                         pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-
+                        setTimeout(() => pdfViewer.activatePage(1), 500)
                     });
             });
         })
