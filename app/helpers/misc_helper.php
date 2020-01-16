@@ -563,9 +563,9 @@ function isCurrentManager(string $user_id)
     return $db->where('current_manager', $user_id)->has('departments');
 }
 
-function isITAdmin($user_id)
+function isITAdmin($user_id) : bool
 {
-
+    return Database::getDbh()->where('user_id', $user_id)->getValue('users', 'is_it_admin');
 }
 
 function isSecretary($user_id)
@@ -831,5 +831,13 @@ function getSubmissions() {
     return [];
 }
 
+function fetchGetParams() {
+    $get_params = "?";
+    foreach ($_GET as $key => $value) {
+        if ($key == 'url') continue;
+        $get_params = $get_params . $key . "=" . $value . "&" ;
+    }
+   return rtrim($get_params, '&');
+}
 
 

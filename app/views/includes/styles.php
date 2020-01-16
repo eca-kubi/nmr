@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/kendo-ui/kendo.bootstrap-v4.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css"/>
-    <script>
+<!--    <script>
         var events = {};
         var original = window.addEventListener;
 
@@ -35,7 +35,7 @@
         function hasEventBeenAdded(type) {
             return type in events;
         }
-    </script>
+    </script>-->
     <!-- <link rel="stylesheet" href="<?php /*echo URL_ROOT; */ ?>/public/assets/css/kendo-ui/kendo.common.min.css"/>
     <link rel="stylesheet" href="<?php /*echo URL_ROOT; */ ?>/public/assets/css/kendo-ui/kendo.rtl.min.css"/>
     <link rel="stylesheet" href="<?php /*echo URL_ROOT; */ ?>/public/assets/css/kendo-ui/kendo.default.min.css"/>

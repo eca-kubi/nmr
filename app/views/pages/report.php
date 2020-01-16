@@ -37,6 +37,7 @@
                                            value="<?php echo isset($title) ? $title : ''; ?>">
                                     <input type="hidden" id="draftId" name="draft_id"
                                            value="<?php echo isset($draft_id) ? $draft_id : ''; ?>">
+                                    <input type="hidden" id="departmentName" name="department_name">
                                 </form>
                             </div>
                         </div>
@@ -104,7 +105,7 @@ echo $spreadsheet_templates; ?>'>
     let charts = [];
     let editor;
     let firstSheetLoading = true;
-    let editDraft = Boolean(<?php echo isset($edit_draft)? $edit_draft : '' ?>);
+    let editDraft = Boolean(<?php echo isset($edit_draft) ? $edit_draft : '' ?>);
     let chartConfiguration = {
         series: {
             goldProducedBudgetOunces: {
@@ -135,7 +136,7 @@ echo $spreadsheet_templates; ?>'>
                 let emptyChartPlaceholder = $("#emptyChartPlaceHolder");
                 spreadsheet.activeSheet(spreadsheet.sheetByName($(e.item).text()));
                 updateChartTabs();
-                if (e.contentElement.innerText.length)
+                if (e.contentElement.innerHTML.length)
                     emptyChartPlaceholder.hide();
                 else
                     emptyChartPlaceholder.show();
@@ -148,40 +149,7 @@ echo $spreadsheet_templates; ?>'>
                     type: "button",
                     text: "Save Draft",
                     icon: "save",
-                    click: function (e) {
-                        let postDfr = jQuery.Deferred();
-                        let postDfrPromise = postDfr.promise();
-                        postDfrPromise.done(function (title) {
-                            spreadsheet.saveJSON().then(function (data) {
-                                $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
-                                $.post({
-                                    url: URL_ROOT + "/pages/save-draft",
-                                    data: $("#editorForm").serialize(),
-                                    dataType: 'json'
-                                }).done(function (response, textStatus, jQueryXHR) {
-                                    if (response.success) {
-                                        let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
-                                        if (response.draft_id)
-                                            $('#draftId').val(response.draft_id);
-                                        setTimeout(() => kAlert.close(), 2500);
-                                    } else {
-                                        let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
-                                    }
-                                });
-                            });
-                        });
-                        let draftTitleInput = $("#draftTitleInput");
-                        if (draftTitleInput.hasClass('no-title')) {
-                            kendo.prompt("Enter a title for your draft.", "New Draft").done(function (title) {
-                                $("#draftTitleInput, #title").removeClass('no-title').val(title);
-                                postDfr.resolve(title);
-                            });
-                        } else {
-                            let title = draftTitleInput.val();
-                            $("#title").val(title);
-                            postDfr.resolve(title);
-                        }
-                    }
+                    click: saveDraft
                 },
                 {
                     type: "button",
@@ -190,7 +158,15 @@ echo $spreadsheet_templates; ?>'>
                     click: function () {
                         editor.value("");
                     }
-                }
+                },
+                <?php if (isITAdmin($current_user->user_id)): ?>
+                {
+                    type: "button",
+                    text: "Save as Preloaded",
+                    icon: "launch",
+                    click: saveDraftAsPreloaded
+                },
+                <?php endif; ?>
             ]
         });
 
@@ -297,6 +273,11 @@ echo $spreadsheet_templates; ?>'>
                 home: [
                     chartMenuCommand,
                     copyToEditor,
+                    <?php if (isITAdmin($current_user->user_id)) : ?>
+                    {
+                        type: "button",
+                        template: '<a href="#" id="#saveSpreadsheetBtn" data-role="button" tabindex="0" title="Save Spreadsheet as Template" data-tool="saveSheetTemplate" class="k-button k-button-icon"  data-overflow="auto" onclick="saveSpreadsheetTemplate(event)"><span class="k-icon k-i-save"></span></a>',
+                    }, <?php endif; ?>
                     //"open",
                     "exportAs",
                     //["cut", "copy", "paste"],
@@ -402,6 +383,10 @@ echo $spreadsheet_templates; ?>'>
             data.push(dataItem);
         }
         return data;
+    }
+
+    function generateSheetTemplate() {
+
     }
 
     function saveSheetTemplate(sheet, description) {
@@ -753,7 +738,107 @@ echo $spreadsheet_templates; ?>'>
         return chartTabs;
     }
 
+    function saveDraft(e) {
+        let postDfr = jQuery.Deferred();
+        let postDfrPromise = postDfr.promise();
+        postDfrPromise.done(function (title) {
+            spreadsheet.saveJSON().then(function (data) {
+                $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
+                $.post({
+                    url: "<?php echo isset($edit_preloaded_draft) ? URL_ROOT . '/pages/save-preloaded-draft' : URL_ROOT . '/pages-save-draft' ?>",
+                    data: $("#editorForm").serialize(),
+                    dataType: 'json'
+                }).done(function (response, textStatus, jQueryXHR) {
+                    if (response.success) {
+                        let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
+                        if (response.draft_id)
+                            $('#draftId').val(response.draft_id);
+                        setTimeout(() => kAlert.close(), 2500);
+                    } else {
+                        let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
+                    }
+                });
+            });
+        });
+        let draftTitleInput = $("#draftTitleInput");
+        if (draftTitleInput.hasClass('no-title')) {
+            kendo.prompt("Enter a title for your draft.", "New Draft").done(function (title) {
+                $("#draftTitleInput, #title").removeClass('no-title').val(title);
+                postDfr.resolve(title);
+            });
+        } else {
+            let title = draftTitleInput.val();
+            $("#title").val(title);
+            postDfr.resolve(title);
+        }
+    }
 
+    function saveDraftAsPreloaded(e) {
+        let postDfr = jQuery.Deferred();
+        let postDfrPromise = postDfr.promise();
+        showWindow('', 'Select Department', '#selectDepartmentConfirmationTemplate').done(function (confirmed) {
+            let departmentName = $("#departmentName").val();
+            if (confirmed) {
+                postDfrPromise.done(function (title) {
+                    spreadsheet.saveJSON().then(function (data) {
+                        $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
+                        $.post({
+                            url: URL_ROOT + "/pages/save-draft-as-preloaded",
+                            data: $("#editorForm").serialize(),
+                            dataType: 'json'
+                        }).done(function (response, textStatus, jQueryXHR) {
+                            if (response.success) {
+                                let kAlert = kendoAlert('Save Draft As Preloaded', 'Draft saved successfully!');
+                                setTimeout(() => kAlert.close(), 2500);
+                            } else {
+                                let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
+                            }
+                        });
+                    });
+                });
+                let draftTitleInput = $("#draftTitleInput");
+                kendo.prompt("Enter a title for your draft.", departmentName).done(function (title) {
+                    $("#draftTitleInput, #title").removeClass('no-title').val(title);
+                    postDfr.resolve(title);
+                });
+                /*if (draftTitleInput.hasClass('no-title')) {
+                    kendo.prompt("Enter a title for your draft.", departmentName).done(function (title) {
+                        $("#draftTitleInput, #title").removeClass('no-title').val(title);
+                        postDfr.resolve(title);
+                    });
+                } else {
+                    let title = draftTitleInput.val();
+                    $("#title").val(title);
+                    postDfr.resolve(title);
+                }*/
+            }
+        });
+    }
+
+    function selectDepartment_onChange(e) {
+        $("#departmentName").val(this.value())
+    }
+
+    function saveSpreadsheetTemplate(e) {
+        let activeSheet = spreadsheet.activeSheet();
+        let description = activeSheet.name();
+        showWindow('', 'Save Spreadsheet as Template', '#selectDepartmentConfirmationTemplate_2', () => $("#description").val(description))
+            .done(function () {
+                let departmentName = $("#departmentName").val();
+                $.post({
+                    url: URL_ROOT + '/pages/save-spreadsheet-template',
+                    data: JSON.stringify({
+                        template: JSON.stringify(activeSheet.toJSON(), null, 2),
+                        department: departmentName,
+                        description: description
+                    }, null, 2),
+                    contentType: "application/json",
+                    dataType: "json"
+                }).done(function () {
+                    kendoAlert("Spreadsheet Template Saved", 'Spreadsheet template saved successfully!')
+                });
+            });
+    }
 </script>
 </body>
 </html>

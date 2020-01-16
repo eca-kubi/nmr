@@ -162,12 +162,12 @@ function kendoAlert(title, content) {
     return kAlert;
 }
 
-function showWindow(message, title= "Are You Sure?", template="#confirmationTemplate") {
+function showWindow(message, title = "Are You Sure?", template = "#confirmationTemplate", onWindowOpen = () => false) {
 
     var dfd = new jQuery.Deferred();
     var result = false;
 
-    $("<div id='popupWindow'></div>")
+    let window = $("<div id='popupWindow'></div>")
         .appendTo("body")
         .kendoWindow({
             width: "480px",
@@ -176,22 +176,36 @@ function showWindow(message, title= "Are You Sure?", template="#confirmationTemp
             visible: false,
             close: function (e) {
                 this.destroy();
-                dfd.resolve(result);
+                if (result) {
+                    dfd.resolve(result);
+                } else {
+                    dfd.reject(result);
+                }
+            },
+            open(e) {
+                onWindowOpen();
             }
-        }).data('kendoWindow').content($(template).html()).center().open();
+        }).data('kendoWindow').content("<div id='popupContent' data-role='validator'>" + $(template).html() + "</div>");
+    kendo.bind('#popupWindow');
+    window.center().open();
 
     $('.popupMessage').html(message);
 
     $('#popupWindow .confirm_yes').val('OK');
     $('#popupWindow .confirm_no').val('Cancel');
 
-    $('#popupWindow .confirm_no').on('click',function () {
+    $('#popupWindow .confirm_no').on('click', function () {
         $('#popupWindow').data('kendoWindow').close();
     });
 
     $('#popupWindow .confirm_yes').on('click', function () {
-        result = true;
-        $('#popupWindow').data('kendoWindow').close();
+        let v = $("#popupContent").data("kendoValidator");
+        if (v.validate()) {
+            result = true;
+            $('#popupWindow').data('kendoWindow').close();
+        } else {
+            result = false;
+        }
     });
 
     return dfd.promise();
@@ -200,7 +214,7 @@ function showWindow(message, title= "Are You Sure?", template="#confirmationTemp
 // PDF Viewer fromFile method fails with js error, causing inability to programmatically load a file. #5358 . Workaround
 // Use the following overwrite to overcome the issue:
 kendo.pdfviewer.pdfjs.processor.fn._updateDocument = function (file) {
-    if(this.pdf) {
+    if (this.pdf) {
         this.pdf.loadingTask.destroy();
     }
 

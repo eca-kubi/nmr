@@ -17,4 +17,6 @@
     let isSubmissionClosedByPowerUser = Boolean(<?php echo isSubmissionClosedByPowerUser(); ?>);
     let currentSubmissionMonth = "<?php echo currentSubmissionMonth() ?>";
     let currentSubmissionYear = "<?php echo currentSubmissionYear() ?>";
+    let isITAdmin = Boolean(<?php echo isITAdmin($current_user->user_id); ?>);
+    let departments = JSON.parse('<?php echo json_encode(Database::getDbh()->getValue('departments', 'department', null)) ?>')
 </script>
