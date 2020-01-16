@@ -106,6 +106,10 @@ echo $spreadsheet_templates; ?>'>
     let editor;
     let firstSheetLoading = true;
     let editDraft = Boolean(<?php echo isset($edit_draft) ? $edit_draft : '' ?>);
+    let seriesColor = {
+        goldProduced: "#5b9bd5",
+        budgetOunces: "#ed7d31"
+    };
     let chartConfiguration = {
         series: {
             goldProducedBudgetOunces: {
@@ -549,25 +553,20 @@ echo $spreadsheet_templates; ?>'>
                         categoryField: categoryField,
                         type: "column",
                         name: "RECOVERY",
-                        color: chartConfiguration.series.goldProducedBudgetOunces.color.goldProduced
+                        color: seriesColor.goldProduced
                     },
                     {
                         field: "['HEAD GRADE']",
                         categoryField: categoryField,
                         type: "line",
                         name: "HEAD GRADE",
-                        color: chartConfiguration.series.goldProducedBudgetOunces.color.budgetOunces
+                        color: seriesColor.budgetOunces
                     }
                 ],
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-            setTimeout(function () {
-                overlayScrollbarsInstances['body'].scroll($("#chartsTabstripHolder"), 5500, {
-                    x: "linear",
-                    y: "easeOutBounce"
-                })
-            }, 500)
+
         } else if (sheetName.startsWith(CHART_GOLD_PRODUCED_TONS_MILLED)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
@@ -598,12 +597,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-            setTimeout(function () {
-                overlayScrollbarsInstances['body'].scroll($("#chartsTabstripHolder"), 5500, {
-                    x: "linear",
-                    y: "easeOutBounce"
-                })
-            }, 500)
+
         } else if (sheetName.startsWith(CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
@@ -621,26 +615,30 @@ echo $spreadsheet_templates; ?>'>
                         categoryField: categoryField,
                         type: "column",
                         name: "GOLD PRODUCED",
-                        color: chartConfiguration.series.goldProducedBudgetOunces.color.goldProduced
+                        color: seriesColor.goldProduced
                     },
                     {
                         field: "['BUDGET OUNCES']",
                         categoryField: categoryField,
                         type: "line",
                         name: "BUDGET OUNCES",
-                        color: chartConfiguration.series.goldProducedBudgetOunces.color.budgetOunces
+                        color: seriesColor.budgetOunces
                     }
                 ],
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-            setTimeout(function () {
-                overlayScrollbarsInstances['body'].scroll($("#chartsTabstripHolder"), 5500, {
-                    x: "linear",
-                    y: "easeOutBounce"
-                })
-            }, 500)
         }
+        scrollToChartsTabstrip();
+    }
+
+    function scrollToChartsTabstrip() {
+        setTimeout(function () {
+            overlayScrollbarsInstances['body'].scroll($("#chartsTabstripHolder"), 5500, {
+                x: "linear",
+                y: "easeOutBounce"
+            })
+        }, 1000)
     }
 
     function bindChart(chart, sheet, valueRange, fieldRange) {
