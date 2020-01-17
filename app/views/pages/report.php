@@ -108,17 +108,14 @@ echo $spreadsheet_templates; ?>'>
     let editDraft = Boolean(<?php echo isset($edit_draft) ? $edit_draft : '' ?>);
     let seriesColor = {
         goldProduced: "#5b9bd5",
-        budgetOunces: "#ed7d31"
-    };
-    let chartConfiguration = {
-        series: {
-            goldProducedBudgetOunces: {
-                color: {
-                    goldProduced: "#5b9bd5",
-                    budgetOunces: "#ed7d31"
-                }
-            }
-        }
+        budgetOunces: "#ed7d31",
+        plannedMetres: "#f2740f",
+        actualMetres: "#7f9c45",
+        lowGrade: "#5b9bd5",
+        romGrade: "#ed7d31",
+        milledTonnage: "#ff6eff",
+        deliveryTonnage: "#03b855",
+        budgetTonnage: "#ffcd9b"
     };
     $(function () {
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
@@ -285,17 +282,19 @@ echo $spreadsheet_templates; ?>'>
                     //"open",
                     "exportAs",
                     //["cut", "copy", "paste"],
-                    //["bold", "italic", "underline"],
+                    ["bold", "italic", "underline"],
                     "fontSize",
                     //"fontFamily",
-                    //"alignment",
-                    //"format"
+                    "alignment",
+                    "backgroundColor",
+                    "textColor",
+                    "format"
                 ],
                 insert: false,
                 data: false
             },
             columns: 13,
-            rows: 6,
+            rows: 8,
             removeSheet(e) {
                 chartsTabStrip.remove("li[aria-controls=" + chartTabs[e.sheet.name()] + "]");  //remove chart related to sheet
                 // updateChartTabs();
@@ -388,6 +387,7 @@ echo $spreadsheet_templates; ?>'>
         }
         return data;
     }
+
     function saveSheetTemplate(sheet, description) {
         return $.ajax({
             type: "POST",
@@ -621,6 +621,219 @@ echo $spreadsheet_templates; ?>'>
                         color: seriesColor.budgetOunces
                     }
                 ],
+            })).data("kendoChart");
+            charts[sheetName] = chart;
+            bindChart(chart, sheet, valueRange, fieldRange);
+        } else if (sheetName.startsWith(CHART_PLANNED_VRS_ACTUAL_METRES)) {
+            let valueRange = sheet.range("B2:M4");
+            let fieldRange = sheet.range("A2:A4");
+            data = fetchData(sheet, valueRange, fieldRange);
+            chart = div.kendoChart($.extend(kendoChartOptions, {
+                title: {
+                    text: CHART_PLANNED_VRS_ACTUAL_METRES
+                },
+                dataSource: {data: data},
+                series: [
+                    {
+                        // Notice the syntax for fields
+                        // that are not valid JS identifiers
+                        field: "['PLANNED METRES']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "PLANNED METRES",
+                        color: seriesColor.plannedMetres
+                    },
+                    {
+                        field: "['ACTUAL METRES']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "ACTUAL METRES",
+                        color: seriesColor.actualMetres
+                    }
+                ],
+            })).data("kendoChart");
+            charts[sheetName] = chart;
+            bindChart(chart, sheet, valueRange, fieldRange);
+        } else if (sheetName.startsWith(CHART_CLOSING_STOCKPILE_BALANCE)) {
+            let valueRange = sheet.range("B2:M6");
+            let fieldRange = sheet.range("A2:A6");
+            data = fetchData(sheet, valueRange, fieldRange);
+            chart = div.kendoChart($.extend(kendoChartOptions, {
+                title: {
+                    text: CHART_CLOSING_STOCKPILE_BALANCE
+                },
+                dataSource: {data: data},
+                series: [
+                    {
+                        // Notice the syntax for fields
+                        // that are not valid JS identifiers
+                        field: "['ROM (TONNES)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "ROM (TONNES)",
+                        color: seriesColor.romGrade,
+                        axis: "tonnes"
+                    },
+                    {
+                        field: "['LOW (TONNES)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "LOW (TONNES)",
+                        color: seriesColor.lowGrade,
+                        axis: "tonnes"
+                    },
+                    {
+                        // Notice the syntax for fields
+                        // that are not valid JS identifiers
+                        field: "['ROM (GRADE)']",
+                        categoryField: categoryField,
+                        type: "line",
+                        name: "ROM (GRADE)",
+                        color: seriesColor.romGrade,
+                        markers: {
+                            visible: false
+                        },
+                        labels: {
+                            visible: true
+                        },
+                        axis: "grade"
+                    },
+                    {
+                        field: "['LOW (GRADE)']",
+                        categoryField: categoryField,
+                        type: "line",
+                        name: "LOW (GRADE)",
+                        color: seriesColor.lowGrade,
+                        markers: {
+                            visible: false
+                        },
+                        labels: {
+                            visible: true
+                        },
+                        axis: "grade"
+                    }
+                ],
+                valueAxis: [
+                    {
+                        name: "tonnes",
+                        title: {
+                            text: "Tonnes [t]"
+                        }
+                    },
+                    {
+                        name: "grade",
+                        title: {
+                            text: "Grade [g/t]"
+                        },
+                        min: 0,
+                        max: 2
+                    }
+                ],
+                categoryAxis: {
+                    axisCrossingValues: [0, 13],
+                    majorGridLines: {
+                        visible: false
+                    }
+                }
+            })).data("kendoChart");
+            charts[sheetName] = chart;
+            bindChart(chart, sheet, valueRange, fieldRange);
+        } else if (sheetName.startsWith(CHART_TOLL_DELIVERY)) {
+            let valueRange = sheet.range("B2:M8");
+            let fieldRange = sheet.range("A2:A8");
+            data = fetchData(sheet, valueRange, fieldRange);
+            chart = div.kendoChart($.extend(kendoChartOptions, {
+                title: {
+                    text: CHART_TOLL_DELIVERY,
+                    align: "center"
+                },
+                dataSource: {data: data},
+                series: [
+                    {
+                        field: "['BUDGET TONNAGE (t)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "BUDGET TONNAGE (t)",
+                        color: seriesColor.budgetTonnage,
+                        axis: "tonnes",
+                        stack: "Tonnage"
+                    },
+                    {
+                        field: "['DELIVERY TONNAGE (t)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "DELIVERY TONNAGE (t)",
+                        color: seriesColor.deliveryTonnage,
+                        axis: "tonnes",
+                        stack: "Tonnage"
+                    },
+                    {
+                        // Notice the syntax for fields
+                        // that are not valid JS identifiers
+                        field: "['MILLED TONNAGE (t)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "MILLED TONNAGE (t)",
+                        color: seriesColor.milledTonnage,
+                        axis: "tonnes",
+                        stack: "Tonnage"
+                    },
+                    {
+                        field: "['DELIVERY GRADE (g/t)']",
+                        categoryField: categoryField,
+                        type: "line",
+                        dashType: "dash",
+                        name: "DELIVERY GRADE (g/t)",
+                        color: seriesColor.deliveryTonnage,
+                        markers: {
+                            visible: false
+                        },
+                        axis: "grade"
+                    },
+                    {
+                        field: "['BUDGET GRADE (g/t)']",
+                        categoryField: categoryField,
+                        type: "line",
+                        name: "BUDGET GRADE (g/t)",
+                        color: seriesColor.budgetTonnage,
+                        markers: {
+                            visible: false
+                        },
+                        axis: "grade"
+                    },
+                    {
+                        field: "['MILLED GRADE (g/t)']",
+                        categoryField: categoryField,
+                        type: "line",
+                        dashType: "longDash",
+                        name: "MILLED GRADE (g/t)",
+                        color: seriesColor.milledTonnage,
+                        markers: {
+                            visible: false
+                        },
+                        axis: "grade"
+                    }
+                ],
+                valueAxis: [
+                    {
+                        name: "tonnes",
+                        title: {
+                            text: "Tonnes [t]"
+                        }
+                    },
+                    {
+                        name: "grade",
+                        title: {
+                            text: "Grade [g/t]"
+                        }
+                    }
+                ],
+                categoryAxis: {
+                    axisCrossingValues: [0, 13],
+                    majorGridLines: {
+                        visible: false
+                    }
+                }
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
