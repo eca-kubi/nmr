@@ -42,7 +42,7 @@
      */
     public static function getDbh() {
       if(self::$dbh === null) {
-         self::$dbh = new MysqliDb(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+         self::$dbh = new MysqliDb(['host' => DB_HOST, 'username' => DB_USER, 'password' => DB_PASS, 'db' => DB_NAME, 'charset' => 'utf8mb4']);
       }
       return self::$dbh;
     }

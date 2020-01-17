@@ -11,7 +11,7 @@
                     <div class="row p-1">
                         <h5 class="box-title text-bold"><span><svg class="fontastic-draft" style="fill: currentColor"><use
                                             xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
-                            Drafts
+                            Preloaded Drafts
                         </h5>
                         <div class="box-tools pull-right ml-auto">
                             <button type="button" class="btn btn-app btn-box-tool btn-outline-light btn-sm"

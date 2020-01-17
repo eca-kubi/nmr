@@ -214,6 +214,7 @@ class Pages extends Controller
                     'modified_by' => $current_user->user_id
                 ]);
                 if ($success) echo json_encode(['success' => true]);
+                else echo json_encode(['success' => false]);
             } else {
                 $success = $db->insert('nmr_preloaded_draft', [
                     'title' => $_POST['title'],
@@ -221,9 +222,10 @@ class Pages extends Controller
                     'spreadsheet_content' => $_POST['spreadsheet_content'],
                     'time_modified' => now(),
                     'modified_by' => $current_user->user_id,
-                    'department_id' => $db->where('department', $_POST['department_name'])->getValue('departments', 'department_id')
+                    'department_id' => $department_id
                 ]);
                 if ($success) echo json_encode(['success' => true]);
+                else echo json_encode(['success' => false]);
             }
         }
     }
@@ -303,7 +305,7 @@ class Pages extends Controller
             $data = json_decode($json);
             $db = Database::getDbh();
             $department_id = $db->where('department', $data->department)->getValue('departments', 'department_id');
-            $db->onDuplicate(['template']);
+            $db->onDuplicate(['template', 'department_id']);
             $success = $db->insert(TABLE_NMR_SPREADSHEET_TEMPLATES,
                 ['description' => $data->description, 'template' => $data->template, 'department_id' => $department_id]);
             if ($success) {

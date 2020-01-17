@@ -388,11 +388,6 @@ echo $spreadsheet_templates; ?>'>
         }
         return data;
     }
-
-    function generateSheetTemplate() {
-
-    }
-
     function saveSheetTemplate(sheet, description) {
         return $.ajax({
             type: "POST",
@@ -493,6 +488,7 @@ echo $spreadsheet_templates; ?>'>
 
     function createChartFromSheet(sheet) {
         let categoryField = sheet.range(1, 0).value();
+        if (categoryField === null) return;
         let data = [];
         let sheetName = sheet.name();
         let chart;
@@ -584,14 +580,14 @@ echo $spreadsheet_templates; ?>'>
                         categoryField: categoryField,
                         type: "column",
                         name: "GOLD PRODUCED",
-                        color: chartConfiguration.series.goldProducedBudgetOunces.color.goldProduced
+                        color: seriesColor.goldProduced
                     },
                     {
                         field: "['TONS MILLED']",
                         categoryField: categoryField,
                         type: "line",
                         name: "TONS MILLED",
-                        color: chartConfiguration.series.goldProducedBudgetOunces.color.budgetOunces
+                        color: seriesColor.budgetOunces
                     }
                 ],
             })).data("kendoChart");
@@ -743,7 +739,7 @@ echo $spreadsheet_templates; ?>'>
             spreadsheet.saveJSON().then(function (data) {
                 $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
                 $.post({
-                    url: "<?php echo isset($edit_preloaded_draft) ? URL_ROOT . '/pages/save-preloaded-draft' : URL_ROOT . '/pages-save-draft' ?>",
+                    url: "<?php echo isset($edit_preloaded_draft) ? URL_ROOT . '/pages/save-preloaded-draft' : URL_ROOT . '/pages/save-draft' ?>",
                     data: $("#editorForm").serialize(),
                     dataType: 'json'
                 }).done(function (response, textStatus, jQueryXHR) {
