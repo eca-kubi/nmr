@@ -513,7 +513,7 @@ a.k-link.k-state-active {
     width: 650px !important;
 }*/
 
-.nav-link:hover {
+.dropdown-item.nav-link:hover {
     background-color: unset;
 }
 
@@ -709,6 +709,10 @@ a:hover {
     text-decoration: none!important;
 }
 
+/*.k-chart svg g
+{
+    cursor: default!important;
+}*/
 
 /*@media screen and (max-width: 800px) {
     html body {

@@ -4,6 +4,7 @@ define('DB_HOST', 'localhost');
 define('DB_USER', 'appiahmakuta');
 define('DB_PASS', 'gmail300');
 define('DB_NAME', 'sms');
+define('DB_PARAMS', ['db' => DB_NAME, 'host'=> DB_HOST, 'username'=>DB_USER, 'password' => DB_PASS, 'charset' => 'utf8mb4']);
 define('APP_ROOT', dirname(__FILE__, 2));
 define('SITE_NAME', 'Nzema Monthly Report');
 define('APP_NAME', 'NMR');

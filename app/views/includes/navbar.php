@@ -175,7 +175,7 @@
                                                     xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></i> Draft Reports</a>
                                 </li>
                                 <li><a class="dropdown-item"
-                                       href="<?php echo site_url('#') ?>"><i class="fa fa-check-double"></i> Submitted Reports</a>
+                                       href="<?php echo site_url('pages/submitted-reports/') ?>"><i class="fa fa-check-double"></i> Submitted Reports</a>
                                 </li>
                                 <li><a class="dropdown-item"
                                        href="<?php echo site_url('#')  ?>"><i class="fa fa-stamp"></i> Approved Reports</a>
@@ -184,6 +184,27 @@
                         </li>
                     <?php endif ?>
                     <?php if (isset($is_power_user) && $is_power_user): ?>
+                        <li class="nav-item dropdown  mx-2">
+                            <a class="nav-link dropdown-item w3-text-hover-amber dropdown-toggle btn border-0 text-bold flat nav-item-white"
+                               data-toggle="dropdown">
+                                <i class="fa fa-file"></i>
+                                Reports
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
+                                style="position:absolute">
+                                <!--<li><a class="dropdown-item"
+                                       href="<?php /*echo site_url('pages/draft-reports') */?>"><i><svg class="fontastic-draft" style="fill: currentColor; height: 14px; width: 14px"><use
+                                                    xlink:href="<?php /*echo ICON_PATH . '#fontastic-draft' */?>"></use></svg></i> Draft Reports</a>
+                                </li>-->
+                                <li><a class="dropdown-item"
+                                       href="<?php echo site_url('pages/report-submissions/') ?>"><i><svg class="fontastic-draft" style="fill: currentColor; height: 14px; width: 14px"><use
+                                                    xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></i> Report Submissions</a>
+                                </li>
+                                <li><a class="dropdown-item"
+                                       href="<?php echo site_url('#')  ?>"><i class="fa fa-stamp"></i> Approved Reports</a>
+                                </li>
+                            </ul>
+                        </li>
                         <li class="nav-item  mx-2">
                             <a class="nav-link text-white w3-text-hover-amber  btn border-0 text-bold flat"
                                href="<?php echo site_url('pages/dashboard') ?>">
@@ -200,6 +221,28 @@
                         </a>
                     </li>
                     <?php endif; ?>
+                    <?php if (isITAdmin($current_user->user_id)): ?>
+                        <li class="nav-item dropdown  mx-2">
+                            <a class="nav-link dropdown-item w3-text-hover-amber dropdown-toggle btn border-0 text-bold flat nav-item-white"
+                               data-toggle="dropdown">
+                                <i class="fab fa-hackerrank"></i>
+                                IT Admin
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
+                                style="position:absolute">
+                                <li><a class="dropdown-item"
+                                       href="<?php echo site_url('pages/preloaded-draft-reports') ?>"><i>
+                                            <svg class="fontastic-draft"
+                                                 style="fill: currentColor; height: 14px; width: 14px">
+                                                <use
+                                                        xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use>
+                                            </svg>
+                                        </i> Preloaded Draft Reports</a>
+                                </li>
+                            </ul>
+                        </li>
+                    <?php endif ?>
+
                     <!--<li class="nav-item dropdown  mx-2">
                         <a class="nav-link dropdown-item text-white w3-text-hover-amber dropdown-toggle btn border-0 text-bold flat"
                            data-toggle="dropdown">

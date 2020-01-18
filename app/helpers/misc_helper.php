@@ -201,9 +201,10 @@ function echoDateOfficial($date, $official = false)
     return '';
 }
 
-function getTime($date) {
+function getTime($date)
+{
     try {
-       return (new Moment($date))->format('hh:mm a', new MomentJs());
+        return (new Moment($date))->format('hh:mm a', new MomentJs());
     } catch (MomentException $e) {
     }
     return "";
@@ -563,7 +564,7 @@ function isCurrentManager(string $user_id)
     return $db->where('current_manager', $user_id)->has('departments');
 }
 
-function isITAdmin($user_id) : bool
+function isITAdmin($user_id): bool
 {
     return Database::getDbh()->where('user_id', $user_id)->getValue('users', 'is_it_admin');
 }
@@ -769,7 +770,7 @@ function readFileMetaData($directory)
 function uploadFile(string $path): File
 {
     if (!is_dir($path)) mkdir($path, 0777, true);
-        $factory = new FileUploadFactory(
+    $factory = new FileUploadFactory(
         new PathResolver\Simple($path),
         new FileSystem\Simple()
     );
@@ -786,58 +787,109 @@ function createThumbnail($image)
     $image_mgr = new Intervention\Image\ImageManager();
     $image = $image_mgr->make($image);
     $image->fit(240, 120);
-    $image->save($thumbnail_path . '/' .$image->basename);
+    $image->save($thumbnail_path . '/' . $image->basename);
 }
 
-function uniqueId() {
+function uniqueId()
+{
     return getUserSession()->staff_id;
 }
 
-function monthName($monthNum) {
-   return (DateTime::createFromFormat('!m', $monthNum))->format('F');
+function monthName($monthNum)
+{
+    return (DateTime::createFromFormat('!m', $monthNum))->format('F');
 }
 
-function monthNumber($timeString) {
+function monthNumber($timeString)
+{
     return date("m", strtotime($timeString));
 }
 
-function isPowerUser($user_id) {
-   return Database::getDbh()->where('prop', 'nmr_power_user')->getValue('settings', 'value') == $user_id;
+function year($timeString)
+{
+    return date("y", strtotime($timeString));
 }
 
-function isSubmissionOpened() {
+
+function isPowerUser($user_id)
+{
+    return Database::getDbh()->where('prop', 'nmr_power_user')->getValue('settings', 'value') == $user_id;
+}
+
+function isSubmissionOpened()
+{
     return Database::getDbh()->where('prop', 'nmr_submission_opened')->getValue('settings', 'value');
 }
 
-function isSubmissionClosedByPowerUser() {
+function isSubmissionClosedByPowerUser()
+{
     return Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->getValue('settings', 'value');
 }
 
-function currentSubmissionMonth() {
+function currentSubmissionMonth()
+{
     return Database::getDbh()->where('prop', 'nmr_current_submission_month')->getValue('settings', 'value');
 }
 
-function currentSubmissionYear() {
+function currentSubmissionYear()
+{
     return Database::getDbh()->where('prop', 'nmr_current_submission_year')->getValue('settings', 'value');
 }
 
-function getSubmissions() {
+function getReportSubmissions(string $target_month = "", $target_year = "", $department_id = "")
+{
     try {
-        return Database::getDbh()->where('submitted', 1)->join('users u', 'u.user_id=n.user_id')
-            ->join('departments d', 'u.department_id=d.department_id')
-            ->get('nmr_editor_draft n');
+        $db = Database::getDbh();
+        if ($target_month) {
+            if ($department_id) $db->where('d.department_id', $department_id);
+            return $db->where('monthname(date_submitted) = "' . $target_month . '"')->where('year(date_submitted)=' . $target_year)
+                ->join('users u', 'u.user_id=n.user_id')
+                ->join('departments d', 'u.department_id=d.department_id')
+                ->get('nmr_report_submissions n', null, 'd.department, n.content, n.spreadsheet, n.date_submitted, n.target_month, n.target_year, n.date_modified, u.first_name, u.last_name');
+        } else {
+            return $db->join('users u', 'u.user_id=n.user_id')
+                ->join('departments d', 'u.department_id=d.department_id')
+                ->get('nmr_report_submissions n', null, 'd.department, n.content, n.spreadsheet, n.date_submitted, n.target_month, n.target_year, n.date_modified, u.first_name, u.last_name');
+        }
+
     } catch (Exception $e) {
     }
     return [];
 }
 
-function fetchGetParams() {
-    $get_params = "?";
-    foreach ($_GET as $key => $value) {
-        if ($key == 'url') continue;
-        $get_params = $get_params . $key . "=" . $value . "&" ;
+function groupedReportSubmissions(array $report_submissions) {
+    $db = Database::getDbh();
+    $grouped = [];
+    foreach ($report_submissions as $key => $item) {
+        $grouped[$item['target_month']. " " . $item['target_year']][$key] = $item;
     }
-   return rtrim($get_params, '&');
+
+     ksort($grouped, SORT_NUMERIC);
+    return $grouped;
+}
+
+function getReportMonthYears(){
+    return Database::getDbh()->get("nmr_report_month_year");
 }
 
 
+function fetchGetParams()
+{
+    $get_params = "?";
+    foreach ($_GET as $key => $value) {
+        if ($key == 'url') continue;
+        $get_params = $get_params . $key . "=" . $value . "&";
+    }
+    return rtrim($get_params, '&');
+}
+
+function isReportSubmitted(string $target_month, $target_year, $department_id)
+{
+    $db = Database::getDbh();
+    return $db->where('monthname(date_submitted)="' . $target_month . '"')->where('year(date_submitted)=' . $target_year)
+        ->where('department_id', $department_id)->has('nmr_report_submissions');
+}
+
+function getJsonEncodedHtml ($html) {
+    return json_encode($html, JSON_UNESCAPED_SLASHES);
+}

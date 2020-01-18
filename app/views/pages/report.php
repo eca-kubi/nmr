@@ -103,9 +103,13 @@ echo $spreadsheet_templates; ?>'>
     let editorTabStrip;
     let chartTabs = [];
     let charts = [];
+    /** @type {kendo.ui.Editor}*/
     let editor;
     let firstSheetLoading = true;
     let editDraft = Boolean(<?php echo isset($edit_draft) ? $edit_draft : '' ?>);
+    let isNewDraft = Boolean(<?php echo isset($is_new_draft) ? 'true' : '' ?>);
+    let clearedContents = "";
+    let editorActionToolbar;
     let seriesColor = {
         goldProduced: "#5b9bd5",
         budgetOunces: "#ed7d31",
@@ -144,7 +148,7 @@ echo $spreadsheet_templates; ?>'>
             }
         }).data("kendoTabStrip");
 
-        $("#editorActionToolbar").kendoToolBar({
+        editorActionToolbar = $("#editorActionToolbar").kendoToolBar({
             items: [
                 {
                     type: "button",
@@ -157,9 +161,47 @@ echo $spreadsheet_templates; ?>'>
                     text: "Clear",
                     icon: "refresh-clear",
                     click: function () {
-                        editor.value("");
+                        if (editor.value()) {
+                            clearedContents = editor.value();
+                            editor.value("");
+                            editorActionToolbar.show("#undoClearContents");
+                        }
                     }
                 },
+                {
+                    type: "button",
+                    text: "Undo Clear",
+                    icon: "undo",
+                    id: "undoClearContents",
+                    click: function () {
+                        if (clearedContents) {
+                            editor.value(clearedContents);
+                            editorActionToolbar.hide("#undoClearContents");
+                            clearedContents = "";
+                        }
+                    },
+                    hidden: true
+                },
+                <?php if (isSubmissionOpened()): ?>
+                {
+                    type: "button",
+                    text: "Submit Report",
+                    icon: "check",
+                    id: "submitReportBtn",
+                    click: submitReport,
+                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id)? 'true' : '' ?>")
+                },
+                <?php endif; ?>
+                {
+                    type: "button",
+                    id: "updateSubmittedReportBtn",
+                    icon: "upload",
+                    attributes: {"class" : "update-submitted-report-btn"},
+                    text: "Update Submitted Report",
+                    click: submitReport,
+                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id)? '' : 'true' ?>")
+                },
+
                 <?php if (isITAdmin($current_user->user_id)): ?>
                 {
                     type: "button",
@@ -169,7 +211,7 @@ echo $spreadsheet_templates; ?>'>
                 },
                 <?php endif; ?>
             ]
-        });
+        }).data("kendoToolBar");
 
         editor = $("#editor").kendoEditor({
             tools: [
@@ -498,14 +540,39 @@ echo $spreadsheet_templates; ?>'>
          }*/
         chartsTabStrip.append([{
             text: sheetName,
-            content: '<div id="' + sheetName + '" style="height: 100%; width: 100%"></div>'
+            content: '<div id="' + sheetName + '" class="spreadsheet-chart" style="height: 100%; width: 100%"></div>'
         }]);
         let div = $("[id='" + sheetName + "']");
         let divParent = div.parent("[role=tabpanel]");
         chartsTabStrip.activateTab(divParent);
         //chartTabs[sheetName] = divParent.attr("id");
         //updateChartTabs();
+        /** @type {kendo.dataviz.ui.ChartOptions}*/
         let kendoChartOptions = {
+            legend: {
+                visible: true,
+                position: "bottom",
+                item: {
+                    cursor: "pointer",
+                    visual: function (e) {
+                        let layout;
+                        let type = e.series.type;
+                        let dashType = e.series.dashType;
+                        let color = e.options.markers.background;
+                        let labelColor = e.options.labels.color;
+                        let label = e.series.name;
+
+                        if (type === "line") {
+                            return renderLegend(label, labelColor, color, 1.5, dashType)
+                        } else if (type === "column") {
+                            return renderLegend(label, labelColor, color, 10)
+                        }
+
+
+                        return e.createVisual();
+                    }
+                }
+            },
             seriesDefaults: {
                 type: "line",
                 style: "smooth",
@@ -525,10 +592,6 @@ echo $spreadsheet_templates; ?>'>
                 if (axis.categories) {
                     axis.categories.sort();
                 }*/
-            },
-            legend: {
-                visible: true,
-                position: "top"
             },
             transitions: false
         };
@@ -782,6 +845,7 @@ echo $spreadsheet_templates; ?>'>
                         field: "['DELIVERY GRADE (g/t)']",
                         categoryField: categoryField,
                         type: "line",
+                        style: "normal",
                         dashType: "dash",
                         name: "DELIVERY GRADE (g/t)",
                         color: seriesColor.deliveryTonnage,
@@ -794,6 +858,7 @@ echo $spreadsheet_templates; ?>'>
                         field: "['BUDGET GRADE (g/t)']",
                         categoryField: categoryField,
                         type: "line",
+                        style: "normal",
                         name: "BUDGET GRADE (g/t)",
                         color: seriesColor.budgetTonnage,
                         markers: {
@@ -805,7 +870,8 @@ echo $spreadsheet_templates; ?>'>
                         field: "['MILLED GRADE (g/t)']",
                         categoryField: categoryField,
                         type: "line",
-                        dashType: "longDash",
+                        style: "normal",
+                        dashType: "longDashDotDot",
                         name: "MILLED GRADE (g/t)",
                         color: seriesColor.milledTonnage,
                         markers: {
@@ -848,6 +914,44 @@ echo $spreadsheet_templates; ?>'>
                 y: "easeOutBounce"
             })
         }, 1000)
+    }
+
+    function renderLegend(label, labelColor, color, width = 1.5, dashType = "solid") {
+        let draw = kendo.drawing;
+        let geom = kendo.geometry;
+        let rect = new kendo.geometry.Rect([0, 0], [500, 300]);
+        let layout = new kendo.drawing.Layout(rect, {
+            spacing: 5,
+            alignItems: "center",
+            wrap: false
+        });
+
+        let path = new draw.Path({
+            cursor: "pointer",
+            stroke: {
+                color: color,
+                width: width,
+                dashType: dashType
+            }
+        });
+
+        path.moveTo(0, 0).lineTo(30, 0);
+
+        let text = new draw.Text(label, new geom.Point(0, 0), {
+            font: "12px Arial;white-space:pre",
+            cursor: "pointer",
+            fill: {
+                color: labelColor
+            }
+        });
+
+        //let space = new draw.Text("&nbsp;", [0, 0], {font: "0.2px"});
+
+        layout.append(path, text);
+        layout.reflow();
+
+
+        return layout;
     }
 
     function bindChart(chart, sheet, valueRange, fieldRange) {
@@ -1046,6 +1150,43 @@ echo $spreadsheet_templates; ?>'>
                 });
             });
     }
+
+    function submitReport(e) {
+        let draftId = $("#draftId");
+        let title = $("#draftTitleInput").val();
+        $.post(URL_ROOT + "/pages/submit-report/", {
+            title: title,
+            draft_id: draftId.val()? draftId.val() : "",
+            content: editor.value(),
+            spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+        },null, "json").done((data) => {
+            if(!draftId.val()) draftId.val(data.draftId);
+            if ($(e.target).hasClass('update-submitted-report-btn')) {
+                let alert = kendoAlert("Report Updated!", "Report updated successfully.");
+                setTimeout(() => alert.close(), 3000);
+            } else {
+                let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
+                setTimeout(() => alert.close(), 3000);
+            }
+        })
+    }
+
+    function getArrayData() {
+        $.get(URL_ROOT + "/pages/get-array-data").done(function (data, successTextStatus, jQueryXHR) {
+            decodeEntities(data);
+        })
+    }
+
+    function decodeEntities(encodedString) {
+
+        var textArea = document.createElement('textarea');
+
+        textArea.innerHTML = encodedString;
+
+        return textArea.value;
+
+    }
+
 </script>
 </body>
 </html>

@@ -64,7 +64,7 @@
                             </h6>
                             <!-- small box -->
                             <div class="small-box show border" style="cursor:pointer"
-                                 data-url="<?php echo URL_ROOT ?>/pages/view-submissions/">
+                                 data-url="<?php echo URL_ROOT ?>/pages/report-submissions/">
                                 <div class="inner">
                                     <h4 class="w3-hide-small ">View Submissions</h4>
                                     <h6 class="w3-hide-large w3-hide-medium text-bold">View Submissions</h6>

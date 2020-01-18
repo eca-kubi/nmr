@@ -51,6 +51,7 @@ class Pages extends Controller
             redirect('users/login/pages/new-draft' . fetchGetParams());
         }
         $payload['page_title'] = 'New Draft';
+        $payload['is_new_draft'] = true;
         $db = Database::getDbh();
         if (isset($_GET['preloaded'])) {
             $preloaded = $db->where('department_id', getUserSession()->department_id)->getOne('nmr_preloaded_draft');
@@ -90,6 +91,8 @@ class Pages extends Controller
         if (!isLoggedIn()) {
             redirect('users/login/pages/edit-preloaded-draft/' . $draft_id);
         }
+        if (!isITAdmin(getUserSession()->user_id))
+            redirect('pages/draft-reports');
         $db = Database::getDbh();
         if (!$db->where('draft_id', $draft_id)->has('nmr_preloaded_draft'))
             redirect('errors/index/404');
@@ -252,26 +255,16 @@ class Pages extends Controller
         echo json_encode(['isSubmissionClosedByPowerUser' => true]);
     }
 
-    public function viewSubmissions()
+    public function reportSubmissions(string $target_month = "", $target_year = "", $department_id = "")
     {
-        $db = Database::getDbh();
-        if (!isLoggedIn()) {
-            redirect('users/login/pages/view-report/');
-        }
-        $payload['submissions'] = getSubmissions();
-        $payload['page_title'] = 'Report Submission';
-        $this->view('pages/view-submissions', $payload);
-    }
+        if (!isLoggedIn())
+            redirect('users/login/pages/report-submissions/');
+        if (!isPowerUser(getUserSession()->user_id))
+            redirect('errors/index/404');
+        $payload['page_title'] = 'Report Submissions';
+        $payload['report_submissions'] = groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id));
 
-    public function fetchSubmissions()
-    {
-        try {
-            $submissions = Database::getDbh()->where('submitted', 1)->join('users u', 'u.user_id=n.user_id')
-                ->join('departments d', 'u.department_id=d.department_id')
-                ->get('nmr_editor_draft n');
-            echo print_r($submissions);
-        } catch (Exception $e) {
-        }
+        $this->view('pages/report-submissions', $payload);
     }
 
     public function draftReports()
@@ -284,6 +277,7 @@ class Pages extends Controller
         $payload['drafts'] = Database::getDbh()->where('user_id', getUserSession()->user_id)->where('deleted', 0)->get('nmr_editor_draft');
         $this->view('pages/draft-reports', $payload);
     }
+
 
     public function preloadedDraftReports()
     {
@@ -316,6 +310,47 @@ class Pages extends Controller
         }
     }
 
+    public function submitReport()
+    {
+        $db = Database::getDbh();
+        $current_user = getUserSession();
+        $db->onDuplicate(['content', 'spreadsheet_content', 'date_modified']);
+        $draft_id = '';
+        if (isset($_POST['draft_id'])) $draft_id = $_POST['draft_id'];
+        $success = $db->insert('nmr_report_submissions', [
+            'department_id' => $current_user->department_id,
+            'user_id' => $current_user->user_id,
+            'content' => $_POST['content'],
+            'spreadsheet_content' => $_POST['spreadsheet_content'],
+            'date_submitted' => now(),
+            'date_modified' => now(),
+            'target_month' => $db->func('MonthName(?)', [now()]),
+            'target_year' => $db->func('Year(?)', [now()])
+        ]);
+        if ($success) {
+            if ($db->where('draft_id', $draft_id)->has('nmr_editor_draft')) {
+                $success = $db->where('draft_id', $draft_id)->update('nmr_editor_draft', [
+                    'title' => $_POST['title'],
+                    'user_id' => $current_user->user_id,
+                    'content' => $_POST['content'],
+                    'spreadsheet_content' => $_POST['spreadsheet_content'],
+                    'time_modified' => now()
+                ]);
+                if($success) echo json_encode(['success' => true, 'draftId' => $draft_id]);;
+            } else {
+                $success = $db->insert('nmr_editor_draft', [
+                    'title' => $_POST['title'],
+                    'user_id' => $current_user->user_id,
+                    'content' => $_POST['content'],
+                    'spreadsheet_content' => $_POST['spreadsheet_content'],
+                    'time_modified' => now()
+                ]);
+                if ($success) echo json_encode(['success' => true, 'draftId' => $success]);
+            }
+        }
+    }
+
+
     public function phpinfo(): void
     {
         echo phpinfo();
@@ -330,8 +365,14 @@ class Pages extends Controller
     {
         echo Database::getDbh()->where('draft_id', $draft_id)->getValue('nmr_editor_draft', 'content');
     }
+
     public function fetchPreloadedDraft($draft_id)
     {
         echo Database::getDbh()->where('draft_id', $draft_id)->getValue('nmr_preloaded_draft', 'editor_content');
+    }
+
+    public function getArrayData()
+    {
+        echo json_encode(htmlentities('<span></span>'));
     }
 }
