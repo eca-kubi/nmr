@@ -263,7 +263,7 @@ class Pages extends Controller
             redirect('errors/index/404');
         $payload['page_title'] = 'Report Submissions';
         $payload['report_submissions'] = groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id));
-
+        $payload['is_power_user'] = true;
         $this->view('pages/report-submissions', $payload);
     }
 
@@ -274,7 +274,13 @@ class Pages extends Controller
             redirect('users/login/pages/draft-reports/');
         }
         $payload['page_title'] = 'Draft Reports';
-        $payload['drafts'] = Database::getDbh()->where('user_id', getUserSession()->user_id)->where('deleted', 0)->get('nmr_editor_draft');
+        try {
+            $payload['drafts'] = Database::getDbh()->where('user_id', getUserSession()->user_id)
+                ->where('deleted', 0)
+                ->orderBy('time_modified')
+                ->get('nmr_editor_draft');
+        } catch (Exception $e) {
+        }
         $this->view('pages/draft-reports', $payload);
     }
 
@@ -308,6 +314,12 @@ class Pages extends Controller
                 echo json_encode(['success' => false]);
             }
         }
+    }
+
+    public function getSubmittedReport($report_id)
+    {
+        $report = Database::getDbh()->where('report_submissions_id', $report_id)->getOne('nmr_report_submissions');
+        echo json_encode($report, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
 
     public function submitReport()

@@ -21,7 +21,7 @@
                     <?php if (isset($report_submissions) && is_array($report_submissions) && count($report_submissions) > 0): ?>
                         <div class="accordion" id="accordionReportSubmissions">
                             <?php foreach ($report_submissions as $key => $group) { ?>
-                                <div class="card">
+                                <div class="cardd">
                                     <div class="card-header" id="heading_<?php echo $key; ?>">
                                         <h5 class="mb-0">
                                             <button class="btn btn-link" type="button" data-toggle="collapse"
@@ -35,7 +35,7 @@
                                     <div id="collapseOne" class="collapse show"
                                          aria-labelledby="heading_<?php echo $key; ?>"
                                          data-parent="#accordionReportSubmissions">
-                                        <div class="card-body">
+                                        <div class="card-body border rounded-bottom">
                                             <div class="row"><?php foreach ($group as $report) { ?>
                                                     <div class="col-md-4 col-sm-6 col-xs-12"
                                                          id="<?php echo $report['report_submissions_id']; ?>">
@@ -47,7 +47,7 @@
                                                             <div class="info-box-content"><span
                                                                         class="info-box-text text-bold"><?php echo $report['department'] ?><a
                                                                             href="#"
-                                                                            class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
+                                                                            class="d-none fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
                                                                             data-toggle="dropdown"
                                                                             role="button"></a>
                                          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"><a
@@ -124,6 +124,7 @@
             // maxHeight: 800,
             //open: adjustSize
         }).data("kendoWindow");
+
         pdfViewer = jQSelectors.draftPreviewViewer.kendoPDFViewer({
             pdfjsProcessing: {
                 file: ""
@@ -144,11 +145,15 @@
         }, 1000);
 
         $("a.preview-btn").on("click", function (e) {
-            let id = $(e.currentTarget).data('reportSubmissionsId');
-            let title = $(e.currentTarget).data('title');
-            $.get(URL_ROOT + "/pages/fetch-preloaded-draft/" + id).done(function (data, successTextStatus, jQueryXHR) {
+            let currentTarget = $(e.currentTarget);
+            let reportSubmissionsId = currentTarget.data('reportSubmissionsId');
+            let title = currentTarget.data('title');
+            let departmentId = currentTarget.data('departmentId');
+            let currentMonth = currentTarget.data('currentMonth');
+            let currentYear = currentTarget.data('currentYear');
+            $.get(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`, {}, null, "json").done(function (data, successTextStatus, jQueryXHR) {
 
-                previewEditor.value(data);
+                previewEditor.value(data.content ? data.content : "");
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
                     margin: "2cm",

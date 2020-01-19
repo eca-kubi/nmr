@@ -41,3 +41,6 @@
 .icon-dashed-line:before {
   content: "\62";
 }
+.icon-notepad:before {
+  content: "\61";
+}

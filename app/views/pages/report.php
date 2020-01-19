@@ -99,7 +99,13 @@ echo $spreadsheet_templates; ?>'>
      * @type {kendo.ui.Spreadsheet}
      * */
     let spreadsheet;
+    /**
+     * @type {kendo.ui.TabStrip}
+     * */
     let chartsTabStrip;
+    /**
+     * @type {kendo.ui.TabStrip}
+     * */
     let editorTabStrip;
     let chartTabs = [];
     let charts = [];
@@ -121,7 +127,24 @@ echo $spreadsheet_templates; ?>'>
         deliveryTonnage: "#03b855",
         budgetTonnage: "#ffcd9b"
     };
+    let previewWindow;
+    let previewViewer;
+    let pdfViewer;
     $(function () {
+      /*  previewWindow = $("<div id='previewWindow'><div id='previewViewer'></div></div>").appendTo("body").kendoWindow({
+            modal: true,
+            visible: false,
+            width: "80%",
+            scrollable: false,
+            //height: "80%",
+            // (Optional) Will limit the percentage dimensions as well:
+            // maxWidth: 1200,
+            // maxHeight: 800,
+            //open: adjustSize
+        }).data("kendoWindow");*/
+
+
+
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
         $(window).on("resize", function () {
             kendo.resize($("#chartsTabstripHolder"));
@@ -130,8 +153,37 @@ echo $spreadsheet_templates; ?>'>
 
         editorTabStrip = $("#editorTabStrip").kendoTabStrip({
             select(e) {
+
                 if (e.contentElement.id === "previewTab") {
-                    $("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
+                    if (!pdfViewer)
+                    pdfViewer = $("#previewContent").kendoPDFViewer({
+                        pdfjsProcessing: {
+                            file: ""
+                        },
+                        width: "100%",
+                        height: 550,
+                        scale: 1,
+                    }).getKendoPDFViewer();
+                    //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
+                    kendo.drawing.drawDOM($(editor.body), {
+                        paperSize: 'a3',
+                        margin: "2cm",
+                        multipage: true
+                    }).then(function (group) {
+                        // Render the result as a PDF file
+                        return kendo.drawing.exportPDF(group, {});
+                    })
+                        .done(function (data) {
+                            // Save the PDF file
+                            /*kendo.saveAs({
+                                dataURI: data,
+                                fileName: draftName + ".pdf",
+                                //proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
+                            });*/
+                           // previewWindow.center().open();
+                            pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                            setTimeout(() => pdfViewer.activatePage(1), 500)
+                        });
                 }
             }
         });

@@ -845,11 +845,11 @@ function getReportSubmissions(string $target_month = "", $target_year = "", $dep
             return $db->where('monthname(date_submitted) = "' . $target_month . '"')->where('year(date_submitted)=' . $target_year)
                 ->join('users u', 'u.user_id=n.user_id')
                 ->join('departments d', 'u.department_id=d.department_id')
-                ->get('nmr_report_submissions n', null, 'd.department, n.content, n.spreadsheet, n.date_submitted, n.target_month, n.target_year, n.date_modified, u.first_name, u.last_name');
+                ->get('nmr_report_submissions n', null, 'n.report_submissions_id,d.department, d.department_id, n.content, n.spreadsheet_content, n.date_submitted, n.target_month, n.target_year, n.date_modified, u.first_name, u.last_name');
         } else {
             return $db->join('users u', 'u.user_id=n.user_id')
                 ->join('departments d', 'u.department_id=d.department_id')
-                ->get('nmr_report_submissions n', null, 'd.department, n.content, n.spreadsheet, n.date_submitted, n.target_month, n.target_year, n.date_modified, u.first_name, u.last_name');
+                ->get('nmr_report_submissions n', null, 'n.report_submissions_id, d.department, d.department_id, n.content, n.spreadsheet_content, n.date_submitted, n.target_month, n.target_year, n.date_modified, u.first_name, u.last_name');
         }
 
     } catch (Exception $e) {
