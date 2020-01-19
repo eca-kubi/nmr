@@ -21,6 +21,26 @@
                     <div class="row">
                         <div class="col-md-4">
                             <h6 class="mb-2 text-nowrap">
+                                <i class="icon-notepad text-primary"></i> Report Submissions
+                            </h6>
+                            <!-- small box -->
+                            <div class="small-box show border" style="cursor:pointer"
+                                 data-url="<?php echo URL_ROOT ?>/pages/report-submissions/?power_user=true">
+                                <div class="inner">
+                                    <h4 class="w3-hide-small ">Report Submissions</h4>
+                                    <h6 class="w3-hide-large w3-hide-medium text-bold">Report Submissions</h6>
+                                    <p>View and edit submitted reports.</p>
+                                </div>
+                                <div class="icon text-primary d-md-none">
+                                    <i class="icon-notepad"></i>
+                                </div>
+                                <a href="#" class="small-box-footer bg-primary">
+                                    <span class="fa fa-chevron-circle-right"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h6 class="mb-2 text-nowrap">
                                 <i class="fa fa-door-open text-success"></i> Open Submission
                             </h6>
                             <!-- small box -->
@@ -35,45 +55,6 @@
                                     <i class="fa fa-door-open"></i>
                                 </div>
                                 <a href="#" class="small-box-footer bg-success">
-                                    <span class="fa fa-chevron-circle-right"></span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <h6 class="mb-2 text-nowrap">
-                                <i class="fa fa-file-download text-orange"></i> Generate Report
-                            </h6>
-                            <!-- small box -->
-                            <div class="small-box show border" style="cursor:pointer">
-                                <div class="inner">
-                                    <h4 class="w3-hide-small ">Generate Report</h4>
-                                    <h6 class="w3-hide-large w3-hide-medium text-bold">Generate Report</h6>
-                                    <p>Generate report.</p>
-                                </div>
-                                <div class="icon text-primary d-md-none">
-                                    <i class="fa fa-file-download"></i>
-                                </div>
-                                <a href="#" class="small-box-footer bg-orange">
-                                    <span class="fa fa-chevron-circle-right"></span>
-                                </a>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <h6 class="mb-2 text-nowrap">
-                                <i class="icon-notepad text-primary"></i> Report Submissions
-                            </h6>
-                            <!-- small box -->
-                            <div class="small-box show border" style="cursor:pointer"
-                                 data-url="<?php echo URL_ROOT ?>/pages/report-submissions/">
-                                <div class="inner">
-                                    <h4 class="w3-hide-small ">Report Submissions</h4>
-                                    <h6 class="w3-hide-large w3-hide-medium text-bold">Report Submissions</h6>
-                                    <p>View submitted reports.</p>
-                                </div>
-                                <div class="icon text-primary d-md-none">
-                                    <i class="icon-notepad"></i>
-                                </div>
-                                <a href="#" class="small-box-footer bg-primary">
                                     <span class="fa fa-chevron-circle-right"></span>
                                 </a>
                             </div>
@@ -93,6 +74,25 @@
                                     <i class="fa fa-door-closed"></i>
                                 </div>
                                 <a href="#" class="small-box-footer bg-danger">
+                                    <span class="fa fa-chevron-circle-right"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-none">
+                            <h6 class="mb-2 text-nowrap">
+                                <i class="fa fa-file-download text-orange"></i> Generate Report
+                            </h6>
+                            <!-- small box -->
+                            <div class="small-box show border" style="cursor:pointer">
+                                <div class="inner">
+                                    <h4 class="w3-hide-small ">Generate Report</h4>
+                                    <h6 class="w3-hide-large w3-hide-medium text-bold">Generate Report</h6>
+                                    <p>Generate report.</p>
+                                </div>
+                                <div class="icon text-primary d-md-none">
+                                    <i class="fa fa-file-download"></i>
+                                </div>
+                                <a href="#" class="small-box-footer bg-orange">
                                     <span class="fa fa-chevron-circle-right"></span>
                                 </a>
                             </div>

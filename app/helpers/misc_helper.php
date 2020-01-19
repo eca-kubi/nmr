@@ -893,3 +893,7 @@ function isReportSubmitted(string $target_month, $target_year, $department_id)
 function getJsonEncodedHtml ($html) {
     return json_encode($html, JSON_UNESCAPED_SLASHES);
 }
+
+function getDepartments() {
+    return Database::getDbh()->get('departments');
+}

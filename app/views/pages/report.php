@@ -115,6 +115,7 @@ echo $spreadsheet_templates; ?>'>
     let editDraft = Boolean(<?php echo isset($edit_draft) ? $edit_draft : '' ?>);
     let isNewDraft = Boolean(<?php echo isset($is_new_draft) ? 'true' : '' ?>);
     let clearedContents = "";
+    /** @type {kendo.ui.ToolBar}*/
     let editorActionToolbar;
     let seriesColor = {
         goldProduced: "#5b9bd5",
@@ -130,6 +131,7 @@ echo $spreadsheet_templates; ?>'>
     let previewWindow;
     let previewViewer;
     let pdfViewer;
+    let userDepartmentId = "<?php echo $current_user->department_id; ?>";
     $(function () {
       /*  previewWindow = $("<div id='previewWindow'><div id='previewViewer'></div></div>").appendTo("body").kendoWindow({
             modal: true,
@@ -153,7 +155,6 @@ echo $spreadsheet_templates; ?>'>
 
         editorTabStrip = $("#editorTabStrip").kendoTabStrip({
             select(e) {
-
                 if (e.contentElement.id === "previewTab") {
                     if (!pdfViewer)
                     pdfViewer = $("#previewContent").kendoPDFViewer({
@@ -240,6 +241,7 @@ echo $spreadsheet_templates; ?>'>
                     text: "Submit Report",
                     icon: "check",
                     id: "submitReportBtn",
+                    attributes: {"class" : "submit-report-btn"},
                     click: submitReport,
                     hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id)? 'true' : '' ?>")
                 },
@@ -308,7 +310,7 @@ echo $spreadsheet_templates; ?>'>
             ],
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+               // "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ],
             imageBrowser: {
                 transport: {
@@ -422,7 +424,11 @@ echo $spreadsheet_templates; ?>'>
         let chartsMenuListBox = $("#chartsMenuListBox").kendoListBox({
             dataSource: (() => {
                 let ds = [];
-                spreadsheetTemplates.map((e) => ds.push({id: e.id, description: e.description}));
+                spreadsheetTemplates.map((e) => ds.push({id: e.id, description: e.description, departmentId: e.department_id}));
+                if (!isITAdmin) {
+                    ds = ds.filter(value => value.departmentId + "" === userDepartmentId);
+                }
+                if (ds.length === 0) chartMenuButton.hide();
                 return ds;
             })(),
             dataTextField: "description",
@@ -1216,7 +1222,9 @@ echo $spreadsheet_templates; ?>'>
             if ($(e.target).hasClass('update-submitted-report-btn')) {
                 let alert = kendoAlert("Report Updated!", "Report updated successfully.");
                 setTimeout(() => alert.close(), 3000);
-            } else {
+            } else if($(e.target).hasClass("submit-report-btn")) {
+                editorActionToolbar.hide(".submit-report-btn");
+                editorActionToolbar.show(".update-submitted-report-btn");
                 let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
                 setTimeout(() => alert.close(), 3000);
             }

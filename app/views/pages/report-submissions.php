@@ -1,6 +1,11 @@
 <?php include_once(APP_ROOT . '/views/includes/styles.php'); ?>
 <?php include_once(APP_ROOT . '/views/includes/navbar.php'); ?>
 <?php include_once(APP_ROOT . '/views/includes/sidebar.php'); ?>
+<style>
+    .accordion .fa {
+        margin-right: 0.5rem;
+    }
+</style>
 <!-- .content-wrapper -->
 <div class="content-wrapper animated fadeInRight" style="margin-top: <?php //echo NAVBAR_MT; ?>">
     <!-- content -->
@@ -20,19 +25,48 @@
                 <div class="box-body">
                     <?php if (isset($report_submissions) && is_array($report_submissions) && count($report_submissions) > 0): ?>
                         <div class="accordion" id="accordionReportSubmissions">
-                            <?php foreach ($report_submissions as $key => $group) { ?>
-                                <div class="cardd">
+                            <?php $i = 0;
+                            foreach ($report_submissions as $key => $group) { ?>
+                                <div class="cardd mb-1">
                                     <div class="card-header" id="heading_<?php echo $key; ?>">
                                         <h5 class="mb-0">
                                             <button class="btn btn-link" type="button" data-toggle="collapse"
                                                     data-target="#collapseOne" aria-expanded="true"
-                                                    aria-controls="collapseOne">
+                                                    aria-controls="collapseOne"><i class="collapse-icon fa fa-plus"></i>
                                                 <?php echo $key; ?>
                                             </button>
+                                            <a
+                                                    href="#"
+                                                    class="fa fa-ellipsis-v font-weight-lighter float-right w3-text-dark-grey"
+                                                    data-toggle="dropdown"
+                                                    role="button"></a>
+                                            <span class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                                <a
+                                                        class="dropdown-item preview-final-report-btn"
+                                                        href="#" data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                        data-target-year="<?php echo explode(" ", $key)[1] ?>"><i
+                                                            class="fa fa-play-circle-o"></i> Preview</a>
+                                                <?php if (isPowerUser($current_user->user_id) && isset($is_power_user)): ?>
+                                                    <a
+                                                            class="dropdown-item"
+                                                            href="<?php echo "" ?>"
+                                                            target="_blank"><i class="fa fa-file-edit"></i> Edit
+                                                    </a> <?php endif; ?>
+                                                <a
+                                                        class="dropdown-item download-final-report-btn"
+                                                        href="<?php echo "#" ?>"
+                                                        data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                        data-target-year="<?php echo explode(" ", $key)[1] ?>"
+                                                ><i class="fa fa-file-download"></i> Download</a><a
+                                                        class="dropdown-item"
+                                                        href="<?php echo "" ?>"
+                                                        target="_blank"><i class="fa fa-megaphone"></i> Notify HoDs</a>
+                                            </span>
                                         </h5>
                                     </div>
 
-                                    <div id="collapseOne" class="collapse show"
+                                    <div id="collapseOne" class="collapse <?php echo $i === 0 ? 'show' : '';
+                                    $i++ ?>"
                                          aria-labelledby="heading_<?php echo $key; ?>"
                                          data-parent="#accordionReportSubmissions">
                                         <div class="card-body border rounded-bottom">
@@ -109,6 +143,18 @@
 
 
     $(function () {
+        // Add minus icon for collapse element which is open by default
+        $(".collapse.show").each(function () {
+            $(this).prev(".card-header").find(".collapse-icon").addClass("fa-minus").removeClass("fa-plus");
+        });
+
+        // Toggle plus minus icon on show hide of collapse element
+        $(".collapse").on('show.bs.collapse', function () {
+            $(this).prev(".card-header").find(".collapse-icon").removeClass("fa-plus").addClass("fa-minus");
+        }).on('hide.bs.collapse', function () {
+            $(this).prev(".card-header").find(".collapse-icon").removeClass("fa-minus").addClass("fa-plus");
+        });
+
         jQSelectors.draftViewerWindow = $("<div id='draftViewerWindow'/>").appendTo("body");
         jQSelectors.draftPreviewViewer = $("<div id='draftPreviewViewer'/>").appendTo(jQSelectors.draftViewerWindow);
         jQSelectors.draftPreviewEditor = $("<textarea id='draftPreviewEditor' style='width: 100%;'/>").appendTo("body");
@@ -138,10 +184,9 @@
                 tools: [],
                 stylesheets: [
                     "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                    //"<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
                 ]
             }).data("kendoEditor");
-
         }, 1000);
 
         $("a.preview-btn").on("click", function (e) {
@@ -151,9 +196,33 @@
             let departmentId = currentTarget.data('departmentId');
             let currentMonth = currentTarget.data('currentMonth');
             let currentYear = currentTarget.data('currentYear');
-            $.get(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`, {}, null, "json").done(function (data, successTextStatus, jQueryXHR) {
+            previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`, data => JSON.parse(data).content);
+        });
 
-                previewEditor.value(data.content ? data.content : "");
+        $(".preview-final-report-btn").on("click", e => {
+            let target = $(e.currentTarget);
+            let targetMonth = target.data('targetMonth');
+            let targetYear = target.data('targetYear');
+            previewContent(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"))
+        });
+
+        $(".download-final-report-btn").on("click", e => {
+            let target = $(e.currentTarget);
+            let targetMonth = target.data('targetMonth');
+            let targetYear = target.data('targetYear');
+            downloadContent(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"), (targetMonth + " " + targetYear + " Nzema Report").toUpperCase() );
+        })
+    });
+
+    function previewContent(previewURL, dataFilter) {
+        $.ajax({
+            url: previewURL,
+            dataType: "html",
+            dataFilter(data, type) {
+                return dataFilter ? dataFilter(data, type) : data;
+            },
+            success: function (data) {
+                previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
                     margin: "2cm",
@@ -161,21 +230,40 @@
                 }).then(function (group) {
                     // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
-                })
-                    .done(function (data) {
-                        // Save the PDF file
-                        /*kendo.saveAs({
-                            dataURI: data,
-                            fileName: draftName + ".pdf",
-                            //proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
-                        });*/
-                        draftWindow.center().open();
-                        pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                        setTimeout(() => pdfViewer.activatePage(1), 500)
-                    });
-            });
+                }).done(data => {
+                    draftWindow.center().open();
+                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                    setTimeout(() => pdfViewer.activatePage(1), 500)
+                });
+            }
         })
-    });
+    }
+
+    function downloadContent(contentUrl, dataFilter, fileName = "Report") {
+        $.ajax({
+            url: contentUrl,
+            dataType: "html",
+            dataFilter(data, type) {
+                return dataFilter ? dataFilter(data, type) : data;
+            },
+            success: function (data) {
+                previewEditor.value(data);
+                kendo.drawing.drawDOM($(previewEditor.body), {
+                    paperSize: 'a3',
+                    margin: "2cm",
+                    multipage: true
+                }).then(function (group) {
+                    // Render the result as a PDF file
+                    return kendo.drawing.exportPDF(group, {});
+                }).done(data => {
+                    kendo.saveAs({
+                        dataURI: data,
+                        fileName: fileName + ".pdf"
+                    });
+                });
+            }
+        })
+    }
 
     function adjustSize() {
         // For small screens, maximize the window when it is shown.

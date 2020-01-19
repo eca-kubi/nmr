@@ -259,12 +259,27 @@ class Pages extends Controller
     {
         if (!isLoggedIn())
             redirect('users/login/pages/report-submissions/');
-        if (!isPowerUser(getUserSession()->user_id))
-            redirect('errors/index/404');
+        /*if (!isPowerUser(getUserSession()->user_id))
+            redirect('errors/index/404');*/
         $payload['page_title'] = 'Report Submissions';
         $payload['report_submissions'] = groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id));
-        $payload['is_power_user'] = true;
+        $payload['is_power_user'] = isset($_GET['power_user']) && isPowerUser(getUserSession()->user_id);
         $this->view('pages/report-submissions', $payload);
+    }
+
+    public function finalReport(string $target_month, $target_year)
+    {
+        $db = Database::getDbh();
+        try {
+            $ret = $db->where('s.target_month="' . $target_month . '"')
+                ->where('s.target_year="' . $target_year . '"')
+                ->join('departments d', 'd.department_id=s.department_id')
+                ->join('nmr_report_order r', 'r.department_id=d.department_id')
+                ->orderBy('r.order_no', 'ASC')
+                ->get('nmr_report_submissions s', null, 's.content');
+            echo json_encode($ret, JSON_UNESCAPED_SLASHES);
+        } catch (Exception $e) {
+        }
     }
 
     public function draftReports()
@@ -348,7 +363,7 @@ class Pages extends Controller
                     'spreadsheet_content' => $_POST['spreadsheet_content'],
                     'time_modified' => now()
                 ]);
-                if($success) echo json_encode(['success' => true, 'draftId' => $draft_id]);;
+                if ($success) echo json_encode(['success' => true, 'draftId' => $draft_id]);;
             } else {
                 $success = $db->insert('nmr_editor_draft', [
                     'title' => $_POST['title'],
@@ -368,11 +383,6 @@ class Pages extends Controller
         echo phpinfo();
     }
 
-    public function editor(): void
-    {
-
-    }
-
     public function fetchDraft($draft_id)
     {
         echo Database::getDbh()->where('draft_id', $draft_id)->getValue('nmr_editor_draft', 'content');
@@ -381,10 +391,5 @@ class Pages extends Controller
     public function fetchPreloadedDraft($draft_id)
     {
         echo Database::getDbh()->where('draft_id', $draft_id)->getValue('nmr_preloaded_draft', 'editor_content');
-    }
-
-    public function getArrayData()
-    {
-        echo json_encode(htmlentities('<span></span>'));
     }
 }

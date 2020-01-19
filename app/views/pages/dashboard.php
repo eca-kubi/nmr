@@ -46,11 +46,11 @@
                             </h5>
                             <!-- small box -->
                             <div class="small-box show border" style="cursor:pointer"
-                                 data-url="<?php echo URL_ROOT ?>/pages/view-submissions/">
+                                 data-url="<?php echo URL_ROOT ?>/pages/report-submissions/">
                                 <div class="inner">
                                     <h3 class="w3-hide-small ">Submitted Reports</h3>
                                     <h5 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports</h5>
-                                    <p>View and edit submitted reports.</p>
+                                    <p>View submitted reports.</p>
                                 </div>
                                 <div class="icon" style="color: goldenrod">
                                     <i class="fa fa-check-double"></i>
@@ -60,7 +60,7 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 d-none">
                             <h5 class="mb-2 text-nowrap">
                                 <i class="fa fa-stamp text-success"></i> Approved Reports
                             </h5>

@@ -155,7 +155,7 @@
                         </a>
                     </li>
                     <li class="nav-item ml-0 ml-sm-4 text-left pr-1 border-right border-white">
-                        <a href="<?php echo isset($is_power_user)? site_url('pages/power-user-dashboard') : site_url('pages/dashboard'); ?>"
+                        <a href="<?php echo isset($is_power_user) && $is_power_user? site_url('pages/power-user-dashboard') : site_url('pages/dashboard'); ?>"
                            class="ajax-link nav-link btn border-0 text-bold flat text-left font-raleway nav-item-white w3-text-hover-amber">
                             <i class="fa  fa-dashboard ml-4"></i> Dashboard
                         </a>
@@ -200,7 +200,7 @@
                                        href="<?php echo site_url('pages/report-submissions/') ?>"><i><svg class="fontastic-draft" style="fill: currentColor; height: 14px; width: 14px"><use
                                                     xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></i> Report Submissions</a>
                                 </li>
-                                <li><a class="dropdown-item"
+                                <li class="d-none"><a class="dropdown-item"
                                        href="<?php echo site_url('#')  ?>"><i class="fa fa-stamp"></i> Approved Reports</a>
                                 </li>
                             </ul>
