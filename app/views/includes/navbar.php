@@ -177,7 +177,7 @@
                                 <li><a class="dropdown-item"
                                        href="<?php echo site_url('pages/submitted-reports/') ?>"><i class="fa fa-check-double"></i> Submitted Reports</a>
                                 </li>
-                                <li><a class="dropdown-item"
+                                <li class="d-none"><a class="dropdown-item"
                                        href="<?php echo site_url('#')  ?>"><i class="fa fa-stamp"></i> Approved Reports</a>
                                 </li>
                             </ul>

@@ -310,6 +310,7 @@ echo $spreadsheet_templates; ?>'>
             ],
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                "<?php echo URL_ROOT; ?>/public/assets/css/subjx/subjx.min.css",
                // "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ],
             imageBrowser: {
@@ -1214,11 +1215,11 @@ echo $spreadsheet_templates; ?>'>
         let title = $("#draftTitleInput").val();
         $.post(URL_ROOT + "/pages/submit-report/", {
             title: title,
-            draft_id: draftId.val()? draftId.val() : "",
+            draft_id: draftId.val(),
             content: editor.value(),
             spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
         },null, "json").done((data) => {
-            if(!draftId.val()) draftId.val(data.draftId);
+            /*if(!draftId.val()) */ draftId.val(data.draftId);
             if ($(e.target).hasClass('update-submitted-report-btn')) {
                 let alert = kendoAlert("Report Updated!", "Report updated successfully.");
                 setTimeout(() => alert.close(), 3000);
