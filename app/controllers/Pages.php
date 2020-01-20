@@ -377,6 +377,31 @@ class Pages extends Controller
         }
     }
 
+    public function generateReport(string $target_month, $target_year)
+    {
+        $db = Database::getDbh();
+        $db->onDuplicate(['data_uri']);
+        $json = file_get_contents('php://input');
+        $data = json_decode($json);
+        $data_uri = $data->data_uri;
+        if ($db->insert('nmr_generated_report', ['data_uri' => $data_uri, 'target_month' => $target_month, 'target_year' => $target_year])) {
+            echo json_encode(['success' => true, 'targetMonth' => $target_month, 'targetYear' => $target_year]);
+        }
+    }
+
+    public function downloadReport(string $target_month, $target_year)
+    {
+        $db = Database::getDbh();
+        $data_uri = $db->where('target_month', $target_month)->where('target_year', $target_year)
+            ->getValue('nmr_generated_report', 'data_uri');
+        $data_uri = str_replace('data:application/pdf;base64,', '', $data_uri);
+        $data = base64_decode ($data_uri);
+
+        file_put_contents('file.pdf',$data);
+        header('Content-Type: application/pdf');
+        echo $data;
+    }
+
 
     public function phpinfo(): void
     {

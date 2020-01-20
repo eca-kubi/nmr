@@ -48,9 +48,15 @@
                                                             class="fa fa-play-circle-o"></i> Preview</a>
                                                 <?php if (isPowerUser($current_user->user_id) && isset($is_power_user)): ?>
                                                     <a
-                                                            class="dropdown-item"
-                                                            href="<?php echo "" ?>"
-                                                            target="_blank"><i class="fa fa-file-edit"></i> Edit
+                                                            class="dropdown-item generate-report-btn"
+                                                            href="<?php echo "#" ?>"  data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                            data-target-year="<?php echo explode(" ", $key)[1] ?>"
+                                                    ><i class="fas fa-cogs"></i> Generate Report
+                                                    </a>
+                                                    <a
+                                                            class="dropdown-item d-none"
+                                                            href="<?php echo "#" ?>"
+                                                    ><i class="fa fa-file-edit"></i> Edit
                                                     </a> <?php endif; ?>
                                                 <a
                                                         class="dropdown-item download-final-report-btn"
@@ -58,9 +64,11 @@
                                                         data-target-month="<?php echo explode(" ", $key)[0] ?>"
                                                         data-target-year="<?php echo explode(" ", $key)[1] ?>"
                                                 ><i class="fa fa-file-download"></i> Download</a><a
-                                                        class="dropdown-item"
-                                                        href="<?php echo "" ?>"
-                                                        target="_blank"><i class="fa fa-megaphone"></i> Notify HoDs</a>
+                                                        class="dropdown-item d-none"
+                                                        href="<?php echo "#" ?>"
+                                                        data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                        data-target-year="<?php echo explode(" ", $key)[1] ?>"
+                                                ><i class="fa fa-megaphone"></i> Notify HoDs</a>
                                             </span>
                                         </h5>
                                     </div>
@@ -210,7 +218,7 @@
             let target = $(e.currentTarget);
             let targetMonth = target.data('targetMonth');
             let targetYear = target.data('targetYear');
-            downloadContent(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"), (targetMonth + " " + targetYear + " Nzema Report").toUpperCase() );
+            downloadContent(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"), (targetMonth + " " + targetYear + " Nzema Report").toUpperCase());
         })
     });
 
@@ -264,6 +272,40 @@
             }
         })
     }
+
+    $(".generate-report-btn").on('click', e => {
+        let target = $(e.currentTarget);
+        let targetMonth = target.data('targetMonth');
+        let targetYear = target.data('targetYear');
+        $.ajax({
+            url: `${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`,
+            dataType: "html",
+            dataFilter(data, type) {
+                return JSON.parse(data).map(value => value.content).join("<br/>");
+            },
+            success: data => {
+                previewEditor.value(data);
+                kendo.drawing.drawDOM($(previewEditor.body), {
+                    paperSize: 'a3',
+                    margin: "2cm",
+                    multipage: true
+                }).then(function (group) {
+                    // Render the result as a PDF file
+                    return kendo.drawing.exportPDF(group, {});
+                }).done(data => {
+                    $.ajax({
+                        url: `${URL_ROOT}/pages/generate-report/${targetMonth}/${targetYear}`,
+                        data: JSON.stringify({data_uri: data}, null, 2),
+                        type: "POST",
+                        processData: false,
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: data1 => kendoAlert('Report Generated Successfully', `${targetMonth} ${targetYear} Nzema Report generated successfully! <p>Download Link: <a class="m-2" href="${URL_ROOT}/pages/download-report/${targetMonth}/${targetYear}" target="_blank">${URL_ROOT}/pages/download-report/${targetMonth}/${targetYear}</a> <a id="copyDownloadLink" class="d-none" href="#" role="button" title="Copy download link"><i class="fa fa-copy"></i> </a></p>`)
+                    })
+                });
+            }
+        });
+    });
 
     function adjustSize() {
         // For small screens, maximize the window when it is shown.
