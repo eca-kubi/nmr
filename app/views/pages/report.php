@@ -54,7 +54,7 @@
                 <div class="box-footer d-none"></div>
                 <!-- /.box-footer-->
             </div>
-            <div class="box collapsed border-warning">
+            <div class="box collapsed border-warning  <?php echo isset($is_submission_closed) && $is_submission_closed? 'd-none': ''; ?>">
                 <div class="box-header">
                     <h5 class="box-title text-bold"><span class="fa fa-chart-bar text-warning"></span> Charts</h5>
                     <div class="box-tools pull-right d-none">
@@ -531,7 +531,7 @@ echo $spreadsheet_templates; ?>'>
             chartsMenuPopup.toggle();
         });
 
-        if (editDraft) {
+        if (editDraft && !isSubmissionClosed) {
             loadDraft();
         }
     });

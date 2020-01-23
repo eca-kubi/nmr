@@ -70,7 +70,6 @@ class Pages extends Controller
 
     public function editDraft($draft_id): void
     {
-        //if (!$draft_id) redirect('errors/index/404');
         if (!isLoggedIn()) {
             redirect('users/login/pages/edit-draft/' . $draft_id);
         }
@@ -79,8 +78,12 @@ class Pages extends Controller
             redirect('errors/index/404');
         $payload['page_title'] = 'Edit Draft';
         $payload['draft_id'] = $draft_id;
-        $draft = $db->where('draft_id', $draft_id)->where('user_id', getUserSession()->user_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content']);
+        $draft = $db->where('draft_id', $draft_id)->where('user_id', getUserSession()->user_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_year', 'target_month']);
         $payload['content'] = $draft['content'];
+        $target_month = $draft['target_month'];
+        $target_year = $draft['target_year'];
+        $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
+        //$payload['is_submission_opened'] = isSubmissionOpened();
         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
         $payload['title'] = $draft['title'];
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
@@ -108,7 +111,6 @@ class Pages extends Controller
         $target_year = $draft['target_year'];
         $payload['is_submission_closed'] = json_encode(['submission_closed' => isSubmissionClosedByPowerUser($target_month, $target_year)]);
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        //$payload['edit_draft'] = true;
         $this->view('pages/report', $payload);
     }
 
@@ -347,7 +349,7 @@ class Pages extends Controller
         $db = Database::getDbh();
         $payload['page_title'] = 'Edit Final Report';
         $payload['edit_final_report'] = true;
-        $payload['is_submission_closed'] = $this->isSubmissionClosed($target_month, $target_year);
+       // $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
         if ($db->where('target_year', $target_year)->where('target_month', $target_month)->has('nmr_final_report')) {
             $payload['content'] = $db->where('target_year', $target_year)->where('target_month', $target_month)
                 ->getValue('nmr_final_report', 'html_content');
@@ -362,10 +364,6 @@ class Pages extends Controller
             };
             $payload['content'] = array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year)), $join, "<br/>");
         }
-        /*   $payload['content'] = $db->where('target_year', $target_year)->where('target_month', $target_month)
-               ->getValue('nmr_final_report', 'html_content'); */
-
-
         $payload['title'] = "$target_month $target_year Flash Report";
         $payload['target_year'] = $target_year;
         $payload['target_month'] = $target_month;

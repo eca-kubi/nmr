@@ -16,7 +16,7 @@
                     <div class="row p-1">
                         <h5 class="box-title text-bold"><span><svg class="fontastic-draft" style="fill: currentColor"><use
                                             xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
-                            Report Submissions
+                            Submitted Reports
                         </h5>
                     </div>
 
@@ -108,7 +108,7 @@
                                                                 <a href="#"
                                                                    class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
                                                                    data-report-submissions-id="<?php echo $report['report_submissions_id']; ?>"
-                                                                   data-title="<?php echo $report['department']; ?>"><i
+                                                                   data-title="<?php echo $report['department']; ?>" data-target-month="<?php echo $report['target_month'] ?>" data-target-year="<?php echo $report['target_year'] ?>"><i
                                                                             class="fa fa-play-circle-o"></i> Preview</a>
                                                             </div>
                                                             <!-- /.info-box-content -->
@@ -148,6 +148,8 @@
 <script>
     let previewEditor;
     let draftWindow;
+    let previewTargetMonth;
+    let previewTargetYear;
     /**
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
@@ -189,13 +191,15 @@
             width: "100%",
             height: 550,
             scale: 1,
-            toolbar: [
-                "pager", "zoom", "toggleSelection", "search", "download", "print",
-                {
-                    name: "generateReport",
-                    template: `<a role='button' class='<?php echo isPowerUser($current_user->user_id) ? 'k-button k-flat generate-report-btn' : 'd-none' ?>' title='Generate Report'><span class='fa fa-cogs'></span>&nbsp;Generate Report</a>`
-                }
-            ]
+            toolbar: {
+                items: [
+                    "pager", "zoom", "toggleSelection", "search", "download", "print",
+                    {
+                        name: "generateReport",
+                        template: `<a role='button' class='<?php echo isPowerUser($current_user->user_id) ? 'k-button k-flat generate-report-btn' : 'd-none' ?>' title='Generate Report'><span class='fa fa-cogs'></span>&nbsp;Generate Report</a>`
+                    }
+                ]
+            }
         }).getKendoPDFViewer();
         setTimeout(function () {
             previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
@@ -212,30 +216,52 @@
             let reportSubmissionsId = currentTarget.data('reportSubmissionsId');
             let title = currentTarget.data('title');
             let departmentId = currentTarget.data('departmentId');
-            let currentMonth = currentTarget.data('currentMonth');
-            let currentYear = currentTarget.data('currentYear');
+            let currentMonth = previewTargetMonth = currentTarget.data('targetMonth');
+            let currentYear = previewTargetYear = currentTarget.data('targetYear');
             previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`, data => JSON.parse(data).content);
         });
 
         $(".preview-final-report-btn").on("click", e => {
             let target = $(e.currentTarget);
-            let targetMonth = target.data('targetMonth');
-            let targetYear = target.data('targetYear');
-            previewContent(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"))
+            let targetMonth = previewTargetMonth = target.data('targetMonth');
+            let targetYear = previewTargetYear = target.data('targetYear');
+            $.ajax({
+                url: `${URL_ROOT}/pages/generate-report/${targetMonth}/${targetYear}`,
+                dataType: "html",
+                dataFilter(data, type) {
+                    return JSON.parse(data).map(value => value.content).join("<br/>");
+                },
+                success: data => {
+                    previewEditor.value(data);
+                    kendo.drawing.drawDOM($(previewEditor.body), {
+                        paperSize: 'a3',
+                        margin: "2cm",
+                        multipage: true
+                    }).then(function (group) {
+                        // Render the result as a PDF file
+                        return kendo.drawing.exportPDF(group, {});
+                    }).done(data => {
+                        draftWindow.center().open();
+                        pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                        setTimeout(() => pdfViewer.activatePage(1), 500);
+                    });
+                }
+            });
+            //previewContent(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"))
         });
 
         $(".download-final-report-btn").on("click", e => {
             let target = $(e.currentTarget);
             let targetMonth = target.data('targetMonth');
             let targetYear = target.data('targetYear');
-            downloadContent(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"), (targetMonth + " " + targetYear + " Nzema Report").toUpperCase());
+            downloadContent(`${URL_ROOT}/pages/generate-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"), (targetMonth + " " + targetYear + " Nzema Report").toUpperCase());
         });
 
 
         $(".generate-report-btn").on('click', e => {
             let target = $(e.currentTarget);
-            let targetMonth = target.data('targetMonth');
-            let targetYear = target.data('targetYear');
+            let targetMonth = previewTargetMonth;
+            let targetYear = previewTargetYear;
             let html_content = "";
             $.ajax({
                 url: `${URL_ROOT}/pages/generate-report/${targetMonth}/${targetYear}`,
@@ -313,11 +339,11 @@
                 dataType: "json",
                 success: data => {
                     if (data.submission_closed) {
-                        window.location.href =`${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`;
+                        window.location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`;
                     } else {
                         showWindow('You must first close submission for this month!<br>Do you wish to close submission?',
                             'Close Submission?').done(() => {
-                            window.location.href =`${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`;
+                            window.location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`;
                         })
                     }
                 }
