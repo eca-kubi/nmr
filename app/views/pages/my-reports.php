@@ -9,77 +9,37 @@
             <div class="box collapsed">
                 <div class="box-header border-bottom">
                     <div class="row p-1">
-                        <h5 class="box-title text-bold"><span><svg class="fontastic-draft" style="fill: currentColor"><use
-                                            xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
-                            Drafts
+                        <h5 class="box-title text-bold"><span class="fa fa-file-user"></span>
+                            <?php echo $page_title; ?>
                         </h5>
-                        <div class="box-tools pull-right ml-auto <?php echo isITAdmin($current_user->user_id) ? '' : 'd-none'; ?>">
-                            <button type="button" class="btn btn-app btn-box-tool btn-outline-light btn-sm"
-                                    data-toggle="dropdown"
-                            >
-                                <i class="fa fa-file-word" style="color: goldenrod"></i> <span><i
-                                            class="fa fa-plus text-success"></i> Add Draft</span>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item"
-                                   href="<?php echo URL_ROOT . '/pages/new-draft/'; ?>"
-                                   target="_blank"><i class="fa fa-file"></i> New </a>
-                                <a class="dropdown-item"
-                                   href="<?php echo URL_ROOT . '/pages/new-draft/?preloaded=true' ?>"><i
-                                            class="fa fa-star"></i> Preloaded </a>
-                            </div>
-                        </div>
                     </div>
 
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div class="row">
-                        <?php if (isset($drafts) && is_array($drafts) && count($drafts) > 0): ?>
-                            <?php for ($i = 0; $i < count($drafts); $i++): $draft = $drafts[$i] ?>
-                                <div class="col-md-4 col-sm-6 col-xs-12" id="draft_<?php echo $draft['draft_id']; ?>">
-                                    <div class="info-box p-0">
-                                <span class="info-box-icon bg-gray-light border rounded-0 rounded-left"><svg
-                                            class="fontastic-draft"
-                                            style="fill: currentColor"><use
-                                                xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
+                        <?php if (isset($my_reports) && is_array($my_reports) && count($my_reports) > 0): ?>
+                            <div class="k-content">
+                                <ul id="myReportsTreeView" data-role="treeview">
+                                    <?php foreach ($my_reports as $year => $reports) { ?>
+                                        <li data-expanded="true">
+                                            <span class="fa fa-folder"> <?php echo $year ?></span>
 
-                                        <div class="info-box-content">
-                                    <span class="info-box-text text-bold"><?php echo $draft['title'] ?><a href="#"
-                                                                                                          class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
-                                                                                                          data-toggle="dropdown"
-                                                                                                          role="button"></a>
-                                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-<!--          <a class="dropdown-item" href="#"><i class="fa fa-play-circle-o"></i> Preview</a>
-                                -->          <a class="dropdown-item"
-                                                href="<?php echo URL_ROOT . '/pages/edit-draft/' . $draft['draft_id']; ?>"
-                                                target="_blank"><i class="fa fa-file-edit"></i> Edit</a>
-                                             <a class="dropdown-item delete-draft-btn" href="#"
-                                                data-draft-id="<?php echo $draft['draft_id']; ?>"
-                                                data-parent="#draft_<?php echo $draft['draft_id']; ?>"><i
-                                                         class="fa fa-trash-o"></i> Delete</a>
-                                        </div>
-                                    </span>
-                                            <span class="text-sm"><i
-                                                        class="fa fa-calendar"></i> <?php echo echoDateOfficial($draft['time_modified'], true); ?></span>
-                                            <span style="font-size: 0.7rem;display: block"><i
-                                                        class="fa fa-clock-o"></i> <?php echo getTime($draft['time_modified']); ?></span>
-                                            <a href="#"
-                                               class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
-                                               data-draft-id="<?php echo $draft['draft_id']; ?>"
-                                               data-title="<?php echo $draft['title']; ?>"><i
-                                                        class="fa fa-play-circle-o"></i> Preview</a>
-                                        </div>
-                                        <!-- /.info-box-content -->
-                                    </div>
-                                    <!-- /.info-box -->
-                                    <!--<div class="w3-card p-0 collapse rounded" id="previewBox">
-                                        <div class="info-box-content">OK</div>
-                                    </div>-->
-                                </div>
-                            <?php endfor ?>
+                                            <ul>
+                                                <?php foreach ($reports as $report) { ?>
+                                                    <li onclick="window.location.href='<?php echo URL_ROOT ?>/pages/edit-report/<?php echo $report["draft_id"]; ?>'" data-submission-closed="<?php echo $report['closed_status']? : '' ?>" data-draft-id="<?php echo $report['draft_id'] ?>">
+                                                        <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span> <i class="mx-2 text-bold text-sm <?php echo $report['closed_status']? 'text-danger submission-closed' : 'text-success' ?>" ><?php echo $report['closed_status']? 'Submission closed (You can not edit the report).' : 'Submission opened.' ?></i>
+                                                    </li>
+                                                <?php } ?>
+                                            </ul>
+
+                                        </li>
+                                    <?php } ?>
+                                </ul>
+                            </div>
+
                         <?php else: ?>
-                            <h5>No Draft Available!</h5>
+                            <h5>No Reports Available!</h5>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -111,6 +71,7 @@
 
 
     $(function () {
+        kendo.bind('.k-content');
         jQSelectors.draftViewerWindow = $("<div id='draftViewerWindow'/>").appendTo("body");
         jQSelectors.draftPreviewViewer = $("<div id='draftPreviewViewer'/>").appendTo(jQSelectors.draftViewerWindow);
         jQSelectors.draftPreviewEditor = $("<textarea id='draftPreviewEditor' style='width: 100%;'/>").appendTo("body");
@@ -133,6 +94,11 @@
             width: "100%",
             height: 550,
             scale: 1,
+            toolbar: {
+                items: [
+                    "pager", "zoom", "toggleSelection", "search", "download", "print"
+                ]
+            }
         }).getKendoPDFViewer();
         setTimeout(function () {
             previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
@@ -145,9 +111,9 @@
 
         }, 1000);
 
-        $("a.preview-btn").on("click", function (e) {
+        $(".preview-btn").on("click", function (e) {
             let draftId = $(e.currentTarget).data('draftId');
-            let title = $(e.currentTarget).data('title');
+            window.previewDraftId = draftId;
             $.get(URL_ROOT + "/pages/fetchDraft/" + draftId).done(function (data, successTextStatus, jQueryXHR) {
 
                 previewEditor.value(data);

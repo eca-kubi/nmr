@@ -8,9 +8,9 @@
         <div class="box-group pt-1" id="box_group">
             <div class="box collapsed border-primary">
                 <div class="box-header">
-                    <h5 class="box-title text-bold"><input type="text" id="draftTitleInput"
+                    <h5 class="box-title text-bold"><input type="text" readonly id="draftTitleInput"
                                                            class="k-input <?php echo isset($title) ? '' : 'no-title' ?>"
-                                                           value="<?php echo isset($title) ? $title : 'New Draft' ?>">
+                                                           value="<?php echo isset($title) ? $title : 'Draft' ?>">
                     </h5>
                     <div class="box-tools pull-right d-none">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -30,13 +30,17 @@
                             <div style="width: 100%">
                                 <form id="editorForm">
                                     <textarea name="content" id="editor" cols="30" rows="10"
-                                              style="height: 400px"><?php echo isset($content) ? $content : ''; ?></textarea>
+                                              style="height: 400px"><?php echo $content ?? ''; ?></textarea>
                                     <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
-                                           value='<?php echo isset($spreadsheet_content) ? $spreadsheet_content : ''; ?>'>
+                                           value='<?php echo $spreadsheet_content ?? ''; ?>'>
                                     <input type="hidden" id="title" name="title"
-                                           value="<?php echo isset($title) ? $title : ''; ?>">
+                                           value="<?php echo $title ?? ''; ?>">
                                     <input type="hidden" id="draftId" name="draft_id"
-                                           value="<?php echo isset($draft_id) ? $draft_id : ''; ?>">
+                                           value="<?php echo $draft_id ?? ''; ?>">
+                                    <input type="hidden" id="targetYear" name="target_year"
+                                           value="<?php echo $target_year ?? ''; ?>">
+                                    <input type="hidden" id="targetMonth" name="target_month"
+                                           value="<?php echo $target_month ?? ''; ?>">
                                     <input type="hidden" id="departmentName" name="department_name">
                                 </form>
                             </div>
@@ -91,6 +95,12 @@
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
 <input type="hidden" id="spreadsheetTemplates" value='<?php /** @var string $spreadsheet_templates */
 echo $spreadsheet_templates; ?>'>
+<style>
+    #previewEditor .k-editor {
+        visibility: hidden;
+        z-index: -1;
+    }
+</style>
 <script>
     const HEADER_BACKGROUND_COLOR = "#9c27b0";
     const HEADER_BORDER = {color: HEADER_BACKGROUND_COLOR, size: 2};
@@ -112,8 +122,10 @@ echo $spreadsheet_templates; ?>'>
     /** @type {kendo.ui.Editor}*/
     let editor;
     let firstSheetLoading = true;
-    let editDraft = Boolean(<?php echo isset($edit_draft) ? $edit_draft : '' ?>);
-    let isNewDraft = Boolean(<?php echo isset($is_new_draft) ? 'true' : '' ?>);
+    let editDraft = Boolean(<?php echo $edit_draft ?? '' ?>);
+    let isNewDraft = Boolean(<?php echo $is_new_draft ?? '' ?>);
+    let editReport = Boolean(<?php echo $edit_report ?? ''; ?>);
+    let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
     let clearedContents = "";
     /** @type {kendo.ui.ToolBar}*/
     let editorActionToolbar;
@@ -133,18 +145,17 @@ echo $spreadsheet_templates; ?>'>
     let pdfViewer;
     let userDepartmentId = "<?php echo $current_user->department_id; ?>";
     $(function () {
-      /*  previewWindow = $("<div id='previewWindow'><div id='previewViewer'></div></div>").appendTo("body").kendoWindow({
-            modal: true,
-            visible: false,
-            width: "80%",
-            scrollable: false,
-            //height: "80%",
-            // (Optional) Will limit the percentage dimensions as well:
-            // maxWidth: 1200,
-            // maxHeight: 800,
-            //open: adjustSize
-        }).data("kendoWindow");*/
-
+        /*  previewWindow = $("<div id='previewWindow'><div id='previewViewer'></div></div>").appendTo("body").kendoWindow({
+              modal: true,
+              visible: false,
+              width: "80%",
+              scrollable: false,
+              //height: "80%",
+              // (Optional) Will limit the percentage dimensions as well:
+              // maxWidth: 1200,
+              // maxHeight: 800,
+              //open: adjustSize
+          }).data("kendoWindow");*/
 
 
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
@@ -157,14 +168,14 @@ echo $spreadsheet_templates; ?>'>
             select(e) {
                 if (e.contentElement.id === "previewTab") {
                     if (!pdfViewer)
-                    pdfViewer = $("#previewContent").kendoPDFViewer({
-                        pdfjsProcessing: {
-                            file: ""
-                        },
-                        width: "100%",
-                        height: 550,
-                        scale: 1,
-                    }).getKendoPDFViewer();
+                        pdfViewer = $("#previewContent").kendoPDFViewer({
+                            pdfjsProcessing: {
+                                file: ""
+                            },
+                            width: "100%",
+                            height: 550,
+                            scale: 1,
+                        }).getKendoPDFViewer();
                     //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
                     kendo.drawing.drawDOM($(editor.body), {
                         paperSize: 'a3',
@@ -181,7 +192,7 @@ echo $spreadsheet_templates; ?>'>
                                 fileName: draftName + ".pdf",
                                 //proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
                             });*/
-                           // previewWindow.center().open();
+                            // previewWindow.center().open();
                             pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                             setTimeout(() => pdfViewer.activatePage(1), 500)
                         });
@@ -207,7 +218,15 @@ echo $spreadsheet_templates; ?>'>
                     type: "button",
                     text: "Save Draft",
                     icon: "save",
-                    click: saveDraft
+                    click: saveDraft,
+                    hidden: "<?php echo isset($edit_draft) ? '' : 'true' ?>"
+                },
+                {
+                    type: "button",
+                    text: "Save Final Report",
+                    icon: "save",
+                    click: saveFinalReport,
+                    hidden: "<?php echo isset($edit_final_report) ? '' : 'true' ?>"
                 },
                 {
                     type: "button",
@@ -219,7 +238,8 @@ echo $spreadsheet_templates; ?>'>
                             editor.value("");
                             editorActionToolbar.show("#undoClearContents");
                         }
-                    }
+                    },
+                    hidden: true
                 },
                 {
                     type: "button",
@@ -235,25 +255,33 @@ echo $spreadsheet_templates; ?>'>
                     },
                     hidden: true
                 },
-                <?php if (isSubmissionOpened()): ?>
+                <?php if (isset($edit_report) && isSubmissionOpened()): ?>
                 {
                     type: "button",
                     text: "Submit Report",
                     icon: "check",
                     id: "submitReportBtn",
-                    attributes: {"class" : "submit-report-btn"},
+                    attributes: {"class": "submit-report-btn"},
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id)? 'true' : '' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id) ? 'true' : '' ?>")
                 },
-                <?php endif; ?>
                 {
                     type: "button",
                     id: "updateSubmittedReportBtn",
                     icon: "upload",
-                    attributes: {"class" : "update-submitted-report-btn"},
+                    attributes: {"class": "update-submitted-report-btn"},
                     text: "Update Submitted Report",
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id)? '' : 'true' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id) ? '' : 'true' ?>")
+                },
+                <?php endif; ?>
+                {
+                    type: "button",
+                    id: "cancelBtn",
+                    icon: "cancel",
+                    attributes: {"class": "cancel-btn"},
+                    text: "Cancel",
+                    click: e => history.back(),
                 },
 
                 <?php if (isITAdmin($current_user->user_id)): ?>
@@ -261,7 +289,8 @@ echo $spreadsheet_templates; ?>'>
                     type: "button",
                     text: "Save as Preloaded",
                     icon: "launch",
-                    click: saveDraftAsPreloaded
+                    click: saveDraftAsPreloaded,
+                    hidden: true
                 },
                 <?php endif; ?>
             ]
@@ -311,7 +340,7 @@ echo $spreadsheet_templates; ?>'>
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                 "<?php echo URL_ROOT; ?>/public/assets/css/subjx/subjx.min.css",
-               // "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                // "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ],
             imageBrowser: {
                 transport: {
@@ -353,8 +382,8 @@ echo $spreadsheet_templates; ?>'>
             },
             encoded: false
         }).data("kendoEditor");
+        if (editor) editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
 
-        editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
 
         let chartMenuCommand = {
             template: kendo.template($("#chartsMenuTemplate").html())
@@ -363,6 +392,7 @@ echo $spreadsheet_templates; ?>'>
         let copyToEditor = {
             template: kendo.template($("#copyToEditor").html())
         };
+
 
         spreadsheet = $("#spreadSheet").kendoSpreadsheet({
             columnWidth: 50,
@@ -415,6 +445,7 @@ echo $spreadsheet_templates; ?>'>
             $("div#spreadSheet").trigger("resize");
             //overlayScrollbarsInstances.body.scroll($("#editorTabStrip"), 5000, {x: 'swing', y: 'swing'})
             setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {x: 'swing', y: 'swing'}), 500);
+
         }, 3000);
 
         let chartMenuButton = $("#chartsMenuButton");
@@ -425,7 +456,11 @@ echo $spreadsheet_templates; ?>'>
         let chartsMenuListBox = $("#chartsMenuListBox").kendoListBox({
             dataSource: (() => {
                 let ds = [];
-                spreadsheetTemplates.map((e) => ds.push({id: e.id, description: e.description, departmentId: e.department_id}));
+                spreadsheetTemplates.map((e) => ds.push({
+                    id: e.id,
+                    description: e.description,
+                    departmentId: e.department_id
+                }));
                 if (!isITAdmin) {
                     ds = ds.filter(value => value.departmentId + "" === userDepartmentId);
                 }
@@ -1130,17 +1165,32 @@ echo $spreadsheet_templates; ?>'>
                 });
             });
         });
-        let draftTitleInput = $("#draftTitleInput");
-        if (draftTitleInput.hasClass('no-title')) {
-            kendo.prompt("Enter a title for your draft.", "New Draft").done(function (title) {
-                $("#draftTitleInput, #title").removeClass('no-title').val(title);
-                postDfr.resolve(title);
-            });
-        } else {
-            let title = draftTitleInput.val();
-            $("#title").val(title);
-            postDfr.resolve(title);
-        }
+        /* let draftTitleInput = $("#draftTitleInput");
+         if (draftTitleInput.hasClass('no-title')) {
+             kendo.prompt("Enter a title for your draft.", "New Draft").done(function (title) {
+                 $("#draftTitleInput, #title").removeClass('no-title').val(title);
+                 postDfr.resolve(title);
+             });
+         } else {
+             let title = draftTitleInput.val();
+             $("#title").val(title);
+             postDfr.resolve(title);
+         }*/
+    }
+
+    function saveFinalReport() {
+        let targetMonth = $("#targetMonth").val();
+        let targetYear = $("#targetYear").val();
+        $.post({
+            url: `${URL_ROOT}/pages/save-final-report/${targetMonth}/${targetYear}`,
+            data: JSON.stringify({html_content: editor.value()}),
+            dataType: "json",
+            contentType: "application/json",
+            success: function () {
+                let alert = kendoAlert('Save Flash Report', `${targetMonth} ${targetYear} Flash Report saved successfully!`);
+                setTimeout(() => alert.close(), 1500);
+            }
+        })
     }
 
     function saveDraftAsPreloaded(e) {
@@ -1213,23 +1263,36 @@ echo $spreadsheet_templates; ?>'>
     function submitReport(e) {
         let draftId = $("#draftId");
         let title = $("#draftTitleInput").val();
-        $.post(URL_ROOT + "/pages/submit-report/", {
-            title: title,
-            draft_id: draftId.val(),
-            content: editor.value(),
-            spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-        },null, "json").done((data) => {
-            /*if(!draftId.val()) */ draftId.val(data.draftId);
-            if ($(e.target).hasClass('update-submitted-report-btn')) {
-                let alert = kendoAlert("Report Updated!", "Report updated successfully.");
-                setTimeout(() => alert.close(), 3000);
-            } else if($(e.target).hasClass("submit-report-btn")) {
-                editorActionToolbar.hide(".submit-report-btn");
-                editorActionToolbar.show(".update-submitted-report-btn");
+        let submit = () => {
+            let dfd = $.Deferred();
+            let post = $.post(URL_ROOT + "/pages/submit-report/", {
+                title: title,
+                draft_id: draftId.val(),
+                content: editor.value(),
+                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+            }, null, "json");
+            dfd.resolve(post);
+            return dfd.promise();
+        };
+
+        if ($(e.target).hasClass('update-submitted-report-btn')) {
+            showWindow('This report has already been submitted. Are you sure you want to update it?')
+                .done(e => {
+                    submit().done(post => post.done(data => {
+                        draftId.val(data.draftId);
+                        let alert = kendoAlert("Report Updated!", "Report updated successfully.");
+                        setTimeout(() => alert.close(), 3000);
+                    }));
+                });
+        } else if ($(e.target).hasClass("submit-report-btn")) {
+            submit().done(post => post.done(data => {
+                draftId.val(data.draftId);
                 let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
                 setTimeout(() => alert.close(), 3000);
-            }
-        })
+                editorActionToolbar.hide(".submit-report-btn");
+                editorActionToolbar.show(".update-submitted-report-btn");
+            }));
+        }
     }
 
     function getArrayData() {

@@ -11,7 +11,7 @@
                     <div class="row p-1">
                         <h5 class="box-title text-bold"><span><svg class="fontastic-draft" style="fill: currentColor"><use
                                             xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
-                            Drafts
+                            <?php echo $page_title; ?>
                         </h5>
                         <div class="box-tools pull-right ml-auto <?php echo isITAdmin($current_user->user_id) ? '' : 'd-none'; ?>">
                             <button type="button" class="btn btn-app btn-box-tool btn-outline-light btn-sm"
@@ -35,16 +35,15 @@
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div class="row">
-                        <?php if (isset($drafts) && is_array($drafts) && count($drafts) > 0): ?>
-                            <?php for ($i = 0; $i < count($drafts); $i++): $draft = $drafts[$i] ?>
-                                <div class="col-md-4 col-sm-6 col-xs-12" id="draft_<?php echo $draft['draft_id']; ?>">
-                                    <div class="info-box p-0">
+                        <?php if (isset($draft) && is_array($draft) && count($draft) > 0): ?>
+                            <div class="col-md-4 col-sm-6 col-xs-12" id="draft_<?php echo $draft['draft_id']; ?>">
+                                <div class="info-box p-0">
                                 <span class="info-box-icon bg-gray-light border rounded-0 rounded-left"><svg
                                             class="fontastic-draft"
                                             style="fill: currentColor"><use
                                                 xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
 
-                                        <div class="info-box-content">
+                                    <div class="info-box-content">
                                     <span class="info-box-text text-bold"><?php echo $draft['title'] ?><a href="#"
                                                                                                           class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
                                                                                                           data-toggle="dropdown"
@@ -54,30 +53,34 @@
                                 -->          <a class="dropdown-item"
                                                 href="<?php echo URL_ROOT . '/pages/edit-draft/' . $draft['draft_id']; ?>"
                                                 target="_blank"><i class="fa fa-file-edit"></i> Edit</a>
-                                             <a class="dropdown-item delete-draft-btn" href="#"
+                                             <a class="dropdown-item delete-draft-btn d-none" href="#"
                                                 data-draft-id="<?php echo $draft['draft_id']; ?>"
                                                 data-parent="#draft_<?php echo $draft['draft_id']; ?>"><i
                                                          class="fa fa-trash-o"></i> Delete</a>
                                         </div>
                                     </span>
-                                            <span class="text-sm"><i
-                                                        class="fa fa-calendar"></i> <?php echo echoDateOfficial($draft['time_modified'], true); ?></span>
-                                            <span style="font-size: 0.7rem;display: block"><i
-                                                        class="fa fa-clock-o"></i> <?php echo getTime($draft['time_modified']); ?></span>
-                                            <a href="#"
-                                               class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
-                                               data-draft-id="<?php echo $draft['draft_id']; ?>"
-                                               data-title="<?php echo $draft['title']; ?>"><i
-                                                        class="fa fa-play-circle-o"></i> Preview</a>
-                                        </div>
-                                        <!-- /.info-box-content -->
+                                        <span class="text-sm"><i
+                                                    class="fa fa-calendar"></i> <?php echo echoDateOfficial($draft['time_modified'], true); ?></span>
+                                        <span style="font-size: 0.7rem;display: block"><i
+                                                    class="fa fa-clock-o"></i> <?php echo getTime($draft['time_modified']); ?></span>
+                                        <a href="#"
+                                           class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
+                                           data-draft-id="<?php echo $draft['draft_id']; ?>"
+                                           data-title="<?php echo $draft['title']; ?>"><i
+                                                    class="fa fa-play-circle-o"></i> Preview</a>
+                                        <a href="<?php echo URL_ROOT . '/pages/edit-draft/' . $draft['draft_id']; ?>"
+                                           class="float-right text-sm font-poppins w3-text-dark-grey edit-btn mx-4"
+                                           data-draft-id="<?php echo $draft['draft_id']; ?>"
+                                           data-title="<?php echo $draft['title']; ?>"><i
+                                                    class="fa fa-file-edit"></i> Edit</a>
                                     </div>
-                                    <!-- /.info-box -->
-                                    <!--<div class="w3-card p-0 collapse rounded" id="previewBox">
-                                        <div class="info-box-content">OK</div>
-                                    </div>-->
+                                    <!-- /.info-box-content -->
                                 </div>
-                            <?php endfor ?>
+                                <!-- /.info-box -->
+                                <!--<div class="w3-card p-0 collapse rounded" id="previewBox">
+                                    <div class="info-box-content">OK</div>
+                                </div>-->
+                            </div>
                         <?php else: ?>
                             <h5>No Draft Available!</h5>
                         <?php endif; ?>
@@ -133,6 +136,11 @@
             width: "100%",
             height: 550,
             scale: 1,
+            toolbar: {
+                items: [
+                    "pager", "zoom", "toggleSelection", "search", "download", "print"
+                ]
+            }
         }).getKendoPDFViewer();
         setTimeout(function () {
             previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
@@ -147,7 +155,8 @@
 
         $("a.preview-btn").on("click", function (e) {
             let draftId = $(e.currentTarget).data('draftId');
-            let title = $(e.currentTarget).data('title');
+            window.previewDraftId = draftId;
+                let title = $(e.currentTarget).data('title');
             $.get(URL_ROOT + "/pages/fetchDraft/" + draftId).done(function (data, successTextStatus, jQueryXHR) {
 
                 previewEditor.value(data);

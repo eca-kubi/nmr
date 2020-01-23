@@ -21,14 +21,14 @@
                     <div class="row">
                         <div class="col-md-4">
                             <h6 class="mb-2 text-nowrap">
-                                <i class="icon-notepad text-primary"></i> Report Submissions
+                                <i class="icon-notepad text-primary"></i> Submitted Reports
                             </h6>
                             <!-- small box -->
                             <div class="small-box show border" style="cursor:pointer"
-                                 data-url="<?php echo URL_ROOT ?>/pages/report-submissions/?power_user=true">
+                                 data-url="<?php echo URL_ROOT ?>/pages/submitted-reports/?power_user=true">
                                 <div class="inner">
-                                    <h4 class="w3-hide-small ">Report Submissions</h4>
-                                    <h6 class="w3-hide-large w3-hide-medium text-bold">Report Submissions</h6>
+                                    <h4 class="w3-hide-small ">Submitted Reports</h4>
+                                    <h6 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports</h6>
                                     <p>View and edit submitted reports.</p>
                                 </div>
                                 <div class="icon text-primary d-md-none">

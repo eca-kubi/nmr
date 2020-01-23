@@ -44,3 +44,9 @@
 .icon-notepad:before {
   content: "\61";
 }
+.icon-doc:before {
+  content: "\63";
+}
+.icon-folder2:before {
+  content: "\64";
+}

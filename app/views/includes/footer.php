@@ -14,7 +14,7 @@
 <script>
     let isPowerUser = Boolean(<?php echo isPowerUser($current_user->user_id) ?>);
     let isSubmissionOpened = Boolean(<?php echo isSubmissionOpened(); ?>);
-    let isSubmissionClosedByPowerUser = Boolean(<?php echo isSubmissionClosedByPowerUser(); ?>);
+    let isSubmissionClosedByPowerUser = Boolean(<?php echo isSubmissionClosedByPowerUser(monthName(monthNumber(now())), year(now())); ?>);
     let currentSubmissionMonth = "<?php echo currentSubmissionMonth() ?>";
     let currentSubmissionYear = "<?php echo currentSubmissionYear() ?>";
     let isITAdmin = Boolean(<?php echo isITAdmin($current_user->user_id); ?>);

@@ -9,6 +9,8 @@ use Moment\CustomFormats\MomentJs;
 use Moment\Moment;
 use Moment\MomentException;
 
+$current_user = getUserSession();
+
 function arrToObj($arr)
 {
     return json_decode(json_encode($arr, JSON_THROW_ON_ERROR, 512), true, 512, JSON_THROW_ON_ERROR);
@@ -821,9 +823,10 @@ function isSubmissionOpened()
     return Database::getDbh()->where('prop', 'nmr_submission_opened')->getValue('settings', 'value');
 }
 
-function isSubmissionClosedByPowerUser()
+function isSubmissionClosedByPowerUser($target_month, $target_year)
 {
-    return Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->getValue('settings', 'value');
+    //return Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->getValue('settings', 'value');
+    return Database::getDbh()->where('target_month', $target_month)->where('target_year', $target_year)->getValue('nmr_target_month_year', 'closed_status');
 }
 
 function currentSubmissionMonth()
@@ -836,6 +839,18 @@ function currentSubmissionYear()
     return Database::getDbh()->where('prop', 'nmr_current_submission_year')->getValue('settings', 'value');
 }
 
+function getSubmittedReports ($target_month, $target_year) {
+    try {
+        return Database::getDbh()->where('s.target_month="' . $target_month . '"')
+            ->where('s.target_year="' . $target_year . '"')
+            ->join('departments d', 'd.department_id=s.department_id')
+            ->join('nmr_report_order r', 'r.department_id=d.department_id')
+            ->orderBy('r.order_no', 'ASC')
+            ->get('nmr_report_submissions s', null, 's.content');
+    } catch (Exception $e) {
+    }
+    return [];
+}
 function getReportSubmissions(string $target_month = "", $target_year = "", $department_id = "")
 {
     try {
@@ -858,13 +873,22 @@ function getReportSubmissions(string $target_month = "", $target_year = "", $dep
 }
 
 function groupedReportSubmissions(array $report_submissions) {
-    $db = Database::getDbh();
     $grouped = [];
     foreach ($report_submissions as $key => $item) {
         $grouped[$item['target_month']. " " . $item['target_year']][$key] = $item;
     }
 
      ksort($grouped, SORT_NUMERIC);
+    return $grouped;
+}
+
+function groupedMyReports(array $my_reports) {
+    $grouped = [];
+    foreach ($my_reports as $key => $item) {
+        $grouped[$item['target_year']][$key] = $item;
+    }
+
+    // ksort($grouped, SORT_NUMERIC);
     return $grouped;
 }
 
@@ -896,4 +920,24 @@ function getJsonEncodedHtml ($html) {
 
 function getDepartments() {
     return Database::getDbh()->get('departments');
+}
+
+function hasDraftForTargetMonthYear($target_month, $target_year, $user_id) {
+    return Database::getDbh()->where('target_year', $target_year)
+        ->where('target_month', $target_month)->where('user_id', $user_id)
+        ->has('nmr_editor_draft');
+}
+
+function getDraftForTargetMonthYear($target_month, $target_year, $user_id) {
+    return Database::getDbh()->where('target_year', $target_year)
+        ->where('target_month', $target_month)->where('user_id', $user_id)
+        ->getOne('nmr_editor_draft');
+}
+
+function getPreviousMonthYear($current_month) {
+    return  Date('F Y', strtotime($current_month . " last month"));
+}
+
+function getYear($date) {
+   // return Date('y', strtotime($time))
 }
