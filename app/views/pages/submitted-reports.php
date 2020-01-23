@@ -228,11 +228,8 @@
             let targetMonth = previewTargetMonth = target.data('targetMonth');
             let targetYear = previewTargetYear = target.data('targetYear');
             $.ajax({
-                url: `${URL_ROOT}/pages/generate-report/${targetMonth}/${targetYear}`,
+                url: `${URL_ROOT}/pages/download-final-report-client-side/${targetMonth}/${targetYear}`,
                 dataType: "html",
-                dataFilter(data, type) {
-                    return JSON.parse(data).map(value => value.content).join("<br/>");
-                },
                 success: data => {
                     previewEditor.value(data);
                     kendo.drawing.drawDOM($(previewEditor.body), {

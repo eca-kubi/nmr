@@ -430,8 +430,8 @@ class Pages extends Controller
             redirect('users/login/pages/draft-report/');
         }
         $payload['page_title'] = 'Draft Report (Start Monthly Report Here)';
-        $current_sub_month = currentSubmissionMonth();
-        $current_sub_year = currentSubmissionYear();
+        $current_sub_month = currentSubmissionMonth()?:  monthName(monthNumber(now()));
+        $current_sub_year = currentSubmissionYear()?: year(now());
         $previous_month = explode(" ", getPreviousMonthYear($current_sub_month))[0];
         $previous_year = explode(" ", getPreviousMonthYear($current_sub_month))[1];
         // If user has a draft for the target month and year load it

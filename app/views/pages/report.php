@@ -500,7 +500,7 @@ echo $spreadsheet_templates; ?>'>
                     description: e.description,
                     departmentId: e.department_id
                 }));
-                if (!isITAdmin) {
+                if (!(isITAdmin || isPowerUser)) {
                     ds = ds.filter(value => value.departmentId + "" === userDepartmentId);
                 }
                 if (ds.length === 0) chartMenuButton.hide();

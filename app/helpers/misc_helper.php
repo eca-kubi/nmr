@@ -809,7 +809,7 @@ function monthNumber($timeString)
 
 function year($timeString)
 {
-    return date("y", strtotime($timeString));
+    return date("Y", strtotime($timeString));
 }
 
 
