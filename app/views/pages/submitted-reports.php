@@ -235,7 +235,8 @@
                     kendo.drawing.drawDOM($(previewEditor.body), {
                         paperSize: 'a3',
                         margin: "2cm",
-                        multipage: true
+                        multipage: true,
+                        forcePageBreak: ".page-break"
                     }).then(function (group) {
                         // Render the result as a PDF file
                         return kendo.drawing.exportPDF(group, {});
@@ -275,7 +276,8 @@
                     kendo.drawing.drawDOM($(previewEditor.body), {
                         paperSize: 'a3',
                         margin: "2cm",
-                        multipage: true
+                        multipage: true,
+                        forcePageBreak: ".page-break"
                     }).then(function (group) {
                         // Render the result as a PDF file
                         return kendo.drawing.exportPDF(group, {});
@@ -334,7 +336,8 @@
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
                     margin: "2cm",
-                    multipage: true
+                    multipage: true,
+                    forcePageBreak: ".page-break"
                 }).then(function (group) {
                     // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
@@ -359,7 +362,8 @@
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
                     margin: "2cm",
-                    multipage: true
+                    multipage: true,
+                    forcePageBreak: ".page-break"
                 }).then(function (group) {
                     // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});

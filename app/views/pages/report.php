@@ -22,31 +22,35 @@
                 <div class="box-body">
                     <div id="editorTabStrip">
                         <ul>
-                            <?php if (!(isset($is_submission_closed) && $is_submission_closed)):      ?> <li class="k-state-active">Edit</li> <?php endif; ?>
-                            <li class="<?php echo isset($is_submission_closed) && $is_submission_closed ? 'k-state-active' : ''?>">Preview</li>
+                            <?php if (!(isset($is_submission_closed) && $is_submission_closed)): ?>
+                                <li class="k-state-active">Edit</li> <?php endif; ?>
+                            <li class="<?php echo isset($is_submission_closed) && $is_submission_closed ? 'k-state-active' : '' ?>">
+                                Preview
+                            </li>
                         </ul>
-                        <?php if (!(isset($is_submission_closed) && $is_submission_closed)):      ?>   <div id="editorTab">
-                            <div id="editorActionToolbar"></div>
-                            <div style="width: 100%">
-                                <form id="editorForm">
+                        <?php if (!(isset($is_submission_closed) && $is_submission_closed)): ?>
+                            <div id="editorTab">
+                                <div id="editorActionToolbar"></div>
+                                <div style="width: 100%">
+                                    <form id="editorForm">
                                     <textarea name="content" id="editor" cols="30" rows="10"
                                               style="height: 400px"><?php echo $content ?? ''; ?></textarea>
-                                    <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
-                                           value='<?php echo $spreadsheet_content ?? ''; ?>'>
-                                    <input type="hidden" id="title" name="title"
-                                           value="<?php echo $title ?? ''; ?>">
-                                    <input type="hidden" id="draftId" name="draft_id"
-                                           value="<?php echo $draft_id ?? ''; ?>">
-                                    <input type="hidden" id="targetYear" name="target_year"
-                                           value="<?php echo $target_year ?? ''; ?>">
-                                    <input type="hidden" id="targetMonth" name="target_month"
-                                           value="<?php echo $target_month ?? ''; ?>">
-                                    <input type="hidden" id="departmentName" name="department_name">
-                                </form>
-                            </div>
-                        </div> <?php endif; ?>
+                                        <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
+                                               value='<?php echo $spreadsheet_content ?? ''; ?>'>
+                                        <input type="hidden" id="title" name="title"
+                                               value="<?php echo $title ?? ''; ?>">
+                                        <input type="hidden" id="draftId" name="draft_id"
+                                               value="<?php echo $draft_id ?? ''; ?>">
+                                        <input type="hidden" id="targetYear" name="target_year"
+                                               value="<?php echo $target_year ?? ''; ?>">
+                                        <input type="hidden" id="targetMonth" name="target_month"
+                                               value="<?php echo $target_month ?? ''; ?>">
+                                        <input type="hidden" id="departmentName" name="department_name">
+                                    </form>
+                                </div>
+                            </div> <?php endif; ?>
                         <div id="previewTab">
-                            <div id="previewContent" ></div>
+                            <div id="previewContent"></div>
                         </div>
                     </div>
                 </div>
@@ -54,7 +58,7 @@
                 <div class="box-footer d-none"></div>
                 <!-- /.box-footer-->
             </div>
-            <div class="box collapsed border-warning  <?php echo isset($is_submission_closed) && $is_submission_closed? 'd-none': ''; ?>">
+            <div class="box collapsed border-warning  <?php echo isset($is_submission_closed) && $is_submission_closed ? 'd-none' : ''; ?>">
                 <div class="box-header">
                     <h5 class="box-title text-bold"><span class="fa fa-chart-bar text-warning"></span> Charts</h5>
                     <div class="box-tools pull-right d-none">
@@ -95,7 +99,17 @@
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
 <input type="hidden" id="spreadsheetTemplates" value='<?php /** @var string $spreadsheet_templates */
 echo $spreadsheet_templates; ?>'>
+<?php if (!isITAdmin($current_user->user_id)): ?>
+    <style>
+        [title='View HTML'] {
+            display: none!important;
+        }
+    </style>
+<?php endif; ?>
 <style>
+    .page-break-btn {
+        display: none!important;
+    }
     #previewEditorParent .k-editor {
         visibility: hidden;
         z-index: -1;
@@ -209,7 +223,7 @@ echo $spreadsheet_templates; ?>'>
                     "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
                 ]
             }).data("kendoEditor");
-            let previewEditorValue = `<?php echo $content?? '' ?>`;
+            let previewEditorValue = `<?php echo $content ?? '' ?>`;
             previewEditor.value(previewEditorValue);
 
             if (!pdfViewer)
@@ -374,7 +388,12 @@ echo $spreadsheet_templates; ?>'>
                 "fontSize",
                 "foreColor",
                 "backColor",
-                "viewHtml"
+                "viewHtml",
+                {
+                    name: "pageBreak",
+                    tooltip: "Insert Page Break",
+                    template: `<a tabindex="0" role="button" class="k-tool k-group-start k-group-end page-break-btn" unselectable="on" title="Page Break" aria-label="Page Break"><span unselectable="on" class="k-tool-icon k-icon k-i-arrow-parent"></span></a>`,
+                }
             ],
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
@@ -421,9 +440,11 @@ echo $spreadsheet_templates; ?>'>
             },
             encoded: false
         }).data("kendoEditor");
-        if (editor) editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
+        if (editor) {
+            editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
+        }
 
-
+        $(".page-break-btn").on('click', (e) => editor.paste("<p style='page-break-before: always'></p>"));
         let chartMenuCommand = {
             template: kendo.template($("#chartsMenuTemplate").html())
         };

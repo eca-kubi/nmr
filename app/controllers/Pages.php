@@ -306,7 +306,7 @@ class Pages extends Controller
         }
         if ($db->where('target_month', $target_month)->where('target_year', $target_year)
             ->update('nmr_target_month_year', ['closed_status' => 1])) {
-            echo json_encode(['isSubmissionClosedByPowerUser' => true, 'success'=> true]);
+            echo json_encode(['isSubmissionClosedByPowerUser' => true, 'success' => true]);
         }
     }
 
@@ -351,9 +351,12 @@ class Pages extends Controller
     public function fetchFinalReportAsHtml(string $target_month, $target_year)
     {
         $db = Database::getDbh();
+        $cover_page = $db->where('name', 'cover_page')->getValue('nmr_report_parts', 'content');
         if ($db->where('target_year', $target_year)->where('target_month', $target_month)->has('nmr_final_report')) {
-           return  $db->where('target_year', $target_year)->where('target_month', $target_month)
+            $content = $db->where('target_year', $target_year)->where('target_month', $target_month)
                 ->getValue('nmr_final_report', 'html_content');
+            if (strpos($content, "<coverpage>") === false) $content = "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" . $content;
+            return $content;
         } else {
             $callback = function ($array) {
                 return $array['content'];
@@ -363,10 +366,9 @@ class Pages extends Controller
                 $content .= $separator;
                 return $content;
             };
-            return  array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year)), $join, "<br/>");
+            return "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" . array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year)), $join, "<br/>");
         }
     }
-
 
 
     public function editFinalReport(string $target_month, $target_year)
@@ -430,8 +432,8 @@ class Pages extends Controller
             redirect('users/login/pages/draft-report/');
         }
         $payload['page_title'] = 'Draft Report (Start Monthly Report Here)';
-        $current_sub_month = currentSubmissionMonth()?:  monthName(monthNumber(now()));
-        $current_sub_year = currentSubmissionYear()?: year(now());
+        $current_sub_month = currentSubmissionMonth() ?: monthName(monthNumber(now()));
+        $current_sub_year = currentSubmissionYear() ?: year(now());
         $previous_month = explode(" ", getPreviousMonthYear($current_sub_month))[0];
         $previous_year = explode(" ", getPreviousMonthYear($current_sub_month))[1];
         // If user has a draft for the target month and year load it
@@ -602,7 +604,7 @@ class Pages extends Controller
 
     public function downloadFinalReportClientSide($target_month, $target_year)
     {
-       echo $this->fetchFinalReportAsHtml($target_month, $target_year);
+        echo $this->fetchFinalReportAsHtml($target_month, $target_year);
     }
 
     public function phpinfo(): void
