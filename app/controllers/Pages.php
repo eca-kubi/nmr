@@ -306,7 +306,7 @@ class Pages extends Controller
         }
         if ($db->where('target_month', $target_month)->where('target_year', $target_year)
             ->update('nmr_target_month_year', ['closed_status' => 1])) {
-            echo json_encode(['isSubmissionClosedByPowerUser' => true]);
+            echo json_encode(['isSubmissionClosedByPowerUser' => true, 'success'=> true]);
         }
     }
 

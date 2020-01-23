@@ -298,8 +298,8 @@
 
         $(".edit-final-report-btn").on('click', e => {
             let target = $(e.currentTarget);
-            let targetMonth = target.data('targetMonth');
-            let targetYear = target.data('targetYear');
+            let targetMonth = previewTargetMonth = target.data('targetMonth');
+            let targetYear = previewTargetYear = target.data('targetYear');
             let html_content = "";
             /*
                         let editFinalReport = () => $.get(`${URL_ROOT}/pages/close-submission/${targetMonth}/${targetYear}`).done(() => {
@@ -345,7 +345,12 @@
                     } else {
                         showWindow('You must first close submission of reports for this month! This will ensure that no one can undo the changes you are about to make.<br>Do you wish to close submission?',
                             'Close Submission First').done(() => {
-                            window.location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`;
+                            $.get({
+                                url: `${URL_ROOT}/pages/close-submission/${targetMonth}/${targetYear}`,
+                                dataType: "json"
+                            }).done(data => {
+                                if(data.success) window.location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`;
+                            })
                         })
                     }
                 }
