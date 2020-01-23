@@ -46,6 +46,8 @@
                                         <input type="hidden" id="targetMonth" name="target_month"
                                                value="<?php echo $target_month ?? ''; ?>">
                                         <input type="hidden" id="departmentName" name="department_name">
+                                        <input type="hidden" id="reportSubmissionsId" name="report_submissions_id" value="<?php echo $report_submissions_id ?? ''; ?>">
+                                        <input type="hidden" id="editSubmittedReport" name="edit_submitted_report" value="<?php echo $edit_submitted_report ?? ''; ?>">
                                     </form>
                                 </div>
                             </div> <?php endif; ?>
@@ -139,6 +141,7 @@ echo $spreadsheet_templates; ?>'>
     let editDraft = Boolean(<?php echo $edit_draft ?? '' ?>);
     let isNewDraft = Boolean(<?php echo $is_new_draft ?? '' ?>);
     let editReport = Boolean(<?php echo $edit_report ?? ''; ?>);
+    let editSubmittedReport = Boolean(<?php echo $edit_submitted_report ?? ''; ?>);
     let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
     let clearedContents = "";
     /** @type {kendo.ui.ToolBar}*/

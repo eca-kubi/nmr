@@ -114,6 +114,43 @@ class Pages extends Controller
         $this->view('pages/report', $payload);
     }
 
+    public function editSubmittedReport($report_submissions_id): void
+    {
+        $db = Database::getDbh();
+        $current_user = getUserSession();
+        if (!isLoggedIn()) {
+            redirect('users/login/pages/edit-submitted-report/' . $report_submissions_id);
+        }
+        if(!isPowerUser($current_user->user_id) || isITAdmin($current_user->user_id)) {
+            redirect('errors/index/404');
+        }
+
+        if(!$db->where('report_submissions_id', $report_submissions_id)->has('nmr_report_submissions_id')) {
+            redirect('errors/index/404');
+        }
+        $payload['report_submissions_id'] = $report_submissions_id;
+        $payload['edit_submitted_report'] = true;
+        try {
+            $submitted_report = $db->where('report_submissions_id', $report_submissions_id)
+                ->join('departments d', 'u.department_id=d.department_id')
+                ->getOne('nmr_report_submissions', ['content', 'spreadsheet_content', 'target_month', 'target_year', 'department']);
+            $payload['content'] = $submitted_report['content'];
+            $payload['spreadsheet_content'] = $submitted_report['spreadsheet_content'];
+            $payload['title'] = "Flash Report (" . $submitted_report['department'] . ")";
+            $payload['page_title'] = 'Edit Submitted Report (' . $submitted_report['department'] . ')';
+            $target_month = $submitted_report['target_month'];
+            $target_year = $submitted_report['target_year'];
+            $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
+            $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
+            $this->view('pages/report', $payload);
+        } catch (Exception $e) {
+        }
+    }
+
+    public function updateSubmittedReport($report_submissions_id)
+    {
+
+    }
     /* public function editSubmittedReport($target_month, $target_year): void
      {
          $db = Database::getDbh();

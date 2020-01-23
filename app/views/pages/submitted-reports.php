@@ -92,12 +92,12 @@
                                                             <div class="info-box-content"><span
                                                                         class="info-box-text text-bold"><?php echo $report['department'] ?><a
                                                                             href="#"
-                                                                            class="d-none fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
+                                                                            class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
                                                                             data-toggle="dropdown"
                                                                             role="button"></a>
                                          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"><a
                                                      class="dropdown-item "
-                                                     href="<?php echo URL_ROOT . '/pages/edit-report' . $report['draft_id']; ?>"
+                                                     href="<?php echo URL_ROOT . '/pages/edit-report/' . $report['report_submissions_id']; ?>"
                                              ><i class="fa fa-file-edit"></i> Edit</a>
                                         </div>
                                     </span>

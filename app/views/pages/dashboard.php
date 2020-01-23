@@ -147,8 +147,8 @@
             if (isSubmissionOpened) {
                 kendoAlert("Submission Already Opened!", `Report submission is already opened for ${currentSubmissionMonth + " " + currentSubmissionYear}.`)
             } else if (isSubmissionClosedByPowerUser) {
-                kendoAlert('Submission Currently Closed', 'Power user has closed submission of reports for ' + currentSubmissionMonth + ' ' + currentSubmissionYear +
-                    '.<br/> Try again next month!');
+                kendoAlert('Submission Currently Closed', 'Power user has closed submission of reports for this month.' +
+                    '<br/> Try again next month!');
             } else {
                 let openSubmission = $("<div/>").appendTo("body").kendoDialog({
                     width: "450px",
