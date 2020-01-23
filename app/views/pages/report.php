@@ -1203,6 +1203,7 @@ echo $spreadsheet_templates; ?>'>
                 });
             });
         });
+        postDfr.resolve(title);
         /* let draftTitleInput = $("#draftTitleInput");
          if (draftTitleInput.hasClass('no-title')) {
              kendo.prompt("Enter a title for your draft.", "New Draft").done(function (title) {

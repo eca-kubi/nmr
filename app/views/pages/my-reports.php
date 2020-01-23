@@ -28,7 +28,7 @@
                                             <ul>
                                                 <?php foreach ($reports as $report) { ?>
                                                     <li onclick="window.location.href='<?php echo URL_ROOT ?>/pages/edit-report/<?php echo $report["draft_id"]; ?>'" data-submission-closed="<?php echo $report['closed_status']? : '' ?>" data-draft-id="<?php echo $report['draft_id'] ?>">
-                                                        <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span> <i class="mx-2 text-bold text-sm <?php echo $report['closed_status']? 'text-danger submission-closed' : 'text-success' ?>" ><?php echo $report['closed_status']? 'Submission closed (You can not edit the report).' : 'Submission opened.' ?></i>
+                                                        <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span> <i class="mx-2 text-bold text-sm <?php echo $report['closed_status']? 'text-danger submission-closed' : 'text-success' ?>" ><?php echo $report['closed_status']? 'Submission closed (You can not edit the report).' : 'Submission opened (You can submit/update your report).' ?></i>
                                                     </li>
                                                 <?php } ?>
                                             </ul>

@@ -100,37 +100,37 @@ class Pages extends Controller
         }
         if (!$db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has('nmr_editor_draft'))
             redirect('errors/index/404');
-        $payload['page_title'] = 'Edit Report';
+        $payload['page_title'] = 'Edit Flash Report';
         $payload['draft_id'] = $draft_id;
         $payload['edit_report'] = true;
         $draft = $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_month', 'target_year']);
         $payload['content'] = $draft['content'];
         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
-        $payload['title'] = $draft['title'];
+        $payload['title'] = 'Flash Report';
         $target_month = $draft['target_month'];
         $target_year = $draft['target_year'];
-        $payload['is_submission_closed'] = json_encode(['submission_closed' => isSubmissionClosedByPowerUser($target_month, $target_year)]);
+        $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
         $this->view('pages/report', $payload);
     }
 
-   /* public function editSubmittedReport($target_month, $target_year): void
-    {
-        $db = Database::getDbh();
-        $current_user = getUserSession();
-        if (!isLoggedIn()) {
-            redirect('users/login/pages/edit-submitted-report/' . $target_month . '/' . $target_year);
-        }
-        $payload['page_title'] = 'Edit Submitted Report';
-        $payload['edit_submitted_report'] = true;
-        $draft = $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content']);
-        $payload['content'] = $draft['content'];
-        $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
-        $payload['title'] = $draft['title'];
-        $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        //$payload['edit_draft'] = true;
-        $this->view('pages/report', $payload);
-    } */
+    /* public function editSubmittedReport($target_month, $target_year): void
+     {
+         $db = Database::getDbh();
+         $current_user = getUserSession();
+         if (!isLoggedIn()) {
+             redirect('users/login/pages/edit-submitted-report/' . $target_month . '/' . $target_year);
+         }
+         $payload['page_title'] = 'Edit Submitted Report';
+         $payload['edit_submitted_report'] = true;
+         $draft = $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content']);
+         $payload['content'] = $draft['content'];
+         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
+         $payload['title'] = $draft['title'];
+         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
+         //$payload['edit_draft'] = true;
+         $this->view('pages/report', $payload);
+     } */
 
     public function editPreloadedDraft($draft_id): void
     {
@@ -283,10 +283,13 @@ class Pages extends Controller
     {
         $currentYear = date('Y');
         $currentMonth = date('F');
-        $ret = Database::getDbh()->where('prop', 'nmr_submission_opened')->update('settings', ['value' => 1]);
-        $ret = $ret && Database::getDbh()->where('prop', 'nmr_current_submission_month')->update('settings', ['value' => $currentMonth]);
-        $ret = $ret && Database::getDbh()->where('prop', 'nmr_current_submission_year')->update('settings', ['value' => $currentYear]);
-        $ret = $ret && Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->update('settings', ['value' => 0]);
+        $db = Database::getDbh();
+        $ret = $db->where('prop', 'nmr_submission_opened')->update('settings', ['value' => 1]);
+        $ret = $ret && $db->where('prop', 'nmr_current_submission_month')->update('settings', ['value' => $currentMonth]);
+        $ret = $ret && $db->where('prop', 'nmr_current_submission_year')->update('settings', ['value' => $currentYear]);
+        $ret = $ret && $db->where('prop', 'nmr_submission_closed_by_power_user')->update('settings', ['value' => 0]);
+        $db->onDuplicate(['target_year', 'target_month']);
+        $ret = $ret && $db->insert('nmr_target_month_year', ['target_year' => $currentYear, 'target_month' => $currentMonth, 'closed_status' => 0]);
         if ($ret) {
             echo json_encode(['currentSubmissionYear' => $currentYear, 'currentSubmissionMonth' => $currentMonth, 'isSubmissionClosedByPowerUser' => false]);
         }
@@ -301,7 +304,8 @@ class Pages extends Controller
             $ret = $ret && Database::getDbh()->where('prop', 'nmr_current_submission_month')->update('settings', ['value' => '']);
             $ret = $ret && Database::getDbh()->where('prop', 'nmr_current_submission_year')->update('settings', ['value' => '']);
         }
-        if ($db->insert('nmr_target_month_year', ['target_year' => $target_year, 'target_month' => $target_month, 'closed_status' => 1])) {
+        if ($db->where('target_month', $target_month)->where('target_year', $target_year)
+            ->update('nmr_target_month_year', ['closed_status' => 1])) {
             echo json_encode(['isSubmissionClosedByPowerUser' => true]);
         }
     }
@@ -349,7 +353,7 @@ class Pages extends Controller
         $db = Database::getDbh();
         $payload['page_title'] = 'Edit Final Report';
         $payload['edit_final_report'] = true;
-       // $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
+        // $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
         if ($db->where('target_year', $target_year)->where('target_month', $target_month)->has('nmr_final_report')) {
             $payload['content'] = $db->where('target_year', $target_year)->where('target_month', $target_month)
                 ->getValue('nmr_final_report', 'html_content');

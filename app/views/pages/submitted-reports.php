@@ -108,7 +108,9 @@
                                                                 <a href="#"
                                                                    class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
                                                                    data-report-submissions-id="<?php echo $report['report_submissions_id']; ?>"
-                                                                   data-title="<?php echo $report['department']; ?>" data-target-month="<?php echo $report['target_month'] ?>" data-target-year="<?php echo $report['target_year'] ?>"><i
+                                                                   data-title="<?php echo $report['department']; ?>"
+                                                                   data-target-month="<?php echo $report['target_month'] ?>"
+                                                                   data-target-year="<?php echo $report['target_year'] ?>"><i
                                                                             class="fa fa-play-circle-o"></i> Preview</a>
                                                             </div>
                                                             <!-- /.info-box-content -->
@@ -123,7 +125,7 @@
                             <?php } ?>
                         </div>
                     <?php else: ?>
-                        <h5>No Report Submissions!</h5>
+                        <h5>No Reports have been Submitted!</h5>
                     <?php endif; ?>
                 </div>
                 <!-- /.box-body -->
@@ -260,8 +262,8 @@
 
         $(".generate-report-btn").on('click', e => {
             let target = $(e.currentTarget);
-            let targetMonth = previewTargetMonth;
-            let targetYear = previewTargetYear;
+            let targetMonth = previewTargetMonth = target.data('targetMonth');
+            let targetYear = previewTargetYear = target.data('targetYear');
             let html_content = "";
             $.ajax({
                 url: `${URL_ROOT}/pages/generate-report/${targetMonth}/${targetYear}`,
@@ -341,8 +343,8 @@
                     if (data.submission_closed) {
                         window.location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`;
                     } else {
-                        showWindow('You must first close submission for this month!<br>Do you wish to close submission?',
-                            'Close Submission?').done(() => {
+                        showWindow('You must first close submission of reports for this month! This will ensure that no one can undo the changes you are about to make.<br>Do you wish to close submission?',
+                            'Close Submission First').done(() => {
                             window.location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`;
                         })
                     }
