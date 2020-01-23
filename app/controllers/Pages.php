@@ -348,14 +348,11 @@ class Pages extends Controller
         }
     }
 
-    public function editFinalReport(string $target_month, $target_year)
+    public function fetchFinalReportAsHtml(string $target_month, $target_year)
     {
         $db = Database::getDbh();
-        $payload['page_title'] = 'Edit Final Report';
-        $payload['edit_final_report'] = true;
-        // $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
         if ($db->where('target_year', $target_year)->where('target_month', $target_month)->has('nmr_final_report')) {
-            $payload['content'] = $db->where('target_year', $target_year)->where('target_month', $target_month)
+           return  $db->where('target_year', $target_year)->where('target_month', $target_month)
                 ->getValue('nmr_final_report', 'html_content');
         } else {
             $callback = function ($array) {
@@ -366,8 +363,19 @@ class Pages extends Controller
                 $content .= $separator;
                 return $content;
             };
-            $payload['content'] = array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year)), $join, "<br/>");
+            return  array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year)), $join, "<br/>");
         }
+    }
+
+
+
+    public function editFinalReport(string $target_month, $target_year)
+    {
+        $db = Database::getDbh();
+        $payload['page_title'] = 'Edit Final Report';
+        $payload['edit_final_report'] = true;
+        // $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
+        $payload['content'] = $this->fetchFinalReportAsHtml($target_month, $target_year);
         $payload['title'] = "$target_month $target_year Flash Report";
         $payload['target_year'] = $target_year;
         $payload['target_month'] = $target_month;
@@ -592,6 +600,10 @@ class Pages extends Controller
         echo $data;
     }
 
+    public function downloadFinalReportClientSide($target_month, $target_year)
+    {
+       echo $this->fetchFinalReportAsHtml($target_month, $target_year);
+    }
 
     public function phpinfo(): void
     {

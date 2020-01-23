@@ -209,7 +209,8 @@ echo $spreadsheet_templates; ?>'>
                     "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
                 ]
             }).data("kendoEditor");
-            previewEditor.value('<?php echo $content?? '' ?>');
+            let previewEditorValue = `<?php echo $content?? '' ?>`;
+            previewEditor.value(previewEditorValue);
 
             if (!pdfViewer)
                 pdfViewer = $("#previewContent").kendoPDFViewer({

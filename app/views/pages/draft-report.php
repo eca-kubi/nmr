@@ -52,7 +52,7 @@
 <!--          <a class="dropdown-item" href="#"><i class="fa fa-play-circle-o"></i> Preview</a>
                                 -->          <a class="dropdown-item"
                                                 href="<?php echo URL_ROOT . '/pages/edit-draft/' . $draft['draft_id']; ?>"
-                                                target="_blank"><i class="fa fa-file-edit"></i> Edit</a>
+                                             ><i class="fa fa-file-edit"></i> Edit</a>
                                              <a class="dropdown-item delete-draft-btn d-none" href="#"
                                                 data-draft-id="<?php echo $draft['draft_id']; ?>"
                                                 data-parent="#draft_<?php echo $draft['draft_id']; ?>"><i

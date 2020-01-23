@@ -256,7 +256,7 @@
             let target = $(e.currentTarget);
             let targetMonth = target.data('targetMonth');
             let targetYear = target.data('targetYear');
-            downloadContent(`${URL_ROOT}/pages/generate-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"), (targetMonth + " " + targetYear + " Nzema Report").toUpperCase());
+            downloadContent(`${URL_ROOT}/pages/download-final-report-client-side/${targetMonth}/${targetYear}`, data => data, (targetMonth + " " + targetYear + " Nzema Report").toUpperCase());
         });
 
 
@@ -265,6 +265,7 @@
             let targetMonth = previewTargetMonth = target.data('targetMonth');
             let targetYear = previewTargetYear = target.data('targetYear');
             let html_content = "";
+            // todo issue warning to user.
             $.ajax({
                 url: `${URL_ROOT}/pages/generate-report/${targetMonth}/${targetYear}`,
                 dataType: "html",
@@ -301,40 +302,6 @@
             let targetMonth = previewTargetMonth = target.data('targetMonth');
             let targetYear = previewTargetYear = target.data('targetYear');
             let html_content = "";
-            /*
-                        let editFinalReport = () => $.get(`${URL_ROOT}/pages/close-submission/${targetMonth}/${targetYear}`).done(() => {
-                            $.ajax({
-                                url: `${URL_ROOT}/pages/generate-report/${targetMonth}/${targetYear}`,
-                                dataType: "html",
-                                dataFilter(data, type) {
-                                    return JSON.parse(data).map(value => value.content).join("<br/>");
-                                }
-                            }).done(data => {
-                                html_content = data;
-                                previewEditor.value(data);
-                                kendo.drawing.drawDOM($(previewEditor.body), {
-                                    paperSize: 'a3',
-                                    margin: "2cm",
-                                    multipage: true
-                                }).then(function (group) {
-                                    // Render the result as a PDF file
-                                    return kendo.drawing.exportPDF(group, {});
-                                }).done(data => {
-                                    let json = JSON.stringify({data_uri: data, html_content: html_content});
-                                    $.post({
-                                        url: `${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`,
-                                        dataType: "json",
-                                        data: json,
-                                        processData: false,
-                                        contentType: "application/json",
-                                        success: function () {
-                                            window.location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`
-                                        }
-                                    })
-                                })
-                            })
-                        });
-            */
 
             $.ajax({
                 url: `${URL_ROOT}/pages/is-submission-closed/${targetMonth}/${targetYear}`,
