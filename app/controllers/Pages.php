@@ -106,7 +106,7 @@ class Pages extends Controller
         $payload['title'] = $draft['title'];
         $target_month = $draft['target_month'];
         $target_year = $draft['target_year'];
-        $payload['is_submission_closed'] = false; //json_encode(['submission_closed' => isSubmissionClosedByPowerUser($target_month, $target_year)]);
+        $payload['is_submission_closed'] = json_encode(['submission_closed' => isSubmissionClosedByPowerUser($target_month, $target_year)]);
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
         //$payload['edit_draft'] = true;
         $this->view('pages/report', $payload);

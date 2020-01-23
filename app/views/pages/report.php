@@ -22,10 +22,10 @@
                 <div class="box-body">
                     <div id="editorTabStrip">
                         <ul>
-                            <li class="k-state-active">Edit</li>
-                            <li>Preview</li>
+                            <?php if (!(isset($is_submission_closed) && $is_submission_closed)):      ?> <li class="k-state-active">Edit</li> <?php endif; ?>
+                            <li class="<?php echo isset($is_submission_closed) && $is_submission_closed ? 'k-state-active' : ''?>">Preview</li>
                         </ul>
-                        <div id="editorTab">
+                        <?php if (!(isset($is_submission_closed) && $is_submission_closed)):      ?>   <div id="editorTab">
                             <div id="editorActionToolbar"></div>
                             <div style="width: 100%">
                                 <form id="editorForm">
@@ -44,9 +44,9 @@
                                     <input type="hidden" id="departmentName" name="department_name">
                                 </form>
                             </div>
-                        </div>
+                        </div> <?php endif; ?>
                         <div id="previewTab">
-                            <div id="previewContent"></div>
+                            <div id="previewContent" ></div>
                         </div>
                     </div>
                 </div>
@@ -96,7 +96,7 @@
 <input type="hidden" id="spreadsheetTemplates" value='<?php /** @var string $spreadsheet_templates */
 echo $spreadsheet_templates; ?>'>
 <style>
-    #previewEditor .k-editor {
+    #previewEditorParent .k-editor {
         visibility: hidden;
         z-index: -1;
     }
@@ -144,6 +144,7 @@ echo $spreadsheet_templates; ?>'>
     let previewViewer;
     let pdfViewer;
     let userDepartmentId = "<?php echo $current_user->department_id; ?>";
+    let previewEditor;
     $(function () {
         /*  previewWindow = $("<div id='previewWindow'><div id='previewViewer'></div></div>").appendTo("body").kendoWindow({
               modal: true,
@@ -157,49 +158,86 @@ echo $spreadsheet_templates; ?>'>
               //open: adjustSize
           }).data("kendoWindow");*/
 
+        previewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/> </div>").appendTo("body");
 
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
+
         $(window).on("resize", function () {
             kendo.resize($("#chartsTabstripHolder"));
             spreadsheet.resize(true);
         });
 
-        editorTabStrip = $("#editorTabStrip").kendoTabStrip({
-            select(e) {
-                if (e.contentElement.id === "previewTab") {
-                    if (!pdfViewer)
-                        pdfViewer = $("#previewContent").kendoPDFViewer({
-                            pdfjsProcessing: {
-                                file: ""
-                            },
-                            width: "100%",
-                            height: 550,
-                            scale: 1,
-                        }).getKendoPDFViewer();
-                    //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
-                    kendo.drawing.drawDOM($(editor.body), {
-                        paperSize: 'a3',
-                        margin: "2cm",
-                        multipage: true
-                    }).then(function (group) {
-                        // Render the result as a PDF file
-                        return kendo.drawing.exportPDF(group, {});
-                    })
-                        .done(function (data) {
-                            // Save the PDF file
-                            /*kendo.saveAs({
-                                dataURI: data,
-                                fileName: draftName + ".pdf",
-                                //proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
-                            });*/
-                            // previewWindow.center().open();
+        if (!isSubmissionClosed) {
+            editorTabStrip = $("#editorTabStrip").kendoTabStrip({
+                select(e) {
+                    if (e.contentElement.id === "previewTab") {
+                        if (!pdfViewer)
+                            pdfViewer = $("#previewContent").kendoPDFViewer({
+                                pdfjsProcessing: {
+                                    file: ""
+                                },
+                                width: "100%",
+                                height: 550,
+                                scale: 1,
+                                toolbar: {
+                                    items: [
+                                        "pager", "zoom", "toggleSelection", "search", "download", "print"
+                                    ]
+                                }
+                            }).getKendoPDFViewer();
+                        //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
+                        kendo.drawing.drawDOM($(editor.body), {
+                            paperSize: 'a3',
+                            margin: "2cm",
+                            multipage: true
+                        }).then(function (group) {
+                            // Render the result as a PDF file
+                            return kendo.drawing.exportPDF(group, {});
+                        }).done(function (data) {
                             pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                             setTimeout(() => pdfViewer.activatePage(1), 500)
                         });
+                    }
                 }
-            }
-        });
+            }).data('kendoTabStrip');
+        } else {
+            editorTabStrip = $("#editorTabStrip").kendoTabStrip().data("kendoTabStrip");
+            previewEditor = $("#previewEditor").kendoEditor({
+                tools: [],
+                stylesheets: [
+                    "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                ]
+            }).data("kendoEditor");
+            previewEditor.value('<?php echo $content?? '' ?>');
 
+            if (!pdfViewer)
+                pdfViewer = $("#previewContent").kendoPDFViewer({
+                    pdfjsProcessing: {
+                        file: ""
+                    },
+                    width: "100%",
+                    height: 550,
+                    scale: 1,
+                    toolbar: {
+                        items: [
+                            "pager", "zoom", "toggleSelection", "search", "download", "print"
+                        ]
+                    }
+                }).getKendoPDFViewer();
+            //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
+            kendo.drawing.drawDOM($(previewEditor.body), {
+                paperSize: 'a3',
+                margin: "2cm",
+                multipage: true
+            }).then(function (group) {
+                // Render the result as a PDF file
+                return kendo.drawing.exportPDF(group, {});
+            }).done(function (data) {
+                pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                setTimeout(() => pdfViewer.activatePage(1), 500)
+            });
+        }
         chartsTabStrip = $("#chartsTabStrip").kendoTabStrip({
             activate(e) {
                 let emptyChartPlaceholder = $("#emptyChartPlaceHolder");
