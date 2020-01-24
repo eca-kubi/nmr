@@ -123,7 +123,7 @@
                         text: "Cancel",
                         icon: "cancel",
                         click: function () {
-                            window.history.back();
+                            draftWindow.close();
                         },
                     }
                 ]
