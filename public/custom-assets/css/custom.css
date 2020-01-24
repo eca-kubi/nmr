@@ -78,6 +78,11 @@ td.action {
     text-align: justify !important;
 }
 
+.blockMsg {
+    background-color: transparent!important;
+    border: none!important;
+}
+
 th.title {
     font-weight: bold !important;
 }

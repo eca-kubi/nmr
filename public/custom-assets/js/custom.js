@@ -26,6 +26,11 @@ const CHART_CLOSING_STOCKPILE_BALANCE = 'CLOSING STOCKPILE BALANCE';
 const CHART_TOLL_DELIVERY = 'TOLL DELIVERY';
 let monthNames = kendo.cultures.current.calendars.standard.months.names;
 $(function () {
+    $.blockUI.defaults.overlayCSS.opacity = 0.3;
+    $.blockUI.defaults.overlayCSS.cursor = 'default';
+    $.blockUI.defaults.message = "<div class='fa-3x'><i class='fa fa-pulse fa-spinner'></i></div>";
+    $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+
     //jQuery.fx.off = true;
     URL_ROOT = $('#url_root').val();
     //$('.print-it').printPage();
