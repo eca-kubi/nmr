@@ -51,7 +51,7 @@ $(function () {
 
 window.addEventListener("load", function () {
     setTimeout(() => {
-        $('.content').removeClass('d-none invisible');
+        $('.blockable').removeClass('d-none invisible');
         $('footer').removeClass('d-none');
         setTimeout(function () {
             $.unblockUI();

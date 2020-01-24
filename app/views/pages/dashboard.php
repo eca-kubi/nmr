@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <h5 class="mb-2 text-nowrap">
-                                <span><svg class="fontastic-draft" style="fill: var(--danger)"><use
+                                <span><svg class="fontastic-draft" style="fill: var(--orange)"><use
                                                 xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
                                 Draft Report
                             </h5>
@@ -34,10 +34,10 @@
                                 </div>
                                 <div class="icon text-success">
                                     <span><svg class="fontastic-draft"
-                                               style="fill: var(--danger); width: 78px; height: 90px"><use
+                                               style="fill: var(--orange); width: 78px; height: 90px"><use
                                                     xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
                                 </div>
-                                <a href="#" class="small-box-footer" style="background-color: var(--danger)">
+                                <a href="#" class="small-box-footer" style="background-color: var(--orange)">
                                     <span class="fa fa-chevron-circle-right"></span>
                                 </a>
                             </div>
@@ -105,7 +105,7 @@
                             </div>
                             <div class="col-md-6 <?php echo isSubmissionOpened() ? '' : 'd-none' ?>">
                                 <h5 class="mb-2 text-nowrap">
-                                    <i class="fa fa-door-closed text-orange"></i> Close Submission
+                                    <i class="fa fa-door-closed text-danger"></i> Close Submission
                                 </h5>
                                 <!-- small box -->
                                 <div class="small-box show border" id="closeSubmission" style="cursor:pointer">
@@ -114,10 +114,10 @@
                                         <h5 class="w3-hide-large w3-hide-medium text-bold">Close Submission</h5>
                                         <p>Close report submission.</p>
                                     </div>
-                                    <div class="icon text-orange">
+                                    <div class="icon text-danger">
                                         <i class="fa fa-door-closed"></i>
                                     </div>
-                                    <a href="#" class="small-box-footer bg-orange">
+                                    <a href="#" class="small-box-footer bg-danger">
                                         <span class="fa fa-chevron-circle-right"></span>
                                     </a>
                                 </div>
@@ -146,10 +146,10 @@
         $("#openSubmission").on('click', () => {
             if (isSubmissionOpened) {
                 kendoAlert("Submission Already Opened!", `Report submission is already opened for ${currentSubmissionMonth + " " + currentSubmissionYear}.`)
-            } else if (isSubmissionClosedByPowerUser) {
+            } /*else if (isSubmissionClosedByPowerUser) {
                 kendoAlert('Submission Currently Closed', 'Power user has closed submission of reports for this month.' +
                     '<br/> Try again next month!');
-            } else {
+            } */else {
                 let openSubmission = $("<div/>").appendTo("body").kendoDialog({
                     width: "450px",
                     title: 'Open Submission of Reports',
@@ -169,6 +169,7 @@
                                     currentSubmissionYear = data.currentSubmissionYear;
                                     $("#closeSubmission").parent().removeClass('d-none');
                                     kendoAlert("Submission Opened", "Report submission opened for " + data.currentSubmissionMonth + " " + data.currentSubmissionYear);
+                                    $("#submissionNotice p").removeClass('text-danger').addClass('text-success').html("<i class=\"fa fa-info-circle\"></i> Report Submission Opened");
                                 });
                             }
                         },
@@ -204,6 +205,7 @@
                             isSubmissionClosedByPowerUser = data.isSubmissionClosedByPowerUser;
                             kendoAlert('Submission Closed', 'Submission of reports closed for this month!');
                             $("#closeSubmission").parent().addClass('d-none');
+                            $("#submissionNotice p").removeClass('text-success').addClass('text-danger').html("<i class=\"fa fa-info-circle\"></i> Report Submission Closed");
                         });
                     }
                 })

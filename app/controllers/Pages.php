@@ -328,9 +328,11 @@ class Pages extends Controller
         }
     }
 
-    public function closeSubmission($target_month, $target_year)
+    public function closeSubmission($target_month = "", $target_year = "")
     {
         $db = Database::getDbh();
+        $target_month = $target_month? : date('Y');
+        $target_year = $target_year ? : date('F');
         if (currentSubmissionYear() === $target_year && (currentSubmissionMonth()) === $target_month) {
             $ret = Database::getDbh()->where('prop', 'nmr_submission_opened')->update('settings', ['value' => 0]);
             $ret = $ret && Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->update('settings', ['value' => 1]);

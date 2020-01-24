@@ -12,6 +12,14 @@ body {
 .hop-outer {
 }
 
+#submissionNotice p.closed:after {
+    content: 'Report Submission is Closed';
+}
+
+#submissionNotice p.opened:after {
+    content: 'Report Submission is Opened';
+}
+
 .hop-outer {
     -webkit-transition: .2s linear all;
     -moz-transition: .2s linear all;
