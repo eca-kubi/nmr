@@ -51,7 +51,7 @@
                                  data-url="<?php echo URL_ROOT ?>/pages/my-reports/">
                                 <div class="inner">
                                     <h3 class="w3-hide-small ">My Reports</h3>
-                                    <h5 class="w3-hide-large w3-hide-medium text-bold"> My Reports</h5>
+                                    <h5 class="w3-hide-large w3-hide-medium text-bold">View My Reports</h5>
                                     <p>View and submit your reports.</p>
                                 </div>
                                 <div class="icon text-success">
@@ -64,15 +64,15 @@
                         </div>
                         <div class="col-md-6">
                             <h5 class="mb-2 text-nowrap">
-                                <i class="fa fa-check-double" style="color: goldenrod"></i> Submitted Reports
+                                <i class="fa fa-check-double" style="color: goldenrod"></i> Submitted Reports (Departments)
                             </h5>
                             <!-- small box -->
                             <div class="small-box show border" style="cursor:pointer"
                                  data-url="<?php echo URL_ROOT ?>/pages/submitted-reports/">
                                 <div class="inner">
-                                    <h3 class="w3-hide-small ">Submitted Reports</h3>
-                                    <h5 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports</h5>
-                                    <p>View submitted reports.</p>
+                                    <h3 class="w3-hide-small text-wrap">Submitted Reports (Departments)</h3>
+                                    <h5 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports (Departments)</h5>
+                                    <p>View reports submitted by departments</p>
                                 </div>
                                 <div class="icon" style="color: goldenrod">
                                     <i class="fa fa-check-double"></i>

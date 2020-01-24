@@ -8,10 +8,9 @@
         <div class="box-group pt-1" id="box_group">
             <div class="box collapsed border-primary">
                 <div class="box-header">
-                    <h5 class="box-title text-bold"><input type="text" readonly id="draftTitleInput"
-                                                           class="k-input <?php echo isset($title) ? '' : 'no-title' ?>"
-                                                           value="<?php echo isset($title) ? $title : 'Draft' ?>">
-                    </h5>
+                    <h3 class="box-title text-bold text-success">
+                        <?php echo $title?? ''; ?>
+                    </h3>
                     <div class="box-tools pull-right d-none">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
                             <i class="fa fa-minus"></i>
@@ -41,13 +40,18 @@
                                                value="<?php echo $title ?? ''; ?>">
                                         <input type="hidden" id="draftId" name="draft_id"
                                                value="<?php echo $draft_id ?? ''; ?>">
+                                        <input type="hidden" id="draftTitleInput" name="draft_id"
+                                               value="<?php echo $title ?? ''; ?>">
+
                                         <input type="hidden" id="targetYear" name="target_year"
                                                value="<?php echo $target_year ?? ''; ?>">
                                         <input type="hidden" id="targetMonth" name="target_month"
                                                value="<?php echo $target_month ?? ''; ?>">
                                         <input type="hidden" id="departmentName" name="department_name">
-                                        <input type="hidden" id="reportSubmissionsId" name="report_submissions_id" value="<?php echo $report_submissions_id ?? ''; ?>">
-                                        <input type="hidden" id="editSubmittedReport" name="edit_submitted_report" value="<?php echo $edit_submitted_report ?? ''; ?>">
+                                        <input type="hidden" id="reportSubmissionsId" name="report_submissions_id"
+                                               value="<?php echo $report_submissions_id ?? ''; ?>">
+                                        <input type="hidden" id="editSubmittedReport" name="edit_submitted_report"
+                                               value="<?php echo $edit_submitted_report ?? ''; ?>">
                                     </form>
                                 </div>
                             </div> <?php endif; ?>
@@ -104,14 +108,15 @@ echo $spreadsheet_templates; ?>'>
 <?php if (!isITAdmin($current_user->user_id)): ?>
     <style>
         [title='View HTML'] {
-            display: none!important;
+            display: none !important;
         }
     </style>
 <?php endif; ?>
 <style>
     .page-break-btn {
-        display: none!important;
+        display: none !important;
     }
+
     #previewEditorParent .k-editor {
         visibility: hidden;
         z-index: -1;
@@ -162,18 +167,8 @@ echo $spreadsheet_templates; ?>'>
     let pdfViewer;
     let userDepartmentId = "<?php echo $current_user->department_id; ?>";
     let previewEditor;
+
     $(function () {
-        /*  previewWindow = $("<div id='previewWindow'><div id='previewViewer'></div></div>").appendTo("body").kendoWindow({
-              modal: true,
-              visible: false,
-              width: "80%",
-              scrollable: false,
-              //height: "80%",
-              // (Optional) Will limit the percentage dimensions as well:
-              // maxWidth: 1200,
-              // maxHeight: 800,
-              //open: adjustSize
-          }).data("kendoWindow");*/
 
         previewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/> </div>").appendTo("body");
 
@@ -243,6 +238,7 @@ echo $spreadsheet_templates; ?>'>
                         ]
                     }
                 }).getKendoPDFViewer();
+
             //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
             kendo.drawing.drawDOM($(previewEditor.body), {
                 paperSize: 'a3',
@@ -275,7 +271,8 @@ echo $spreadsheet_templates; ?>'>
                     text: "Save Draft",
                     icon: "save",
                     click: saveDraft,
-                    hidden: "<?php echo isset($edit_draft) ? '' : 'true' ?>"
+                   // hidden: "<?php echo isset($edit_draft) ? '' : 'true' ?>"
+                    hidden: true
                 },
                 {
                     type: "button",
@@ -283,6 +280,13 @@ echo $spreadsheet_templates; ?>'>
                     icon: "save",
                     click: saveFinalReport,
                     hidden: "<?php echo isset($edit_final_report) ? '' : 'true' ?>"
+                },
+                {
+                    type: "button",
+                    text: "Save",
+                    icon: "save",
+                    click: onEditSubmittedReport,
+                    hidden: "<?php echo isset($edit_submitted_report) ? '' : 'true' ?>"
                 },
                 {
                     type: "button",
@@ -311,7 +315,7 @@ echo $spreadsheet_templates; ?>'>
                     },
                     hidden: true
                 },
-                <?php if (isset($edit_report) && isSubmissionOpened()): ?>
+                <?php if (isset($edit_draft) && isSubmissionOpened()): ?>
                 {
                     type: "button",
                     text: "Submit Report",
@@ -1323,6 +1327,26 @@ echo $spreadsheet_templates; ?>'>
                 });
             });
     }
+
+
+    function onEditSubmittedReport(e) {
+        let reportSubmissionsId = $("#reportSubmissionsId").val();
+        let submit = () => {
+            let dfd = $.Deferred();
+            let post = $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId, {
+                content: editor.value(),
+                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+            }, null, "json");
+            dfd.resolve(post);
+            return dfd.promise();
+        };
+
+        submit().done(post => post.done(data => {
+            let alert = kendoAlert("Report Saved!", "Report saved successfully.");
+            setTimeout(() => alert.close(), 1500);
+        }));
+    }
+
 
     function submitReport(e) {
         let draftId = $("#draftId");

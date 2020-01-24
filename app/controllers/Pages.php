@@ -76,7 +76,7 @@ class Pages extends Controller
         $db = Database::getDbh();
         if (!$db->where('draft_id', $draft_id)->where('user_id', getUserSession()->user_id)->has('nmr_editor_draft'))
             redirect('errors/index/404');
-        $payload['page_title'] = 'Edit Draft';
+        $payload['page_title'] = 'Edit Draft (Flash Report)';
         $payload['draft_id'] = $draft_id;
         $draft = $db->where('draft_id', $draft_id)->where('user_id', getUserSession()->user_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_year', 'target_month']);
         $payload['content'] = $draft['content'];
@@ -85,7 +85,7 @@ class Pages extends Controller
         $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
         //$payload['is_submission_opened'] = isSubmissionOpened();
         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
-        $payload['title'] = $draft['title'];
+        $payload['title'] = 'Edit Draft (Flash Report)';
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
         $payload['edit_draft'] = true;
         $this->view('pages/report', $payload);
@@ -100,13 +100,13 @@ class Pages extends Controller
         }
         if (!$db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has('nmr_editor_draft'))
             redirect('errors/index/404');
-        $payload['page_title'] = 'Edit Flash Report';
+        $payload['page_title'] = 'My Reports (Flash Report)';
         $payload['draft_id'] = $draft_id;
         $payload['edit_report'] = true;
         $draft = $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_month', 'target_year']);
         $payload['content'] = $draft['content'];
         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
-        $payload['title'] = 'Flash Report';
+        $payload['title'] = 'My Reports (Flash Report)';
         $target_month = $draft['target_month'];
         $target_year = $draft['target_year'];
         $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
@@ -125,22 +125,22 @@ class Pages extends Controller
             redirect('errors/index/404');
         }
 
-        if(!$db->where('report_submissions_id', $report_submissions_id)->has('nmr_report_submissions_id')) {
+        if(!$db->where('report_submissions_id', $report_submissions_id)->has('nmr_report_submissions')) {
             redirect('errors/index/404');
         }
         $payload['report_submissions_id'] = $report_submissions_id;
         $payload['edit_submitted_report'] = true;
         try {
             $submitted_report = $db->where('report_submissions_id', $report_submissions_id)
-                ->join('departments d', 'u.department_id=d.department_id')
-                ->getOne('nmr_report_submissions', ['content', 'spreadsheet_content', 'target_month', 'target_year', 'department']);
+                ->join('departments d', 'r.department_id=d.department_id')
+                ->getOne('nmr_report_submissions r', ['content', 'spreadsheet_content', 'target_month', 'target_year', 'department']);
             $payload['content'] = $submitted_report['content'];
             $payload['spreadsheet_content'] = $submitted_report['spreadsheet_content'];
             $payload['title'] = "Flash Report (" . $submitted_report['department'] . ")";
-            $payload['page_title'] = 'Edit Submitted Report (' . $submitted_report['department'] . ')';
+            $payload['page_title'] = 'Flash Report (' . $submitted_report['department'] . ')';
             $target_month = $submitted_report['target_month'];
             $target_year = $submitted_report['target_year'];
-            $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
+            //$payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
             $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
             $this->view('pages/report', $payload);
         } catch (Exception $e) {
@@ -149,25 +149,16 @@ class Pages extends Controller
 
     public function updateSubmittedReport($report_submissions_id)
     {
-
+        $db = Database::getDbh();
+        $success = $db->where('report_submissions_id', $report_submissions_id)->update('nmr_report_submissions', [
+            'content' => $_POST['content'],
+            'spreadsheet_content' => $_POST['spreadsheet_content'],
+            'date_modified' => now(),
+        ]);
+        if ($success) {
+            echo json_encode(['success' => true]);
+        }
     }
-    /* public function editSubmittedReport($target_month, $target_year): void
-     {
-         $db = Database::getDbh();
-         $current_user = getUserSession();
-         if (!isLoggedIn()) {
-             redirect('users/login/pages/edit-submitted-report/' . $target_month . '/' . $target_year);
-         }
-         $payload['page_title'] = 'Edit Submitted Report';
-         $payload['edit_submitted_report'] = true;
-         $draft = $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content']);
-         $payload['content'] = $draft['content'];
-         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
-         $payload['title'] = $draft['title'];
-         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-         //$payload['edit_draft'] = true;
-         $this->view('pages/report', $payload);
-     } */
 
     public function editPreloadedDraft($draft_id): void
     {
@@ -411,7 +402,7 @@ class Pages extends Controller
     public function editFinalReport(string $target_month, $target_year)
     {
         $db = Database::getDbh();
-        $payload['page_title'] = 'Edit Final Report';
+        $payload['page_title'] = 'Edit Final Report (Flash Report)';
         $payload['edit_final_report'] = true;
         // $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
         $payload['content'] = $this->fetchFinalReportAsHtml($target_month, $target_year);
@@ -606,7 +597,7 @@ class Pages extends Controller
             if ($db->where('draft_id', $draft_id)->has('nmr_editor_draft')) {
                 $success = $db->where('draft_id', $draft_id)->update('nmr_editor_draft', [
                     'title' => $_POST['title'],
-                    'user_id' => $current_user->user_id,
+                    //'user_id' => $current_user->user_id,
                     'content' => $_POST['content'],
                     'spreadsheet_content' => $_POST['spreadsheet_content'],
                     'time_modified' => now()

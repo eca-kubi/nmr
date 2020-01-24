@@ -10,7 +10,7 @@
                 <div class="box-header border-bottom">
                     <div class="row p-1">
                         <h5 class="box-title text-bold"><span class="fa fa-file-user"></span>
-                            <?php echo $page_title; ?>
+                            <?php echo $page_title ?? 'My Reports (Flash Report)'; ?>
                         </h5>
                     </div>
 
@@ -27,8 +27,20 @@
 
                                             <ul>
                                                 <?php foreach ($reports as $report) { ?>
-                                                    <li onclick="window.location.href='<?php echo URL_ROOT ?>/pages/edit-report/<?php echo $report["draft_id"]; ?>'" data-submission-closed="<?php echo $report['closed_status']? : '' ?>" data-draft-id="<?php echo $report['draft_id'] ?>">
-                                                        <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span> <i class="mx-2 text-bold text-sm <?php echo $report['closed_status']? 'text-danger submission-closed' : 'text-success' ?>" ><?php echo $report['closed_status']? 'Submission closed (You can not edit the report).' : 'Submission opened (You can submit/update your report).' ?></i>
+                                                    <li data-expanded="true"
+                                                        data-submission-closed="<?php echo $report['closed_status'] ?: '' ?>"
+                                                        data-draft-id="<?php echo $report['draft_id'] ?>">
+                                                        <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span>
+                                                        <i class="mx-2 text-bold text-sm <?php echo $report['closed_status'] ? 'text-danger submission-closed' : 'text-success' ?>"><?php echo $report['closed_status'] ? '(Closed)' : '(Opened)' ?></i>
+                                                        <ul>
+                                                            <li>
+                                                                <a class="mx-1 k-button view-btn"
+                                                                        data-draft-id="<?php echo $report['draft_id']; ?>"
+                                                                        data-closed-status="<?php echo $report['closed_status'] ?: '' ?>">
+                                                                    View
+                                                                </a>
+                                                            </li>
+                                                        </ul>
                                                     </li>
                                                 <?php } ?>
                                             </ul>
@@ -96,7 +108,24 @@
             scale: 1,
             toolbar: {
                 items: [
-                    "pager", "zoom", "toggleSelection", "search", "download", "print"
+                    "pager", "zoom", "toggleSelection", "search", "download", "print",
+                    {
+                        id: "submitReport",
+                        type: "button",
+                        text: "Submit Report",
+                        icon: "upload",
+                        click: function () {
+                        }
+                    },
+                    {
+                        id: "cancel",
+                        type: "button",
+                        text: "Cancel",
+                        icon: "cancel",
+                        click: function () {
+                            window.history.back();
+                        },
+                    }
                 ]
             }
         }).getKendoPDFViewer();
@@ -111,11 +140,12 @@
 
         }, 1000);
 
-        $(".preview-btn").on("click", function (e) {
+        $(".view-btn").on("click", function (e) {
             let draftId = $(e.currentTarget).data('draftId');
+            let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
+            let toolbar = pdfViewer.toolbar;
             window.previewDraftId = draftId;
             $.get(URL_ROOT + "/pages/fetchDraft/" + draftId).done(function (data, successTextStatus, jQueryXHR) {
-
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
@@ -124,15 +154,9 @@
                 }).then(function (group) {
                     // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
-                })
-                    .done(function (data) {
-                        // Save the PDF file
-                        /*kendo.saveAs({
-                            dataURI: data,
-                            fileName: draftName + ".pdf",
-                            //proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
-                        });*/
-                        draftWindow.center().open();
+                }).done(function (data) {
+                        if (closedStatus) toolbar.hide("#submitReport");
+                        draftWindow.center().open().maximize().title(closedStatus? 'Submission Closed!' : '');
                         pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                         setTimeout(() => pdfViewer.activatePage(1), 500)
                     });

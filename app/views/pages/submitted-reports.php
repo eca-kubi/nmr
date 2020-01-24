@@ -89,29 +89,36 @@
                                                                         class="fontastic-draft"
                                                                         style="fill: currentColor"><use
                                                                             xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
-                                                            <div class="info-box-content"><span
-                                                                        class="info-box-text text-bold"><?php echo $report['department'] ?><a
-                                                                            href="#"
-                                                                            class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
-                                                                            data-toggle="dropdown"
-                                                                            role="button"></a>
+                                                            <div class="info-box-content">
+                                                                <span class="info-box-text text-bold"><?php echo $report['department'] ?>
+                                                                    <a href="#"
+                                                                       class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey d-none"
+                                                                       data-toggle="dropdown"
+                                                                       role="button"></a>
                                          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"><a
                                                      class="dropdown-item "
-                                                     href="<?php echo URL_ROOT . '/pages/edit-report/' . $report['report_submissions_id']; ?>"
+                                                     href="<?php echo URL_ROOT . '/pages/edit-submitted-report/' . $report['report_submissions_id']; ?>"
                                              ><i class="fa fa-file-edit"></i> Edit</a>
+                                             <a class="dropdown-item preview-btn" href="#"><i
+                                                         class="fa fa-play-circle-o"></i> Preview</a>
                                         </div>
                                     </span>
                                                                 <span class="text-sm"><i
                                                                             class="fa fa-calendar"></i> <?php echo echoDateOfficial($report['date_submitted'], true); ?></span>
                                                                 <span style="font-size: 0.7rem;display: block"><i
                                                                             class="fa fa-clock-o"></i> <?php echo getTime($report['date_submitted']); ?></span>
+
                                                                 <a href="#"
                                                                    class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
                                                                    data-report-submissions-id="<?php echo $report['report_submissions_id']; ?>"
                                                                    data-title="<?php echo $report['department']; ?>"
                                                                    data-target-month="<?php echo $report['target_month'] ?>"
                                                                    data-target-year="<?php echo $report['target_year'] ?>"><i
-                                                                            class="fa fa-play-circle-o"></i> Preview</a>
+                                                                            class="fa fa-play-circle-o mr-0"></i>
+                                                                    Preview</a>
+                                                                <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 <?php echo isPowerUser($current_user->user_id) ? '' : 'd-none' ?>"
+                                                                   href="<?php echo URL_ROOT . '/pages/edit-submitted-report/' . $report['report_submissions_id']; ?>"
+                                                                ><i class="fa fa-file-edit mr-0"></i> Edit</a>
                                                             </div>
                                                             <!-- /.info-box-content -->
                                                         </div>
@@ -315,7 +322,7 @@
                                 url: `${URL_ROOT}/pages/close-submission/${targetMonth}/${targetYear}`,
                                 dataType: "json"
                             }).done(data => {
-                                if(data.success) window.location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`;
+                                if (data.success) window.location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}`;
                             })
                         })
                     }
