@@ -28,7 +28,7 @@ let monthNames = kendo.cultures.current.calendars.standard.months.names;
 $(function () {
     $.blockUI.defaults.overlayCSS.opacity = 0.3;
     $.blockUI.defaults.overlayCSS.cursor = 'default';
-    $.blockUI.defaults.message = "<div class='fa-3x'><i class='fa fa-pulse fa-spinner'></i></div>";
+    $.blockUI.defaults.message = "<i class='k-loading-mask k-loading-image'></i>";
     $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
 
     //jQuery.fx.off = true;
