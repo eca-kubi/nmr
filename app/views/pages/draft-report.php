@@ -138,7 +138,15 @@
             scale: 1,
             toolbar: {
                 items: [
-                    "pager", "zoom", "toggleSelection", "search", "download", "print"
+                    "pager", "zoom", "toggleSelection", "search", "download", "print", {
+                        id: "cancel",
+                        type: "button",
+                        text: "Cancel",
+                        icon: "cancel",
+                        click: function () {
+                            draftWindow.close();
+                        },
+                    }
                 ]
             }
         }).getKendoPDFViewer();
@@ -175,7 +183,7 @@
                             fileName: draftName + ".pdf",
                             //proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
                         });*/
-                        draftWindow.center().open();
+                        draftWindow.center().open().maximize();
                         pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                         setTimeout(() => pdfViewer.activatePage(1), 500)
                     });

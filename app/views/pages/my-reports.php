@@ -92,7 +92,10 @@
             modal: true,
             visible: false,
             width: "80%",
-            scrollable: false
+            scrollable: false,
+            title: {
+                encoded: false
+            }
             //height: "80%",
             // (Optional) Will limit the percentage dimensions as well:
             // maxWidth: 1200,
@@ -156,7 +159,7 @@
                     return kendo.drawing.exportPDF(group, {});
                 }).done(function (data) {
                         if (closedStatus) toolbar.hide("#submitReport");
-                        draftWindow.center().open().maximize().title(closedStatus? 'Submission Closed!' : '');
+                        draftWindow.center().open().maximize().title(closedStatus? {encoded: false, text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"} : '');
                         pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                         setTimeout(() => pdfViewer.activatePage(1), 500)
                     });

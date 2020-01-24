@@ -76,8 +76,9 @@
                                         </h5>
                                     </div>
 
-                                    <div id="collapseOne" class="with-plus-icon collapse <?php echo $i === 0 ? 'show' : '';
-                                    $i++ ?>"
+                                    <div id="collapseOne"
+                                         class="with-plus-icon collapse <?php echo $i === 0 ? 'show' : '';
+                                         $i++ ?>"
                                          aria-labelledby="heading_<?php echo $key; ?>"
                                          data-parent="#accordionReportSubmissions">
                                         <div class="card-body border rounded-bottom">
@@ -142,8 +143,10 @@
                                                                        data-toggle="dropdown"
                                                                        role="button"></a>
                                          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"><a
-                                                     class="dropdown-item "
-                                                     href="<?php echo URL_ROOT . '/pages/edit-submitted-report/' . $report['report_submissions_id']; ?>"
+                                                     class="dropdown-item edit-submitted-report"
+                                                     data-submissions-id="<?php echo $report['report_submissions_id']; ?>"
+                                                     data-target-month="<?php echo $report['target_month'] ?>" data-target-year="<?php echo $report['target_year'] ?>"
+                                                     href="#"
                                              ><i class="fa fa-file-edit"></i> Edit</a>
                                              <a class="dropdown-item preview-btn" href="#"><i
                                                          class="fa fa-play-circle-o"></i> Preview</a>
@@ -162,8 +165,9 @@
                                                                    data-target-year="<?php echo $report['target_year'] ?>"><i
                                                                             class="fa fa-play-circle-o mr-0"></i>
                                                                     Preview</a>
-                                                                <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 <?php echo isPowerUser($current_user->user_id) ? '' : 'd-none' ?>"
-                                                                   href="<?php echo URL_ROOT . '/pages/edit-submitted-report/' . $report['report_submissions_id']; ?>"
+                                                                <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 edit-submitted-report <?php echo isPowerUser($current_user->user_id) ? '' : 'd-none' ?>"
+                                                                   href="#" data-submissions-id="<?php echo $report['report_submissions_id']; ?>"
+                                                                   data-target-month="<?php echo $report['target_month'] ?>" data-target-year="<?php echo $report['target_year'] ?>"
                                                                 ><i class="fa fa-file-edit mr-0"></i> Edit</a>
                                                             </div>
                                                             <!-- /.info-box-content -->
@@ -395,14 +399,42 @@
                 }
             });
         });
+
+        $(".edit-submitted-report").on('click', e => {
+            let target = $(e.currentTarget);
+            let targetMonth = previewTargetMonth = target.data('targetMonth');
+            let targetYear = previewTargetYear = target.data('targetYear');
+            let submissionsId = target.data('submissionsId');
+            let html_content = "";
+
+            $.ajax({
+                url: `${URL_ROOT}/pages/is-submission-closed/${targetMonth}/${targetYear}`,
+                dataType: "json",
+                success: data => {
+                    if (data.submission_closed) {
+                        window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${submissionsId}`;
+                    } else {
+                        showWindow('You must first close submission of reports for this month! This will ensure that no one can undo the changes you are about to make.<br>Do you wish to close submission?',
+                            'Close Submission First').done(() => {
+                            $.get({
+                                url: `${URL_ROOT}/pages/close-submission/${targetMonth}/${targetYear}`,
+                                dataType: "json"
+                            }).done(data => {
+                                if (data.success) window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${submissionsId}`;
+                            })
+                        })
+                    }
+                }
+            });
+        });
     });
 
     function onEditSubmittedReport(e) {
-        window.location.href=`${URL_ROOT}/pages/edit-submitted-report/${reportSubmissionsId}`;
+        window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${reportSubmissionsId}`;
     }
 
     function onEditFinalReport(e) {
-        $("[id='editFinalReportBtn_" +  previewTargetMonth + " " + previewTargetYear + "']").trigger('click');
+        $("[id='editFinalReportBtn_" + previewTargetMonth + " " + previewTargetYear + "']").trigger('click');
     }
 
     function previewContent(previewURL, dataFilter) {
