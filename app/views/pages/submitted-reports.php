@@ -228,6 +228,8 @@
             $(this).prev(".card-header").find(".collapse-icon").removeClass("fa-minus").addClass("fa-plus");
         });
 
+        $("#submissionCollapse").on('hide.bs.collapse show.bs.collapse', e => e.stopPropagation());
+
         jQSelectors.draftViewerWindow = $("<div id='draftViewerWindow'/>").appendTo("body");
         jQSelectors.draftPreviewViewer = $("<div id='draftPreviewViewer'/>").appendTo(jQSelectors.draftViewerWindow);
         jQSelectors.draftPreviewEditor = $("<textarea id='draftPreviewEditor' style='width: 100%;'/>").appendTo("body");
