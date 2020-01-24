@@ -948,7 +948,7 @@ function getPreviousMonthYear($current_month) {
             ->join('departments d', 'd.department_id=s.department_id')
             ->getValue('nmr_report_submissions s', 'department', null);
         $callback = function ($needle) use ($submitted_departments) {
-            return !in_array($needle, $submitted_departments);
+            return !in_array($needle, $submitted_departments) && $needle !== 'Accra Office';
         };
         return array_filter($departments, $callback);
 

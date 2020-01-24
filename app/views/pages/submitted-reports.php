@@ -28,7 +28,7 @@
                             <?php $i = 0;
                             foreach ($report_submissions as $key => $group) { ?>
                                 <div class="cardd mb-1">
-                                    <div class="card-header" id="heading_<?php echo $key; ?>">
+                                    <div class="card-header with-plus-icon" id="heading_<?php echo $key; ?>">
                                         <h5 class="mb-0">
                                             <button class="btn btn-link" type="button" data-toggle="collapse"
                                                     data-target="#collapseOne" aria-expanded="true"
@@ -76,7 +76,7 @@
                                         </h5>
                                     </div>
 
-                                    <div id="collapseOne" class="collapse <?php echo $i === 0 ? 'show' : '';
+                                    <div id="collapseOne" class="with-plus-icon collapse <?php echo $i === 0 ? 'show' : '';
                                     $i++ ?>"
                                          aria-labelledby="heading_<?php echo $key; ?>"
                                          data-parent="#accordionReportSubmissions">
@@ -260,15 +260,16 @@
                     },
                     {
                         id: "editSubmittedReport",
-                        template: `<a role="button" class="btn" onclick="onEditSubmittedReport()"> <i class="fa fa-file-edit"></i> Edit</a>`
+                        template: `<a role="button" class="k-button k-flat" onclick="onEditSubmittedReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`,
                     },
                     {
                         id: "editFinalReport",
-                        template: `<a role="button" class="btn" onclick=""> <i class="fa fa-file-edit"></i> Edit</a>`
+                        template: `<a role="button" class="k-button k-flat" onclick="onEditFinalReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`,
                     }
                 ]
             }
         }).getKendoPDFViewer();
+
         setTimeout(function () {
             previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
                 tools: [],
@@ -279,14 +280,6 @@
             }).data("kendoEditor");
         }, 1000);
 
-        function onEditSubmittedReport(e) {
-            window.location.href=`${URL_ROOT}/pages/edit-submitted-report/${reportSubmissionsId}`;
-        }
-
-        function onEditFinalReport(e) {
-            //$("[id='editFinalReportBtn_" +  previewTargetMonth + " " + previewTargetYear + "']").trigger('click');
-        }
-
         $("a.preview-btn").on("click", function (e) {
             let currentTarget = $(e.currentTarget);
             reportSubmissionsId = currentTarget.data('reportSubmissionsId');
@@ -295,7 +288,7 @@
             let currentMonth = previewTargetMonth = currentTarget.data('targetMonth');
             let currentYear = previewTargetYear = currentTarget.data('targetYear');
             pdfViewer.toolbar.hide('#generateReport');
-            //pdfViewer.toolbar.hide("#editFinalReport");
+            pdfViewer.toolbar.hide("#editFinalReport");
             previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`, data => JSON.parse(data).content);
         });
 
@@ -323,6 +316,8 @@
                     });
                 }
             });
+            pdfViewer.toolbar.show('#generateReport');
+            pdfViewer.toolbar.hide("#editSubmittedReport");
             //previewContent(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"))
         });
 
@@ -399,6 +394,14 @@
             });
         });
     });
+
+    function onEditSubmittedReport(e) {
+        window.location.href=`${URL_ROOT}/pages/edit-submitted-report/${reportSubmissionsId}`;
+    }
+
+    function onEditFinalReport(e) {
+        $("[id='editFinalReportBtn_" +  previewTargetMonth + " " + previewTargetYear + "']").trigger('click');
+    }
 
     function previewContent(previewURL, dataFilter) {
         $.ajax({
