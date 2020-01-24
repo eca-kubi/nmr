@@ -938,6 +938,33 @@ function getPreviousMonthYear($current_month) {
     return  Date('F Y', strtotime($current_month . " last month"));
 }
 
-function getYear($date) {
-   // return Date('y', strtotime($time))
+ function getNotSubmittedDepartments($target_month, $target_year)
+{
+    $db = Database::getDbh();
+    $departments = $db->getValue('departments', 'department', null);
+    try {
+        $submitted_departments = $db->where('s.target_month="' . $target_month . '"')
+            ->where('s.target_year="' . $target_year . '"')
+            ->join('departments d', 'd.department_id=s.department_id')
+            ->getValue('nmr_report_submissions s', 'department', null);
+        $callback = function ($needle) use ($submitted_departments) {
+            return !in_array($needle, $submitted_departments);
+        };
+        return array_filter($departments, $callback);
+
+    } catch (Exception $e) {
+    }
+    return [];
 }
+
+function getSubmittedDepartments($target_month, $target_year) {
+    try {
+        return Database::getDbh()->where('s.target_month="' . $target_month . '"')
+            ->where('s.target_year="' . $target_year . '"')
+            ->join('departments d', 'd.department_id=s.department_id')
+            ->getValue('nmr_report_submissions s', 'department', null);
+    } catch (Exception $e) {
+    }
+    return [];
+}
+

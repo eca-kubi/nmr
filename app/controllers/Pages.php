@@ -121,11 +121,11 @@ class Pages extends Controller
         if (!isLoggedIn()) {
             redirect('users/login/pages/edit-submitted-report/' . $report_submissions_id);
         }
-        if(!isPowerUser($current_user->user_id) || isITAdmin($current_user->user_id)) {
+        if (!isPowerUser($current_user->user_id) || isITAdmin($current_user->user_id)) {
             redirect('errors/index/404');
         }
 
-        if(!$db->where('report_submissions_id', $report_submissions_id)->has('nmr_report_submissions')) {
+        if (!$db->where('report_submissions_id', $report_submissions_id)->has('nmr_report_submissions')) {
             redirect('errors/index/404');
         }
         $payload['report_submissions_id'] = $report_submissions_id;
@@ -158,6 +158,11 @@ class Pages extends Controller
         if ($success) {
             echo json_encode(['success' => true]);
         }
+    }
+
+    public function notSubmittedDepartments($target_month, $target_year)
+    {
+       echo json_encode(getNotSubmittedDepartments($target_month, $target_year));
     }
 
     public function editPreloadedDraft($draft_id): void
@@ -342,7 +347,7 @@ class Pages extends Controller
     {
         if (!isLoggedIn())
             redirect('users/login/pages/submitted-reports/');
-        $payload['page_title'] = 'Submitted Reports';
+        $payload['page_title'] = 'Submitted Reports (Flash Report)';
         $payload['report_submissions'] = groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id));
         $payload['is_power_user'] = isPowerUser(getUserSession()->user_id);
         $this->view('pages/submitted-reports', $payload);

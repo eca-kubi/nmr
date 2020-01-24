@@ -340,7 +340,7 @@ echo $spreadsheet_templates; ?>'>
                     id: "cancelBtn",
                     icon: "cancel",
                     attributes: {"class": "cancel-btn"},
-                    text: "Cancel",
+                    text: "Close",
                     click: e => history.back(),
                 },
 

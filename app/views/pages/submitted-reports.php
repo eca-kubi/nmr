@@ -16,7 +16,7 @@
                     <div class="row p-1">
                         <h5 class="box-title text-bold"><span><svg class="fontastic-draft" style="fill: currentColor"><use
                                             xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
-                            Submitted Reports
+                            <?php echo $page_title ?? ''; ?>
                         </h5>
                     </div>
 
@@ -54,11 +54,11 @@
                                                             data-target-year="<?php echo explode(" ", $key)[1] ?>"
                                                     ><i class="fas fa-cogs"></i> Generate Report
                                                     </a>
-                                                    <a
-                                                            class="dropdown-item edit-final-report-btn <?php echo isPowerUser($current_user->user_id) ? '' : 'd-none' ?>"
-                                                            href="#"
-                                                            data-target-month="<?php echo explode(" ", $key)[0] ?>"
-                                                            data-target-year="<?php echo explode(" ", $key)[1] ?>"
+                                                    <a id="<?php echo 'editFinalReportBtn_' . $key ?>"
+                                                       class="dropdown-item edit-final-report-btn <?php echo isPowerUser($current_user->user_id) ? '' : 'd-none' ?> d-none"
+                                                       href="#"
+                                                       data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                       data-target-year="<?php echo explode(" ", $key)[1] ?>"
                                                     ><i class="fa fa-file-edit"></i> Edit
                                                     </a> <?php endif; ?>
                                                 <a
@@ -81,6 +81,52 @@
                                          aria-labelledby="heading_<?php echo $key; ?>"
                                          data-parent="#accordionReportSubmissions">
                                         <div class="card-body border rounded-bottom">
+                                            <?php if (isPowerUser($current_user->user_id)) { ?>
+                                                <a href="#submissionCollapse" class="btn btn-primary mb-3"
+                                                   data-toggle="collapse" role="button"><i
+                                                            class="fa fa-info-circle"></i> <?php echo $key ?> Report
+                                                    Submission Summary</a>
+                                                <div class="collapse" id="submissionCollapse">
+                                                    <div class="card card-body">
+                                                        <table id="submissionStatusGrid"
+                                                               class="table table-bordered mb-2">
+                                                            <colgroup>
+                                                                <col/>
+                                                                <col/>
+                                                                <!-- <col style="width:110px" />
+                                                                 <col style="width:120px" />
+                                                                 <col style="width:130px" />-->
+                                                            </colgroup>
+                                                            <thead>
+                                                            <tr class="text-center">
+                                                                <th colspan="2"><?php echo $key ?> Report Submission
+                                                                    Summary
+                                                                </th>
+                                                            </tr>
+                                                            <tr>
+                                                                <th data-field="department">Department</th>
+                                                                <th data-field="status">Status</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <?php foreach (getSubmittedDepartments(explode(" ", $key)[0], explode(" ", $key)[1]) as $department) { ?>
+                                                                <tr>
+                                                                    <td><?php echo $department ?></td>
+                                                                    <td class="text-bold text-success"> Submitted</td>
+                                                                </tr>
+                                                            <?php } ?>
+                                                            <?php foreach (getNotSubmittedDepartments(explode(" ", $key)[0], explode(" ", $key)[1]) as $department) { ?>
+                                                                <tr>
+                                                                    <td><?php echo $department ?></td>
+                                                                    <td class="text-bold text-danger"> Pending</td>
+                                                                </tr>
+                                                            <?php } ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                            <?php } ?>
                                             <div class="row"><?php foreach ($group as $report) { ?>
                                                     <div class="col-md-4 col-sm-6 col-xs-12"
                                                          id="<?php echo $report['report_submissions_id']; ?>">
@@ -159,6 +205,7 @@
     let draftWindow;
     let previewTargetMonth;
     let previewTargetYear;
+    let reportSubmissionsId;
     /**
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
@@ -166,6 +213,10 @@
 
     $(function () {
         // Add minus icon for collapse element which is open by default
+        /* $("#submissionStatusGrid").kendoGrid({
+             height: 300,
+             sortable: true
+         });*/
         $(".collapse.show").each(function () {
             $(this).prev(".card-header").find(".collapse-icon").addClass("fa-minus").removeClass("fa-plus");
         });
@@ -204,8 +255,16 @@
                 items: [
                     "pager", "zoom", "toggleSelection", "search", "download", "print",
                     {
-                        name: "generateReport",
+                        id: "generateReport",
                         template: `<a role='button' class='<?php echo isPowerUser($current_user->user_id) ? 'k-button k-flat generate-report-btn' : 'd-none' ?>' title='Generate Report'><span class='fa fa-cogs'></span>&nbsp;Generate Report</a>`
+                    },
+                    {
+                        id: "editSubmittedReport",
+                        template: `<a role="button" class="btn" onclick="onEditSubmittedReport()"> <i class="fa fa-file-edit"></i> Edit</a>`
+                    },
+                    {
+                        id: "editFinalReport",
+                        template: `<a role="button" class="btn" onclick=""> <i class="fa fa-file-edit"></i> Edit</a>`
                     }
                 ]
             }
@@ -220,13 +279,23 @@
             }).data("kendoEditor");
         }, 1000);
 
+        function onEditSubmittedReport(e) {
+            window.location.href=`${URL_ROOT}/pages/edit-submitted-report/${reportSubmissionsId}`;
+        }
+
+        function onEditFinalReport(e) {
+            //$("[id='editFinalReportBtn_" +  previewTargetMonth + " " + previewTargetYear + "']").trigger('click');
+        }
+
         $("a.preview-btn").on("click", function (e) {
             let currentTarget = $(e.currentTarget);
-            let reportSubmissionsId = currentTarget.data('reportSubmissionsId');
+            reportSubmissionsId = currentTarget.data('reportSubmissionsId');
             let title = currentTarget.data('title');
             let departmentId = currentTarget.data('departmentId');
             let currentMonth = previewTargetMonth = currentTarget.data('targetMonth');
             let currentYear = previewTargetYear = currentTarget.data('targetYear');
+            pdfViewer.toolbar.hide('#generateReport');
+            //pdfViewer.toolbar.hide("#editFinalReport");
             previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`, data => JSON.parse(data).content);
         });
 
@@ -248,7 +317,7 @@
                         // Render the result as a PDF file
                         return kendo.drawing.exportPDF(group, {});
                     }).done(data => {
-                        draftWindow.center().open();
+                        draftWindow.center().open().maximize();
                         pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                         setTimeout(() => pdfViewer.activatePage(1), 500);
                     });
@@ -349,7 +418,7 @@
                     // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
                 }).done(data => {
-                    draftWindow.center().open();
+                    draftWindow.center().open().maximize();
                     pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                     setTimeout(() => pdfViewer.activatePage(1), 500)
                 });
