@@ -321,7 +321,7 @@ class Pages extends Controller
         $ret = $ret && $db->where('prop', 'nmr_current_submission_month')->update('settings', ['value' => $currentMonth]);
         $ret = $ret && $db->where('prop', 'nmr_current_submission_year')->update('settings', ['value' => $currentYear]);
         $ret = $ret && $db->where('prop', 'nmr_submission_closed_by_power_user')->update('settings', ['value' => 0]);
-        $db->onDuplicate(['target_year', 'target_month']);
+        $db->onDuplicate(['closed_status']);
         $ret = $ret && $db->insert('nmr_target_month_year', ['target_year' => $currentYear, 'target_month' => $currentMonth, 'closed_status' => 0]);
         if ($ret) {
             echo json_encode(['currentSubmissionYear' => $currentYear, 'currentSubmissionMonth' => $currentMonth, 'isSubmissionClosedByPowerUser' => false]);
@@ -331,8 +331,8 @@ class Pages extends Controller
     public function closeSubmission($target_month = "", $target_year = "")
     {
         $db = Database::getDbh();
-        $target_month = $target_month? : date('Y');
-        $target_year = $target_year ? : date('F');
+        $target_month = $target_month? : date('F');
+        $target_year = $target_year ? : date('Y');
         if (currentSubmissionYear() === $target_year && (currentSubmissionMonth()) === $target_month) {
             $ret = Database::getDbh()->where('prop', 'nmr_submission_opened')->update('settings', ['value' => 0]);
             $ret = $ret && Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->update('settings', ['value' => 1]);
