@@ -146,6 +146,7 @@ echo $spreadsheet_templates; ?>'>
     let editDraft = Boolean(<?php echo $edit_draft ?? '' ?>);
     let isNewDraft = Boolean(<?php echo $is_new_draft ?? '' ?>);
     let editReport = Boolean(<?php echo $edit_report ?? ''; ?>);
+    let editPreloadedDraft = Boolean(<?php echo $edit_preloaded_draft ?? ''; ?>);
     let editSubmittedReport = Boolean(<?php echo $edit_submitted_report ?? ''; ?>);
     let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
     let clearedContents = "";
@@ -347,11 +348,18 @@ echo $spreadsheet_templates; ?>'>
                 <?php if (isITAdmin($current_user->user_id)): ?>
                 {
                     type: "button",
+                    text: "Save",
+                    icon: "save",
+                    click: savePreloadedDraft,
+                    hidden: editPreloadedDraft? '' : true
+                },
+                {
+                    type: "button",
                     text: "Save as Preloaded",
                     icon: "launch",
                     click: saveDraftAsPreloaded,
                     hidden: true
-                },
+                }
                 <?php endif; ?>
             ]
         }).data("kendoToolBar");
@@ -818,7 +826,8 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName.startsWith(CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
+        }
+        else if (sheetName.startsWith(CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1213,11 +1222,11 @@ echo $spreadsheet_templates; ?>'>
     function saveDraft(e) {
         let postDfr = jQuery.Deferred();
         let postDfrPromise = postDfr.promise();
-        postDfrPromise.done(function (title) {
+        postDfrPromise.done(function () {
             spreadsheet.saveJSON().then(function (data) {
                 $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
                 $.post({
-                    url: "<?php echo isset($edit_preloaded_draft) ? URL_ROOT . '/pages/save-preloaded-draft' : URL_ROOT . '/pages/save-draft' ?>",
+                    url: "<?php echo  URL_ROOT . '/pages/save-draft' ?>",
                     data: $("#editorForm").serialize(),
                     dataType: 'json'
                 }).done(function (response, textStatus, jQueryXHR) {
@@ -1228,22 +1237,38 @@ echo $spreadsheet_templates; ?>'>
                         setTimeout(() => kAlert.close(), 2500);
                     } else {
                         let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
+                        setTimeout(() => kAlert.close(), 2500);
                     }
                 });
             });
         });
-        postDfr.resolve(title);
-        /* let draftTitleInput = $("#draftTitleInput");
-         if (draftTitleInput.hasClass('no-title')) {
-             kendo.prompt("Enter a title for your draft.", "New Draft").done(function (title) {
-                 $("#draftTitleInput, #title").removeClass('no-title').val(title);
-                 postDfr.resolve(title);
-             });
-         } else {
-             let title = draftTitleInput.val();
-             $("#title").val(title);
-             postDfr.resolve(title);
-         }*/
+        postDfr.resolve();
+    }
+
+    function savePreloadedDraft(e) {
+        let postDfr = jQuery.Deferred();
+        let postDfrPromise = postDfr.promise();
+        postDfrPromise.done(function () {
+            spreadsheet.saveJSON().then(function (data) {
+                $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
+                $.post({
+                    url: "<?php echo URL_ROOT . '/pages/save-preloaded-draft'; ?>",
+                    data: $("#editorForm").serialize(),
+                    dataType: 'json'
+                }).done(function (response, textStatus, jQueryXHR) {
+                    if (response.success) {
+                        let kAlert = kendoAlert('Save Preloaded Draft', 'Draft saved successfully!');
+                        if (response.draft_id)
+                            $('#draftId').val(response.draft_id);
+                        setTimeout(() => kAlert.close(), 2500);
+                    } else {
+                        let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
+                        setTimeout(() => kAlert.close(), 2500);
+                    }
+                });
+            });
+        });
+        postDfr.resolve();
     }
 
     function saveFinalReport() {

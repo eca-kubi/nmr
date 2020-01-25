@@ -968,3 +968,10 @@ function getSubmittedDepartments($target_month, $target_year) {
     return [];
 }
 
+function getSpreadsheetTemplate() {
+    try {
+       return Database::getDbh()->orderBy('description', 'ASC')->get('nmr_spreadsheet_templates');
+    } catch (Exception $e) {
+    }
+    return [];
+}

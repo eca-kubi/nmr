@@ -181,8 +181,7 @@ class Pages extends Controller
         $payload['content'] = $draft['editor_content'];
         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
         $payload['title'] = $draft['title'];
-        $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $payload['edit_draft'] = true;
+        $payload['spreadsheet_templates'] = json_encode(getSpreadsheetTemplate());
         $payload['edit_preloaded_draft'] = true;
         $this->view('pages/report', $payload);
     }
@@ -269,8 +268,7 @@ class Pages extends Controller
                     'title' => $_POST['title'],
                     'editor_content' => $_POST['content'],
                     'spreadsheet_content' => $_POST['spreadsheet_content'],
-                    'time_modified' => now(),
-                    'user_id' => $current_user->user_id
+                    'time_modified' => now()
                 ]);
                 if ($ret)
                     echo json_encode(['draft_id' => $db->getInsertId(), 'success' => true]);

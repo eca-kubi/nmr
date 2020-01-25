@@ -168,7 +168,8 @@
                                     currentSubmissionMonth = data.currentSubmissionMonth;
                                     currentSubmissionYear = data.currentSubmissionYear;
                                     $("#closeSubmission").parent().removeClass('d-none');
-                                    kendoAlert("Submission Opened", "Report submission opened for " + data.currentSubmissionMonth + " " + data.currentSubmissionYear);
+                                    let alert = kendoAlert("Submission Opened", "Report submission opened for " + data.currentSubmissionMonth + " " + data.currentSubmissionYear);
+                                    setTimeout(() => alert.close(), 3000);
                                     $("#submissionNotice p").removeClass('text-danger').addClass('text-success').html("<i class=\"fa fa-info-circle\"></i> Report Submission Opened");
                                 });
                             }
@@ -203,14 +204,16 @@
                         }).done(function (data, successTextStatus, jQueryXHR) {
                             isSubmissionOpened = false;
                             isSubmissionClosedByPowerUser = data.isSubmissionClosedByPowerUser;
-                            kendoAlert('Submission Closed', 'Submission of reports closed for this month!');
+                           let alert =  kendoAlert('Submission Closed', 'Submission of reports closed for this month!');
+                           setTimeout(() => alert.close(), 3000);
                             $("#closeSubmission").parent().addClass('d-none');
                             $("#submissionNotice p").removeClass('text-success').addClass('text-danger').html("<i class=\"fa fa-info-circle\"></i> Report Submission Closed");
                         });
                     }
                 })
             } else if (isSubmissionClosedByPowerUser) {
-                kendoAlert('Submission Closed', 'Submission of reports is already closed for this month!');
+               let alert =  kendoAlert('Submission Closed', 'Submission of reports is already closed for this month!');
+                setTimeout(() => alert.close(), 3000);
             }
         });
     });

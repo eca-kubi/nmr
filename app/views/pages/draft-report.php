@@ -11,7 +11,7 @@
                     <div class="row p-1">
                         <h5 class="box-title text-bold"><span><svg class="fontastic-draft" style="fill: currentColor"><use
                                             xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
-                            <?php echo $page_title; ?>
+                            <?php echo $page_title??  'Draft (Flash Report)'; ?>
                         </h5>
                         <div class="box-tools pull-right ml-auto <?php echo isITAdmin($current_user->user_id) ? '' : 'd-none'; ?>">
                             <button type="button" class="btn btn-app btn-box-tool btn-outline-light btn-sm"
