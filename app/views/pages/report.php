@@ -898,19 +898,19 @@ echo $spreadsheet_templates; ?>'>
                 dataSource: {data: data},
                 series: [
                     {
+                        field: "['ARL']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "ARL",
+                        color: "#1d6f86",
+                        stack: true
+                    },
+                    {
                         field: "['TOLL']",
                         categoryField: categoryField,
                         type: "column",
                         name: "TOLL",
                         color: "#f08527",
-                        stack: true
-                    },
-                    {
-                        field: "['ARL']",
-                        categoryField: categoryField,
-                        type: "column",
-                        name: "ARL",
-                        color: "#1d6f86"
                     },
                     {
                         // Notice the syntax for fields
@@ -920,7 +920,10 @@ echo $spreadsheet_templates; ?>'>
                         type: "line",
                         style: "normal",
                         name: "MONTHLY TOTAL",
-                        color: "#f37f7f"
+                        color: "#f37f7f",
+                        markers: {
+                            visible: false
+                        }
                     }
                 ],
                 categoryAxis: {
@@ -962,11 +965,34 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName=== "GOLD PRODUCED AND TONS MILLED 2") {
+        } else if (sheetName=== CHART_GOLD_PRODUCED_TONS_MILLED_2) {
             let valueRange = sheet.range("B2:M5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
+                legend: {
+                    visible: true,
+                    position: "bottom",
+                    item: {
+                        cursor: "pointer",
+                        visual: function (e) {
+                            let layout;
+                            let type = e.series.type;
+                            let dashType = e.series.dashType;
+                            let color = e.options.markers.background;
+                            let labelColor = e.options.labels.color;
+                            let label = e.series.name;
+
+                            if (type === "line") {
+                                return renderLegend(label, labelColor, color, 1.5, dashType, {pathColor: seriesColor.actualGoldProduced, circleColor: seriesColor.actualGoldProduced})
+                            } else if (type === "column") {
+                                return renderLegend(label, labelColor, color, 10)
+                            }
+
+                            return e.createVisual();
+                        }
+                    }
+                },
                 title: {
                     text: "GOLD PRODUCED AND TONNES MILLED"
                 },
@@ -996,6 +1022,10 @@ echo $spreadsheet_templates; ?>'>
                         style: "normal",
                         name: "ACTUAL GOLD PRODUCED (oz)",
                         color: seriesColor.actualGoldProduced,
+                        markers: {
+                            visible: true,
+                            background: seriesColor.actualGoldProduced
+                        },
                         axis: "goldProduced"
                     }
                 ],
@@ -1028,6 +1058,29 @@ echo $spreadsheet_templates; ?>'>
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
+                legend: {
+                    visible: true,
+                    position: "bottom",
+                    item: {
+                        cursor: "pointer",
+                        visual: function (e) {
+                            let layout;
+                            let type = e.series.type;
+                            let dashType = e.series.dashType;
+                            let color = e.options.markers.background;
+                            let labelColor = e.options.labels.color;
+                            let label = e.series.name;
+
+                            if (type === "line") {
+                                return renderLegend(label, labelColor, color, 1.5, dashType, {pathColor: "#873987", circleColor: "#9e480e"})
+                            } else if (type === "column") {
+                                return renderLegend(label, labelColor, color, 10)
+                            }
+
+                            return e.createVisual();
+                        }
+                    }
+                },
                 title: {
                     text: CHART_GOLD_PRODUCED_BUDGET_OUNCES
                 },
@@ -1047,9 +1100,13 @@ echo $spreadsheet_templates; ?>'>
                         categoryField: categoryField,
                         type: "line",
                         name: "BUDGET OUNCES",
-                        color: seriesColor.budgetOunces
+                        color: seriesColor.budgetOunces,
+                        markers: {
+                            visible: true,
+                            background: seriesColor.budgetOunces
+                        }
                     }
-                ],
+                ]
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
