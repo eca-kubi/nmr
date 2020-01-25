@@ -9,7 +9,7 @@
             <div class="box collapsed border-primary">
                 <div class="box-header">
                     <h3 class="box-title text-bold text-success">
-                        <?php echo $title?? ''; ?>
+                        <?php echo $title ?? ''; ?>
                     </h3>
                     <div class="box-tools pull-right d-none">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -161,7 +161,10 @@ echo $spreadsheet_templates; ?>'>
         romGrade: "#ed7d31",
         milledTonnage: "#ff6eff",
         deliveryTonnage: "#03b855",
-        budgetTonnage: "#ffcd9b"
+        budgetTonnage: "#ffcd9b",
+        tonnesMilled: "#fbbd00",
+        budgetTonnesMilled: "#70ad47",
+        actualGoldProduced: "#43682b"
     };
     let previewWindow;
     let previewViewer;
@@ -272,7 +275,7 @@ echo $spreadsheet_templates; ?>'>
                     text: "Save Draft",
                     icon: "save",
                     click: saveDraft,
-                   // hidden: "<?php echo isset($edit_draft) ? '' : 'true' ?>"
+                    // hidden: "<?php echo isset($edit_draft) ? '' : 'true' ?>"
                     hidden: true
                 },
                 {
@@ -351,7 +354,7 @@ echo $spreadsheet_templates; ?>'>
                     text: "Save",
                     icon: "save",
                     click: savePreloadedDraft,
-                    hidden: editPreloadedDraft? '' : true
+                    hidden: editPreloadedDraft ? '' : true
                 },
                 {
                     type: "button",
@@ -764,7 +767,7 @@ echo $spreadsheet_templates; ?>'>
             },
             transitions: false
         };
-        if (sheetName.startsWith(CHART_RECOVERY_HEAD_GRADE)) {
+        if (sheetName===(CHART_RECOVERY_HEAD_GRADE)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -795,7 +798,117 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName.startsWith(CHART_GOLD_PRODUCED_TONS_MILLED)) {
+        } else if (sheetName===(CHART_RECOVERY_HEAD_GRADE_2)) {
+            let valueRange = sheet.range("B2:M5");
+            let fieldRange = sheet.range("A2:A5");
+            data = fetchData(sheet, valueRange, fieldRange);
+            chart = div.kendoChart($.extend(kendoChartOptions, {
+                title: {
+                    text: "RECOVERY AND HEAD GRADE"
+                },
+                dataSource: {data: data},
+                series: [
+                    {
+                        field: "['HEAD GRADE (g/t)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "HEAD GRADE (g/t)",
+                        color: "#00b0f0",
+                        axis: "headGrade"
+                    },
+                    {
+                        field: "['BUDGET HEAD GRADE (g/t)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "BUDGET HEAD GRADE (g/t)",
+                        color: "#ffc000",
+                    },
+                    {
+                        // Notice the syntax for fields
+                        // that are not valid JS identifiers
+                        field: "['RECOVERY (%)']",
+                        categoryField: categoryField,
+                        type: "line",
+                        style: "normal",
+                        name: "RECOVERY (%)",
+                        color: "#873987",
+                        markers: {
+                            background: "#9e480e",
+                            visible: true
+                        },
+                        axis: "recovery"
+                    },
+                ],
+                valueAxis: [
+                    {
+                        name: "headGrade",
+                        title: {
+                            text: "Head Grade (g/t)"
+                        }
+                    },
+                    {
+                        name: "recovery",
+                        title: {
+                            text: "Recovery (%)"
+                        }
+                    }
+                ],
+                categoryAxis: {
+                    axisCrossingValues: [0, 13],
+                    majorGridLines: {
+                        visible: false
+                    }
+                }
+            })).data("kendoChart");
+            charts[sheetName] = chart;
+            bindChart(chart, sheet, valueRange, fieldRange);
+
+        } else if (sheetName===(CHART_GOLD_RECOVERED_ARL_AND_TOLL)) {
+            let valueRange = sheet.range("B2:M5");
+            let fieldRange = sheet.range("A2:A5");
+            data = fetchData(sheet, valueRange, fieldRange);
+            chart = div.kendoChart($.extend(kendoChartOptions, {
+                title: {
+                    text: CHART_GOLD_RECOVERED_ARL_AND_TOLL
+                },
+                dataSource: {data: data},
+                series: [
+                    {
+                        field: "['TOLL']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "TOLL",
+                        color: "#f08527",
+                        stack: true
+                    },
+                    {
+                        field: "['ARL']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "ARL",
+                        color: "#1d6f86"
+                    },
+                    {
+                        // Notice the syntax for fields
+                        // that are not valid JS identifiers
+                        field: "['MONTHLY TOTAL']",
+                        categoryField: categoryField,
+                        type: "line",
+                        style: "normal",
+                        name: "MONTHLY TOTAL",
+                        color: "#f37f7f"
+                    }
+                ],
+                categoryAxis: {
+                    majorGridLines: {
+                        visible: false
+                    }
+                }
+            })).data("kendoChart");
+            charts[sheetName] = chart;
+            bindChart(chart, sheet, valueRange, fieldRange);
+
+        } else if (sheetName===(CHART_GOLD_PRODUCED_TONS_MILLED)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -825,9 +938,68 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
+        } else if (sheetName=== "GOLD PRODUCED AND TONS MILLED 2") {
+            let valueRange = sheet.range("B2:M5");
+            let fieldRange = sheet.range("A2:A5");
+            data = fetchData(sheet, valueRange, fieldRange);
+            chart = div.kendoChart($.extend(kendoChartOptions, {
+                title: {
+                    text: "GOLD PRODUCED AND TONNES MILLED"
+                },
+                dataSource: {data: data},
+                series: [
+                    {
+                        // Notice the syntax for fields
+                        // that are not valid JS identifiers
+                        field: "['TONNES MILLED (t)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "TONNES MILLED (t)",
+                        color: seriesColor.tonnesMilled,
+                        axis: "tonnes"
+                    },
+                    {
+                        field: "['BUDGET TONNES MILLED (t)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "BUDGET TONNES MILLED (t)",
+                        color: seriesColor.budgetTonnesMilled
+                    },
+                    {
+                        field: "['ACTUAL GOLD PRODUCED (oz)']",
+                        categoryField: categoryField,
+                        type: "line",
+                        style: "normal",
+                        name: "ACTUAL GOLD PRODUCED (oz)",
+                        color: seriesColor.actualGoldProduced,
+                        axis: "goldProduced"
+                    }
+                ],
+                valueAxis: [
+                    {
+                        name: "tonnes",
+                        title: {
+                            text: "Tonnes Milled (t)"
+                        }
+                    },
+                    {
+                        name: "goldProduced",
+                        title: {
+                            text: "Gold Produced (oz)"
+                        }
+                    }
+                ],
+                categoryAxis: {
+                    axisCrossingValues: [0, 13],
+                    majorGridLines: {
+                        visible: false
+                    }
+                }
+            })).data("kendoChart");
+            charts[sheetName] = chart;
+            bindChart(chart, sheet, valueRange, fieldRange);
 
-        }
-        else if (sheetName.startsWith(CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
+        } else if (sheetName===(CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -857,7 +1029,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName.startsWith(CHART_PLANNED_VRS_ACTUAL_METRES)) {
+        } else if (sheetName===(CHART_PLANNED_VRS_ACTUAL_METRES)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -887,7 +1059,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName.startsWith(CHART_CLOSING_STOCKPILE_BALANCE)) {
+        } else if (sheetName===(CHART_CLOSING_STOCKPILE_BALANCE)) {
             let valueRange = sheet.range("B2:M6");
             let fieldRange = sheet.range("A2:A6");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -971,7 +1143,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName.startsWith(CHART_TOLL_DELIVERY)) {
+        } else if (sheetName===(CHART_TOLL_DELIVERY)) {
             let valueRange = sheet.range("B2:M8");
             let fieldRange = sheet.range("A2:A8");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1226,7 +1398,7 @@ echo $spreadsheet_templates; ?>'>
             spreadsheet.saveJSON().then(function (data) {
                 $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
                 $.post({
-                    url: "<?php echo  URL_ROOT . '/pages/save-draft' ?>",
+                    url: "<?php echo URL_ROOT . '/pages/save-draft' ?>",
                     data: $("#editorForm").serialize(),
                     dataType: 'json'
                 }).done(function (response, textStatus, jQueryXHR) {
