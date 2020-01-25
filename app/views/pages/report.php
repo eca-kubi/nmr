@@ -803,6 +803,29 @@ echo $spreadsheet_templates; ?>'>
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
+                legend: {
+                    visible: true,
+                    position: "bottom",
+                    item: {
+                        cursor: "pointer",
+                        visual: function (e) {
+                            let layout;
+                            let type = e.series.type;
+                            let dashType = e.series.dashType;
+                            let color = e.options.markers.background;
+                            let labelColor = e.options.labels.color;
+                            let label = e.series.name;
+
+                            if (type === "line") {
+                                return renderLegend(label, labelColor, color, 1.5, dashType, {pathColor: "#873987", circleColor: "#9e480e"})
+                            } else if (type === "column") {
+                                return renderLegend(label, labelColor, color, 10)
+                            }
+
+                            return e.createVisual();
+                        }
+                    }
+                },
                 title: {
                     text: "RECOVERY AND HEAD GRADE"
                 },
@@ -834,6 +857,7 @@ echo $spreadsheet_templates; ?>'>
                         color: "#873987",
                         markers: {
                             background: "#9e480e",
+                            border: {color: "#9e480e"},
                             visible: true
                         },
                         axis: "recovery"
@@ -1258,7 +1282,42 @@ echo $spreadsheet_templates; ?>'>
         }, 1000)
     }
 
-    function renderLegend(label, labelColor, color, width = 1.5, dashType = "solid") {
+    function renderSolidDot (options = {}) {
+        let draw = kendo.drawing;
+        let geom = kendo.geometry;
+        let path = new draw.Path({
+            stroke: {
+                color: options.pathColor? options.pathColor : "#9999b6",
+                width: 3,
+                lineCap: "round"
+            },
+            fill: {
+                color: options.pathColor? options.pathColor : "#33ccff"
+            },
+            cursor: "pointer"
+        });
+        let dot = new geom.Circle([40,200], 5);
+        let circle = new draw.Circle(dot,{
+            stroke: {
+                color: options.circleColor? options.circleColor : "#33ccff",
+            },
+            fill: {
+                color: options.circleColor? options.circleColor : "#33ccff",
+            },
+            cursor: "pointer"
+        });
+        // The following commands are interchangeable
+        path.moveTo(20, 200);
+        path.lineTo(60, 200);
+        //path.lineTo([200, 200]);
+        //path.lineTo(new geom.Point(200, 200));
+        let group = new draw.Group();
+        group.append(path, circle);
+
+        return group;
+    }
+
+    function renderLegend(label, labelColor, color, width = 1.5, dashType = "solid", solidDot = null) {
         let draw = kendo.drawing;
         let geom = kendo.geometry;
         let rect = new kendo.geometry.Rect([0, 0], [500, 300]);
@@ -1287,9 +1346,15 @@ echo $spreadsheet_templates; ?>'>
             }
         });
 
+        if (solidDot) {
+            let group = renderSolidDot(solidDot);
+            layout.append(group, text);
+        } else {
+            layout.append(path, text);
+        }
+
         //let space = new draw.Text("&nbsp;", [0, 0], {font: "0.2px"});
 
-        layout.append(path, text);
         layout.reflow();
 
 
