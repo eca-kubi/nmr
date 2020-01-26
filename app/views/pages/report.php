@@ -40,7 +40,7 @@
                                                value="<?php echo $title ?? ''; ?>">
                                         <input type="hidden" id="draftId" name="draft_id"
                                                value="<?php echo $draft_id ?? ''; ?>">
-                                        <input type="hidden" id="draftTitleInput" name="draft_id"
+                                        <input type="hidden" id="draftTitleInput" name="draft_title_input"
                                                value="<?php echo $title ?? ''; ?>">
 
                                         <input type="hidden" id="targetYear" name="target_year"
@@ -221,8 +221,8 @@ echo $spreadsheet_templates; ?>'>
             previewEditor = $("#previewEditor").kendoEditor({
                 tools: [],
                 stylesheets: [
-                    "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                   // "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                    //"<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
                 ]
             }).data("kendoEditor");
             let previewEditorValue = `<?php echo $content ?? '' ?>`;

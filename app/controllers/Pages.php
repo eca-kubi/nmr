@@ -253,7 +253,6 @@ class Pages extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db = Database::getDbh();
-            $current_user = getUserSession();
             $draft_id = isset($_POST['draft_id']) ? $_POST['draft_id'] : '';
             if ($draft_id && $db->where('draft_id', $draft_id)->has('nmr_preloaded_draft')) {
                 $ret = $db->where('draft_id', $draft_id)->update('nmr_preloaded_draft',
