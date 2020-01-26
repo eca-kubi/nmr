@@ -75,3 +75,4 @@ fabric.properties
 app/config/host.php
 
 /app/uploads/
+/public/reports/
