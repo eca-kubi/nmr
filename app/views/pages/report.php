@@ -33,7 +33,7 @@
                                 <div style="width: 100%">
                                     <form id="editorForm">
                                     <textarea name="content" id="editor" cols="30" rows="10"
-                                              style="height: 400px"><?php echo $content ?? ''; ?></textarea>
+                                              style="height: 500px"><?php echo $content ?? ''; ?></textarea>
                                         <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
                                                value='<?php echo $spreadsheet_content ?? ''; ?>'>
                                         <input type="hidden" id="title" name="title"
@@ -204,7 +204,7 @@ echo $spreadsheet_templates; ?>'>
                         //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
                         kendo.drawing.drawDOM($(editor.body), {
                             paperSize: 'a3',
-                            margin: "2cm",
+                            margin: "1.3cm",
                             multipage: true
                         }).then(function (group) {
                             // Render the result as a PDF file
@@ -246,7 +246,7 @@ echo $spreadsheet_templates; ?>'>
             //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
             kendo.drawing.drawDOM($(previewEditor.body), {
                 paperSize: 'a3',
-                margin: "2cm",
+                margin: "1cm",
                 multipage: true
             }).then(function (group) {
                 // Render the result as a PDF file
@@ -1452,13 +1452,13 @@ echo $spreadsheet_templates; ?>'>
                 }
                 for (let i = 0; i < promises.length; i++) {
                     if (ignoreExisting) {
-                        promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;margin-left:auto;margin-right:auto;'/>"));
+                        promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;/*margin-left:auto;*/margin-right:auto;'/>"));
                     } else {
                         let imgs = editor.body.querySelectorAll("img[data-id='sheet_img_" + sheet.name() + "']");
                         if (imgs)
                             promises[i].done(data => $(imgs).attr("src", data));
                         else
-                            promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;margin-left:auto;margin-right:auto;'/>"));
+                            promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;/*margin-left:auto;*/margin-right:auto;'/>"));
                     }
                 }
             }
@@ -1470,11 +1470,11 @@ echo $spreadsheet_templates; ?>'>
         let chart = charts[chartName];
         chart.exportImage().done(data => {
             if (ignoreExisting) {
-                editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;margin-left:auto;margin-right:auto;' />");
+                editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;/*margin-left:auto;*/margin-right:auto;' />");
             } else {
                 let imgs = editor.body.querySelectorAll("img[data-id='chart_img_" + chartName + "']");
                 if (!imgs) {
-                    editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;margin-left:auto;margin-right:auto;' />");
+                    editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;//**/*margin-left:auto;*/margin-right:auto;' />");
                 } else {
                     $(imgs).attr("src", data);
                 }
