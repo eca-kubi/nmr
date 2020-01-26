@@ -175,7 +175,13 @@ echo $spreadsheet_templates; ?>'>
     $(function () {
 
         previewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/> </div>").appendTo("body");
-
+        previewEditor = $("#previewEditor").kendoEditor({
+            tools: [],
+            stylesheets: [
+                "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+            ]
+        }).data("kendoEditor");
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
 
         $(window).on("resize", function () {
@@ -183,51 +189,21 @@ echo $spreadsheet_templates; ?>'>
             spreadsheet.resize(true);
         });
 
-        if (!isSubmissionClosed) {
-            editorTabStrip = $("#editorTabStrip").kendoTabStrip({
-                select(e) {
-                    if (e.contentElement.id === "previewTab") {
-                        if (!pdfViewer)
-                            pdfViewer = $("#previewContent").kendoPDFViewer({
-                                pdfjsProcessing: {
-                                    file: ""
-                                },
-                                width: "100%",
-                                height: 550,
-                                scale: 1,
-                                toolbar: {
-                                    items: [
-                                        "pager", "zoom", "toggleSelection", "search", "download", "print"
-                                    ]
-                                }
-                            }).getKendoPDFViewer();
-                        //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
-                        kendo.drawing.drawDOM($(editor.body), {
-                            paperSize: 'a3',
-                            margin: "1.3cm",
-                            multipage: false
-                        }).then(function (group) {
-                            // Render the result as a PDF file
-                            return kendo.drawing.exportPDF(group, {});
-                        }).done(function (data) {
-                            pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                            setTimeout(() => pdfViewer.activatePage(1), 500)
-                        });
-                    }
-                }
-            }).data('kendoTabStrip');
-        } else {
-            editorTabStrip = $("#editorTabStrip").kendoTabStrip().data("kendoTabStrip");
-            previewEditor = $("#previewEditor").kendoEditor({
-                tools: [],
-                stylesheets: [
-                   // "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                    //"<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
-                ]
-            }).data("kendoEditor");
-            let previewEditorValue = `<?php echo $content ?? '' ?>`;
-            previewEditor.value(previewEditorValue);
-
+        let previewContent = function (contentUrl, datafilter=false) {
+            let showPdfViewer = () => {
+                kendo.drawing.drawDOM($(previewEditor.body), {
+                    paperSize: 'a3',
+                    margin: "1.3cm",
+                    multipage: false
+                }).then(function (group) {
+                    // Render the result as a PDF file
+                    return kendo.drawing.exportPDF(group, {});
+                }).done(function (data) {
+                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                    setTimeout(() => pdfViewer.activatePage(1), 500)
+                });
+            };
+            let dataFilter = datafilter? datafilter : (data, type) => JSON.parse(data).content;
             if (!pdfViewer)
                 pdfViewer = $("#previewContent").kendoPDFViewer({
                     pdfjsProcessing: {
@@ -242,20 +218,52 @@ echo $spreadsheet_templates; ?>'>
                         ]
                     }
                 }).getKendoPDFViewer();
+            if (contentUrl) {
+                $.get({
+                    url: contentUrl,
+                    dataType: "html",
+                    dataFilter: dataFilter,
+                    success: function (data) {
+                        previewEditor.value(data);
+                        showPdfViewer();
+                    }
+                });
+            } else {
+                showPdfViewer();
+            }
+        };
 
-            //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
-            kendo.drawing.drawDOM($(previewEditor.body), {
-                paperSize: 'a3',
-                margin: "1cm",
-                multipage: true
-            }).then(function (group) {
-                // Render the result as a PDF file
-                return kendo.drawing.exportPDF(group, {});
-            }).done(function (data) {
-                pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                setTimeout(() => pdfViewer.activatePage(1), 500)
-            });
+        if (!isSubmissionClosed) {
+            editorTabStrip = $("#editorTabStrip").kendoTabStrip({
+                select(e) {
+                    if (e.contentElement.id === "previewTab") {
+                        //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
+                        if(editSubmittedReport) {
+                            let reportSubmissionsId = $("#reportSubmissionsId").val();
+                            $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId, {
+                                content: editor.value(),
+                                //spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`));
+                        } else if(editDraft){
+                            let draftId = $("#draftId");
+                            let title = $("#draftTitleInput").val();
+                            $.post(URL_ROOT + "/pages/save-draft/", {
+                                title: title,
+                                draft_id: draftId.val(),
+                                content: editor.value(),
+                                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-draft/${draftId.val()}`, data => data));
+                        }
+                    }
+                }
+            }).data('kendoTabStrip');
+        } else {
+            editorTabStrip = $("#editorTabStrip").kendoTabStrip().data("kendoTabStrip");
+            let previewEditorValue = `<?php echo $content ?? '' ?>`;
+            previewEditor.value(previewEditorValue);
+            previewContent();
         }
+
         chartsTabStrip = $("#chartsTabStrip").kendoTabStrip({
             activate(e) {
                 let emptyChartPlaceholder = $("#emptyChartPlaceHolder");
@@ -416,7 +424,7 @@ echo $spreadsheet_templates; ?>'>
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                 "<?php echo URL_ROOT; ?>/public/assets/css/subjx/subjx.min.css",
-                 "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ],
             imageBrowser: {
                 transport: {
@@ -767,7 +775,7 @@ echo $spreadsheet_templates; ?>'>
             },
             transitions: false
         };
-        if (sheetName===(CHART_RECOVERY_HEAD_GRADE)) {
+        if (sheetName === (CHART_RECOVERY_HEAD_GRADE)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -798,7 +806,7 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName===(CHART_RECOVERY_HEAD_GRADE_2)) {
+        } else if (sheetName === (CHART_RECOVERY_HEAD_GRADE_2)) {
             let valueRange = sheet.range("B2:M5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -817,7 +825,10 @@ echo $spreadsheet_templates; ?>'>
                             let label = e.series.name;
 
                             if (type === "line") {
-                                return renderLegend(label, labelColor, color, 1.5, dashType, {pathColor: "#873987", circleColor: "#9e480e"})
+                                return renderLegend(label, labelColor, color, 1.5, dashType, {
+                                    pathColor: "#873987",
+                                    circleColor: "#9e480e"
+                                })
                             } else if (type === "column") {
                                 return renderLegend(label, labelColor, color, 10)
                             }
@@ -887,7 +898,7 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName===(CHART_GOLD_RECOVERED_ARL_AND_TOLL)) {
+        } else if (sheetName === (CHART_GOLD_RECOVERED_ARL_AND_TOLL)) {
             let valueRange = sheet.range("B2:M5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -935,7 +946,7 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName===(CHART_GOLD_PRODUCED_TONS_MILLED)) {
+        } else if (sheetName === (CHART_GOLD_PRODUCED_TONS_MILLED)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -965,7 +976,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName=== CHART_GOLD_PRODUCED_TONS_MILLED_2) {
+        } else if (sheetName === CHART_GOLD_PRODUCED_TONS_MILLED_2) {
             let valueRange = sheet.range("B2:M5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -984,7 +995,10 @@ echo $spreadsheet_templates; ?>'>
                             let label = e.series.name;
 
                             if (type === "line") {
-                                return renderLegend(label, labelColor, color, 1.5, dashType, {pathColor: seriesColor.actualGoldProduced, circleColor: seriesColor.actualGoldProduced})
+                                return renderLegend(label, labelColor, color, 1.5, dashType, {
+                                    pathColor: seriesColor.actualGoldProduced,
+                                    circleColor: seriesColor.actualGoldProduced
+                                })
                             } else if (type === "column") {
                                 return renderLegend(label, labelColor, color, 10)
                             }
@@ -1053,7 +1067,7 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName===(CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
+        } else if (sheetName === (CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1072,7 +1086,10 @@ echo $spreadsheet_templates; ?>'>
                             let label = e.series.name;
 
                             if (type === "line") {
-                                return renderLegend(label, labelColor, color, 1.5, dashType, {pathColor: "#873987", circleColor: "#9e480e"})
+                                return renderLegend(label, labelColor, color, 1.5, dashType, {
+                                    pathColor: "#873987",
+                                    circleColor: "#9e480e"
+                                })
                             } else if (type === "column") {
                                 return renderLegend(label, labelColor, color, 10)
                             }
@@ -1110,7 +1127,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName===(CHART_PLANNED_VRS_ACTUAL_METRES)) {
+        } else if (sheetName === (CHART_PLANNED_VRS_ACTUAL_METRES)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1140,7 +1157,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName===(CHART_CLOSING_STOCKPILE_BALANCE)) {
+        } else if (sheetName === (CHART_CLOSING_STOCKPILE_BALANCE)) {
             let valueRange = sheet.range("B2:M6");
             let fieldRange = sheet.range("A2:A6");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1224,7 +1241,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName===(CHART_TOLL_DELIVERY)) {
+        } else if (sheetName === (CHART_TOLL_DELIVERY)) {
             let valueRange = sheet.range("B2:M8");
             let fieldRange = sheet.range("A2:A8");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1339,27 +1356,27 @@ echo $spreadsheet_templates; ?>'>
         }, 1000)
     }
 
-    function renderSolidDot (options = {}) {
+    function renderSolidDot(options = {}) {
         let draw = kendo.drawing;
         let geom = kendo.geometry;
         let path = new draw.Path({
             stroke: {
-                color: options.pathColor? options.pathColor : "#9999b6",
+                color: options.pathColor ? options.pathColor : "#9999b6",
                 width: 3,
                 lineCap: "round"
             },
             fill: {
-                color: options.pathColor? options.pathColor : "#33ccff"
+                color: options.pathColor ? options.pathColor : "#33ccff"
             },
             cursor: "pointer"
         });
-        let dot = new geom.Circle([40,200], 5);
-        let circle = new draw.Circle(dot,{
+        let dot = new geom.Circle([40, 200], 5);
+        let circle = new draw.Circle(dot, {
             stroke: {
-                color: options.circleColor? options.circleColor : "#33ccff",
+                color: options.circleColor ? options.circleColor : "#33ccff",
             },
             fill: {
-                color: options.circleColor? options.circleColor : "#33ccff",
+                color: options.circleColor ? options.circleColor : "#33ccff",
             },
             cursor: "pointer"
         });

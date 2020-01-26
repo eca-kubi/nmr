@@ -150,11 +150,14 @@ class Pages extends Controller
     public function updateSubmittedReport($report_submissions_id)
     {
         $db = Database::getDbh();
-        $success = $db->where('report_submissions_id', $report_submissions_id)->update('nmr_report_submissions', [
-            'content' => $_POST['content'],
-            'spreadsheet_content' => $_POST['spreadsheet_content'],
-            'date_modified' => now(),
-        ]);
+        $data = [];
+        if (isset($_POST['spreadsheet_content'])) {
+            $data['spreadsheet_content'] = $_POST['spreadsheet_content'];
+        }
+        $data['content'] = $_POST['content'];
+        $data['date_modified'] = now();
+        $success = $db->where('report_submissions_id', $report_submissions_id)
+            ->update('nmr_report_submissions', $data);
         if ($success) {
             echo json_encode(['success' => true]);
         }
@@ -383,7 +386,7 @@ class Pages extends Controller
         if (!is_dir($reports_directory)) {
             mkdir($reports_directory, 0777, true);
         }
-        file_put_contents($reports_directory . '/'. $file_name, $base64_decoded);
+        file_put_contents($reports_directory . '/' . $file_name, $base64_decoded);
 
         $html_content = $data->html_content;
 
@@ -591,6 +594,7 @@ class Pages extends Controller
         $report = Database::getDbh()->where('report_submissions_id', $report_id)->getOne('nmr_report_submissions');
         echo json_encode($report, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
+
 
     public function submitReport()
     {

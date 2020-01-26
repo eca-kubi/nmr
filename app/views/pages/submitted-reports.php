@@ -309,7 +309,7 @@
                     previewEditor.value(data);
                     kendo.drawing.drawDOM($(previewEditor.body), {
                         paperSize: 'a3',
-                        margin: "2cm",
+                        margin: "1.3cm",
                         multipage: true,
                         forcePageBreak: ".page-break"
                     }).then(function (group) {
@@ -352,7 +352,7 @@
                     html_content = data;
                     kendo.drawing.drawDOM($(previewEditor.body), {
                         paperSize: 'a3',
-                        margin: "2cm",
+                        margin: "1.3cm",
                         multipage: true,
                         forcePageBreak: ".page-break"
                     }).then(function (group) {
@@ -448,7 +448,7 @@
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
-                    margin: "2cm",
+                    margin: "1.3cm",
                     multipage: true,
                     forcePageBreak: ".page-break"
                 }).then(function (group) {
@@ -474,7 +474,7 @@
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
-                    margin: "2cm",
+                    margin: "1.3cm",
                     multipage: true,
                     forcePageBreak: ".page-break"
                 }).then(function (group) {
