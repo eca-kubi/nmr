@@ -205,7 +205,7 @@ echo $spreadsheet_templates; ?>'>
                         kendo.drawing.drawDOM($(editor.body), {
                             paperSize: 'a3',
                             margin: "1.3cm",
-                            multipage: true
+                            multipage: false
                         }).then(function (group) {
                             // Render the result as a PDF file
                             return kendo.drawing.exportPDF(group, {});
@@ -416,7 +416,7 @@ echo $spreadsheet_templates; ?>'>
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                 "<?php echo URL_ROOT; ?>/public/assets/css/subjx/subjx.min.css",
-                // "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                 "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ],
             imageBrowser: {
                 transport: {
@@ -440,7 +440,7 @@ echo $spreadsheet_templates; ?>'>
                         dataType: "json"
                     },
                     fileUrl: function (e) {
-                        return URL_ROOT + "/file-service/files/?f=" + e;
+                        return URL_ROOT + "/file-service/read/?f=" + e;
                     },
                     uploadUrl: URL_ROOT + "/file-service/upload",
                     create: {

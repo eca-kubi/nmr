@@ -162,7 +162,7 @@ class Pages extends Controller
 
     public function notSubmittedDepartments($target_month, $target_year)
     {
-       echo json_encode(getNotSubmittedDepartments($target_month, $target_year));
+        echo json_encode(getNotSubmittedDepartments($target_month, $target_year));
     }
 
     public function editPreloadedDraft($draft_id): void
@@ -328,8 +328,8 @@ class Pages extends Controller
     public function closeSubmission($target_month = "", $target_year = "")
     {
         $db = Database::getDbh();
-        $target_month = $target_month? : date('F');
-        $target_year = $target_year ? : date('Y');
+        $target_month = $target_month ?: date('F');
+        $target_year = $target_year ?: date('Y');
         if (currentSubmissionYear() === $target_year && (currentSubmissionMonth()) === $target_month) {
             $ret = Database::getDbh()->where('prop', 'nmr_submission_opened')->update('settings', ['value' => 0]);
             $ret = $ret && Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->update('settings', ['value' => 1]);
@@ -374,9 +374,21 @@ class Pages extends Controller
         $json = file_get_contents('php://input');
         $data = json_decode($json);
         $data_uri = $data->data_uri;
+        $base_to_php = explode(',', $data_uri);
+        $base64_decoded = base64_decode($base_to_php[1]);
+        $reports_directory = APP_ROOT . "/../public/reports/$target_year/$target_month";
+        $file_name = strtoupper("$target_month $target_year NZEMA REPORT.pdf");
+        $download_url = URL_ROOT . "/public/reports/$target_year/$target_month" . "/$file_name";
+        //chdir(APP_ROOT . "");
+        if (!is_dir($reports_directory)) {
+            mkdir($reports_directory, 0777, true);
+        }
+        file_put_contents($reports_directory . '/'. $file_name, $base64_decoded);
+
         $html_content = $data->html_content;
-        if ($db->insert('nmr_final_report', ['data_uri' => $data_uri, 'html_content' => $html_content, 'target_month' => $target_month, 'target_year' => $target_year])) {
-            echo json_encode(['success' => true, 'targetMonth' => $target_month, 'targetYear' => $target_year]);
+
+        if ($db->insert('nmr_final_report', ['data_uri' => $data_uri, 'download_url' => $download_url, 'html_content' => $html_content, 'target_month' => $target_month, 'target_year' => $target_year])) {
+            echo json_encode(['success' => true, 'targetMonth' => $target_month, 'targetYear' => $target_year, "downloadUrl" => $download_url]);
         }
     }
 
@@ -629,7 +641,7 @@ class Pages extends Controller
         $data_uri = str_replace('data:application/pdf;base64,', '', $data_uri);
         $data = base64_decode($data_uri);
 
-        file_put_contents('file.pdf', $data);
+        //file_put_contents('file.pdf', $data);
         header('Content-Type: application/pdf');
         echo $data;
     }

@@ -27,7 +27,6 @@ class ImageService extends Controller
 
     public function images()
     {
-        $current_user = getUserSession();
         $file_name = isset($_GET['i']) ? $_GET['i'] : '';
         $file_name = IMAGE_UPLOAD_PATH . "/" . uniqueId() . "/" . $file_name;
         sendFile($file_name);

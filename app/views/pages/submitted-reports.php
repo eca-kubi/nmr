@@ -366,7 +366,7 @@
                             processData: false,
                             dataType: "json",
                             contentType: "application/json",
-                            success: data1 => kendoAlert('Report Generated Successfully', `${targetMonth} ${targetYear} Nzema Report generated successfully! <p><u>Download Link:</u> <a class="m-2" href="${URL_ROOT}/pages/download-report/${targetMonth}/${targetYear}" target="_blank">${URL_ROOT}/pages/download-report/${targetMonth}/${targetYear}</a> <a id="copyDownloadLink" class="d-none" href="#" role="button" title="Copy download link"><i class="fa fa-copy"></i> </a></p>`)
+                            success: data1 => kendoAlert('Report Generated Successfully', `${targetMonth} ${targetYear} Nzema Report generated successfully! <p><u>Download Link:</u> <a class="" href="${data1.downloadUrl}" target="_blank">${data1.downloadUrl}</a> <a id="copyDownloadLink" class="d-none" href="#" role="button" title="Copy download link"><i class="fa fa-copy"></i> </a></p>`)
                         })
                     });
                 }
