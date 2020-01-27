@@ -58,7 +58,7 @@
 <!--          <a class="dropdown-item" href="#"><i class="fa fa-play-circle-o"></i> Preview</a>
                                 -->          <a class="dropdown-item"
                                                 href="<?php echo URL_ROOT . '/pages/edit-preloaded-draft/' . $draft['draft_id']; ?>"
-                                                target="_blank"><i class="fa fa-file-edit"></i> Edit</a>
+                                                ><i class="fa fa-file-edit"></i> Edit</a>
                                              <a class="dropdown-item delete-preloaded-draft-btn" href="#"
                                                 data-draft-id="<?php echo $draft['draft_id']; ?>"
                                                 data-parent="#preloaded_draft_<?php echo $draft['draft_id']; ?>"><i
@@ -74,6 +74,9 @@
                                                data-draft-id="<?php echo $draft['draft_id']; ?>"
                                                data-title="<?php echo $draft['title']; ?>"><i
                                                     class="fa fa-play-circle-o"></i> Preview</a>
+                                            <a class="float-right text-sm font-poppins w3-text-dark-grey mx-2"
+                                               href="<?php echo URL_ROOT . '/pages/edit-preloaded-draft/' . $draft['draft_id']; ?>"
+                                            ><i class="fa fa-file-edit"></i> Edit</a>
                                         </div>
                                         <!-- /.info-box-content -->
                                     </div>

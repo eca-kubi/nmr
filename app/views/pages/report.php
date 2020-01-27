@@ -253,6 +253,15 @@ echo $spreadsheet_templates; ?>'>
                                 content: editor.value(),
                                 spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
                             }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-draft/${draftId.val()}`, data => data));
+                        } else if (editPreloadedDraft) {
+                            let draftId = $("#draftId");
+                            let title = $("#draftTitleInput").val();
+                            $.post(URL_ROOT + "/pages/save-preloaded-draft/", {
+                                title: title,
+                                draft_id: draftId.val(),
+                                content: editor.value(),
+                                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-preloaded-draft/${draftId.val()}`, data => data));
                         }
                     }
                 }
@@ -466,6 +475,22 @@ echo $spreadsheet_templates; ?>'>
             },
             encoded: false
         }).data("kendoEditor");
+
+        /*
+        // Limit image upload size
+        $(".k-i-image").on('click', function () {
+            setTimeout(function(){
+                // Attach a select handler to the Upload embedded in the ImageBrowser.
+                $(".k-imagebrowser .k-upload").find("input").data("kendoUpload").bind("select", function (e) {
+                    // Prevent the event if the selected file exceeds the specified limit.
+                    if (e.files[0].size > 1048576) {
+                        e.preventDefault();
+                        alert("Maximum allowed file size: 1MB");
+                    }
+                });
+            });
+        });*/
+
         if (editor) {
             editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
         }
