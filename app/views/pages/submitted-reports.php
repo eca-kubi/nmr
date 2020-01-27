@@ -62,7 +62,7 @@
                                                     ><i class="fa fa-file-edit"></i> Edit
                                                     </a> <?php endif; ?>
                                                 <a
-                                                        class="dropdown-item download-final-report-btn <?php echo isset($group[0]['download_url'])? '': 'd-none' ?>"
+                                                        class="dropdown-item download-final-report-btn <?php echo !empty($group[0]['download_url']) ? '' : 'd-none' ?>"
                                                         href="<?php echo $group[0]['download_url']?? "#" ?>" data-download-url="<?php echo $group[0]['download_url']?? ''; ?>" target="_blank"
                                                         data-target-month="<?php echo explode(" ", $key)[0] ?>"
                                                         data-target-year="<?php echo explode(" ", $key)[1] ?>"
@@ -327,13 +327,13 @@
             //previewContent(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}`, data => JSON.parse(data).map(value => value.content).join("<br/>"))
         });
 
-        $(".download-final-report-btn").on("click", e => {
+       /* $(".download-final-report-btn").on("click", e => {
             let target = $(e.currentTarget);
             let targetMonth = target.data('targetMonth');
             let targetYear = target.data('targetYear');
             let downloadURL = target.data('downloadUrl');
             downloadContent(`${URL_ROOT}/pages/download-final-report-client-side/${targetMonth}/${targetYear}`, data => data, (targetMonth + " " + targetYear + " Nzema Report").toUpperCase());
-        });
+        });*/
 
 
         $(".generate-report-btn").on('click', e => {
