@@ -260,17 +260,27 @@
             toolbar: {
                 items: [
                     "pager", "zoom", "toggleSelection", "search", "download", "print",
-                    {
+                 /*   {
                         id: "generateReport",
-                        template: `<a role='button' class='<?php echo isPowerUser($current_user->user_id) ? 'k-button k-flat generate-report-btn' : 'd-none' ?>' title='Generate Report'><span class='fa fa-cogs'></span>&nbsp;Generate Report</a>`
+                        template: `<a role='button' class='d-none' title='Generate Report'><span class='fa fa-cogs'></span>&nbsp;Generate Report</a>`,
                     },
+                    {
+                        id: "editSubmittedReport",
+                        template: `<a role="button" class="k-button k-flat d-none" onclick="onEditSubmittedReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`,
+                    },
+                    {
+                        id: "editFinalReport",
+                        overflow: "auto",
+                        template: `<a role="button" class="k-button k-flat" onclick="onEditFinalReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`
+                    },*/
                     {
                         id: "editSubmittedReport",
                         template: `<a role="button" class="k-button k-flat" onclick="onEditSubmittedReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`,
                     },
                     {
-                        id: "editFinalReport",
-                        template: `<a role="button" class="k-button k-flat" onclick="onEditFinalReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`,
+                        id: "cancel",
+                        overflow: "auto",
+                        template: `<a role="button" class="k-button k-flat" onclick="draftWindow.close();" title="Cancel"> <i class="k-i-cancel k-icon"></i>&nbsp; Cancel</a>`
                     }
                 ]
             }
@@ -295,7 +305,7 @@
             let currentYear = previewTargetYear = currentTarget.data('targetYear');
             pdfViewer.toolbar.hide('#generateReport');
             pdfViewer.toolbar.hide("#editFinalReport");
-            pdfViewer.toolbar.hide("#editSubmittedReport");
+           // pdfViewer.toolbar.hide("#editSubmittedReport");
             previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`, data => JSON.parse(data).content);
         });
 
