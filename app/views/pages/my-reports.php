@@ -117,6 +117,7 @@
                         type: "button",
                         text: "Submit Report",
                         icon: "upload",
+                        hidden: true,
                         click: function () {
                         }
                     },

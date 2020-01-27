@@ -295,6 +295,7 @@
             let currentYear = previewTargetYear = currentTarget.data('targetYear');
             pdfViewer.toolbar.hide('#generateReport');
             pdfViewer.toolbar.hide("#editFinalReport");
+            pdfViewer.toolbar.hide("#editSubmittedReport");
             previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`, data => JSON.parse(data).content);
         });
 
