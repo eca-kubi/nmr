@@ -359,12 +359,13 @@ class Pages extends Controller
     {
         $db = Database::getDbh();
         try {
-            $ret = $db->where('s.target_month="' . $target_month . '"')
+            /*$ret = $db->where('s.target_month="' . $target_month . '"')
                 ->where('s.target_year="' . $target_year . '"')
                 ->join('departments d', 'd.department_id=s.department_id')
                 ->join('nmr_report_order r', 'r.department_id=d.department_id')
                 ->orderBy('r.order_no', 'ASC')
-                ->get('nmr_report_submissions s', null, 's.content');
+                ->get('nmr_report_submissions s', null, 's.content');*/
+            $ret = [['content' => $this->fetchFinalReportAsHtml($target_month, $target_year)]] ;
             echo json_encode($ret, JSON_UNESCAPED_SLASHES);
         } catch (Exception $e) {
         }
@@ -373,7 +374,7 @@ class Pages extends Controller
     public function finalReport(string $target_month, $target_year)
     {
         $db = Database::getDbh();
-        $db->onDuplicate(['data_uri', 'html_content']);
+        $db->onDuplicate(['data_uri', 'html_content', 'download_url']);
         $json = file_get_contents('php://input');
         $data = json_decode($json);
         $data_uri = $data->data_uri;

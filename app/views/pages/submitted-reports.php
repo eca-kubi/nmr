@@ -62,8 +62,8 @@
                                                     ><i class="fa fa-file-edit"></i> Edit
                                                     </a> <?php endif; ?>
                                                 <a
-                                                        class="dropdown-item download-final-report-btn"
-                                                        href="<?php echo "#" ?>"
+                                                        class="dropdown-item download-final-report-btn <?php echo isset($group[0]['download_url'])? '': 'd-none' ?>"
+                                                        href="<?php echo $group[0]['download_url']?? "#" ?>" data-download-url="<?php echo $group[0]['download_url']?? ''; ?>" target="_blank"
                                                         data-target-month="<?php echo explode(" ", $key)[0] ?>"
                                                         data-target-year="<?php echo explode(" ", $key)[1] ?>"
                                                 ><i class="fa fa-file-download"></i> Download</a><a
@@ -331,6 +331,7 @@
             let target = $(e.currentTarget);
             let targetMonth = target.data('targetMonth');
             let targetYear = target.data('targetYear');
+            let downloadURL = target.data('downloadUrl');
             downloadContent(`${URL_ROOT}/pages/download-final-report-client-side/${targetMonth}/${targetYear}`, data => data, (targetMonth + " " + targetYear + " Nzema Report").toUpperCase());
         });
 
@@ -366,7 +367,10 @@
                             processData: false,
                             dataType: "json",
                             contentType: "application/json",
-                            success: data1 => kendoAlert('Report Generated Successfully', `${targetMonth} ${targetYear} Nzema Report generated successfully! <p><u>Download Link:</u> <a class="" href="${data1.downloadUrl}" target="_blank">${data1.downloadUrl}</a> <a id="copyDownloadLink" class="d-none" href="#" role="button" title="Copy download link"><i class="fa fa-copy"></i> </a></p>`)
+                            success: data1 =>{
+                                kendoAlert('Report Generated Successfully', `${targetMonth} ${targetYear} Nzema Report generated successfully! <p><u>Download Link:</u> <a class="" href="${data1.downloadUrl}" target="_blank">${data1.downloadUrl}</a> <a id="copyDownloadLink" class="d-none" href="#" role="button" title="Copy download link"><i class="fa fa-copy"></i> </a></p>`);
+                                target.next('.download-final-report-btn').attr('href', data1.downloadUrl).attr('data-download-url', data1.downloadUrl).removeClass('d-none');
+                            }
                         })
                     });
                 }
