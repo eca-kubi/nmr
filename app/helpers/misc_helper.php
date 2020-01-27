@@ -862,12 +862,12 @@ function getReportSubmissions(string $target_month = "", $target_year = "", $dep
             return $db->where('monthname(date_submitted) = "' . $target_month . '"')->where('year(date_submitted)=' . $target_year)
                 ->join('users u', 'u.user_id=n.user_id')
                 ->join('departments d', 'u.department_id=d.department_id')
-                ->join('nmr_final_report f', 'f.target_year=n.target_year and f.target_month=n.target_month')
+                ->join('nmr_final_report f', 'f.target_year=n.target_year and f.target_month=n.target_month', 'Left')
                 ->get('nmr_report_submissions n', null, 'n.report_submissions_id,d.department, d.department_id, n.content, n.spreadsheet_content, n.date_submitted, n.target_month, n.target_year, n.date_modified,f.download_url, u.first_name, u.last_name');
         } else {
             return $db->join('users u', 'u.user_id=n.user_id')
                 ->join('departments d', 'u.department_id=d.department_id')
-                ->join('nmr_final_report f', 'f.target_year=n.target_year and f.target_month=n.target_month')
+                ->join('nmr_final_report f', 'f.target_year=n.target_year and f.target_month=n.target_month', 'Left')
                 ->get('nmr_report_submissions n', null, 'n.report_submissions_id, d.department, d.department_id, n.content, n.spreadsheet_content, n.date_submitted, n.target_month, n.target_year, n.date_modified, f.download_url, u.first_name, u.last_name');
         }
 
