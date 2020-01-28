@@ -1,57 +1,56 @@
 <?php
 
-class Pages extends Controller
+class Fr extends Controller
 {
     public function index(): void
     {
         if (!isLoggedIn()) {
             redirect('users/login');
         }
-        redirect('pages/dashboard');
+        redirect('fr/dashboard');
     }
 
     public function dashboard(): void
     {
         if (!isLoggedIn()) {
-            redirect('users/login/pages/dashboard');
+            redirect('users/login/fr/dashboard');
         }
-        $payload['page_title'] = 'Dashboard';
+        $payload['page_title'] = 'Dashboard (Full Report)';
         //$payload['current_draft'] = Database::getDbh()->where('month(time_modified) = month(current_date)')->where('user_id', getUserSession()->user_id)->getOne('nmr_editor_draft');
         $payload['is_power_user'] = isPowerUser(getUserSession()->user_id);
-        $this->view('pages/dashboard', $payload);
+        $this->view('fr/dashboard', $payload);
     }
 
     public function powerUserDashboard()
     {
-        redirect('pages/dashboard');
+        redirect('fr/dashboard');
         /*if (!isLoggedIn()) {
-            redirect('users/login/pages/power-user-dashboard');
+            redirect('users/login/fr/power-user-dashboard');
         }
         $payload = ['page_title' => 'Power User Dashboard'];
         if ($payload['is_power_user'] = isPowerUser(getUserSession()->user_id)) {
-            $this->view('pages/power-user-dashboard', $payload);
+            $this->view('fr/power-user-dashboard', $payload);
         } else {
-            redirect('pages/dashboard');
+            redirect('fr/dashboard');
         }*/
     }
 
-    public function reportParts(): void
+    public function reports(): void
     {
-        $payload['page_title'] = 'Report Parts';
+        $payload['page_title'] = 'Reports';
         $db = Database::getDbh();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/report-parts');
+            redirect('users/login/fr/reports');
         }
-        $payload['report_parts'] = $db->get('nmr_report_parts');
-        $payload['report_parts_fr'] = $db->get('nmr_fr_report_parts');
-        $this->view('pages/report-parts', $payload);
+        $payload['reports'] = $db->get('nmr_flash_report');
+        $this->view('fr/reports', $payload);
     }
 
     public function newDraft(): void
     {
         if (!isLoggedIn()) {
-            // redirect('users/login/pages/new-draft' . (isset($_GET['preloaded'])? '?preloaded=true' : ''));
-            redirect('users/login/pages/new-draft' . fetchGetParams());
+            // redirect('users/login/fr/new-draft' . (isset($_GET['preloaded'])? '?preloaded=true' : ''));
+            redirect('users/login/fr/new-draft' . fetchGetParams());
         }
         $payload['page_title'] = 'New Draft';
         $payload['is_new_draft'] = true;
@@ -66,30 +65,30 @@ class Pages extends Controller
             }
         }
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $this->view('pages/report', $payload);
+        $this->view('fr/report', $payload);
     }
 
     public function editDraft($draft_id): void
     {
         if (!isLoggedIn()) {
-            redirect('users/login/pages/edit-draft/' . $draft_id);
+            redirect('users/login/fr/edit-draft/' . $draft_id);
         }
         $db = Database::getDbh();
-        if (!$db->where('draft_id', $draft_id)->where('user_id', getUserSession()->user_id)->has('nmr_editor_draft'))
+        if (!$db->where('draft_id', $draft_id)->where('user_id', getUserSession()->user_id)->has('nmr_fr_editor_draft'))
             redirect('errors/index/404');
-        $payload['page_title'] = 'Edit Draft (Flash Report)';
+        $payload['page_title'] = 'Edit Draft (Full Report)';
         $payload['draft_id'] = $draft_id;
-        $draft = $db->where('draft_id', $draft_id)->where('user_id', getUserSession()->user_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_year', 'target_month']);
+        $draft = $db->where('draft_id', $draft_id)->where('user_id', getUserSession()->user_id)->getOne('nmr_fr_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_year', 'target_month']);
         $payload['content'] = $draft['content'];
         $target_month = $draft['target_month'];
         $target_year = $draft['target_year'];
         $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
         //$payload['is_submission_opened'] = isSubmissionOpened();
         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
-        $payload['title'] = 'Edit Draft (Flash Report)';
+        $payload['title'] = 'Edit Draft (Full Report)';
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
         $payload['edit_draft'] = true;
-        $this->view('pages/report', $payload);
+        $this->view('fr/report', $payload);
     }
 
     public function editReport($draft_id): void
@@ -97,7 +96,7 @@ class Pages extends Controller
         $db = Database::getDbh();
         $current_user = getUserSession();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/edit-report/' . $draft_id);
+            redirect('users/login/fr/edit-report/' . $draft_id);
         }
         if (!$db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has('nmr_editor_draft'))
             redirect('errors/index/404');
@@ -112,7 +111,7 @@ class Pages extends Controller
         $target_year = $draft['target_year'];
         $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $this->view('pages/report', $payload);
+        $this->view('fr/report', $payload);
     }
 
     public function editSubmittedReport($report_submissions_id): void
@@ -120,13 +119,13 @@ class Pages extends Controller
         $db = Database::getDbh();
         $current_user = getUserSession();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/edit-submitted-report/' . $report_submissions_id);
+            redirect('users/login/fr/edit-submitted-report/' . $report_submissions_id);
         }
         if (!isPowerUser($current_user->user_id) || isITAdmin($current_user->user_id)) {
             redirect('errors/index/404');
         }
 
-        if (!$db->where('report_submissions_id', $report_submissions_id)->has('nmr_report_submissions')) {
+        if (!$db->where('report_submissions_id', $report_submissions_id)->has('nmr_fr_report_submissions')) {
             redirect('errors/index/404');
         }
         $payload['report_submissions_id'] = $report_submissions_id;
@@ -134,16 +133,16 @@ class Pages extends Controller
         try {
             $submitted_report = $db->where('report_submissions_id', $report_submissions_id)
                 ->join('departments d', 'r.department_id=d.department_id')
-                ->getOne('nmr_report_submissions r', ['content', 'spreadsheet_content', 'target_month', 'target_year', 'department']);
+                ->getOne('nmr_fr_report_submissions r', ['content', 'spreadsheet_content', 'target_month', 'target_year', 'department']);
             $payload['content'] = $submitted_report['content'];
             $payload['spreadsheet_content'] = $submitted_report['spreadsheet_content'];
-            $payload['title'] = "Flash Report (" . $submitted_report['department'] . ")";
-            $payload['page_title'] = 'Flash Report (' . $submitted_report['department'] . ')';
+            $payload['title'] = "Full Report (" . $submitted_report['department'] . ")";
+            $payload['page_title'] = 'Full Report (' . $submitted_report['department'] . ')';
             $target_month = $submitted_report['target_month'];
             $target_year = $submitted_report['target_year'];
             //$payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
             $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-            $this->view('pages/report', $payload);
+            $this->view('fr/report', $payload);
         } catch (Exception $e) {
         }
     }
@@ -158,7 +157,7 @@ class Pages extends Controller
         $data['content'] = $_POST['content'];
         $data['date_modified'] = now();
         $success = $db->where('report_submissions_id', $report_submissions_id)
-            ->update('nmr_report_submissions', $data);
+            ->update('nmr_fr_report_submissions', $data);
         if ($success) {
             echo json_encode(['success' => true]);
         }
@@ -172,10 +171,10 @@ class Pages extends Controller
     public function editPreloadedDraft($draft_id): void
     {
         if (!isLoggedIn()) {
-            redirect('users/login/pages/edit-preloaded-draft/' . $draft_id);
+            redirect('users/login/fr/edit-preloaded-draft/' . $draft_id);
         }
         if (!isITAdmin(getUserSession()->user_id))
-            redirect('pages/draft-reports');
+            redirect('fr/draft-reports');
         $db = Database::getDbh();
         if (!$db->where('draft_id', $draft_id)->has('nmr_preloaded_draft'))
             redirect('errors/index/404');
@@ -187,7 +186,7 @@ class Pages extends Controller
         $payload['title'] = $draft['title'];
         $payload['spreadsheet_templates'] = json_encode(getSpreadsheetTemplate());
         $payload['edit_preloaded_draft'] = true;
-        $this->view('pages/report', $payload);
+        $this->view('fr/report', $payload);
     }
 
     public function deleteDraft($draft_id)
@@ -211,63 +210,15 @@ class Pages extends Controller
         //if (!$report_id) redirect('errors/index/404');
         $db = Database::getDbh();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/view-report/');
+            redirect('users/login/fr/view-report/');
         }
         $payload['page_title'] = 'View Report';
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['report_month_input']) && isset($_GET['report_year_input'])) {
             $payload['report'] = $db->where('month', monthNumber($_GET['report_month_input'] . '-' . $_GET['report_year_input']))->where('year', $_GET['report_year_input'])->getOne('nmr_flash_report');
-            $this->view('pages/view-report', $payload);
+            $this->view('fr/view-report', $payload);
         } else {
-            redirect('pages/reports');
+            redirect('fr/reports');
         }
-    }
-
-    public function saveReportPart($report_part_id = "")
-    {
-        $db = Database::getDbh();
-        if ($report_part_id) {
-            if ($db->where('report_part_id', $report_part_id)->update('nmr_report_parts', [
-                'content' => $_POST['content']
-            ])) {
-                echo json_encode(['success' => true]);
-            }
-        } else {
-            if ($db->insert('nmr_report_parts', [
-                'content' => $_POST['content'],
-                'description' => $_POST['description'],
-                'name' => strtolower(preg_replace('/\s+/', '_', $_POST['description']))
-            ])) {
-                echo json_encode(['success' => true]);
-            }
-        }
-    }
-
-    public function saveReportPartTemp($report_part_id = "")
-    {
-        $db = Database::getDbh();
-        if ($report_part_id) {
-            if ($db->where('report_part_id', $report_part_id)->update('nmr_report_parts_temp', [
-                'content' => $_POST['content']
-            ])) {
-                echo json_encode(['success' => true, 'report_part_id_temp' => $report_part_id]);
-            }
-        } else {
-            if ($db->insert('nmr_report_parts_temp', [
-                'content' => $_POST['content'],
-            ])) {
-                echo json_encode(['success' => true, 'report_part_id_temp' => $db->getInsertId()]);
-            }
-        }
-    }
-
-    public function fetchReportPart($report_part_id)
-    {
-        echo Database::getDbh()->where('report_part_id', $report_part_id)->getValue('nmr_report_parts', 'content');
-    }
-
-    public function fetchReportPartTemp($report_part_id)
-    {
-        echo Database::getDbh()->where('report_part_id', $report_part_id)->getValue('nmr_report_parts_temp', 'content');
     }
 
     public function saveDraft()
@@ -276,8 +227,8 @@ class Pages extends Controller
             $db = Database::getDbh();
             $current_user = getUserSession();
             $draft_id = isset($_POST['draft_id']) ? $_POST['draft_id'] : '';
-            if ($draft_id && $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has('nmr_editor_draft')) {
-                $ret = $db->where('draft_id', $draft_id)->update('nmr_editor_draft',
+            if ($draft_id && $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has('nmr_fr_editor_draft')) {
+                $ret = $db->where('draft_id', $draft_id)->update('nmr_fr_editor_draft',
                     ['title' => $_POST['title'], 'content' => $_POST['content'], 'time_modified' => now(), 'spreadsheet_content' => $_POST['spreadsheet_content']]
                 );
                 if ($ret)
@@ -285,7 +236,7 @@ class Pages extends Controller
                 else
                     echo json_encode(['success' => false]);
             } else {
-                $ret = $db->insert('nmr_editor_draft', [
+                $ret = $db->insert('nmr_fr_editor_draft', [
                     'title' => $_POST['title'],
                     'content' => $_POST['content'],
                     'spreadsheet_content' => $_POST['spreadsheet_content'],
@@ -397,12 +348,11 @@ class Pages extends Controller
     public function submittedReports(string $target_month = "", $target_year = "", $department_id = "")
     {
         if (!isLoggedIn())
-            redirect('users/login/pages/submitted-reports/');
-        $payload['page_title'] = 'Submitted Reports';
+            redirect('users/login/fr/submitted-reports/');
+        $payload['page_title'] = 'Submitted Reports (Flash Report)';
         $payload['report_submissions'] = groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id));
-        $payload['report_submissions_fr'] = groupedReportSubmissions(getReportSubmissionsFr($target_month, $target_year, $department_id));
         $payload['is_power_user'] = isPowerUser(getUserSession()->user_id);
-        $this->view('pages/submitted-reports', $payload);
+        $this->view('fr/submitted-reports', $payload);
     }
 
     public function generateReport(string $target_month, $target_year)
@@ -415,34 +365,10 @@ class Pages extends Controller
                 ->join('nmr_report_order r', 'r.department_id=d.department_id')
                 ->orderBy('r.order_no', 'ASC')
                 ->get('nmr_report_submissions s', null, 's.content');*/
-            $ret = [['content' => $this->fetchFinalReportAsHtml($target_month, $target_year)]];
+            $ret = [['content' => $this->fetchFinalReportAsHtml($target_month, $target_year)]] ;
             echo json_encode($ret, JSON_UNESCAPED_SLASHES);
         } catch (Exception $e) {
         }
-    }
-
-    public function editReportPart($report_part_id)
-    {
-        $db = Database::getDbh();
-        if (!isLoggedIn()) {
-            redirect('users/login/pages/edit-report-part/' . $report_part_id);
-        }
-        $payload['edit_report_part'] = true;
-        $report_part = $db->where('report_part_id', $report_part_id)->getOne('nmr_report_parts');
-        $payload['content'] = $report_part['content'];
-        $payload['report_part_id'] = $report_part_id;
-        $payload['report_part_description'] = $report_part['description'];
-        $payload['page_title'] = 'Edit ' . $report_part['description'];
-        $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $this->view('pages/report', $payload);
-    }
-
-    public function addReportPart()
-    {
-        $payload['page_title'] = 'New Report Part';
-        $payload['add_report_part'] = true;
-        $payload['spreadsheet_templates'] = json_encode(Database::getDbh()->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $this->view('pages/report', $payload);
     }
 
     public function finalReport(string $target_month, $target_year)
@@ -455,7 +381,7 @@ class Pages extends Controller
         $base_to_php = explode(',', $data_uri);
         $base64_decoded = base64_decode($base_to_php[1]);
         $reports_directory = APP_ROOT . "/../public/reports/$target_year/$target_month";
-        $file_name = strtoupper("$target_month $target_year NZEMA REPORT.pdf");
+        $file_name = strtoupper("$target_month $target_year NZEMA REPORT (FULL).pdf");
         $download_url = URL_ROOT . "/public/reports/$target_year/$target_month" . "/$file_name";
         //chdir(APP_ROOT . "");
         if (!is_dir($reports_directory)) {
@@ -465,34 +391,12 @@ class Pages extends Controller
 
         $html_content = $data->html_content;
 
-        if ($db->insert('nmr_final_report', ['data_uri' => $data_uri, 'download_url' => $download_url, 'html_content' => $html_content, 'target_month' => $target_month, 'target_year' => $target_year])) {
+        if ($db->insert('nmr_fr_final_report', ['data_uri' => $data_uri, 'download_url' => $download_url, 'html_content' => $html_content, 'target_month' => $target_month, 'target_year' => $target_year])) {
             echo json_encode(['success' => true, 'targetMonth' => $target_month, 'targetYear' => $target_year, "downloadUrl" => $download_url]);
         }
     }
 
     public function fetchFinalReportAsHtml(string $target_month, $target_year)
-    {
-        $db = Database::getDbh();
-        $cover_page = $db->where('name', 'cover_page')->getValue('nmr_report_parts', 'content');
-        if ($db->where('target_year', $target_year)->where('target_month', $target_month)->has('nmr_final_report')) {
-            $content = $db->where('target_year', $target_year)->where('target_month', $target_month)
-                ->getValue('nmr_final_report', 'html_content');
-            if (strpos($content, "<coverpage>") === false) $content = "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" . $content;
-            return $content;
-        } else {
-            $callback = function ($array) {
-                return $array['content'];
-            };
-
-            $join = function ($content, $separator) {
-                $content .= $separator;
-                return $content;
-            };
-            return "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" . array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year)), $join, "<br/>");
-        }
-    }
-
-    public function fetchFinalReportAsHtmlFr(string $target_month, $target_year)
     {
         $db = Database::getDbh();
         $cover_page = $db->where('name', 'cover_page')->getValue('nmr_fr_report_parts', 'content');
@@ -510,7 +414,7 @@ class Pages extends Controller
                 $content .= $separator;
                 return $content;
             };
-            return "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" . array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year)), $join, "<br/>");
+            return "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" . array_reduce(array_map($callback, getSubmittedReportsFr($target_month, $target_year)), $join, "<br/>");
         }
     }
 
@@ -526,7 +430,7 @@ class Pages extends Controller
         $payload['target_year'] = $target_year;
         $payload['target_month'] = $target_month;
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $this->view('pages/report', $payload);
+        $this->view('fr/report', $payload);
     }
 
     public function saveFinalReport(string $target_month, $target_year)
@@ -552,10 +456,10 @@ class Pages extends Controller
 
     public function draftReports()
     {
-        redirect('pages/draft-report');
+        redirect('fr/draft-report');
         /*$db = Database::getDbh();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/draft-reports/');
+            redirect('users/login/fr/draft-reports/');
         }
         $payload['page_title'] = 'Draft Reports';
         try {
@@ -565,69 +469,18 @@ class Pages extends Controller
                 ->get('nmr_editor_draft');
         } catch (Exception $e) {
         }
-        $this->view('pages/draft-reports', $payload);*/
+        $this->view('fr/draft-reports', $payload);*/
     }
 
-    public function draftReport()
+    public static function draftReport($payload)
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
-        if (!isLoggedIn()) {
-            redirect('users/login/pages/draft-report/');
-        }
-        $payload['page_title'] = 'Draft Report (Start Monthly Report Here)';
         $current_sub_month = currentSubmissionMonth() ?: monthName(monthNumber(now()));
         $current_sub_year = currentSubmissionYear() ?: year(now());
         $previous_month = explode(" ", getPreviousMonthYear($current_sub_month))[0];
         $previous_year = explode(" ", getPreviousMonthYear($current_sub_month))[1];
         // If user has a draft for the target month and year load it
-        if (hasDraftForTargetMonthYear($current_sub_month, $current_sub_year, $current_user->user_id)) {
-            $payload['draft'] = getDraftForTargetMonthYear($current_sub_month, $current_sub_year, $current_user->user_id);
-        } else if (hasDraftForTargetMonthYear($previous_month, $previous_year, $current_user->user_id)) {
-            // if a draft exists for the previous month create a new one based on it
-            $previous_draft = getDraftForTargetMonthYear($previous_month, $previous_year, $current_user->user_id);
-            if ($draft_id = $db->insert('nmr_editor_draft', [
-                'content' => $previous_draft['content'],
-                'spreadsheet_content' => $previous_draft['spreadsheet_content'],
-                'target_month' => $current_sub_month,
-                'target_year' => $current_sub_year,
-                'user_id' => $current_user->user_id,
-                'time_modified' => now(),
-                'target_month_no' => monthNumber(now())
-            ])) {
-                $payload['draft'] = $db->where('draft_id', $draft_id)->getOne('nmr_editor_draft');
-                // Create an entry into my reports
-                $db->insert('nmr_my_reports', ['draft_id' => $draft_id]);
-            }
-        } else if ($db->where('department_id', $current_user->department_id)->has('nmr_preloaded_draft')) {
-            // Create a new draft based on preloaded draft
-            $preloaded_draft = $db->where('department_id', $current_user->department_id)->getOne('nmr_preloaded_draft');
-            if ($draft_id = $db->insert('nmr_editor_draft', [
-                'content' => $preloaded_draft['editor_content'],
-                'spreadsheet_content' => $preloaded_draft['spreadsheet_content'],
-                'target_month' => $current_sub_month,
-                'target_year' => $current_sub_year,
-                'user_id' => $current_user->user_id,
-                'time_modified' => now(),
-                'target_month_no' => monthNumber(now())
-            ])) {
-                $payload['draft'] = $db->where('draft_id', $draft_id)->getOne('nmr_editor_draft');
-                $db->insert('nmr_my_reports', ['draft_id' => $draft_id]);
-            }
-        } else {
-            // Create a new draft
-            if ($draft_id = $db->insert('nmr_editor_draft', [
-                'target_month' => $current_sub_month,
-                'target_year' => $current_sub_year,
-                'user_id' => $current_user->user_id,
-                'time_modified' => now(),
-                'target_month_no' => monthNumber(now())
-            ])) {
-                $payload['draft'] = $db->where('draft_id', $draft_id)->getOne('nmr_editor_draft');
-                $db->insert('nmr_my_reports', ['draft_id' => $draft_id]);
-            }
-        }
-        //$payload = FrHelper::draftReport($payload);
         if (hasDraftForTargetMonthYearFr($current_sub_month, $current_sub_year, $current_user->user_id)) {
             $payload['draft_fr'] = getDraftForTargetMonthYearFr($current_sub_month, $current_sub_year, $current_user->user_id);
         } else if (hasDraftForTargetMonthYearFr($previous_month, $previous_year, $current_user->user_id)) {
@@ -674,7 +527,8 @@ class Pages extends Controller
                 $db->insert('nmr_fr_my_reports', ['draft_id' => $draft_id]);
             }
         }
-        $this->view('pages/draft-report', $payload);
+        return $payload;
+       // $this->view('fr/draft-report', $payload);
     }
 
 
@@ -682,13 +536,88 @@ class Pages extends Controller
     {
         $db = Database::getDbh();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/preloaded-draft-reports/');
+            redirect('users/login/fr/preloaded-draft-reports/');
         }
         if (!isITAdmin(getUserSession()->user_id))
-            redirect('pages/draft-reports');
+            redirect('fr/draft-reports');
         $payload['page_title'] = 'Preloaded Draft Reports';
         $payload['preloaded_drafts'] = Database::getDbh()->where('deleted', 0)->get('nmr_preloaded_draft');
-        $this->view('pages/preloaded-draft-reports', $payload);
+        $this->view('fr/preloaded-draft-reports', $payload);
+    }
+
+    public function saveReportPart($report_part_id = "")
+    {
+        $db = Database::getDbh();
+        if ($report_part_id) {
+            if ($db->where('report_part_id', $report_part_id)->update('nmr_fr_report_parts', [
+                'content' => $_POST['content']
+            ])) {
+                echo json_encode(['success' => true]);
+            }
+        } else {
+            if ($db->insert('nmr_fr_report_parts', [
+                'content' => $_POST['content'],
+                'description' => $_POST['description'],
+                'name' => strtolower(preg_replace('/\s+/', '_', $_POST['description']))
+            ])) {
+                echo json_encode(['success' => true]);
+            }
+        }
+    }
+
+    public function saveReportPartTemp($report_part_id = "")
+    {
+        $db = Database::getDbh();
+        if ($report_part_id) {
+            if ($db->where('report_part_id', $report_part_id)->update('nmr_fr_report_parts_temp', [
+                'content' => $_POST['content']
+            ])) {
+                echo json_encode(['success' => true]);
+            }
+        } else {
+            if ($db->insert('nmr_fr_report_parts_temp', [
+                'content' => $_POST['content'],
+                'description' => $_POST['description'],
+                'name' => strtolower(preg_replace('/\s+/', '_', $_POST['description']))
+            ])) {
+                echo json_encode(['success' => true]);
+            }
+        }
+    }
+
+    public function fetchReportPartTemp($report_part_id)
+    {
+        echo Database::getDbh()->where('report_part_id', $report_part_id)->getValue('nmr_fr_report_parts_temp', 'content');
+    }
+
+
+    public function addReportPart()
+    {
+        $payload['page_title'] = 'New Report Part';
+        $payload['add_report_part'] = true;
+        $payload['spreadsheet_templates'] = json_encode(Database::getDbh()->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
+        $this->view('fr/report', $payload);
+    }
+
+    public function editReportPart($report_part_id)
+    {
+        $db = Database::getDbh();
+        if (!isLoggedIn()) {
+            redirect('users/login/fr/edit-report-part/' . $report_part_id);
+        }
+        $payload['edit_report_part'] = true;
+        $report_part = $db->where('report_part_id', $report_part_id)->getOne('nmr_fr_report_parts');
+        $payload['content'] = $report_part['content'];
+        $payload['report_part_id'] = $report_part_id;
+        $payload['report_part_description'] = $report_part['description'];
+        $payload['page_title'] = 'Edit ' . $report_part['description'];
+        $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
+        $this->view('pages/report', $payload);
+    }
+
+    public function fetchReportPart($report_part_id)
+    {
+        echo Database::getDbh()->where('report_part_id', $report_part_id)->getValue('nmr_fr_report_parts', 'content');
     }
 
     public function myReports()
@@ -698,7 +627,7 @@ class Pages extends Controller
         $payload['page_title'] = 'My Reports';
         $current_user = getUserSession();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/my-reports/');
+            redirect('users/login/fr/my-reports/');
         }
 
         try {
@@ -710,18 +639,9 @@ class Pages extends Controller
                 $my_reports = groupedMyReports($my_reports);
                 $payload['my_reports'] = $my_reports;
             }
-
-            $my_reports_fr = $db->where('d.user_id', $current_user->user_id)->join('nmr_fr_editor_draft d', 'd.draft_id=m.draft_id')
-                ->join('nmr_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
-                ->orderBy('month_no_year', 'DESC')
-                ->get('nmr_fr_my_reports m', null, 'd.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status');
-            if (is_array($my_reports_fr)) {
-                $my_reports_fr = groupedMyReports($my_reports_fr);
-                $payload['my_reports_fr'] = $my_reports_fr;
-            }
         } catch (Exception $e) {
         }
-        $this->view('pages/my-reports', $payload);
+        $this->view('fr/my-reports', $payload);
     }
 
     public function saveSpreadsheetTemplate()
@@ -742,18 +662,6 @@ class Pages extends Controller
         }
     }
 
-    public function getSubmittedReport($report_id)
-    {
-        $report = Database::getDbh()->where('report_submissions_id', $report_id)->getOne('nmr_report_submissions');
-        echo json_encode($report, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-    }
-
-    public function getSubmittedReportFr($report_id)
-    {
-        $report = Database::getDbh()->where('report_submissions_id', $report_id)->getOne('nmr_fr_report_submissions');
-        echo json_encode($report, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-    }
-
 
     public function submitReport()
     {
@@ -762,7 +670,7 @@ class Pages extends Controller
         $db->onDuplicate(['content', 'spreadsheet_content', 'date_modified']);
         $draft_id = '';
         if (isset($_POST['draft_id'])) $draft_id = $_POST['draft_id'];
-        $success = $db->insert('nmr_report_submissions', [
+        $success = $db->insert('nmr_fr_report_submissions', [
             'department_id' => $current_user->department_id,
             'user_id' => $current_user->user_id,
             'content' => $_POST['content'],
@@ -773,8 +681,8 @@ class Pages extends Controller
             'target_year' => $db->func('Year(?)', [now()])
         ]);
         if ($success) {
-            if ($db->where('draft_id', $draft_id)->has('nmr_editor_draft')) {
-                $success = $db->where('draft_id', $draft_id)->update('nmr_editor_draft', [
+            if ($db->where('draft_id', $draft_id)->has('nmr_fr_editor_draft')) {
+                $success = $db->where('draft_id', $draft_id)->update('nmr_fr_editor_draft', [
                     'title' => $_POST['title'],
                     //'user_id' => $current_user->user_id,
                     'content' => $_POST['content'],
@@ -783,7 +691,7 @@ class Pages extends Controller
                 ]);
                 if ($success) echo json_encode(['success' => true, 'draftId' => $draft_id]);;
             } else {
-                $success = $db->insert('nmr_editor_draft', [
+                $success = $db->insert('nmr_fr_editor_draft', [
                     'title' => $_POST['title'],
                     'user_id' => $current_user->user_id,
                     'content' => $_POST['content'],
@@ -808,10 +716,15 @@ class Pages extends Controller
         header('Content-Type: application/pdf');
         echo $data;
     }
-
     public function downloadFinalReportClientSide($target_month, $target_year)
     {
         echo $this->fetchFinalReportAsHtml($target_month, $target_year);
+    }
+
+    public function getSubmittedReport($report_id)
+    {
+        $report = Database::getDbh()->where('report_submissions_id', $report_id)->getOne('nmr_fr_report_submissions');
+        echo json_encode($report, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
     }
 
     public function phpinfo(): void
@@ -821,7 +734,7 @@ class Pages extends Controller
 
     public function fetchDraft($draft_id)
     {
-        echo Database::getDbh()->where('draft_id', $draft_id)->getValue('nmr_editor_draft', 'content');
+        echo Database::getDbh()->where('draft_id', $draft_id)->getValue('nmr_fr_editor_draft', 'content');
     }
 
     public function fetchPreloadedDraft($draft_id)

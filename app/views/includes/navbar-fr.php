@@ -1,7 +1,7 @@
 <?php $current_user = getUserSession(); ?>
 <header>
     <div class="navbar-fixed fixed-top blockable">
-        <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom px-3">
+        <nav class="main-header navbar navbar-expand bg-white navbar border-bottom px-3">
             <!-- Left navbar links -->
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -147,7 +147,7 @@
                 </li>
             </ul>
         </nav>
-        <nav class="d-md-block navbar navbar-light bg-navy text-white flex-nowrap flex-row" id="navbar2"
+        <nav class="d-md-block navbar navbar-light bg-teal-gradient text-white flex-nowrap flex-row" id="navbar2"
              style="z-index: 0">
             <div class="container-fluid">
                 <ul class="navbar-nav flex-row float-left">
@@ -215,16 +215,6 @@
                                                         xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use>
                                             </svg>
                                         </i> Preloaded Draft Reports</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item"
-                                       href="<?php echo site_url('pages/add-report-part') ?>">
-                                        <i class="fa fa-file-plus"></i> Add Flash Report Part</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item"
-                                       href="<?php echo site_url('fr/add-report-part') ?>">
-                                        <i class="fa fa-file-plus"></i> Add Full Report Part</a>
                                 </li>
                             </ul>
                         </li>

@@ -4,6 +4,9 @@
     <option name="languageLevel" value="ES6" />
   </component>
   <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/app/classes/FrHelper.php" />
+    <file url="file://$PROJECT_DIR$/app/views/includes/navbar-fr.php" />
+    <file url="file://$PROJECT_DIR$/app/views/includes/sidebar-fr.php" />
     <file url="file://$PROJECT_DIR$/app/views/pages/dashboard-2.php" />
     <file url="file://$PROJECT_DIR$/app/views/pages/draft-reports.php" />
     <file url="file://$PROJECT_DIR$/public/assets/css/bootstrap/bootstrap-grid.min.css" />

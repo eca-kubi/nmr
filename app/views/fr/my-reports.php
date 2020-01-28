@@ -10,7 +10,7 @@
                 <div class="box-header border-bottom">
                     <div class="row p-1">
                         <h5 class="box-title text-bold"><span class="fa fa-file-user"></span>
-                            <?php echo 'My Reports <span class="text-primary">(Flash Report) </span>'; ?>
+                            <?php echo $page_title ?? 'My Reports (Flash Report)'; ?>
                         </h5>
                     </div>
 
@@ -51,62 +51,7 @@
                             </div>
 
                         <?php else: ?>
-                            <h5>No Flash Reports Available!</h5>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                <!-- /.box-body -->
-                <div class="box-footer d-none"></div>
-                <!-- /.box-footer-->
-            </div>
-        </div>
-        <div class="box-group pt-1" id="box_group">
-            <div class="box collapsed">
-                <div class="box-header border-bottom">
-                    <div class="row p-1">
-                        <h5 class="box-title text-bold"><span class="fa fa-file-user"></span>
-                            <?php echo 'My Reports <span class="text-warning">(Full Report)</span> '; ?>
-                        </h5>
-                    </div>
-
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <div class="row">
-                        <?php if (isset($my_reports_fr) && is_array($my_reports_fr) && count($my_reports_fr) > 0): ?>
-                            <div class="k-content">
-                                <ul id="myReportsTreeView" data-role="treeview">
-                                    <?php foreach ($my_reports_fr as $year => $reports) { ?>
-                                        <li data-expanded="true">
-                                            <span class="fa fa-folder"> <?php echo $year ?></span>
-
-                                            <ul>
-                                                <?php foreach ($reports as $report) { ?>
-                                                    <li data-expanded="true"
-                                                        data-submission-closed="<?php echo $report['closed_status'] ?: '' ?>"
-                                                        data-draft-id="<?php echo $report['draft_id'] ?>">
-                                                        <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span>
-                                                        <i class="mx-2 text-bold text-sm <?php echo $report['closed_status'] ? 'text-danger submission-closed' : 'text-success' ?>"><?php echo $report['closed_status'] ? '(Closed)' : '(Opened)' ?></i>
-                                                        <ul>
-                                                            <li>
-                                                                <a class="mx-1 k-button view-fr-btn"
-                                                                        data-draft-id="<?php echo $report['draft_id']; ?>"
-                                                                        data-closed-status="<?php echo $report['closed_status'] ?: '' ?>">
-                                                                    View
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </li>
-                                                <?php } ?>
-                                            </ul>
-
-                                        </li>
-                                    <?php } ?>
-                                </ul>
-                            </div>
-
-                        <?php else: ?>
-                            <h5>No Full Reports Available!</h5>
+                            <h5>No Reports Available!</h5>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -208,30 +153,7 @@
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
-                    margin: "1.3cm",
-                    multipage: true
-                }).then(function (group) {
-                    // Render the result as a PDF file
-                    return kendo.drawing.exportPDF(group, {});
-                }).done(function (data) {
-                        if (closedStatus) toolbar.hide("#submitReport");
-                        draftWindow.center().open().maximize().title(closedStatus? {encoded: false, text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"} : '');
-                        pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                        setTimeout(() => pdfViewer.activatePage(1), 500)
-                    });
-            });
-        }) ;
-
-        $(".view-fr-btn").on("click", function (e) {
-            let draftId = $(e.currentTarget).data('draftId');
-            let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
-            let toolbar = pdfViewer.toolbar;
-            window.previewDraftId = draftId;
-            $.get(URL_ROOT + "/fr/fetchDraft/" + draftId).done(function (data, successTextStatus, jQueryXHR) {
-                previewEditor.value(data);
-                kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'a3',
-                    margin: "1.3cm",
+                    margin: "2cm",
                     multipage: true
                 }).then(function (group) {
                     // Render the result as a PDF file

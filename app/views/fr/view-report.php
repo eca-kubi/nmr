@@ -33,14 +33,14 @@
                                 <div style="width: 100%">
                                     <form id="editorForm">
                                     <textarea name="content" id="editor" cols="30" rows="10"
-                                              style="height: 500px"><?php echo $content ?? ''; ?></textarea>
+                                              style="height: 400px"><?php echo $content ?? ''; ?></textarea>
                                         <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
                                                value='<?php echo $spreadsheet_content ?? ''; ?>'>
                                         <input type="hidden" id="title" name="title"
                                                value="<?php echo $title ?? ''; ?>">
                                         <input type="hidden" id="draftId" name="draft_id"
                                                value="<?php echo $draft_id ?? ''; ?>">
-                                        <input type="hidden" id="draftTitleInput" name="draft_title_input"
+                                        <input type="hidden" id="draftTitleInput" name="draft_id"
                                                value="<?php echo $title ?? ''; ?>">
 
                                         <input type="hidden" id="targetYear" name="target_year"
@@ -52,11 +52,6 @@
                                                value="<?php echo $report_submissions_id ?? ''; ?>">
                                         <input type="hidden" id="editSubmittedReport" name="edit_submitted_report"
                                                value="<?php echo $edit_submitted_report ?? ''; ?>">
-                                        <input type="hidden" id="reportPartId" name="report_part_id"
-                                               value="<?php echo $report_part_id ?? ''; ?>">
-                                        <input type="hidden" id="reportPartIdTemp" name="report_part_id_temp">
-                                        <input type="hidden" id="reportPartDescription" name="report_part_description"
-                                               value="<?php echo $report_part_description ?? ''; ?>">
                                     </form>
                                 </div>
                             </div> <?php endif; ?>
@@ -151,9 +146,6 @@ echo $spreadsheet_templates; ?>'>
     let editDraft = Boolean(<?php echo $edit_draft ?? '' ?>);
     let isNewDraft = Boolean(<?php echo $is_new_draft ?? '' ?>);
     let editReport = Boolean(<?php echo $edit_report ?? ''; ?>);
-    let editReportPart = Boolean(<?php echo $edit_report_part ?? ''; ?>);
-    let addReportPart = Boolean(<?php echo $add_report_part ?? ''; ?>);
-    let editPreloadedDraft = Boolean(<?php echo $edit_preloaded_draft ?? ''; ?>);
     let editSubmittedReport = Boolean(<?php echo $edit_submitted_report ?? ''; ?>);
     let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
     let clearedContents = "";
@@ -168,28 +160,28 @@ echo $spreadsheet_templates; ?>'>
         romGrade: "#ed7d31",
         milledTonnage: "#ff6eff",
         deliveryTonnage: "#03b855",
-        budgetTonnage: "#ffcd9b",
-        tonnesMilled: "#fbbd00",
-        budgetTonnesMilled: "#70ad47",
-        actualGoldProduced: "#43682b"
+        budgetTonnage: "#ffcd9b"
     };
     let previewWindow;
     let previewViewer;
     let pdfViewer;
     let userDepartmentId = "<?php echo $current_user->department_id; ?>";
     let previewEditor;
-
     $(function () {
+        /*  previewWindow = $("<div id='previewWindow'><div id='previewViewer'></div></div>").appendTo("body").kendoWindow({
+              modal: true,
+              visible: false,
+              width: "80%",
+              scrollable: false,
+              //height: "80%",
+              // (Optional) Will limit the percentage dimensions as well:
+              // maxWidth: 1200,
+              // maxHeight: 800,
+              //open: adjustSize
+          }).data("kendoWindow");*/
 
         previewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/> </div>").appendTo("body");
-        previewEditor = $("#previewEditor").kendoEditor({
-            tools: [],
-            stylesheets: [
-                "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css",
 
-            ]
-        }).data("kendoEditor");
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
 
         $(window).on("resize", function () {
@@ -197,117 +189,62 @@ echo $spreadsheet_templates; ?>'>
             spreadsheet.resize(true);
         });
 
-        let previewContent = function (contentUrl, datafilter = false, fileName = "Document") {
-            let showPdfViewer = () => {
-                kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'a3',
-                    margin: "1.3cm",
-                    multipage: false
-                }).then(function (group) {
-                    // Render the result as a PDF file
-                    return kendo.drawing.exportPDF(group, {});
-                }).done(function (data) {
-                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                    setTimeout(() => pdfViewer.activatePage(1), 500)
-                });
-            };
-            let dataFilter = datafilter ? datafilter : (data, type) => JSON.parse(data).content;
-            if (!pdfViewer)
-                pdfViewer = $("#previewContent").kendoPDFViewer({
-                    messages: {
-                        defaultFileName: fileName
-                    },
-                    pdfjsProcessing: {
-                        file: ""
-                    },
-                    width: "100%",
-                    height: 550,
-                    scale: 1,
-                    toolbar: {
-                        items: [
-                            "pager", "zoom", "toggleSelection", "search", "download", "print", {
-                                id: "cancel",
-                                type: "button",
-                                text: "Cancel",
-                                icon: "cancel",
-                                click: function () {
-                                    window.history.back()
-                                },
-                                hidden: !isSubmissionClosed
-                            }
-                        ]
-                    }
-                }).getKendoPDFViewer();
-            if (contentUrl) {
-                $.get({
-                    url: contentUrl,
-                    dataType: "html",
-                    dataFilter: dataFilter,
-                    success: function (data) {
-                        previewEditor.value(data);
-                        showPdfViewer();
-                    }
-                });
-            } else {
-                showPdfViewer();
-            }
-        };
+        editorTabStrip = $("#editorTabStrip").kendoTabStrip().data("kendoTabStrip");
+        previewEditor = $("#previewEditor").kendoEditor({
+            tools: [],
+            stylesheets: [
+                "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+            ]
+        }).data("kendoEditor");
+        let previewEditorValue = `<?php echo $content ?? '' ?>`;
+        previewEditor.value(previewEditorValue);
 
-        if (!isSubmissionClosed) {
-            editorTabStrip = $("#editorTabStrip").kendoTabStrip({
-                select(e) {
-                    if (e.contentElement.id === "previewTab") {
-                        //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
-                        if (editSubmittedReport) {
-                            let reportSubmissionsId = $("#reportSubmissionsId").val();
-                            $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId, {
-                                content: editor.value(),
-                                //spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`));
-                        } else if (editDraft) {
-                            let draftId = $("#draftId");
-                            let title = $("#draftTitleInput").val();
-                            $.post(URL_ROOT + "/pages/save-draft/", {
-                                title: title,
-                                draft_id: draftId.val(),
-                                content: editor.value(),
-                                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-draft/${draftId.val()}`, data => data));
-                        } else if (editPreloadedDraft) {
-                            let draftId = $("#draftId");
-                            let title = $("#draftTitleInput").val();
-                            $.post(URL_ROOT + "/pages/save-preloaded-draft/", {
-                                title: title,
-                                draft_id: draftId.val(),
-                                content: editor.value(),
-                                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-preloaded-draft/${draftId.val()}`, data => data));
-                        } else if (editReportPart) {
-                            let reportPartId = $("#reportPartId").val();
-                            let description = $("#reportPartDescription").val();
-                            $.post(URL_ROOT + "/pages/save-report-part/" + reportPartId, {
-                                content: editor.value(),
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-report-part/${reportPartId}`, data => data, description));
-                        } else if (addReportPart) {
-                            let reportPartIdTemp = $("#reportPartIdTemp").val();
-                            $.post(URL_ROOT + "/pages/save-report-part-temp/" + reportPartIdTemp, {
-                                content: editor.value()
-                            }, null, "json").done((data) => {
-                                reportPartIdTemp = data.report_part_id_temp;
-                                $("#reportPartIdTemp").val(reportPartIdTemp);
-                                previewContent(`${URL_ROOT}/pages/fetch-report-part-temp/${reportPartIdTemp}`, data1 => data1)
-                            });
-                        }
-                    }
+        if (!pdfViewer)
+            pdfViewer = $("#previewContent").kendoPDFViewer({
+                pdfjsProcessing: {
+                    file: ""
+                },
+                width: "100%",
+                height: 550,
+                scale: 1,
+                toolbar: {
+                    items: [
+                        "pager", "zoom", "toggleSelection", "search", "download", "print"
+                    ]
                 }
-            }).data('kendoTabStrip');
-        } else {
-            editorTabStrip = $("#editorTabStrip").kendoTabStrip().data("kendoTabStrip");
-            let previewEditorValue = `<?php echo $content ?? '' ?>`;
-            previewEditor.value(previewEditorValue);
-            previewContent();
-        }
+            }).getKendoPDFViewer();
 
+        pdfViewer.toolbar.add({
+            name: "submitReport",
+            type: "button",
+            text: "Submit Report",
+            icon: "upload",
+            click: function () {
+            },
+            hidden: isSubmissionClosed
+        });
+        pdfViewer.toolbar.add({
+            name: "cancel",
+            type: "button",
+            text: "Cancel",
+            icon: "cancel",
+            click: function () {
+                window.history.back();
+            },
+        });
+        //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
+        kendo.drawing.drawDOM($(previewEditor.body), {
+            paperSize: 'a3',
+            margin: "2cm",
+            multipage: true
+        }).then(function (group) {
+            // Render the result as a PDF file
+            return kendo.drawing.exportPDF(group, {});
+        }).done(function (data) {
+            pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+            setTimeout(() => pdfViewer.activatePage(1), 500)
+        });
         chartsTabStrip = $("#chartsTabStrip").kendoTabStrip({
             activate(e) {
                 let emptyChartPlaceholder = $("#emptyChartPlaceHolder");
@@ -327,15 +264,7 @@ echo $spreadsheet_templates; ?>'>
                     text: "Save Draft",
                     icon: "save",
                     click: saveDraft,
-                    // hidden: "<?php echo isset($edit_draft) ? '' : 'true' ?>"
-                    hidden: true
-                },
-                {
-                    type: "button",
-                    text: "Save",
-                    icon: "save",
-                    click: saveReportPart,
-                    hidden: "<?php echo isset($edit_report_part) ? '' : 'true' ?>"
+                    hidden: "<?php echo isset($edit_draft) ? '' : 'true' ?>"
                 },
                 {
                     type: "button",
@@ -343,13 +272,6 @@ echo $spreadsheet_templates; ?>'>
                     icon: "save",
                     click: saveFinalReport,
                     hidden: "<?php echo isset($edit_final_report) ? '' : 'true' ?>"
-                },
-                {
-                    type: "button",
-                    text: "Save",
-                    icon: "save",
-                    click: onEditSubmittedReport,
-                    hidden: "<?php echo isset($edit_submitted_report) ? '' : 'true' ?>"
                 },
                 {
                     type: "button",
@@ -378,7 +300,7 @@ echo $spreadsheet_templates; ?>'>
                     },
                     hidden: true
                 },
-                <?php if (isset($edit_draft) && isSubmissionOpened()): ?>
+                <?php if (isset($edit_report) && isSubmissionOpened()): ?>
                 {
                     type: "button",
                     text: "Submit Report",
@@ -398,21 +320,16 @@ echo $spreadsheet_templates; ?>'>
                     hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id) ? '' : 'true' ?>")
                 },
                 <?php endif; ?>
+                {
+                    type: "button",
+                    id: "cancelBtn",
+                    icon: "cancel",
+                    attributes: {"class": "cancel-btn"},
+                    text: "Cancel",
+                    click: e => history.back(),
+                },
+
                 <?php if (isITAdmin($current_user->user_id)): ?>
-                {
-                    type: "button",
-                    text: "Save",
-                    icon: "save",
-                    click: savePreloadedDraft,
-                    hidden: editPreloadedDraft ? '' : true
-                },
-                {
-                    type: "button",
-                    text: "Save",
-                    icon: "save",
-                    click: saveReportPart,
-                    hidden: addReportPart ? '' : true
-                },
                 {
                     type: "button",
                     text: "Save as Preloaded",
@@ -421,14 +338,6 @@ echo $spreadsheet_templates; ?>'>
                     hidden: true
                 },
                 <?php endif; ?>
-                {
-                    type: "button",
-                    id: "cancelBtn",
-                    icon: "cancel",
-                    attributes: {"class": "cancel-btn"},
-                    text: "Cancel",
-                    click: e => history.back(),
-                }
             ]
         }).data("kendoToolBar");
 
@@ -481,7 +390,7 @@ echo $spreadsheet_templates; ?>'>
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                 "<?php echo URL_ROOT; ?>/public/assets/css/subjx/subjx.min.css",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                // "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ],
             imageBrowser: {
                 transport: {
@@ -505,7 +414,7 @@ echo $spreadsheet_templates; ?>'>
                         dataType: "json"
                     },
                     fileUrl: function (e) {
-                        return URL_ROOT + "/file-service/read/?f=" + e;
+                        return URL_ROOT + "/file-service/files/?f=" + e;
                     },
                     uploadUrl: URL_ROOT + "/file-service/upload",
                     create: {
@@ -523,22 +432,6 @@ echo $spreadsheet_templates; ?>'>
             },
             encoded: false
         }).data("kendoEditor");
-
-        /*
-        // Limit image upload size
-        $(".k-i-image").on('click', function () {
-            setTimeout(function(){
-                // Attach a select handler to the Upload embedded in the ImageBrowser.
-                $(".k-imagebrowser .k-upload").find("input").data("kendoUpload").bind("select", function (e) {
-                    // Prevent the event if the selected file exceeds the specified limit.
-                    if (e.files[0].size > 1048576) {
-                        e.preventDefault();
-                        alert("Maximum allowed file size: 1MB");
-                    }
-                });
-            });
-        });*/
-
         if (editor) {
             editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
         }
@@ -848,7 +741,7 @@ echo $spreadsheet_templates; ?>'>
             },
             transitions: false
         };
-        if (sheetName === (CHART_RECOVERY_HEAD_GRADE)) {
+        if (sheetName.startsWith(CHART_RECOVERY_HEAD_GRADE)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -879,147 +772,7 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName === (CHART_RECOVERY_HEAD_GRADE_2)) {
-            let valueRange = sheet.range("B2:M5");
-            let fieldRange = sheet.range("A2:A5");
-            data = fetchData(sheet, valueRange, fieldRange);
-            chart = div.kendoChart($.extend(kendoChartOptions, {
-                legend: {
-                    visible: true,
-                    position: "bottom",
-                    item: {
-                        cursor: "pointer",
-                        visual: function (e) {
-                            let layout;
-                            let type = e.series.type;
-                            let dashType = e.series.dashType;
-                            let color = e.options.markers.background;
-                            let labelColor = e.options.labels.color;
-                            let label = e.series.name;
-
-                            if (type === "line") {
-                                return renderLegend(label, labelColor, color, 1.5, dashType, {
-                                    pathColor: "#873987",
-                                    circleColor: "#9e480e"
-                                })
-                            } else if (type === "column") {
-                                return renderLegend(label, labelColor, color, 10)
-                            }
-
-                            return e.createVisual();
-                        }
-                    }
-                },
-                title: {
-                    text: "RECOVERY AND HEAD GRADE"
-                },
-                dataSource: {data: data},
-                series: [
-                    {
-                        field: "['HEAD GRADE (g/t)']",
-                        categoryField: categoryField,
-                        type: "column",
-                        name: "HEAD GRADE (g/t)",
-                        color: "#00b0f0",
-                        axis: "headGrade"
-                    },
-                    {
-                        field: "['BUDGET HEAD GRADE (g/t)']",
-                        categoryField: categoryField,
-                        type: "column",
-                        name: "BUDGET HEAD GRADE (g/t)",
-                        color: "#ffc000",
-                    },
-                    {
-                        // Notice the syntax for fields
-                        // that are not valid JS identifiers
-                        field: "['RECOVERY (%)']",
-                        categoryField: categoryField,
-                        type: "line",
-                        style: "normal",
-                        name: "RECOVERY (%)",
-                        color: "#873987",
-                        markers: {
-                            background: "#9e480e",
-                            border: {color: "#9e480e"},
-                            visible: true
-                        },
-                        axis: "recovery"
-                    },
-                ],
-                valueAxis: [
-                    {
-                        name: "headGrade",
-                        title: {
-                            text: "Head Grade (g/t)"
-                        }
-                    },
-                    {
-                        name: "recovery",
-                        title: {
-                            text: "Recovery (%)"
-                        }
-                    }
-                ],
-                categoryAxis: {
-                    axisCrossingValues: [0, 13],
-                    majorGridLines: {
-                        visible: false
-                    }
-                }
-            })).data("kendoChart");
-            charts[sheetName] = chart;
-            bindChart(chart, sheet, valueRange, fieldRange);
-
-        } else if (sheetName === (CHART_GOLD_RECOVERED_ARL_AND_TOLL)) {
-            let valueRange = sheet.range("B2:M5");
-            let fieldRange = sheet.range("A2:A5");
-            data = fetchData(sheet, valueRange, fieldRange);
-            chart = div.kendoChart($.extend(kendoChartOptions, {
-                title: {
-                    text: CHART_GOLD_RECOVERED_ARL_AND_TOLL
-                },
-                dataSource: {data: data},
-                series: [
-                    {
-                        field: "['ARL']",
-                        categoryField: categoryField,
-                        type: "column",
-                        name: "ARL",
-                        color: "#1d6f86",
-                        stack: true
-                    },
-                    {
-                        field: "['TOLL']",
-                        categoryField: categoryField,
-                        type: "column",
-                        name: "TOLL",
-                        color: "#f08527",
-                    },
-                    {
-                        // Notice the syntax for fields
-                        // that are not valid JS identifiers
-                        field: "['MONTHLY TOTAL']",
-                        categoryField: categoryField,
-                        type: "line",
-                        style: "normal",
-                        name: "MONTHLY TOTAL",
-                        color: "#f37f7f",
-                        markers: {
-                            visible: false
-                        }
-                    }
-                ],
-                categoryAxis: {
-                    majorGridLines: {
-                        visible: false
-                    }
-                }
-            })).data("kendoChart");
-            charts[sheetName] = chart;
-            bindChart(chart, sheet, valueRange, fieldRange);
-
-        } else if (sheetName === (CHART_GOLD_PRODUCED_TONS_MILLED)) {
+        } else if (sheetName.startsWith(CHART_GOLD_PRODUCED_TONS_MILLED)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1049,128 +802,12 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === CHART_GOLD_PRODUCED_TONS_MILLED_2) {
-            let valueRange = sheet.range("B2:M5");
-            let fieldRange = sheet.range("A2:A5");
-            data = fetchData(sheet, valueRange, fieldRange);
-            chart = div.kendoChart($.extend(kendoChartOptions, {
-                legend: {
-                    visible: true,
-                    position: "bottom",
-                    item: {
-                        cursor: "pointer",
-                        visual: function (e) {
-                            let layout;
-                            let type = e.series.type;
-                            let dashType = e.series.dashType;
-                            let color = e.options.markers.background;
-                            let labelColor = e.options.labels.color;
-                            let label = e.series.name;
 
-                            if (type === "line") {
-                                return renderLegend(label, labelColor, color, 1.5, dashType, {
-                                    pathColor: seriesColor.actualGoldProduced,
-                                    circleColor: seriesColor.actualGoldProduced
-                                })
-                            } else if (type === "column") {
-                                return renderLegend(label, labelColor, color, 10)
-                            }
-
-                            return e.createVisual();
-                        }
-                    }
-                },
-                title: {
-                    text: "GOLD PRODUCED AND TONNES MILLED"
-                },
-                dataSource: {data: data},
-                series: [
-                    {
-                        // Notice the syntax for fields
-                        // that are not valid JS identifiers
-                        field: "['TONNES MILLED (t)']",
-                        categoryField: categoryField,
-                        type: "column",
-                        name: "TONNES MILLED (t)",
-                        color: seriesColor.tonnesMilled,
-                        axis: "tonnes"
-                    },
-                    {
-                        field: "['BUDGET TONNES MILLED (t)']",
-                        categoryField: categoryField,
-                        type: "column",
-                        name: "BUDGET TONNES MILLED (t)",
-                        color: seriesColor.budgetTonnesMilled
-                    },
-                    {
-                        field: "['ACTUAL GOLD PRODUCED (oz)']",
-                        categoryField: categoryField,
-                        type: "line",
-                        style: "normal",
-                        name: "ACTUAL GOLD PRODUCED (oz)",
-                        color: seriesColor.actualGoldProduced,
-                        markers: {
-                            visible: true,
-                            background: seriesColor.actualGoldProduced
-                        },
-                        axis: "goldProduced"
-                    }
-                ],
-                valueAxis: [
-                    {
-                        name: "tonnes",
-                        title: {
-                            text: "Tonnes Milled (t)"
-                        }
-                    },
-                    {
-                        name: "goldProduced",
-                        title: {
-                            text: "Gold Produced (oz)"
-                        }
-                    }
-                ],
-                categoryAxis: {
-                    axisCrossingValues: [0, 13],
-                    majorGridLines: {
-                        visible: false
-                    }
-                }
-            })).data("kendoChart");
-            charts[sheetName] = chart;
-            bindChart(chart, sheet, valueRange, fieldRange);
-
-        } else if (sheetName === (CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
+        } else if (sheetName.startsWith(CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
-                legend: {
-                    visible: true,
-                    position: "bottom",
-                    item: {
-                        cursor: "pointer",
-                        visual: function (e) {
-                            let layout;
-                            let type = e.series.type;
-                            let dashType = e.series.dashType;
-                            let color = e.options.markers.background;
-                            let labelColor = e.options.labels.color;
-                            let label = e.series.name;
-
-                            if (type === "line") {
-                                return renderLegend(label, labelColor, color, 1.5, dashType, {
-                                    pathColor: "#873987",
-                                    circleColor: "#9e480e"
-                                })
-                            } else if (type === "column") {
-                                return renderLegend(label, labelColor, color, 10)
-                            }
-
-                            return e.createVisual();
-                        }
-                    }
-                },
                 title: {
                     text: CHART_GOLD_PRODUCED_BUDGET_OUNCES
                 },
@@ -1190,17 +827,13 @@ echo $spreadsheet_templates; ?>'>
                         categoryField: categoryField,
                         type: "line",
                         name: "BUDGET OUNCES",
-                        color: seriesColor.budgetOunces,
-                        markers: {
-                            visible: true,
-                            background: seriesColor.budgetOunces
-                        }
+                        color: seriesColor.budgetOunces
                     }
-                ]
+                ],
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === (CHART_PLANNED_VRS_ACTUAL_METRES)) {
+        } else if (sheetName.startsWith(CHART_PLANNED_VRS_ACTUAL_METRES)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1230,7 +863,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === (CHART_CLOSING_STOCKPILE_BALANCE)) {
+        } else if (sheetName.startsWith(CHART_CLOSING_STOCKPILE_BALANCE)) {
             let valueRange = sheet.range("B2:M6");
             let fieldRange = sheet.range("A2:A6");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1314,7 +947,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === (CHART_TOLL_DELIVERY)) {
+        } else if (sheetName.startsWith(CHART_TOLL_DELIVERY)) {
             let valueRange = sheet.range("B2:M8");
             let fieldRange = sheet.range("A2:A8");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1429,42 +1062,7 @@ echo $spreadsheet_templates; ?>'>
         }, 1000)
     }
 
-    function renderSolidDot(options = {}) {
-        let draw = kendo.drawing;
-        let geom = kendo.geometry;
-        let path = new draw.Path({
-            stroke: {
-                color: options.pathColor ? options.pathColor : "#9999b6",
-                width: 3,
-                lineCap: "round"
-            },
-            fill: {
-                color: options.pathColor ? options.pathColor : "#33ccff"
-            },
-            cursor: "pointer"
-        });
-        let dot = new geom.Circle([40, 200], 5);
-        let circle = new draw.Circle(dot, {
-            stroke: {
-                color: options.circleColor ? options.circleColor : "#33ccff",
-            },
-            fill: {
-                color: options.circleColor ? options.circleColor : "#33ccff",
-            },
-            cursor: "pointer"
-        });
-        // The following commands are interchangeable
-        path.moveTo(20, 200);
-        path.lineTo(60, 200);
-        //path.lineTo([200, 200]);
-        //path.lineTo(new geom.Point(200, 200));
-        let group = new draw.Group();
-        group.append(path, circle);
-
-        return group;
-    }
-
-    function renderLegend(label, labelColor, color, width = 1.5, dashType = "solid", solidDot = null) {
+    function renderLegend(label, labelColor, color, width = 1.5, dashType = "solid") {
         let draw = kendo.drawing;
         let geom = kendo.geometry;
         let rect = new kendo.geometry.Rect([0, 0], [500, 300]);
@@ -1493,15 +1091,9 @@ echo $spreadsheet_templates; ?>'>
             }
         });
 
-        if (solidDot) {
-            let group = renderSolidDot(solidDot);
-            layout.append(group, text);
-        } else {
-            layout.append(path, text);
-        }
-
         //let space = new draw.Text("&nbsp;", [0, 0], {font: "0.2px"});
 
+        layout.append(path, text);
         layout.reflow();
 
 
@@ -1542,13 +1134,13 @@ echo $spreadsheet_templates; ?>'>
                 }
                 for (let i = 0; i < promises.length; i++) {
                     if (ignoreExisting) {
-                        promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;/*margin-left:auto;*/margin-right:auto;'/>"));
+                        promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;margin-left:auto;margin-right:auto;'/>"));
                     } else {
                         let imgs = editor.body.querySelectorAll("img[data-id='sheet_img_" + sheet.name() + "']");
                         if (imgs)
                             promises[i].done(data => $(imgs).attr("src", data));
                         else
-                            promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;/*margin-left:auto;*/margin-right:auto;'/>"));
+                            promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;margin-left:auto;margin-right:auto;'/>"));
                     }
                 }
             }
@@ -1560,11 +1152,11 @@ echo $spreadsheet_templates; ?>'>
         let chart = charts[chartName];
         chart.exportImage().done(data => {
             if (ignoreExisting) {
-                editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;/*margin-left:auto;*/margin-right:auto;' />");
+                editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;margin-left:auto;margin-right:auto;' />");
             } else {
                 let imgs = editor.body.querySelectorAll("img[data-id='chart_img_" + chartName + "']");
                 if (!imgs) {
-                    editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;//**/*margin-left:auto;*/margin-right:auto;' />");
+                    editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;margin-left:auto;margin-right:auto;' />");
                 } else {
                     $(imgs).attr("src", data);
                 }
@@ -1606,11 +1198,11 @@ echo $spreadsheet_templates; ?>'>
     function saveDraft(e) {
         let postDfr = jQuery.Deferred();
         let postDfrPromise = postDfr.promise();
-        postDfrPromise.done(function () {
+        postDfrPromise.done(function (title) {
             spreadsheet.saveJSON().then(function (data) {
                 $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
                 $.post({
-                    url: "<?php echo URL_ROOT . '/pages/save-draft' ?>",
+                    url: "<?php echo isset($edit_preloaded_draft) ? URL_ROOT . '/pages/save-preloaded-draft' : URL_ROOT . '/pages/save-draft' ?>",
                     data: $("#editorForm").serialize(),
                     dataType: 'json'
                 }).done(function (response, textStatus, jQueryXHR) {
@@ -1621,51 +1213,22 @@ echo $spreadsheet_templates; ?>'>
                         setTimeout(() => kAlert.close(), 2500);
                     } else {
                         let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
-                        setTimeout(() => kAlert.close(), 2500);
                     }
                 });
             });
         });
-        postDfr.resolve();
-    }
-
-    function saveReportPart() {
-        let reportPartId = $("#reportPartId").val();
-        kendo.prompt('Enter the description', '').done(description => {
-            $.post(`${URL_ROOT}/pages/save-report-part/${reportPartId}`, {
-                content: editor.value(),
-                description: description
-            }, null, "json").done(d => {
-                let alert = kendoAlert('Success!', description + ' saved successfully!');
-                setTimeout(() => alert.close(), 1500);
-            });
-        })
-    }
-
-    function savePreloadedDraft(e) {
-        let postDfr = jQuery.Deferred();
-        let postDfrPromise = postDfr.promise();
-        postDfrPromise.done(function () {
-            spreadsheet.saveJSON().then(function (data) {
-                $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
-                $.post({
-                    url: "<?php echo URL_ROOT . '/pages/save-preloaded-draft'; ?>",
-                    data: $("#editorForm").serialize(),
-                    dataType: 'json'
-                }).done(function (response, textStatus, jQueryXHR) {
-                    if (response.success) {
-                        let kAlert = kendoAlert('Save Preloaded Draft', 'Draft saved successfully!');
-                        if (response.draft_id)
-                            $('#draftId').val(response.draft_id);
-                        setTimeout(() => kAlert.close(), 2500);
-                    } else {
-                        let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
-                        setTimeout(() => kAlert.close(), 2500);
-                    }
-                });
-            });
-        });
-        postDfr.resolve();
+        postDfr.resolve(title);
+        /* let draftTitleInput = $("#draftTitleInput");
+         if (draftTitleInput.hasClass('no-title')) {
+             kendo.prompt("Enter a title for your draft.", "New Draft").done(function (title) {
+                 $("#draftTitleInput, #title").removeClass('no-title').val(title);
+                 postDfr.resolve(title);
+             });
+         } else {
+             let title = draftTitleInput.val();
+             $("#title").val(title);
+             postDfr.resolve(title);
+         }*/
     }
 
     function saveFinalReport() {
@@ -1749,26 +1312,6 @@ echo $spreadsheet_templates; ?>'>
                 });
             });
     }
-
-
-    function onEditSubmittedReport(e) {
-        let reportSubmissionsId = $("#reportSubmissionsId").val();
-        let submit = () => {
-            let dfd = $.Deferred();
-            let post = $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId, {
-                content: editor.value(),
-                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-            }, null, "json");
-            dfd.resolve(post);
-            return dfd.promise();
-        };
-
-        submit().done(post => post.done(data => {
-            let alert = kendoAlert("Report Saved!", "Report saved successfully.");
-            setTimeout(() => alert.close(), 1500);
-        }));
-    }
-
 
     function submitReport(e) {
         let draftId = $("#draftId");

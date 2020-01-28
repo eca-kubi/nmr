@@ -52,11 +52,6 @@
                                                value="<?php echo $report_submissions_id ?? ''; ?>">
                                         <input type="hidden" id="editSubmittedReport" name="edit_submitted_report"
                                                value="<?php echo $edit_submitted_report ?? ''; ?>">
-                                        <input type="hidden" id="reportPartId" name="report_part_id"
-                                               value="<?php echo $report_part_id ?? ''; ?>">
-                                        <input type="hidden" id="reportPartIdTemp" name="report_part_id_temp">
-                                        <input type="hidden" id="reportPartDescription" name="report_part_description"
-                                               value="<?php echo $report_part_description ?? ''; ?>">
                                     </form>
                                 </div>
                             </div> <?php endif; ?>
@@ -151,8 +146,6 @@ echo $spreadsheet_templates; ?>'>
     let editDraft = Boolean(<?php echo $edit_draft ?? '' ?>);
     let isNewDraft = Boolean(<?php echo $is_new_draft ?? '' ?>);
     let editReport = Boolean(<?php echo $edit_report ?? ''; ?>);
-    let editReportPart = Boolean(<?php echo $edit_report_part ?? ''; ?>);
-    let addReportPart = Boolean(<?php echo $add_report_part ?? ''; ?>);
     let editPreloadedDraft = Boolean(<?php echo $edit_preloaded_draft ?? ''; ?>);
     let editSubmittedReport = Boolean(<?php echo $edit_submitted_report ?? ''; ?>);
     let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
@@ -186,8 +179,7 @@ echo $spreadsheet_templates; ?>'>
             tools: [],
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css",
-
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ]
         }).data("kendoEditor");
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
@@ -260,43 +252,32 @@ echo $spreadsheet_templates; ?>'>
                         //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
                         if (editSubmittedReport) {
                             let reportSubmissionsId = $("#reportSubmissionsId").val();
-                            $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId, {
+                            $.post(URL_ROOT + "/fr/update-submitted-report/" + reportSubmissionsId, {
                                 content: editor.value(),
                                 //spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`));
+                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/fr/get-submitted-report/${reportSubmissionsId}`));
                         } else if (editDraft) {
                             let draftId = $("#draftId");
                             let title = $("#draftTitleInput").val();
-                            $.post(URL_ROOT + "/pages/save-draft/", {
+                            $.post(URL_ROOT + "/fr/save-draft/", {
                                 title: title,
                                 draft_id: draftId.val(),
                                 content: editor.value(),
                                 spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-draft/${draftId.val()}`, data => data));
+                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/fr/fetch-draft/${draftId.val()}`, data => data));
                         } else if (editPreloadedDraft) {
                             let draftId = $("#draftId");
                             let title = $("#draftTitleInput").val();
-                            $.post(URL_ROOT + "/pages/save-preloaded-draft/", {
+                            $.post(URL_ROOT + "/fr/save-preloaded-draft/", {
                                 title: title,
                                 draft_id: draftId.val(),
                                 content: editor.value(),
                                 spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-preloaded-draft/${draftId.val()}`, data => data));
-                        } else if (editReportPart) {
-                            let reportPartId = $("#reportPartId").val();
-                            let description = $("#reportPartDescription").val();
-                            $.post(URL_ROOT + "/pages/save-report-part/" + reportPartId, {
-                                content: editor.value(),
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-report-part/${reportPartId}`, data => data, description));
+                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/fr/fetch-preloaded-draft/${draftId.val()}`, data => data));
                         } else if (addReportPart) {
-                            let reportPartIdTemp = $("#reportPartIdTemp").val();
-                            $.post(URL_ROOT + "/pages/save-report-part-temp/" + reportPartIdTemp, {
-                                content: editor.value()
-                            }, null, "json").done((data) => {
-                                reportPartIdTemp = data.report_part_id_temp;
-                                $("#reportPartIdTemp").val(reportPartIdTemp);
-                                previewContent(`${URL_ROOT}/pages/fetch-report-part-temp/${reportPartIdTemp}`, data1 => data1)
-                            });
+                            $.post(URL_ROOT + "/fr/save-report-part-temp/", {
+                                content: editor.value(),
+                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/fr/fetch-report-part-temp/`, data => data));
                         }
                     }
                 }
@@ -329,13 +310,6 @@ echo $spreadsheet_templates; ?>'>
                     click: saveDraft,
                     // hidden: "<?php echo isset($edit_draft) ? '' : 'true' ?>"
                     hidden: true
-                },
-                {
-                    type: "button",
-                    text: "Save",
-                    icon: "save",
-                    click: saveReportPart,
-                    hidden: "<?php echo isset($edit_report_part) ? '' : 'true' ?>"
                 },
                 {
                     type: "button",
@@ -398,6 +372,15 @@ echo $spreadsheet_templates; ?>'>
                     hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id) ? '' : 'true' ?>")
                 },
                 <?php endif; ?>
+                {
+                    type: "button",
+                    id: "cancelBtn",
+                    icon: "cancel",
+                    attributes: {"class": "cancel-btn"},
+                    text: "Cancel",
+                    click: e => history.back(),
+                },
+
                 <?php if (isITAdmin($current_user->user_id)): ?>
                 {
                     type: "button",
@@ -408,27 +391,19 @@ echo $spreadsheet_templates; ?>'>
                 },
                 {
                     type: "button",
+                    text: "Save as Preloaded",
+                    icon: "save",
+                    click: saveDraftAsPreloaded,
+                    hidden: true
+                },
+                {
+                    type: "button",
                     text: "Save",
                     icon: "save",
                     click: saveReportPart,
                     hidden: addReportPart ? '' : true
-                },
-                {
-                    type: "button",
-                    text: "Save as Preloaded",
-                    icon: "launch",
-                    click: saveDraftAsPreloaded,
-                    hidden: true
-                },
-                <?php endif; ?>
-                {
-                    type: "button",
-                    id: "cancelBtn",
-                    icon: "cancel",
-                    attributes: {"class": "cancel-btn"},
-                    text: "Cancel",
-                    click: e => history.back(),
                 }
+                <?php endif; ?>
             ]
         }).data("kendoToolBar");
 
@@ -1629,19 +1604,6 @@ echo $spreadsheet_templates; ?>'>
         postDfr.resolve();
     }
 
-    function saveReportPart() {
-        let reportPartId = $("#reportPartId").val();
-        kendo.prompt('Enter the description', '').done(description => {
-            $.post(`${URL_ROOT}/pages/save-report-part/${reportPartId}`, {
-                content: editor.value(),
-                description: description
-            }, null, "json").done(d => {
-                let alert = kendoAlert('Success!', description + ' saved successfully!');
-                setTimeout(() => alert.close(), 1500);
-            });
-        })
-    }
-
     function savePreloadedDraft(e) {
         let postDfr = jQuery.Deferred();
         let postDfrPromise = postDfr.promise();
@@ -1725,6 +1687,19 @@ echo $spreadsheet_templates; ?>'>
         });
     }
 
+    function saveReportPart() {
+        let reportPartId = $("#reportPartId").val();
+        kendo.prompt('Enter the description', '').done(description => {
+            $.post(`${URL_ROOT}/fr/save-report-part/${reportPartId}`, {
+                content: editor.value(),
+                description: description
+            }, null, "json").done(d => {
+                let alert = kendoAlert('Success!', description + ' saved successfully!');
+                setTimeout(() => alert.close(), 1500);
+            });
+        })
+    }
+
     function selectDepartment_onChange(e) {
         $("#departmentName").val(this.value())
     }
@@ -1755,7 +1730,7 @@ echo $spreadsheet_templates; ?>'>
         let reportSubmissionsId = $("#reportSubmissionsId").val();
         let submit = () => {
             let dfd = $.Deferred();
-            let post = $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId, {
+            let post = $.post(URL_ROOT + "/fr/update-submitted-report/" + reportSubmissionsId, {
                 content: editor.value(),
                 spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
             }, null, "json");
@@ -1775,7 +1750,7 @@ echo $spreadsheet_templates; ?>'>
         let title = $("#draftTitleInput").val();
         let submit = () => {
             let dfd = $.Deferred();
-            let post = $.post(URL_ROOT + "/pages/submit-report/", {
+            let post = $.post(URL_ROOT + "/fr/submit-report/", {
                 title: title,
                 draft_id: draftId.val(),
                 content: editor.value(),

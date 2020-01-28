@@ -1,6 +1,6 @@
 <?php include_once(APP_ROOT . '/views/includes/styles.php'); ?>
-<?php include_once(APP_ROOT . '/views/includes/navbar.php'); ?>
-<?php include_once(APP_ROOT . '/views/includes/sidebar.php'); ?>
+<?php include_once(APP_ROOT . '/views/includes/navbar-fr.php'); ?>
+<?php include_once(APP_ROOT . '/views/includes/sidebar-fr.php'); ?>
 <!-- .content-wrapper -->
 <div class="content-wrapper animated fadeInRight" style="margin-top: <?php //echo NAVBAR_MT; ?>">
     <!-- content -->
@@ -11,7 +11,7 @@
                     <div class="row p-1">
                         <h5 class="box-title text-bold"><span><svg class="fontastic-draft" style="fill: currentColor"><use
                                             xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
-                            <?php echo 'Draft Report (Start Monthly Report Here)'; ?>
+                            <?php echo $page_title??  'Draft (Full Report)'; ?>
                         </h5>
                         <div class="box-tools pull-right ml-auto <?php echo isITAdmin($current_user->user_id) ? '' : 'd-none'; ?>">
                             <button type="button" class="btn btn-app btn-box-tool btn-outline-light btn-sm"
@@ -36,7 +36,7 @@
                 <div class="box-body">
                     <div class="row">
                         <?php if (isset($draft) && is_array($draft) && count($draft) > 0): ?>
-                            <div class="col-md-6 col-sm-6 col-xs-12" id="draft_<?php echo $draft['draft_id']; ?>">
+                            <div class="col-md-4 col-sm-6 col-xs-12" id="draft_<?php echo $draft['draft_id']; ?>">
                                 <div class="info-box p-0">
                                 <span class="info-box-icon bg-gray-light border rounded-0 rounded-left"><svg
                                             class="fontastic-draft"
@@ -44,21 +44,15 @@
                                                 xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
 
                                     <div class="info-box-content">
-                                        <span class="info-box-text text-bold"> Draft <span class="text-primary">(Flash Report) </span><a href="#"
-                                                                                                  class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
-                                                                                                  data-toggle="dropdown"
-                                                                                                  role="button"></a>
+                                    <span class="info-box-text text-bold"><?php echo $draft['title'] ?><a href="#"
+                                                                                                          class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
+                                                                                                          data-toggle="dropdown"
+                                                                                                          role="button"></a>
                                          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 <!--          <a class="dropdown-item" href="#"><i class="fa fa-play-circle-o"></i> Preview</a>
                                 -->          <a class="dropdown-item"
                                                 href="<?php echo URL_ROOT . '/pages/edit-draft/' . $draft['draft_id']; ?>"
                                              ><i class="fa fa-file-edit"></i> Edit</a>
-                                             <a class="dropdown-item preview-fr-btn"
-                                                data-draft-id="<?php echo $draft['draft_id']; ?>"
-                                                data-title="<?php echo $draft['title']; ?>"
-                                                href="#"
-                                             ><i class="fa fa-play-circle-o"></i> Preview</a>
-
                                              <a class="dropdown-item delete-draft-btn d-none" href="#"
                                                 data-draft-id="<?php echo $draft['draft_id']; ?>"
                                                 data-parent="#draft_<?php echo $draft['draft_id']; ?>"><i
@@ -88,60 +82,7 @@
                                 </div>-->
                             </div>
                         <?php else: ?>
-                            <h5>No Flash Report Draft Available!</h5>
-                        <?php endif; ?>
-                        <?php if (isset($draft_fr) && is_array($draft_fr) && count($draft_fr) > 0): ?>
-                            <div class="col-md-6 col-sm-6 col-xs-12" id="draft_<?php echo $draft_fr['draft_id']; ?>">
-                                <div class="info-box p-0">
-                                <span class="info-box-icon bg-gray-light border rounded-0 rounded-left"><svg
-                                            class="fontastic-draft"
-                                            style="fill: currentColor"><use
-                                                xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
-
-                                    <div class="info-box-content">
-                                        <span class="info-box-text text-bold">Draft <span class="text-warning">(Full Report) </span> <a href="#"
-                                                                                                 class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
-                                                                                                 data-toggle="dropdown"
-                                                                                                 role="button"></a>
-                                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                             <a class="dropdown-item"
-                                                href="<?php echo URL_ROOT . '/fr/edit-draft/' . $draft_fr['draft_id']; ?>"
-                                             ><i class="fa fa-file-edit"></i> Edit</a>
-                                             <a class="dropdown-item preview-fr-btn"
-                                                href="<?php echo '#'; ?>"
-                                                data-draft-id="<?php echo $draft_fr['draft_id']; ?>"
-                                                data-title="<?php echo $draft_fr['title']; ?>"
-                                             ><i class="fa fa-play-circle-o"></i> Preview</a>
-                                             <a class="dropdown-item delete-draft-btn d-none" href="#"
-                                                data-draft-id="<?php echo $draft_fr['draft_id']; ?>"
-                                                data-parent="#draft_<?php echo $draft_fr['draft_id']; ?>"><i
-                                                         class="fa fa-trash-o"></i> Delete</a>
-                                        </div>
-                                    </span>
-                                        <span class="text-sm"><i
-                                                    class="fa fa-calendar"></i> <?php echo echoDateOfficial($draft_fr['time_modified'], true); ?></span>
-                                        <span style="font-size: 0.7rem;display: block"><i
-                                                    class="fa fa-clock-o"></i> <?php echo getTime($draft_fr['time_modified']); ?></span>
-                                        <a href="#"
-                                           class="float-right text-sm font-poppins w3-text-dark-grey preview-fr-btn"
-                                           data-draft-id="<?php echo $draft_fr['draft_id']; ?>"
-                                           data-title="<?php echo $draft_fr['title']; ?>"><i
-                                                    class="fa fa-play-circle-o"></i> Preview</a>
-                                        <a href="<?php echo URL_ROOT . '/fr/edit-draft/' . $draft_fr['draft_id']; ?>"
-                                           class="float-right text-sm font-poppins w3-text-dark-grey edit-btn mx-4"
-                                           data-draft-id="<?php echo $draft_fr['draft_id']; ?>"
-                                           data-title="<?php echo $draft_fr['title']; ?>"><i
-                                                    class="fa fa-file-edit"></i> Edit</a>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                                <!-- /.info-box -->
-                                <!--<div class="w3-card p-0 collapse rounded" id="previewBox">
-                                    <div class="info-box-content">OK</div>
-                                </div>-->
-                            </div>
-                        <?php else: ?>
-                            <h5>No Full Report Draft Available!</h5>
+                            <h5>No Draft Available!</h5>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -197,8 +138,7 @@
             scale: 1,
             toolbar: {
                 items: [
-                    "pager", "zoom", "toggleSelection", "search", "download", "print",
-                    {
+                    "pager", "zoom", "toggleSelection", "search", "download", "print", {
                         id: "cancel",
                         type: "button",
                         text: "Cancel",
@@ -224,36 +164,13 @@
         $("a.preview-btn").on("click", function (e) {
             let draftId = $(e.currentTarget).data('draftId');
             window.previewDraftId = draftId;
-            let title = $(e.currentTarget).data('title');
+                let title = $(e.currentTarget).data('title');
             $.get(URL_ROOT + "/pages/fetchDraft/" + draftId).done(function (data, successTextStatus, jQueryXHR) {
 
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
-                    margin: "1.3cm",
-                    multipage: true
-                }).then(function (group) {
-                    // Render the result as a PDF file
-                    return kendo.drawing.exportPDF(group, {});
-                })
-                    .done(function (data) {
-                        draftWindow.center().open().maximize();
-                        pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                        setTimeout(() => pdfViewer.activatePage(1), 500)
-                    });
-            });
-        });
-
-        $("a.preview-fr-btn").on("click", function (e) {
-            let draftId = $(e.currentTarget).data('draftId');
-            window.previewDraftId = draftId;
-            let title = $(e.currentTarget).data('title');
-            $.get(URL_ROOT + "/fr/fetchDraft/" + draftId).done(function (data, successTextStatus, jQueryXHR) {
-
-                previewEditor.value(data);
-                kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'a3',
-                    margin: "1.3cm",
+                    margin: "2cm",
                     multipage: true
                 }).then(function (group) {
                     // Render the result as a PDF file
@@ -261,6 +178,11 @@
                 })
                     .done(function (data) {
                         // Save the PDF file
+                        /*kendo.saveAs({
+                            dataURI: data,
+                            fileName: draftName + ".pdf",
+                            //proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
+                        });*/
                         draftWindow.center().open().maximize();
                         pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                         setTimeout(() => pdfViewer.activatePage(1), 500)
