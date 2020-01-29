@@ -218,13 +218,8 @@
                                 </li>
                                 <li>
                                     <a class="dropdown-item"
-                                       href="<?php echo site_url('pages/add-report-part') ?>">
-                                        <i class="fa fa-file-plus"></i> Add Flash Report Part</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item"
-                                       href="<?php echo site_url('fr/add-report-part') ?>">
-                                        <i class="fa fa-file-plus"></i> Add Full Report Part</a>
+                                       href="<?php echo site_url('pages/report-parts') ?>">
+                                        <i class="fa fa-file"></i> Report Parts</a>
                                 </li>
                             </ul>
                         </li>

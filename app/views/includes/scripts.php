@@ -12,6 +12,7 @@
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-dim-background/jquery-dim-background.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/interactjs/interact.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/subjx/subjx.min.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/displace/displace.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/pako-deflate/pako-deflate.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/pdfjs/pdf.js"></script>
 <script>

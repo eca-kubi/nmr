@@ -612,7 +612,7 @@ class Fr extends Controller
         $payload['report_part_description'] = $report_part['description'];
         $payload['page_title'] = 'Edit ' . $report_part['description'];
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $this->view('pages/report', $payload);
+        $this->view('fr/report', $payload);
     }
 
     public function fetchReportPart($report_part_id)

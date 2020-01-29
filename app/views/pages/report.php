@@ -110,6 +110,11 @@
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
 <input type="hidden" id="spreadsheetTemplates" value='<?php /** @var string $spreadsheet_templates */
 echo $spreadsheet_templates; ?>'>
+<style>
+    /*    .k-editable-area {
+           width: 842px;
+        }*/
+</style>
 <?php if (!isITAdmin($current_user->user_id)): ?>
     <style>
         [title='View HTML'] {
@@ -398,6 +403,7 @@ echo $spreadsheet_templates; ?>'>
                     hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id) ? '' : 'true' ?>")
                 },
                 <?php endif; ?>
+
                 <?php if (isITAdmin($current_user->user_id)): ?>
                 {
                     type: "button",
@@ -434,6 +440,10 @@ echo $spreadsheet_templates; ?>'>
 
         editor = $("#editor").kendoEditor({
             tools: [
+                {
+                    name: "MoveResize",
+                    template: "<a class=' k-button m-1' title='Move/Resize'> <i class='k-icon k-i-arrows-resizing'></i>&nbsp;Move/Resize</a>"
+                },
                 "bold",
                 "italic",
                 "underline",
@@ -478,6 +488,9 @@ echo $spreadsheet_templates; ?>'>
                     template: `<a tabindex="0" role="button" class="k-tool k-group-start k-group-end page-break-btn" unselectable="on" title="Page Break" aria-label="Page Break"><span unselectable="on" class="k-tool-icon k-icon k-i-arrow-parent"></span></a>`,
                 }
             ],
+            select(e) {
+                //console.log('select')
+            },
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                 "<?php echo URL_ROOT; ?>/public/assets/css/subjx/subjx.min.css",
@@ -524,6 +537,11 @@ echo $spreadsheet_templates; ?>'>
             encoded: false
         }).data("kendoEditor");
 
+        if (editor)
+            appendScriptsToEditor(editor.document, [
+                `${URL_ROOT}/public/assets/js/subjx/subjx.min.js`,
+                `${URL_ROOT}/public/assets/js/displace/displace.min.js`,
+            ]);
         /*
         // Limit image upload size
         $(".k-i-image").on('click', function () {
@@ -1631,7 +1649,10 @@ echo $spreadsheet_templates; ?>'>
 
     function saveReportPart() {
         let reportPartId = $("#reportPartId").val();
-        kendo.prompt('Enter the description', '').done(description => {
+        let description = $("#reportPartDescription").val();
+        let dfd = $.Deferred();
+        let promise = dfd.promise();
+        promise.done((description) => {
             $.post(`${URL_ROOT}/pages/save-report-part/${reportPartId}`, {
                 content: editor.value(),
                 description: description
@@ -1639,7 +1660,14 @@ echo $spreadsheet_templates; ?>'>
                 let alert = kendoAlert('Success!', description + ' saved successfully!');
                 setTimeout(() => alert.close(), 1500);
             });
-        })
+        });
+        if (!reportPartId) {
+            kendo.prompt('Enter the description', '').done(description => {
+                dfd.resolve(description);
+            })
+        } else {
+            dfd.resolve(description)
+        }
     }
 
     function savePreloadedDraft(e) {

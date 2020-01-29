@@ -146,9 +146,11 @@ echo $spreadsheet_templates; ?>'>
     let editDraft = Boolean(<?php echo $edit_draft ?? '' ?>);
     let isNewDraft = Boolean(<?php echo $is_new_draft ?? '' ?>);
     let editReport = Boolean(<?php echo $edit_report ?? ''; ?>);
+    let editReportPart = Boolean(<?php echo $edit_report_part ?? ''; ?>);
     let editPreloadedDraft = Boolean(<?php echo $edit_preloaded_draft ?? ''; ?>);
     let editSubmittedReport = Boolean(<?php echo $edit_submitted_report ?? ''; ?>);
     let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
+    let addReportPart = Boolean(<?php echo $add_report_part ?? ''; ?>);
     let clearedContents = "";
     /** @type {kendo.ui.ToolBar}*/
     let editorActionToolbar;
@@ -274,6 +276,12 @@ echo $spreadsheet_templates; ?>'>
                                 content: editor.value(),
                                 spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
                             }, null, "json").done((data) => previewContent(`${URL_ROOT}/fr/fetch-preloaded-draft/${draftId.val()}`, data => data));
+                        } else if (editReportPart) {
+                            let reportPartId = $("#reportPartId").val();
+                            let description = $("#reportPartDescription").val();
+                            $.post(URL_ROOT + "/pages/save-report-part/" + reportPartId, {
+                                content: editor.value(),
+                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-report-part/${reportPartId}`, data => data, description));
                         } else if (addReportPart) {
                             $.post(URL_ROOT + "/fr/save-report-part-temp/", {
                                 content: editor.value(),
@@ -1689,7 +1697,10 @@ echo $spreadsheet_templates; ?>'>
 
     function saveReportPart() {
         let reportPartId = $("#reportPartId").val();
-        kendo.prompt('Enter the description', '').done(description => {
+        let description = $("#reportPartDescription").val();
+        let dfd = $.Deferred();
+        let promise = dfd.promise();
+        promise.done((description) => {
             $.post(`${URL_ROOT}/fr/save-report-part/${reportPartId}`, {
                 content: editor.value(),
                 description: description
@@ -1697,7 +1708,14 @@ echo $spreadsheet_templates; ?>'>
                 let alert = kendoAlert('Success!', description + ' saved successfully!');
                 setTimeout(() => alert.close(), 1500);
             });
-        })
+        });
+        if (!reportPartId) {
+            kendo.prompt('Enter the description', '').done(description => {
+                dfd.resolve(description);
+            })
+        } else {
+            dfd.resolve(description)
+        }
     }
 
     function selectDepartment_onChange(e) {

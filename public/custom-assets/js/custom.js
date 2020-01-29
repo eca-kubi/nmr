@@ -231,6 +231,23 @@ kendo.pdfviewer.pdfjs.processor.fn._updateDocument = function (file) {
 
     this.file = file;
 };
+
+
+function appendScriptsToEditor(document, urls) {
+    let body = document.body;
+
+    let appendScript = (url) => {
+        let script = document.createElement('script');
+        script.src = url;
+        script.type = "text/javascript";
+        body.appendChild(script);
+    };
+
+    for (let i = 0; i < urls.length; i++) {
+        appendScript(urls[i]);
+    }
+}
+
 /*kendo.pdf.defineFont({
     "DejaVu Sans"             : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
     "DejaVu Sans|Bold"        : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",
