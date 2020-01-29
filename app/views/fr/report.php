@@ -52,6 +52,11 @@
                                                value="<?php echo $report_submissions_id ?? ''; ?>">
                                         <input type="hidden" id="editSubmittedReport" name="edit_submitted_report"
                                                value="<?php echo $edit_submitted_report ?? ''; ?>">
+                                        <input type="hidden" id="reportPartId" name="report_part_id"
+                                               value="<?php echo $report_part_id ?? ''; ?>">
+                                        <input type="hidden" id="reportPartIdTemp" name="report_part_id_temp">
+                                        <input type="hidden" id="reportPartDescription" name="report_part_description"
+                                               value="<?php echo $report_part_description ?? ''; ?>">
                                     </form>
                                 </div>
                             </div> <?php endif; ?>
@@ -279,13 +284,18 @@ echo $spreadsheet_templates; ?>'>
                         } else if (editReportPart) {
                             let reportPartId = $("#reportPartId").val();
                             let description = $("#reportPartDescription").val();
-                            $.post(URL_ROOT + "/pages/save-report-part/" + reportPartId, {
+                            $.post(URL_ROOT + "/fr/save-report-part/" + reportPartId, {
                                 content: editor.value(),
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-report-part/${reportPartId}`, data => data, description));
+                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/fr/fetch-report-part/${reportPartId}`, data => data, description));
                         } else if (addReportPart) {
-                            $.post(URL_ROOT + "/fr/save-report-part-temp/", {
-                                content: editor.value(),
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/fr/fetch-report-part-temp/`, data => data));
+                            let reportPartIdTemp = $("#reportPartIdTemp").val();
+                            $.post(URL_ROOT + "/pages/save-report-part-temp/" + reportPartIdTemp, {
+                                content: editor.value()
+                            }, null, "json").done((data) => {
+                                reportPartIdTemp = data.report_part_id_temp;
+                                $("#reportPartIdTemp").val(reportPartIdTemp);
+                                previewContent(`${URL_ROOT}/pages/fetch-report-part-temp/${reportPartIdTemp}`, data1 => data1)
+                            });
                         }
                     }
                 }
@@ -380,15 +390,6 @@ echo $spreadsheet_templates; ?>'>
                     hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id) ? '' : 'true' ?>")
                 },
                 <?php endif; ?>
-                {
-                    type: "button",
-                    id: "cancelBtn",
-                    icon: "cancel",
-                    attributes: {"class": "cancel-btn"},
-                    text: "Cancel",
-                    click: e => history.back(),
-                },
-
                 <?php if (isITAdmin($current_user->user_id)): ?>
                 {
                     type: "button",
@@ -410,8 +411,23 @@ echo $spreadsheet_templates; ?>'>
                     icon: "save",
                     click: saveReportPart,
                     hidden: addReportPart ? '' : true
-                }
+                },
+                {
+                    type: "button",
+                    text: "Save",
+                    icon: "save",
+                    click: saveReportPart,
+                    hidden: editReportPart ? '' : true
+                },
                 <?php endif; ?>
+                {
+                    type: "button",
+                    id: "cancelBtn",
+                    icon: "cancel",
+                    attributes: {"class": "cancel-btn"},
+                    text: "Cancel",
+                    click: e => history.back(),
+                }
             ]
         }).data("kendoToolBar");
 
