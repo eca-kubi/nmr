@@ -115,6 +115,7 @@ toastSuccess = function f(message, timeout = 3000) {
     });
 };
 
+
 function createKendoTooltip(target, filter, position = "top") {
     return target.kendoTooltip({
         filter: filter,
@@ -246,6 +247,11 @@ function appendScriptsToEditor(document, urls) {
     for (let i = 0; i < urls.length; i++) {
         appendScript(urls[i]);
     }
+}
+
+function notify(message, type = 'success') {
+    let notification = $('<span class="notification" />').appendTo('body').kendoNotification().data('kendoNotification');
+    notification.show(message, type)
 }
 
 /*kendo.pdf.defineFont({

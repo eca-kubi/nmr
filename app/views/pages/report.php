@@ -111,9 +111,9 @@
 <input type="hidden" id="spreadsheetTemplates" value='<?php /** @var string $spreadsheet_templates */
 echo $spreadsheet_templates; ?>'>
 <style>
-        .k-editor {
-           width: 842px;
-        }
+    .k-editor {
+        width: 842px;
+    }
 </style>
 <?php if (!isITAdmin($current_user->user_id)): ?>
     <style>
@@ -262,7 +262,7 @@ echo $spreadsheet_templates; ?>'>
             editorTabStrip = $("#editorTabStrip").kendoTabStrip({
                 select(e) {
                     if (e.contentElement.id === "previewTab") {
-                        //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
+                        notify('Saving...');
                         if (editSubmittedReport) {
                             let reportSubmissionsId = $("#reportSubmissionsId").val();
                             $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId, {

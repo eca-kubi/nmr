@@ -257,6 +257,7 @@ echo $spreadsheet_templates; ?>'>
                 select(e) {
                     if (e.contentElement.id === "previewTab") {
                         //$("#previewContent").html($(".k-editable-area iframe")[0].contentDocument.documentElement.innerHTML);
+                        notify('Saving...');
                         if (editSubmittedReport) {
                             let reportSubmissionsId = $("#reportSubmissionsId").val();
                             $.post(URL_ROOT + "/fr/update-submitted-report/" + reportSubmissionsId, {
