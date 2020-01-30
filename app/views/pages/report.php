@@ -33,7 +33,7 @@
                                 <div style="width: 100%">
                                     <form id="editorForm">
                                     <textarea name="content" id="editor" cols="30" rows="10"
-                                              style="height: 500px"><?php echo $content ?? ''; ?></textarea>
+                                              style="height: 500px;"><?php echo $content ?? ''; ?></textarea>
                                         <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
                                                value='<?php echo $spreadsheet_content ?? ''; ?>'>
                                         <input type="hidden" id="title" name="title"
@@ -111,9 +111,9 @@
 <input type="hidden" id="spreadsheetTemplates" value='<?php /** @var string $spreadsheet_templates */
 echo $spreadsheet_templates; ?>'>
 <style>
-    /*    .k-editable-area {
+        .k-editor {
            width: 842px;
-        }*/
+        }
 </style>
 <?php if (!isITAdmin($current_user->user_id)): ?>
     <style>
@@ -493,6 +493,7 @@ echo $spreadsheet_templates; ?>'>
             },
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                "<?php echo URL_ROOT; ?>/public/assets/css/overlay-scrollbar/OverlayScrollbars.min.css",
                 "<?php echo URL_ROOT; ?>/public/assets/css/subjx/subjx.min.css",
                 "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ],
