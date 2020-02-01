@@ -722,6 +722,12 @@ a:hover {
     text-decoration: none!important;
 }
 
+/*Adapt Red theme*/
+
+/*[class~='fa'] {
+    color: var(--danger)!important;
+}*/
+
 /*.k-chart svg g
 {
     cursor: default!important;

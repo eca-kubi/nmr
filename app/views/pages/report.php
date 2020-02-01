@@ -412,10 +412,10 @@ echo $spreadsheet_templates; ?>'>
 
         editor = $("#editor").kendoEditor({
             tools: [
-                {
+               /* {
                     name: "MoveResize",
-                    template: "<a class=' k-button m-1' title='Move/Resize'> <i class='k-icon k-i-arrows-resizing'></i>&nbsp;Move/Resize</a>"
-                },
+                    template: "<a class=' k-button m-1 d-invisible' title='Move/Resize'> <i class='k-icon k-i-arrows-resizing'></i>&nbsp;Move/Resize</a>"
+                },*/
                 "bold",
                 "italic",
                 "underline",
