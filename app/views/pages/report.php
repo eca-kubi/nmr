@@ -167,7 +167,7 @@ echo $spreadsheet_templates; ?>'>
     let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
     let tablePrefix = "<?php echo $table_prefix ?? 'nmr'; ?>";
     let clearedContents = "";
-    let targetMonthYearsSubmissionStatus = JSON.parse('<?php json_encode(getTargetMonthYearsSubmissionStatus($table_prefix?? 'nmr')) ?>') ;
+    let targetMonthYearsSubmissionStatus = JSON.parse('<?php echo json_encode(getTargetMonthYearsSubmissionStatus($table_prefix?? 'nmr')) ?>') ;
     /** @type {kendo.ui.ToolBar}*/
     let editorActionToolbar;
     let seriesColor = {

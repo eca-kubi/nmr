@@ -394,8 +394,8 @@ class Pages extends Controller
                 $db->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 1]);
                // $db->where('prop', $table_prefix . '_current_submission_month')->update('settings', ['value' => '']);
                // $db->where('prop', $table_prefix . '_current_submission_year')->update('settings', ['value' => '']);
-                echo json_encode(['isSubmissionClosedByPowerUser' => true, 'targetYear' => $target_year, 'targetMonth' => $target_month]);
             }
+            echo json_encode(['isSubmissionClosedByPowerUser' => true, 'targetYear' => $target_year, 'targetMonth' => $target_month]);
         }
     }
 
