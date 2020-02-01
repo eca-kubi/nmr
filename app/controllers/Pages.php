@@ -409,7 +409,7 @@ class Pages extends Controller
         $payload['is_power_user'] = isPowerUser(getUserSession()->user_id);
         $table_prefixes = ['nmr', 'nmr_fr'];
         foreach ($table_prefixes as $table_prefix) {
-            $payload['report_submissions'][$table_prefix] = groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id, $table_prefix));
+            $payload['report_submissions'][$table_prefix] = array_reverse(groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id, $table_prefix))) ;
             $payload['target_month_years'][$table_prefix] = Database::getDbh()->getValue($table_prefix . '_final_report', 'concat_ws(" ", target_month, target_year)', null) ?: [];
         }
         $this->view('pages/submitted-reports', $payload);

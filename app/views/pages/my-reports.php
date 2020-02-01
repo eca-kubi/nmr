@@ -142,6 +142,7 @@
     let draftWindow;
     let draftId;
     let reportSubmitted;
+    let currentTarget;
     /**
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
@@ -204,6 +205,8 @@
                                     });
                             } else {
                                 submit().done(post => post.done(data => {
+                                    reportSubmitted = 1;
+                                    currentTarget.data('reportSubmitted', 1);
                                     let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
                                     setTimeout(() => alert.close(), 1500);
                                 }));
@@ -234,7 +237,8 @@
         }, 1000);
 
         $(".view-btn").on("click", function (e) {
-            draftId = $(e.currentTarget).data('draftId');
+            currentTarget = $(e.currentTarget);
+            draftId = currentTarget.data('draftId');
             reportSubmitted = $(e.currentTarget).data('reportSubmitted');
             tablePrefix = $(e.currentTarget).data('tablePrefix');
             let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
@@ -265,7 +269,8 @@
         });
 
         $(".view-fr-btn").on("click", function (e) {
-            reportSubmitted = $(e.currentTarget).data('reportSubmitted');
+            currentTarget = $(e.currentTarget);
+            reportSubmitted = currentTarget.data('reportSubmitted');
             draftId = $(e.currentTarget).data('draftId');
             tablePrefix = $(e.currentTarget).data('tablePrefix');
             let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
