@@ -57,6 +57,9 @@
                                         <input type="hidden" id="reportPartIdTemp" name="report_part_id_temp">
                                         <input type="hidden" id="reportPartDescription" name="report_part_description"
                                                value="<?php echo $report_part_description ?? ''; ?>">
+                                        <input type="hidden" id="finalReportId" name="final_report_id"
+                                               value="<?php echo $final_report_id ?? ''; ?>">
+
                                     </form>
                                 </div>
                             </div> <?php endif; ?>
@@ -160,8 +163,11 @@ echo $spreadsheet_templates; ?>'>
     let addReportPart = Boolean(<?php echo $add_report_part ?? ''; ?>);
     let editPreloadedDraft = Boolean(<?php echo $edit_preloaded_draft ?? ''; ?>);
     let editSubmittedReport = Boolean(<?php echo $edit_submitted_report ?? ''; ?>);
+    let editFinalReport = Boolean(<?php echo $edit_final_report ?? ''; ?>);
     let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
+    let tablePrefix = "<?php echo $table_prefix ?? 'nmr'; ?>";
     let clearedContents = "";
+    let targetMonthYearsSubmissionStatus = JSON.parse('<?php json_encode(getTargetMonthYearsSubmissionStatus($table_prefix?? 'nmr')) ?>') ;
     /** @type {kendo.ui.ToolBar}*/
     let editorActionToolbar;
     let seriesColor = {
@@ -207,7 +213,8 @@ echo $spreadsheet_templates; ?>'>
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
                     margin: "1.3cm",
-                    multipage: false
+                    multipage: true,
+                    forcePageBreak: '.page-break'
                 }).then(function (group) {
                     // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
@@ -262,47 +269,12 @@ echo $spreadsheet_templates; ?>'>
             editorTabStrip = $("#editorTabStrip").kendoTabStrip({
                 select(e) {
                     if (e.contentElement.id === "previewTab") {
-                        notify('Saving...');
-                        if (editSubmittedReport) {
-                            let reportSubmissionsId = $("#reportSubmissionsId").val();
-                            $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId, {
-                                content: editor.value(),
-                                //spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}`));
-                        } else if (editDraft) {
-                            let draftId = $("#draftId");
-                            let title = $("#draftTitleInput").val();
-                            $.post(URL_ROOT + "/pages/save-draft/", {
-                                title: title,
-                                draft_id: draftId.val(),
-                                content: editor.value(),
-                                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-draft/${draftId.val()}`, data => data));
-                        } else if (editPreloadedDraft) {
-                            let draftId = $("#draftId");
-                            let title = $("#draftTitleInput").val();
-                            $.post(URL_ROOT + "/pages/save-preloaded-draft/", {
-                                title: title,
-                                draft_id: draftId.val(),
-                                content: editor.value(),
-                                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-preloaded-draft/${draftId.val()}`, data => data));
-                        } else if (editReportPart) {
-                            let reportPartId = $("#reportPartId").val();
-                            let description = $("#reportPartDescription").val();
-                            $.post(URL_ROOT + "/pages/save-report-part/" + reportPartId, {
-                                content: editor.value(),
-                            }, null, "json").done((data) => previewContent(`${URL_ROOT}/pages/fetch-report-part/${reportPartId}`, data => data, description));
-                        } else if (addReportPart) {
-                            let reportPartIdTemp = $("#reportPartIdTemp").val();
-                            $.post(URL_ROOT + "/pages/save-report-part-temp/" + reportPartIdTemp, {
-                                content: editor.value()
-                            }, null, "json").done((data) => {
-                                reportPartIdTemp = data.report_part_id_temp;
-                                $("#reportPartIdTemp").val(reportPartIdTemp);
-                                previewContent(`${URL_ROOT}/pages/fetch-report-part-temp/${reportPartIdTemp}`, data1 => data1)
-                            });
-                        }
+                        $.post(URL_ROOT + "/pages/preview-content/", {
+                            content: editor.value()
+                        }, null, "html").done((data) => {
+                            previewEditor.value(data);
+                            previewContent();
+                        });
                     }
                 }
             }).data('kendoTabStrip');
@@ -1654,7 +1626,7 @@ echo $spreadsheet_templates; ?>'>
         let dfd = $.Deferred();
         let promise = dfd.promise();
         promise.done((description) => {
-            $.post(`${URL_ROOT}/pages/save-report-part/${reportPartId}`, {
+            $.post(`${URL_ROOT}/pages/save-report-part/${reportPartId}/${tablePrefix}`, {
                 content: editor.value(),
                 description: description
             }, null, "json").done(d => {
@@ -1678,7 +1650,7 @@ echo $spreadsheet_templates; ?>'>
             spreadsheet.saveJSON().then(function (data) {
                 $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
                 $.post({
-                    url: "<?php echo URL_ROOT . '/pages/save-preloaded-draft'; ?>",
+                    url: "<?php echo URL_ROOT . '/pages/save-preloaded-draft/' . ($table_prefix ?? 'nmr'); ?>",
                     data: $("#editorForm").serialize(),
                     dataType: 'json'
                 }).done(function (response, textStatus, jQueryXHR) {
@@ -1700,16 +1672,23 @@ echo $spreadsheet_templates; ?>'>
     function saveFinalReport() {
         let targetMonth = $("#targetMonth").val();
         let targetYear = $("#targetYear").val();
-        $.post({
-            url: `${URL_ROOT}/pages/save-final-report/${targetMonth}/${targetYear}`,
-            data: JSON.stringify({html_content: editor.value()}),
-            dataType: "json",
-            contentType: "application/json",
-            success: function () {
+        let html_content = editor.value();
+        previewEditor.value(html_content);
+        kendo.drawing.drawDOM($(previewEditor.body), {
+            paperSize: 'a3',
+            margin: "1.3cm",
+            multipage: true,
+            forcePageBreak: ".page-break"
+        }).then(function (group) {
+            // Render the result as a PDF file
+            return kendo.drawing.exportPDF(group, {});
+        }).done(dataURI => {
+            $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`,{html_content: editor.value(), data_uri: dataURI}, () => {
                 let alert = kendoAlert('Save Flash Report', `${targetMonth} ${targetYear} Flash Report saved successfully!`);
                 setTimeout(() => alert.close(), 1500);
-            }
-        })
+            }, "json")
+        });
+
     }
 
     function saveDraftAsPreloaded(e) {
@@ -1722,7 +1701,7 @@ echo $spreadsheet_templates; ?>'>
                     spreadsheet.saveJSON().then(function (data) {
                         $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
                         $.post({
-                            url: URL_ROOT + "/pages/save-draft-as-preloaded",
+                            url: URL_ROOT + "/pages/save-draft-as-preloaded/" + tablePrefix,
                             data: $("#editorForm").serialize(),
                             dataType: 'json'
                         }).done(function (response, textStatus, jQueryXHR) {
@@ -1782,9 +1761,11 @@ echo $spreadsheet_templates; ?>'>
 
     function onEditSubmittedReport(e) {
         let reportSubmissionsId = $("#reportSubmissionsId").val();
+        let targetMonth = $("#targetMonth").val();
+        let targetYear = $("#targetYear").val();
         let submit = () => {
             let dfd = $.Deferred();
-            let post = $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId, {
+            let post = $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId + "/" + tablePrefix, {
                 content: editor.value(),
                 spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
             }, null, "json");
@@ -1793,8 +1774,23 @@ echo $spreadsheet_templates; ?>'>
         };
 
         submit().done(post => post.done(data => {
-            let alert = kendoAlert("Report Saved!", "Report saved successfully.");
-            setTimeout(() => alert.close(), 1500);
+            let url = `${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`;
+            $.get(url).done(html => {
+                previewEditor.value(html);
+                kendo.drawing.drawDOM($(previewEditor.body), {
+                    paperSize: 'a3',
+                    margin: "1.3cm",
+                    multipage: true,
+                    forcePageBreak: '.page-break'
+                }).then(function (group) {
+                    return kendo.drawing.exportPDF(group, {});
+                }).done(function (dataURI) {
+                    $.post(url, {data_uri: dataURI, html_content: html}, null, "json").done(() => {
+                        let alert = kendoAlert("Report Saved!", "Report saved successfully.");
+                        setTimeout(() => alert.close(), 1500);
+                    });
+                });
+            });
         }));
     }
 
@@ -1804,7 +1800,7 @@ echo $spreadsheet_templates; ?>'>
         let title = $("#draftTitleInput").val();
         let submit = () => {
             let dfd = $.Deferred();
-            let post = $.post(URL_ROOT + "/pages/submit-report/", {
+            let post = $.post(URL_ROOT + "/pages/submit-report/" + "/" + tablePrefix, {
                 title: title,
                 draft_id: draftId.val(),
                 content: editor.value(),

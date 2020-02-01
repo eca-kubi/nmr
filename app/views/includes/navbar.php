@@ -11,7 +11,7 @@
                 </li>
             </ul>
 
-            <span id="submissionNotice" class="blockable d-none mx-auto text-bold animated flash slower infinite"><?php echo isSubmissionOpened()? '<p class="text-success"><i class="fa fa-info-circle"></i> Report Submission is Opened</p>' : '<p class="text-danger "><i class="fa fa-info-circle"></i> Report Submission is Closed</p>'  ?></span>
+            <span id="submissionNotice" class="blockable d-none mx-auto text-bold animated flash slower infinite"><?php echo isSubmissionOpened()? '<p class="text-success"><i class="fa fa-info-circle"></i> Report Submission is Opened for the Current Month</p>' : '<p class="text-danger "><i class="fa fa-info-circle"></i> Report Submission is Closed for the Current Month</p>'  ?></span>
             <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
                 <!-- Messages Dropdown Menu -->

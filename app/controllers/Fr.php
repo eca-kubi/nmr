@@ -345,12 +345,12 @@ class Fr extends Controller
         }
     }
 
-    public function submittedReports(string $target_month = "", $target_year = "", $department_id = "")
+    public function submittedReports(string $target_month = "", $target_year = "", $department_id = "", $table_prefix='nmr')
     {
         if (!isLoggedIn())
             redirect('users/login/fr/submitted-reports/');
         $payload['page_title'] = 'Submitted Reports (Flash Report)';
-        $payload['report_submissions'] = groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id));
+        $payload['report_submissions'] = groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id, $table_prefix));
         $payload['is_power_user'] = isPowerUser(getUserSession()->user_id);
         $this->view('fr/submitted-reports', $payload);
     }
@@ -400,33 +400,28 @@ class Fr extends Controller
     {
         $db = Database::getDbh();
         $cover_page = $db->where('name', 'cover_page')->getValue('nmr_fr_report_parts', 'content');
-        if ($db->where('target_year', $target_year)->where('target_month', $target_month)->has('nmr_fr_final_report')) {
-            $content = $db->where('target_year', $target_year)->where('target_month', $target_month)
-                ->getValue('nmr_fr_final_report', 'html_content');
-            if (strpos($content, "<coverpage>") === false) $content = "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" . $content;
-            return $content;
-        } else {
-            $callback = function ($array) {
-                return $array['content'];
-            };
+        $distribution_list = $db->where('name', 'distribution_list')->getValue('nmr_fr_report_parts', 'content');
+        $callback = function ($array) {
+            return $array['content'];
+        };
 
-            $join = function ($content, $separator) {
-                $content .= $separator;
-                return $content;
-            };
-            return "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" . array_reduce(array_map($callback, getSubmittedReportsFr($target_month, $target_year)), $join, "<br/>");
-        }
+        $join = function ($content, $separator) {
+            $content .= $separator;
+            return $content;
+        };
+        return "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" .
+            "<distributionlist>$distribution_list</distributionlist>" . "<p class='page-break'></p>" .
+            array_reduce(array_map($callback, getSubmittedReportsFr($target_month, $target_year)), $join, "<br/>");
     }
 
 
     public function editFinalReport(string $target_month, $target_year)
     {
         $db = Database::getDbh();
-        $payload['page_title'] = 'Edit Final Report (Flash Report)';
+        $payload['page_title'] = 'Edit Final Report (Full Report)';
         $payload['edit_final_report'] = true;
-        // $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
         $payload['content'] = $this->fetchFinalReportAsHtml($target_month, $target_year);
-        $payload['title'] = "$target_month $target_year Flash Report";
+        $payload['title'] = "$target_month $target_year Full Report";
         $payload['target_year'] = $target_year;
         $payload['target_month'] = $target_month;
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
@@ -439,7 +434,7 @@ class Fr extends Controller
         $db->onDuplicate(['html_content']);
         $json = file_get_contents('php://input');
         $data = json_decode($json);
-        if ($db->insert('nmr_final_report', [
+        if ($db->insert('nmr_fr_final_report', [
             'html_content' => $data->html_content,
             'target_year' => $target_year,
             'target_month' => $target_month

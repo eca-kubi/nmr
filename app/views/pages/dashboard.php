@@ -64,14 +64,16 @@
                         </div>
                         <div class="col-md-6">
                             <h5 class="mb-2 text-nowrap">
-                                <i class="fa fa-check-double" style="color: goldenrod"></i> Submitted Reports (Departments)
+                                <i class="fa fa-check-double" style="color: goldenrod"></i> Submitted Reports
+                                (Departments)
                             </h5>
                             <!-- small box -->
                             <div class="small-box show border" style="cursor:pointer"
                                  data-url="<?php echo URL_ROOT ?>/pages/submitted-reports/">
                                 <div class="inner">
                                     <h3 class="w3-hide-small text-wrap">Submitted Reports (Departments)</h3>
-                                    <h5 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports (Departments)</h5>
+                                    <h5 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports
+                                        (Departments)</h5>
                                     <p>View reports submitted by departments</p>
                                 </div>
                                 <div class="icon" style="color: goldenrod">
@@ -103,7 +105,7 @@
                                     </a>
                                 </div>
                             </div>
-                            <div class="col-md-6 <?php echo isSubmissionOpened() ? '' : 'd-none' ?>">
+                            <div class="col-md-6">
                                 <h5 class="mb-2 text-nowrap">
                                     <i class="fa fa-door-closed text-danger"></i> Close Submission
                                 </h5>
@@ -141,81 +143,154 @@
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
 <script>
 
+    let targetMonthYearsSubmissionStatus = JSON.parse('<?php echo json_encode(getTargetMonthYearsSubmissionStatus($table_prefix ?? 'nmr')) ?>');
+    let tablePrefix = "<?php echo $table_prefix ?? 'nmr'; ?>";
     $(function () {
         $('.small-box[data-url]').on('click', (e) => window.location.href = $(e.currentTarget).attr('data-url'));
-        $("#openSubmission").on('click', () => {
-            if (isSubmissionOpened) {
-                kendoAlert("Submission Already Opened!", `Report submission is already opened for ${currentSubmissionMonth + " " + currentSubmissionYear}.`)
-            } /*else if (isSubmissionClosedByPowerUser) {
-                kendoAlert('Submission Currently Closed', 'Power user has closed submission of reports for this month.' +
-                    '<br/> Try again next month!');
-            } */else {
-                let openSubmission = $("<div/>").appendTo("body").kendoDialog({
-                    width: "450px",
-                    title: 'Open Submission of Reports',
-                    content: $("#openSubmissionContent").html(),
-                    actions: [
-                        {
-                            text: 'Confirm',
-                            primary: true,
-                            action: function () {
-                                $.get({
-                                    url: URL_ROOT + '/pages/open-submission',
-                                    dataType: "json"
-                                }).done(function (data, successTextStatus, jQueryXHR) {
-                                    openSubmission.close();
-                                    isSubmissionOpened = true;
-                                    currentSubmissionMonth = data.currentSubmissionMonth;
-                                    currentSubmissionYear = data.currentSubmissionYear;
-                                    $("#closeSubmission").parent().removeClass('d-none');
-                                    let alert = kendoAlert("Submission Opened", "Report submission opened for " + data.currentSubmissionMonth + " " + data.currentSubmissionYear);
-                                    setTimeout(() => alert.close(), 3000);
-                                    $("#submissionNotice p").removeClass('text-danger').addClass('text-success').html("<i class=\"fa fa-info-circle\"></i> Report Submission Opened");
-                                });
-                            }
-                        },
-                        {
-                            text: 'Cancel',
-                            action: function () {
-                                openSubmission.close();
-                            }
-                        }
-                    ],
-                    close(e) {
-                        openSubmission.destroy();
-                    },
-                    initOpen(e) {
-                        /*$("#targetMonth").kendoComboBox({
-                            dataSource: new kendo.data.DataSource({data: monthNames})
-                        });*/
-                    }
-                }).data('kendoDialog');
-            }
-        });
+        $("#openSubmission, #closeSubmission").on('click', (e) => {
+            let targetMonth = '';
+            let targetYear = '';
+            let currentTarget = $(e.currentTarget);
+            let id = currentTarget.attr('id');
+            let title = id === 'openSubmission' ? 'Open Submission' : 'Close Submission';
+            showWindow('Select a month and year.', title, '#openCloseSubmissionContent', () => {
 
-        $("#closeSubmission").on('click', function () {
-            if (isSubmissionOpened) {
-                let dfd = showWindow("Are you sure you want to close submission? <br/>Users will not be able to submit anymore reports for this month!", 'Close Submission!', undefined);
-                $.when(dfd).then(function (confirmed) {
-                    if (confirmed) {
-                        $.get({
-                            url: URL_ROOT + '/pages/close-submission',
-                            dataType: "json"
-                        }).done(function (data, successTextStatus, jQueryXHR) {
-                            isSubmissionOpened = false;
-                            isSubmissionClosedByPowerUser = data.isSubmissionClosedByPowerUser;
-                           let alert =  kendoAlert('Submission Closed', 'Submission of reports closed for this month!');
-                           setTimeout(() => alert.close(), 3000);
-                            $("#closeSubmission").parent().addClass('d-none');
-                            $("#submissionNotice p").removeClass('text-success').addClass('text-danger').html("<i class=\"fa fa-info-circle\"></i> Report Submission Closed");
-                        });
+                targetMonth = $("#targetMonthCB").kendoComboBox({
+                    dataSource: new kendo.data.DataSource({data: monthNames}),
+                    change(e) {
+                        targetMonth = this.value();
                     }
-                })
-            } else if (isSubmissionClosedByPowerUser) {
-               let alert =  kendoAlert('Submission Closed', 'Submission of reports is already closed for this month!');
-                setTimeout(() => alert.close(), 3000);
-            }
+                }).data('kendoComboBox').value();
+
+               targetYear =  $("#targetYearCB").kendoComboBox({
+                    dataSource: new kendo.data.DataSource({data: getYearsBetween("December 2019", "December 2030")}),
+                    change(e) {
+                        targetYear = this.value();
+                    }
+                }).data('kendoComboBox').value();
+            }).done(() => {
+                $.get({
+                    url: URL_ROOT + `/pages/${id === 'openSubmission' ? 'open' : 'close'}-submission` + '/' + targetMonth + '/' + targetYear + '/' + tablePrefix,
+                    dataType: "json"
+                }).done(function (data) {
+                    //$("#closeSubmission").parent().removeClass('d-none');
+                    let alert = kendoAlert("Submission Opened", "Report submission " + `${id === 'openSubmission' ? 'opened' : 'closed'}` + " for " + data.targetMonth + " " + data.targetYear);
+                    setTimeout(() => alert.close(), 3000);
+                    if (currentSubmissionYear === targetYear && currentSubmissionMonth === targetMonth)
+                        if (id === 'openSubmission')
+                            $("#submissionNotice p").removeClass('text-danger').addClass('text-success').html("<i class=\"fa fa-info-circle\"></i> Report Submission Opened for the Current Month");
+                        else
+                            $("#submissionNotice p").removeClass('text-success').addClass('text-danger').html("<i class=\"fa fa-info-circle\"></i> Report Submission Closed for the Current Month");
+                });
+            });
+            /*  if (isSubmissionOpened) {
+                  kendoAlert("Submission Already Opened!", `Report submission is already opened for ${currentSubmissionMonth + " " + currentSubmissionYear}.`)
+              }
+              else {
+                  let openSubmission = $("<div/>").appendTo("body").kendoDialog({
+                      width: "450px",
+                      title: 'Open Submission of Reports',
+                      content: $("#openSubmissionContent").html(),
+                      actions: [
+                          {
+                              text: 'Confirm',
+                              primary: true,
+                              action: function () {
+                                  $.get({
+                                      url: URL_ROOT + '/pages/open-submission',
+                                      dataType: "json"
+                                  }).done(function (data, successTextStatus, jQueryXHR) {
+                                      openSubmission.close();
+                                      isSubmissionOpened = true;
+                                      currentSubmissionMonth = data.currentSubmissionMonth;
+                                      currentSubmissionYear = data.currentSubmissionYear;
+                                      $("#closeSubmission").parent().removeClass('d-none');
+                                      let alert = kendoAlert("Submission Opened", "Report submission opened for " + data.currentSubmissionMonth + " " + data.currentSubmissionYear);
+                                      setTimeout(() => alert.close(), 3000);
+                                      $("#submissionNotice p").removeClass('text-danger').addClass('text-success').html("<i class=\"fa fa-info-circle\"></i> Report Submission Opened");
+                                  });
+                              }
+                          },
+                          {
+                              text: 'Cancel',
+                              action: function () {
+                                  openSubmission.close();
+                              }
+                          }
+                      ],
+                      close(e) {
+                          openSubmission.destroy();
+                      },
+                      initOpen(e) {
+                          /!*$("#targetMonth").kendoComboBox({
+                              dataSource: new kendo.data.DataSource({data: monthNames})
+                          });*!/
+                      }
+                  }).data('kendoDialog');
+              }*/
         });
+        /*$("#closeSubmission").on('click', function () {
+            let dfd = showWindow("", 'Close Submission!', '#close');
+
+            showWindow('Select a month and year.', 'Close Submission', '#openCloseSubmissionContent', () => {
+                $("#targetMonthCB").kendoComboBox({
+                    dataSource: new kendo.data.DataSource({data: monthNames})
+                });
+
+                $("#targetYearCB").kendoComboBox({
+                    dataSource: new kendo.data.DataSource({data: getYearsBetween("December 2019", "December 2030")})
+                });
+            }).done(() => {
+                let targetMonth = $("#targetMonthCB").val();
+                let targetYear = $("#targetYearCB").val();
+                $.get({
+                    url: URL_ROOT + '/pages/close-submission' + '/' + targetMonth + '/' + targetYear + '/' + tablePrefix,
+                    dataType: "json"
+                }).done(function (data) {
+                    //$("#closeSubmission").parent().removeClass('d-none');
+                    let alert = kendoAlert("Submission Opened", "Report submission opened for " + data.currentSubmissionMonth + " " + data.currentSubmissionYear);
+                    setTimeout(() => alert.close(), 3000);
+                    if (currentSubmissionYear === targetYear && currentSubmissionMonth === targetMonth)
+                        $("#submissionNotice p").removeClass('text-danger').addClass('text-success').html("<i class=\"fa fa-info-circle\"></i> Report Submission Opened for the Current Month");
+                });
+            });
+            $.when(dfd).then(function (confirmed) {
+                if (confirmed) {
+                    $.get({
+                        url: URL_ROOT + '/pages/close-submission',
+                        dataType: "json"
+                    }).done(function (data, successTextStatus, jQueryXHR) {
+                        isSubmissionOpened = false;
+                        isSubmissionClosedByPowerUser = data.isSubmissionClosedByPowerUser;
+                        let alert = kendoAlert('Submission Closed', 'Submission of reports closed for this month!');
+                        setTimeout(() => alert.close(), 3000);
+                        $("#closeSubmission").parent().addClass('d-none');
+                        $("#submissionNotice p").removeClass('text-success').addClass('text-danger').html("<i class=\"fa fa-info-circle\"></i> Report Submission Closed");
+                    });
+                }
+            })
+            /!* if (isSubmissionOpened) {
+                 let dfd = showWindow("Are you sure you want to close submission? <br/>Users will not be able to submit anymore reports for this month!", 'Close Submission!', undefined);
+                 $.when(dfd).then(function (confirmed) {
+                     if (confirmed) {
+                         $.get({
+                             url: URL_ROOT + '/pages/close-submission',
+                             dataType: "json"
+                         }).done(function (data, successTextStatus, jQueryXHR) {
+                             isSubmissionOpened = false;
+                             isSubmissionClosedByPowerUser = data.isSubmissionClosedByPowerUser;
+                            let alert =  kendoAlert('Submission Closed', 'Submission of reports closed for this month!');
+                            setTimeout(() => alert.close(), 3000);
+                             $("#closeSubmission").parent().addClass('d-none');
+                             $("#submissionNotice p").removeClass('text-success').addClass('text-danger').html("<i class=\"fa fa-info-circle\"></i> Report Submission Closed");
+                         });
+                     }
+                 })
+             } else if (isSubmissionClosedByPowerUser) {
+                let alert =  kendoAlert('Submission Closed', 'Submission of reports is already closed for this month!');
+                 setTimeout(() => alert.close(), 3000);
+             }*!/
+        });*/
     });
 
 </script>

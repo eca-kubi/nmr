@@ -379,7 +379,7 @@ echo $spreadsheet_templates; ?>'>
                     id: "submitReportBtn",
                     attributes: {"class": "submit-report-btn"},
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id) ? 'true' : '' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id,'nmr_fr') ? 'true' : '' ?>")
                 },
                 {
                     type: "button",
@@ -388,7 +388,7 @@ echo $spreadsheet_templates; ?>'>
                     attributes: {"class": "update-submitted-report-btn"},
                     text: "Update Submitted Report",
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id) ? '' : 'true' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id, 'nmr_fr') ? '' : 'true' ?>")
                 },
                 <?php endif; ?>
                 <?php if (isITAdmin($current_user->user_id)): ?>

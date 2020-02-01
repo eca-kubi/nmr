@@ -223,7 +223,7 @@ $user = getUserSession();
                 <h1 class="d-md-block d-none" style="font-size: 50px">NMR Login</h1>
                 <h4 class="pt-2">Nzema Monthly Report</h4>
             </div>
-            <h5 class="font-passion-one d-md-none text-uppercase text-center">CMS Login</h5>
+            <h5 class="font-passion-one d-md-none text-uppercase text-center">NMR Login</h5>
         </div>
         <?php flash('flash_login') ?>
         <!-- .col-10 -->

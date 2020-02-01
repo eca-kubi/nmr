@@ -254,6 +254,18 @@ function notify(message, type = 'success') {
     notification.show(message, type)
 }
 
+function getYearsBetween(startDate, endDate) {
+    let s = new Date( startDate);
+    let start = s.getFullYear();
+
+    let e = new Date( endDate);
+    let end = e.getFullYear();
+    let arr = Array();
+
+    for(let i = start; i <= end; i++) arr.push(i);
+    return arr;
+}
+
 /*kendo.pdf.defineFont({
     "DejaVu Sans"             : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
     "DejaVu Sans|Bold"        : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",

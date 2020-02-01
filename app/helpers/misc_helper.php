@@ -818,56 +818,87 @@ function isPowerUser($user_id)
     return Database::getDbh()->where('prop', 'nmr_power_user')->getValue('settings', 'value') == $user_id;
 }
 
+function getTargetMonthYearsSubmissionStatus($table_prefix) {
+    $target_month_years = Database::getDbh()->get($table_prefix.'_target_month_year');
+    $mapped = [];
+    array_map(function ($element) use (&$mapped) {
+        return $mapped[$element['target_month'] . ' ' . $element['target_year']] = $element['closed_status'];
+    }, $target_month_years);
+    return $mapped;
+}
+
 function isSubmissionOpened()
 {
     return Database::getDbh()->where('prop', 'nmr_submission_opened')->getValue('settings', 'value');
 }
 
-function isSubmissionClosedByPowerUser($target_month, $target_year)
+function isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefix='nmr')
 {
-    //return Database::getDbh()->where('prop', 'nmr_submission_closed_by_power_user')->getValue('settings', 'value');
-    return Database::getDbh()->where('target_month', $target_month)->where('target_year', $target_year)->getValue('nmr_target_month_year', 'closed_status');
+    return Database::getDbh()->where('target_month', $target_month)->where('target_year', $target_year)->getValue($table_prefix. '_target_month_year', 'closed_status');
 }
 
 function currentSubmissionMonth()
 {
-    return Database::getDbh()->where('prop', 'nmr_current_submission_month')->getValue('settings', 'value');
+    //return Database::getDbh()->where('prop', 'nmr_current_submission_month')->getValue('settings', 'value');
+    return date('F');
 }
 
 function currentSubmissionYear()
 {
-    return Database::getDbh()->where('prop', 'nmr_current_submission_year')->getValue('settings', 'value');
+    return date('Y');
+    //return Database::getDbh()->where('prop', 'nmr_current_submission_year')->getValue('settings', 'value');
 }
 
-function getSubmittedReports($target_month, $target_year)
+function getSubmittedReports($target_month, $target_year, $table_prefix = 'nmr')
 {
     try {
         return Database::getDbh()->where('s.target_month="' . $target_month . '"')
             ->where('s.target_year="' . $target_year . '"')
             ->join('departments d', 'd.department_id=s.department_id')
-            ->join('nmr_report_order r', 'r.department_id=d.department_id')
+            ->join($table_prefix . '_report_order r', 'r.department_id=d.department_id')
             ->orderBy('r.order_no', 'ASC')
-            ->get('nmr_report_submissions s', null, 's.content');
+            ->get($table_prefix . '_report_submissions s', null, 's.content');
     } catch (Exception $e) {
     }
     return [];
 }
 
-function getSubmittedReportsFr($target_month, $target_year)
+function generateFinalReport(string $target_month, $target_year, $table_prefix = 'nmr')
 {
-    try {
-        return Database::getDbh()->where('s.target_month="' . $target_month . '"')
-            ->where('s.target_year="' . $target_year . '"')
-            ->join('departments d', 'd.department_id=s.department_id')
-            ->join('nmr_fr_report_order r', 'r.department_id=d.department_id')
-            ->orderBy('r.order_no', 'ASC')
-            ->get('nmr_fr_report_submissions s', null, 's.content');
-    } catch (Exception $e) {
-    }
-    return [];
+    $db = Database::getDbh();
+    $cover_page = $db->where('name', 'cover_page')->getValue($table_prefix . '_report_parts', 'content');
+    $distribution_list = $db->where('name', 'distribution_list')->getValue($table_prefix . '_report_parts', 'content');
+    $callback = function ($array) {
+        return $array['content'];
+    };
+
+    $join = function ($content, $separator) {
+        $content .= $separator;
+        return $content;
+    };
+
+    /*$db->onDuplicate(['html_content']);
+    $db->where('target_month', $target_month)->where('target_year', $target_year)->insert($table_prefix . '_final_report', ["html_content" => $content]);*/
+
+    return "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" .
+        "<distributionlist>$distribution_list</distributionlist>" . "<p class='page-break'></p>" .
+        array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year, $table_prefix)), $join, "<br/>");
 }
 
-function getReportSubmissions(string $target_month = "", $target_year = "", $department_id = "")
+ function fetchFinalReportAsHtml(string $target_month, $target_year, $table_prefix = 'nmr')
+{
+    $db = Database::getDbh();
+    return $db->where('target_year', $target_year)->where('target_month', $target_month)
+        ->getValue($table_prefix . '_final_report', 'html_content');
+}
+
+function flashOrFull($table_prefix)
+{
+    return $table_prefix === 'nmr' ? 'Flash' : 'Full';
+}
+
+
+function getReportSubmissions(string $target_month = "", $target_year = "", $department_id = "", $table_prefix='nmr')
 {
     try {
         $db = Database::getDbh();
@@ -876,13 +907,13 @@ function getReportSubmissions(string $target_month = "", $target_year = "", $dep
             return $db->where('monthname(date_submitted) = "' . $target_month . '"')->where('year(date_submitted)=' . $target_year)
                 ->join('users u', 'u.user_id=n.user_id')
                 ->join('departments d', 'u.department_id=d.department_id')
-                ->join('nmr_final_report f', 'f.target_year=n.target_year and f.target_month=n.target_month', 'Left')
-                ->get('nmr_report_submissions n', null, 'n.report_submissions_id,d.department, d.department_id, n.content, n.spreadsheet_content, n.date_submitted, n.target_month, n.target_year, n.date_modified,f.download_url, u.first_name, u.last_name');
+                ->join($table_prefix. '_final_report f', 'f.target_year=n.target_year and f.target_month=n.target_month', 'Left')
+                ->get($table_prefix. '_report_submissions n', null, 'n.report_submissions_id,d.department, d.department_id, n.content, n.spreadsheet_content, n.date_submitted, n.target_month, n.target_year, n.date_modified,f.download_url, u.first_name, u.last_name');
         } else {
             return $db->join('users u', 'u.user_id=n.user_id')
                 ->join('departments d', 'u.department_id=d.department_id')
-                ->join('nmr_final_report f', 'f.target_year=n.target_year and f.target_month=n.target_month', 'Left')
-                ->get('nmr_report_submissions n', null, 'n.report_submissions_id, d.department, d.department_id, n.content, n.spreadsheet_content, n.date_submitted, n.target_month, n.target_year, n.date_modified, f.download_url, u.first_name, u.last_name');
+                ->join($table_prefix. '_final_report f', 'f.target_year=n.target_year and f.target_month=n.target_month', 'Left')
+                ->get($table_prefix. '_report_submissions n', null, 'n.report_submissions_id, d.department, d.department_id, n.content, n.spreadsheet_content, n.date_submitted, n.target_month, n.target_year, n.date_modified, f.download_url, u.first_name, u.last_name');
         }
 
     } catch (Exception $e) {
@@ -890,28 +921,6 @@ function getReportSubmissions(string $target_month = "", $target_year = "", $dep
     return [];
 }
 
-function getReportSubmissionsFr(string $target_month = "", $target_year = "", $department_id = "")
-{
-    try {
-        $db = Database::getDbh();
-        if ($target_month) {
-            if ($department_id) $db->where('d.department_id', $department_id);
-            return $db->where('monthname(date_submitted) = "' . $target_month . '"')->where('year(date_submitted)=' . $target_year)
-                ->join('users u', 'u.user_id=n.user_id')
-                ->join('departments d', 'u.department_id=d.department_id')
-                ->join('nmr_fr_final_report f', 'f.target_year=n.target_year and f.target_month=n.target_month', 'Left')
-                ->get('nmr_fr_report_submissions n', null, 'n.report_submissions_id,d.department, d.department_id, n.content, n.spreadsheet_content, n.date_submitted, n.target_month, n.target_year, n.date_modified,f.download_url, u.first_name, u.last_name');
-        } else {
-            return $db->join('users u', 'u.user_id=n.user_id')
-                ->join('departments d', 'u.department_id=d.department_id')
-                ->join('nmr_fr_final_report f', 'f.target_year=n.target_year and f.target_month=n.target_month', 'Left')
-                ->get('nmr_fr_report_submissions n', null, 'n.report_submissions_id, d.department, d.department_id, n.content, n.spreadsheet_content, n.date_submitted, n.target_month, n.target_year, n.date_modified, f.download_url, u.first_name, u.last_name');
-        }
-
-    } catch (Exception $e) {
-    }
-    return [];
-}
 
 function groupedReportSubmissions(array $report_submissions)
 {
@@ -935,9 +944,9 @@ function groupedMyReports(array $my_reports)
     return $grouped;
 }
 
-function getReportMonthYears()
+function getReportMonthYears($table_prefix='nmr')
 {
-    return Database::getDbh()->get("nmr_report_month_year");
+    return Database::getDbh()->get($table_prefix ."_report_month_year");
 }
 
 
@@ -951,11 +960,11 @@ function fetchGetParams()
     return rtrim($get_params, '&');
 }
 
-function isReportSubmitted(string $target_month, $target_year, $department_id)
+function isReportSubmitted(string $target_month, $target_year, $department_id, $table_prefix = "nmr")
 {
     $db = Database::getDbh();
     return $db->where('monthname(date_submitted)="' . $target_month . '"')->where('year(date_submitted)=' . $target_year)
-        ->where('department_id', $department_id)->has('nmr_report_submissions');
+        ->where('department_id', $department_id)->has($table_prefix . "_report_submissions");
 }
 
 function getJsonEncodedHtml($html)
@@ -968,32 +977,18 @@ function getDepartments()
     return Database::getDbh()->get('departments');
 }
 
-function hasDraftForTargetMonthYear($target_month, $target_year, $user_id)
+function hasDraftForTargetMonthYear($target_month, $target_year, $user_id, $table_prefix='nmr')
 {
     return Database::getDbh()->where('target_year', $target_year)
         ->where('target_month', $target_month)->where('user_id', $user_id)
-        ->has('nmr_editor_draft');
+        ->has($table_prefix. '_editor_draft');
 }
 
-function hasDraftForTargetMonthYearFr($target_month, $target_year, $user_id)
+function getDraftForTargetMonthYear($target_month, $target_year, $user_id, $table_prefix='nmr')
 {
     return Database::getDbh()->where('target_year', $target_year)
         ->where('target_month', $target_month)->where('user_id', $user_id)
-        ->has('nmr_fr_editor_draft');
-}
-
-function getDraftForTargetMonthYear($target_month, $target_year, $user_id)
-{
-    return Database::getDbh()->where('target_year', $target_year)
-        ->where('target_month', $target_month)->where('user_id', $user_id)
-        ->getOne('nmr_editor_draft');
-}
-
-function getDraftForTargetMonthYearFr($target_month, $target_year, $user_id)
-{
-    return Database::getDbh()->where('target_year', $target_year)
-        ->where('target_month', $target_month)->where('user_id', $user_id)
-        ->getOne('nmr_fr_editor_draft');
+        ->getOne($table_prefix . '_editor_draft');
 }
 
 function getPreviousMonthYear($current_month)
@@ -1001,7 +996,7 @@ function getPreviousMonthYear($current_month)
     return Date('F Y', strtotime($current_month . " last month"));
 }
 
-function getNotSubmittedDepartments($target_month, $target_year)
+function getNotSubmittedDepartments($target_month, $target_year, $table_prefix='nmr')
 {
     $db = Database::getDbh();
     $departments = $db->getValue('departments', 'department', null);
@@ -1009,7 +1004,7 @@ function getNotSubmittedDepartments($target_month, $target_year)
         $submitted_departments = $db->where('s.target_month="' . $target_month . '"')
             ->where('s.target_year="' . $target_year . '"')
             ->join('departments d', 'd.department_id=s.department_id')
-            ->getValue('nmr_report_submissions s', 'department', null);
+            ->getValue($table_prefix. '_report_submissions s', 'department', null);
         $callback = function ($needle) use ($submitted_departments) {
             return !in_array($needle, $submitted_departments) && $needle !== 'Accra Office';
         };
@@ -1020,44 +1015,13 @@ function getNotSubmittedDepartments($target_month, $target_year)
     return [];
 }
 
-function getNotSubmittedDepartmentsFr($target_month, $target_year)
-{
-    $db = Database::getDbh();
-    $departments = $db->getValue('departments', 'department', null);
-    try {
-        $submitted_departments = $db->where('s.target_month="' . $target_month . '"')
-            ->where('s.target_year="' . $target_year . '"')
-            ->join('departments d', 'd.department_id=s.department_id')
-            ->getValue('nmr_fr_report_submissions s', 'department', null);
-        $callback = function ($needle) use ($submitted_departments) {
-            return !in_array($needle, $submitted_departments) && $needle !== 'Accra Office';
-        };
-        return array_filter($departments, $callback);
-
-    } catch (Exception $e) {
-    }
-    return [];
-}
-
-function getSubmittedDepartments($target_month, $target_year)
+function getSubmittedDepartments($target_month, $target_year, $table_prefix='nmr')
 {
     try {
         return Database::getDbh()->where('s.target_month="' . $target_month . '"')
             ->where('s.target_year="' . $target_year . '"')
             ->join('departments d', 'd.department_id=s.department_id')
-            ->getValue('nmr_report_submissions s', 'department', null);
-    } catch (Exception $e) {
-    }
-    return [];
-}
-
-function getSubmittedDepartmentsFr($target_month, $target_year)
-{
-    try {
-        return Database::getDbh()->where('s.target_month="' . $target_month . '"')
-            ->where('s.target_year="' . $target_year . '"')
-            ->join('departments d', 'd.department_id=s.department_id')
-            ->getValue('nmr_fr_report_submissions s', 'department', null);
+            ->getValue($table_prefix. '_report_submissions s', 'department', null);
     } catch (Exception $e) {
     }
     return [];
@@ -1070,4 +1034,11 @@ function getSpreadsheetTemplate()
     } catch (Exception $e) {
     }
     return [];
+}
+
+function regenerateBeforePreview($value = null)
+{
+    if ($value === null)
+        return Database::getDbh()->where('prop', 'nmr_regenerate_before_preview')->getValue('settings', 'value');
+    return $value && Database::getDbh()->where('prop', 'nmr_regenerate_before_preview')->update('settings', ['value' => $value]);
 }
