@@ -601,7 +601,7 @@ class Pages extends Controller
         if (!isITAdmin(getUserSession()->user_id))
             redirect('pages/draft-reports');
         $payload['page_title'] = 'Preloaded Draft Reports';
-        $payload['preloaded_drafts'] = Database::getDbh()->where('deleted', 0)->get('nmr_preloaded_draft');
+        $payload['preloaded_drafts'] = $db->where('deleted', 0)->get('nmr_preloaded_draft');
         $this->view('pages/preloaded-draft-reports', $payload);
     }
 

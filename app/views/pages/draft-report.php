@@ -47,7 +47,7 @@
 
                                         <div class="info-box-content">
                                             <div class="info-box-text text-bold"> Draft <span
-                                                        class="text-primary">(<?php echo flashOrFull($table_prefix) ?> Report) </span>
+                                                        class="text-<?php echo $table_prefix === 'nmr'? 'primary' : 'warning'; ?>">(<?php echo flashOrFull($table_prefix) ?> Report) </span>
                                                 <a href="#"
                                                    class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
                                                    data-toggle="dropdown"

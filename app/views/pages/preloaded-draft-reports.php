@@ -42,12 +42,13 @@
                     <div class="row">
                         <?php if (isset($preloaded_drafts) && is_array($preloaded_drafts) && count($preloaded_drafts) > 0): ?>
                             <?php for ($i = 0; $i < count($preloaded_drafts); $i++): $draft = $preloaded_drafts[$i] ?>
-                                <div class="col-md-4 col-sm-6 col-xs-12" id="preloaded_draft_<?php echo $draft['draft_id']; ?>">
+                                <div class="col-md-4 col-sm-6 col-xs-12"
+                                     id="preloaded_draft_<?php echo $draft['draft_id']; ?>">
                                     <div class="info-box p-0">
                                 <span class="info-box-icon bg-gray-light border rounded-0 rounded-left"><svg
-                                        class="fontastic-draft"
-                                        style="fill: currentColor"><use
-                                            xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
+                                            class="fontastic-draft"
+                                            style="fill: currentColor"><use
+                                                xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
 
                                         <div class="info-box-content">
                                     <span class="info-box-text text-bold"><?php echo $draft['title'] ?><a href="#"
@@ -58,22 +59,22 @@
 <!--          <a class="dropdown-item" href="#"><i class="fa fa-play-circle-o"></i> Preview</a>
                                 -->          <a class="dropdown-item"
                                                 href="<?php echo URL_ROOT . '/pages/edit-preloaded-draft/' . $draft['draft_id']; ?>"
-                                                ><i class="fa fa-file-edit"></i> Edit</a>
+                                             ><i class="fa fa-file-edit"></i> Edit</a>
                                              <a class="dropdown-item delete-preloaded-draft-btn" href="#"
                                                 data-draft-id="<?php echo $draft['draft_id']; ?>"
                                                 data-parent="#preloaded_draft_<?php echo $draft['draft_id']; ?>"><i
-                                                     class="fa fa-trash-o"></i> Delete</a>
+                                                         class="fa fa-trash-o"></i> Delete</a>
                                         </div>
                                     </span>
                                             <span class="text-sm"><i
-                                                    class="fa fa-calendar"></i> <?php echo echoDateOfficial($draft['time_modified'], true); ?></span>
+                                                        class="fa fa-calendar"></i> <?php echo echoDateOfficial($draft['time_modified'], true); ?></span>
                                             <span style="font-size: 0.7rem;display: block"><i
-                                                    class="fa fa-clock-o"></i> <?php echo getTime($draft['time_modified']); ?></span>
+                                                        class="fa fa-clock-o"></i> <?php echo getTime($draft['time_modified']); ?></span>
                                             <a href="#"
                                                class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
                                                data-draft-id="<?php echo $draft['draft_id']; ?>"
                                                data-title="<?php echo $draft['title']; ?>"><i
-                                                    class="fa fa-play-circle-o"></i> Preview</a>
+                                                        class="fa fa-play-circle-o"></i> Preview</a>
                                             <a class="float-right text-sm font-poppins w3-text-dark-grey mx-2"
                                                href="<?php echo URL_ROOT . '/pages/edit-preloaded-draft/' . $draft['draft_id']; ?>"
                                             ><i class="fa fa-file-edit"></i> Edit</a>
@@ -141,6 +142,17 @@
             width: "100%",
             height: 550,
             scale: 1,
+            toolbar: {
+                items: [
+                    "pager", "zoom", "toggleSelection", "search", "download", "print",
+                    {
+                        type: "button",
+                        text: "Cancel",
+                        icon: "cancel",
+                        click: () => draftWindow.close()
+                    }
+                ]
+            }
         }).getKendoPDFViewer();
         setTimeout(function () {
             previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
@@ -156,28 +168,20 @@
         $("a.preview-btn").on("click", function (e) {
             let draftId = $(e.currentTarget).data('draftId');
             let title = $(e.currentTarget).data('title');
-            $.get(URL_ROOT + "/pages/fetch-preloaded-draft/" + draftId).done(function (data, successTextStatus, jQueryXHR) {
-
+            $.get(URL_ROOT + "/pages/fetch-preloaded-draft/" + draftId).done(function (data) {
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
-                    margin: "2cm",
-                    multipage: true
+                    margin: "1.3cm",
+                    multipage: true,
+                    forcePageBreak: ".page-break"
                 }).then(function (group) {
-                    // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
-                })
-                    .done(function (data) {
-                        // Save the PDF file
-                        /*kendo.saveAs({
-                            dataURI: data,
-                            fileName: draftName + ".pdf",
-                            //proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
-                        });*/
-                        draftWindow.center().open();
-                        pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                        setTimeout(() => pdfViewer.activatePage(1), 500)
-                    });
+                }).done(function (data) {
+                    draftWindow.center().open().maximize();
+                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                    setTimeout(() => pdfViewer.activatePage(1), 500)
+                });
             });
         })
     });

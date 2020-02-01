@@ -174,7 +174,7 @@
                     dataType: "json"
                 }).done(function (data) {
                     //$("#closeSubmission").parent().removeClass('d-none');
-                    let alert = kendoAlert("Submission Opened", "Report submission " + `${id === 'openSubmission' ? 'opened' : 'closed'}` + " for " + data.targetMonth + " " + data.targetYear);
+                    let alert = kendoAlert("Submission " + `${id === 'openSubmission' ? 'Opened!' : 'Closed!'}`, "Report submission " + `${id === 'openSubmission' ? 'opened' : 'closed'}` + " for " + data.targetMonth + " " + data.targetYear);
                     setTimeout(() => alert.close(), 3000);
                     if (currentSubmissionYear === targetYear && currentSubmissionMonth === targetMonth)
                         if (id === 'openSubmission')
