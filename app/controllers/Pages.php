@@ -83,6 +83,8 @@ class Pages extends Controller
         $payload['content'] = $draft['content'];
         $target_month = $draft['target_month'];
         $target_year = $draft['target_year'];
+        $payload['target_month'] = $target_month;
+        $payload['target_year'] = $target_year;
         $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
         $payload['title'] = $payload['page_title'];
@@ -92,25 +94,25 @@ class Pages extends Controller
         $this->view('pages/report', $payload);
     }
 
-    public function editReport($draft_id): void
+    public function editReport($draft_id, $table_prefix='nmr'): void
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
         if (!isLoggedIn()) {
             redirect('users/login/pages/edit-report/' . $draft_id);
         }
-        if (!$db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has('nmr_editor_draft'))
+        if (!$db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has($table_prefix. '_editor_draft'))
             redirect('errors/index/404');
-        $payload['page_title'] = 'My Reports (Flash Report)';
+        $payload['page_title'] = 'My Reports (' . flashOrFull($table_prefix) . ') Report)';
         $payload['draft_id'] = $draft_id;
         $payload['edit_report'] = true;
-        $draft = $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->getOne('nmr_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_month', 'target_year']);
+        $draft = $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->getOne($table_prefix. '_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_month', 'target_year']);
         $payload['content'] = $draft['content'];
         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
-        $payload['title'] = 'My Reports (Flash Report)';
+        $payload['title'] = $payload['page_title'];
         $target_month = $draft['target_month'];
         $target_year = $draft['target_year'];
-        $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
+        $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefix);
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
         $this->view('pages/report', $payload);
     }
@@ -666,35 +668,35 @@ class Pages extends Controller
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
-        $db->onDuplicate(['content', 'spreadsheet_content', 'date_modified']);
+        $db->onDuplicate(['content']);
         $draft_id = '';
         if (isset($_POST['draft_id'])) $draft_id = $_POST['draft_id'];
         $success = $db->insert($table_prefix . '_report_submissions', [
             'department_id' => $current_user->department_id,
             'user_id' => $current_user->user_id,
             'content' => $_POST['content'],
-            'spreadsheet_content' => $_POST['spreadsheet_content'],
+            //'spreadsheet_content' => $_POST['spreadsheet_content'],
             'date_submitted' => now(),
-            'date_modified' => now(),
+            //'date_modified' => now(),
             'target_month' => $db->func('MonthName(?)', [now()]),
             'target_year' => $db->func('Year(?)', [now()])
         ]);
         if ($success) {
             if ($db->where('draft_id', $draft_id)->has($table_prefix . '_editor_draft')) {
                 $success = $db->where('draft_id', $draft_id)->update($table_prefix . '_editor_draft', [
-                    'title' => $_POST['title'],
+                    //'title' => $_POST['title'],
                     'content' => $_POST['content'],
-                    'spreadsheet_content' => $_POST['spreadsheet_content'],
-                    'time_modified' => now()
+                    //'spreadsheet_content' => $_POST['spreadsheet_content'],
+                    //'time_modified' => now()
                 ]);
-                if ($success) echo json_encode(['success' => true, 'draftId' => $draft_id]);;
+                if ($success) echo json_encode(['success' => true, 'draftId' => $draft_id]);
             } else {
                 $success = $db->insert($table_prefix . '_editor_draft', [
-                    'title' => $_POST['title'],
+                    //'title' => $_POST['title'],
                     'user_id' => $current_user->user_id,
                     'content' => $_POST['content'],
-                    'spreadsheet_content' => $_POST['spreadsheet_content'],
-                    'time_modified' => now()
+                    //'spreadsheet_content' => $_POST['spreadsheet_content'],
+                    //'time_modified' => now()
                 ]);
                 if ($success) echo json_encode(['success' => true, 'draftId' => $success]);
             }

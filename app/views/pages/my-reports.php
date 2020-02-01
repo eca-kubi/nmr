@@ -28,6 +28,8 @@
                                             <ul>
                                                 <?php foreach ($reports as $report) { ?>
                                                     <li data-expanded="true"
+                                                        data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr') ?>"
+                                                        data-table-prefix="nmr"
                                                         data-submission-closed="<?php echo $report['closed_status'] ?: '' ?>"
                                                         data-draft-id="<?php echo $report['draft_id'] ?>">
                                                         <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span>
@@ -35,8 +37,10 @@
                                                         <ul>
                                                             <li>
                                                                 <a class="mx-1 k-button view-btn"
-                                                                        data-draft-id="<?php echo $report['draft_id']; ?>"
-                                                                        data-closed-status="<?php echo $report['closed_status'] ?: '' ?>">
+                                                                   data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr') ?>"
+                                                                   data-table-prefix="nmr"
+                                                                   data-draft-id="<?php echo $report['draft_id']; ?>"
+                                                                   data-closed-status="<?php echo $report['closed_status'] ?: '' ?>">
                                                                     View
                                                                 </a>
                                                             </li>
@@ -83,6 +87,8 @@
                                             <ul>
                                                 <?php foreach ($reports as $report) { ?>
                                                     <li data-expanded="true"
+                                                        data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr_fr') ?>"
+                                                        data-table-prefix="nmr_fr"
                                                         data-submission-closed="<?php echo $report['closed_status'] ?: '' ?>"
                                                         data-draft-id="<?php echo $report['draft_id'] ?>">
                                                         <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span>
@@ -90,8 +96,10 @@
                                                         <ul>
                                                             <li>
                                                                 <a class="mx-1 k-button view-fr-btn"
-                                                                        data-draft-id="<?php echo $report['draft_id']; ?>"
-                                                                        data-closed-status="<?php echo $report['closed_status'] ?: '' ?>">
+                                                                   data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr_fr') ?>"
+                                                                   data-table-prefix="nmr_fr"
+                                                                   data-draft-id="<?php echo $report['draft_id']; ?>"
+                                                                   data-closed-status="<?php echo $report['closed_status'] ?: '' ?>">
                                                                     View
                                                                 </a>
                                                             </li>
@@ -132,6 +140,8 @@
 <script>
     let previewEditor;
     let draftWindow;
+    let draftId;
+    let reportSubmitted;
     /**
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
@@ -172,8 +182,32 @@
                         type: "button",
                         text: "Submit Report",
                         icon: "upload",
-                        hidden: true,
                         click: function () {
+                            let submit = () => {
+                                let dfd = $.Deferred();
+                                let post = $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix, {
+                                    //title: title,
+                                    draft_id: draftId,
+                                    content: previewEditor.value(),
+                                    //spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                                }, null, "json");
+                                dfd.resolve(post);
+                                return dfd.promise();
+                            };
+                            if (reportSubmitted) {
+                                showWindow('This report has already been submitted. Are you sure you want to update it?')
+                                    .done(e => {
+                                        submit().done(post => post.done(data => {
+                                            let alert = kendoAlert("Report Updated!", "Report updated successfully.");
+                                            setTimeout(() => alert.close(), 1500);
+                                        }));
+                                    });
+                            } else {
+                                submit().done(post => post.done(data => {
+                                    let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
+                                    setTimeout(() => alert.close(), 1500);
+                                }));
+                            }
                         }
                     },
                     {
@@ -183,7 +217,7 @@
                         icon: "cancel",
                         click: function () {
                             draftWindow.close();
-                        },
+                        }
                     }
                 ]
             }
@@ -200,48 +234,64 @@
         }, 1000);
 
         $(".view-btn").on("click", function (e) {
-            let draftId = $(e.currentTarget).data('draftId');
+            draftId = $(e.currentTarget).data('draftId');
+            reportSubmitted = $(e.currentTarget).data('reportSubmitted');
+            tablePrefix = $(e.currentTarget).data('tablePrefix');
             let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
             let toolbar = pdfViewer.toolbar;
             window.previewDraftId = draftId;
-            $.get(URL_ROOT + "/pages/fetchDraft/" + draftId).done(function (data, successTextStatus, jQueryXHR) {
+            $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + "/" + tablePrefix).done(function (data) {
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
                     margin: "1.3cm",
-                    multipage: true
+                    multipage: true,
+                    forcePageBreak: ".page-break"
                 }).then(function (group) {
-                    // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
                 }).done(function (data) {
-                        if (closedStatus) toolbar.hide("#submitReport");
-                        draftWindow.center().open().maximize().title(closedStatus? {encoded: false, text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"} : '');
-                        pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                        setTimeout(() => pdfViewer.activatePage(1), 500)
-                    });
+                    if (closedStatus)
+                        toolbar.hide("#submitReport");
+                    else
+                        toolbar.show("#submitReport");
+                    draftWindow.center().open().maximize().title(closedStatus ? {
+                        encoded: false,
+                        text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"
+                    } : '');
+                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                    setTimeout(() => pdfViewer.activatePage(1), 500)
+                });
             });
-        }) ;
+        });
 
         $(".view-fr-btn").on("click", function (e) {
-            let draftId = $(e.currentTarget).data('draftId');
+            reportSubmitted = $(e.currentTarget).data('reportSubmitted');
+            draftId = $(e.currentTarget).data('draftId');
+            tablePrefix = $(e.currentTarget).data('tablePrefix');
             let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
             let toolbar = pdfViewer.toolbar;
             window.previewDraftId = draftId;
-            $.get(URL_ROOT + "/fr/fetchDraft/" + draftId).done(function (data, successTextStatus, jQueryXHR) {
+            $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + '/' + tablePrefix).done(function (data) {
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
                     margin: "1.3cm",
+                    forcePageBreak: ".page-break",
                     multipage: true
                 }).then(function (group) {
-                    // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
                 }).done(function (data) {
-                        if (closedStatus) toolbar.hide("#submitReport");
-                        draftWindow.center().open().maximize().title(closedStatus? {encoded: false, text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"} : '');
-                        pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                        setTimeout(() => pdfViewer.activatePage(1), 500)
-                    });
+                    if (closedStatus)
+                        toolbar.hide("#submitReport");
+                    else
+                        toolbar.show("#submitReport");
+                    draftWindow.center().open().maximize().title(closedStatus ? {
+                        encoded: false,
+                        text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"
+                    } : '');
+                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                    setTimeout(() => pdfViewer.activatePage(1), 500)
+                });
             });
         })
     });

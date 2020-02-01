@@ -363,7 +363,7 @@ echo $spreadsheet_templates; ?>'>
                     id: "submitReportBtn",
                     attributes: {"class": "submit-report-btn"},
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id) ? 'true' : '' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted($target_month?? '', $target_year?? '', $current_user->department_id, $table_prefix?? 'nmr') ? 'true' : '' ?>")
                 },
                 {
                     type: "button",
@@ -372,7 +372,7 @@ echo $spreadsheet_templates; ?>'>
                     attributes: {"class": "update-submitted-report-btn"},
                     text: "Update Submitted Report",
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted(currentSubmissionMonth(), currentSubmissionYear(), $current_user->department_id) ? '' : 'true' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted($target_month?? '', $target_year?? '', $current_user->department_id, $table_prefix?? 'nmr') ? '' : 'true' ?>")
                 },
                 <?php endif; ?>
 
@@ -1800,7 +1800,7 @@ echo $spreadsheet_templates; ?>'>
         let title = $("#draftTitleInput").val();
         let submit = () => {
             let dfd = $.Deferred();
-            let post = $.post(URL_ROOT + "/pages/submit-report/" + "/" + tablePrefix, {
+            let post = $.post(URL_ROOT + "/pages/submit-report/"  + tablePrefix, {
                 title: title,
                 draft_id: draftId.val(),
                 content: editor.value(),
