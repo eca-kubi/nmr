@@ -1411,6 +1411,7 @@ echo $spreadsheet_templates; ?>'>
             bindChart(chart, sheet, valueRange, fieldRange);
         } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER)) {
             sheet.range("B3:M5").format('#,###');
+            sheet.range("B6:M6").format('#.0000');
             let valueRange = sheet.range("B2:M6");
             let fieldRange = sheet.range("A2:M6");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1421,19 +1422,17 @@ echo $spreadsheet_templates; ?>'>
                 },
                 dataSource: {data: data},
                 series: [
-                    /*{
-                        field: "['NO. OF EMPLOYEES']",
-                        categoryField: categoryField,
-                        type: "column",
-                        name: "NO. OF EMPLOYEES",
-                        color: "#FFFFFF"
-                    },*/
                     {
                         field: "['RESIGNATION(S)']",
                         categoryField: categoryField,
                         type: "column",
                         name: "RESIGNATION(S)",
-                        color: "#ed7d31"
+                        color: "#ed7d31",
+                        tooltip: {
+                            visible: true,
+                            format: "{0:n}",
+                            template: "#= series.name #: #= value #"
+                        }
                     },
                     {
                         field: "['TERMINATION(S)']",
@@ -1441,7 +1440,12 @@ echo $spreadsheet_templates; ?>'>
                         type: "column",
                         name: "TERMINATION(S)",
                         color: "#bfbfbf",
-                        axis: "termination"
+                        axis: "termination",
+                        tooltip: {
+                            visible: true,
+                            format: "{0:n}",
+                            template: "#= series.name #: #= value #"
+                        }
                     },
                     {
                         field: "['TOTAL TURNOVER (%)']",
@@ -1454,7 +1458,12 @@ echo $spreadsheet_templates; ?>'>
                         markers: {
                             visible: false
                         },
-                        axis: "turnover"
+                        axis: "turnover",
+                        tooltip: {
+                            visible: true,
+                            format: "{0:p}",
+                            template: "#= series.name #: #= value #"
+                        }
                     }
                 ],
                 valueAxis: [
@@ -1470,7 +1479,7 @@ echo $spreadsheet_templates; ?>'>
                             text: ""
                         },
                         labels: {
-                            template:  kendo.template("#= kendo.toString(value * (1/100), 'p') #")
+                            format: "{0:p}"
                         }
                     }
                 ],
@@ -1501,7 +1510,12 @@ echo $spreadsheet_templates; ?>'>
                         categoryField: categoryField,
                         type: "column",
                         name: "RESIGNATION(S)",
-                        color: "#ed7d31"
+                        color: "#ed7d31",
+                        tooltip: {
+                            visible: true,
+                            format: "{0:n}",
+                            template: "#= series.name #: #= value #"
+                        }
                     },
                     {
                         field: "['TERMINATION(S)']",
@@ -1509,7 +1523,12 @@ echo $spreadsheet_templates; ?>'>
                         type: "column",
                         name: "TERMINATION(S)",
                         color: "#bfbfbf",
-                        axis: "termination"
+                        axis: "termination",
+                        tooltip: {
+                            visible: true,
+                            format: "{0:n}",
+                            template: "#= series.name #: #= value #"
+                        }
                     },
                     {
                         field: "['TOTAL TURNOVER (%)']",
@@ -1522,7 +1541,12 @@ echo $spreadsheet_templates; ?>'>
                         markers: {
                             visible: false
                         },
-                        axis: "turnover"
+                        axis: "turnover",
+                        tooltip: {
+                            visible: true,
+                            format: "{0:p}",
+                            template: "#= series.name #: #= value #"
+                        }
                     }
                 ],
                 valueAxis: [
@@ -1531,7 +1555,7 @@ echo $spreadsheet_templates; ?>'>
                         title: {
                             text: ""
                         },
-                        majorUnit: 2.0,
+                        //majorUnit: 2.0,
                         //minorUnit: 0.5,
                     },
                     {
@@ -1540,9 +1564,10 @@ echo $spreadsheet_templates; ?>'>
                             text: ""
                         },
                         labels: {
-                            template:  kendo.template("#= kendo.toString(value * (1/100), 'p') #")
+                            format: "{0:p}"
+                            //template:  kendo.template("#= kendo.toString(value * (1/100), 'p') #")
                         },
-                        majorUnit: 1.5,
+                        //majorUnit: 1.5,
                         //minorUnit: 0.5,
                     }
                 ],
@@ -1558,6 +1583,7 @@ echo $spreadsheet_templates; ?>'>
         }
         scrollToChartsTabstrip();
     }
+
 
     function scrollToChartsTabstrip() {
         setTimeout(function () {
@@ -1901,7 +1927,8 @@ echo $spreadsheet_templates; ?>'>
                     contentType: "application/json",
                     dataType: "json"
                 }).done(function () {
-                    kendoAlert("Spreadsheet Template Saved", 'Spreadsheet template saved successfully!')
+                    let alert = kendoAlert("Spreadsheet Template Saved", 'Spreadsheet template saved successfully!');
+                    setTimeout(() => alert.close(), 1500);
                 });
             });
     }
