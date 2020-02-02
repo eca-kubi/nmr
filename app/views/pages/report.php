@@ -615,7 +615,7 @@ echo $spreadsheet_templates; ?>'>
                     ds = ds.filter(value => value.departmentId + "" === userDepartmentId);
                 }
                 if (ds.length === 0) chartMenuButton.hide();
-                return ds;
+                return ds.sort((a, b) => a.description.localeCompare(b.description));
             })(),
             dataTextField: "description",
             dataValueField: "id",
@@ -649,7 +649,9 @@ echo $spreadsheet_templates; ?>'>
     });
 
     function loadDraft() {
-        spreadsheet.fromJSON(JSON.parse($("#spreadsheetContent").val()));
+        let json = $("#spreadsheetContent").val();
+        if (json)
+        spreadsheet.fromJSON(JSON.parse(json));
         let sheets = spreadsheet.sheets();
         for (let i = 0; i < sheets.length; i++) {
             createChartFromSheet(sheets[i])
@@ -1396,6 +1398,152 @@ echo $spreadsheet_templates; ?>'>
                         title: {
                             text: "Grade [g/t]"
                         }
+                    }
+                ],
+                categoryAxis: {
+                    axisCrossingValues: [0, 13],
+                    majorGridLines: {
+                        visible: false
+                    }
+                }
+            })).data("kendoChart");
+            charts[sheetName] = chart;
+            bindChart(chart, sheet, valueRange, fieldRange);
+        } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER)) {
+            sheet.range("B3:M5").format('#,###');
+            let valueRange = sheet.range("B2:M6");
+            let fieldRange = sheet.range("A2:M6");
+            data = fetchData(sheet, valueRange, fieldRange);
+            chart = div.kendoChart($.extend(kendoChartOptions, {
+                title: {
+                    text: CHART_MINE_SITE_EMPLOYEE_TURNOVER,
+                    align: "center"
+                },
+                dataSource: {data: data},
+                series: [
+                    /*{
+                        field: "['NO. OF EMPLOYEES']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "NO. OF EMPLOYEES",
+                        color: "#FFFFFF"
+                    },*/
+                    {
+                        field: "['RESIGNATION(S)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "RESIGNATION(S)",
+                        color: "#ed7d31"
+                    },
+                    {
+                        field: "['TERMINATION(S)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "TERMINATION(S)",
+                        color: "#bfbfbf",
+                        axis: "termination"
+                    },
+                    {
+                        field: "['TOTAL TURNOVER (%)']",
+                        categoryField: categoryField,
+                        type: "line",
+                        style: "normal",
+                        color: "#ffc000",
+                        dashType: "solid",
+                        name: "TOTAL TURNOVER (%)",
+                        markers: {
+                            visible: false
+                        },
+                        axis: "turnover"
+                    }
+                ],
+                valueAxis: [
+                    {
+                        name: "termination",
+                        title: {
+                            text: ""
+                        }
+                    },
+                    {
+                        name: "turnover",
+                        title: {
+                            text: ""
+                        },
+                        labels: {
+                            template:  kendo.template("#= kendo.toString(value * (1/100), 'p') #")
+                        }
+                    }
+                ],
+                categoryAxis: {
+                    axisCrossingValues: [0, 13],
+                    majorGridLines: {
+                        visible: false
+                    }
+                }
+            })).data("kendoChart");
+            charts[sheetName] = chart;
+            bindChart(chart, sheet, valueRange, fieldRange);
+        }
+        else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER_2)) {
+            sheet.range("B3:M5").format('#,###');
+            let valueRange = sheet.range("B2:G6");
+            let fieldRange = sheet.range("A2:G6");
+            data = fetchData(sheet, valueRange, fieldRange);
+            chart = div.kendoChart($.extend(kendoChartOptions, {
+                title: {
+                    text: CHART_MINE_SITE_EMPLOYEE_TURNOVER,
+                    align: "center"
+                },
+                dataSource: {data: data},
+                series: [
+                    {
+                        field: "['RESIGNATION(S)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "RESIGNATION(S)",
+                        color: "#ed7d31"
+                    },
+                    {
+                        field: "['TERMINATION(S)']",
+                        categoryField: categoryField,
+                        type: "column",
+                        name: "TERMINATION(S)",
+                        color: "#bfbfbf",
+                        axis: "termination"
+                    },
+                    {
+                        field: "['TOTAL TURNOVER (%)']",
+                        categoryField: categoryField,
+                        type: "line",
+                        style: "normal",
+                        color: "#ffc000",
+                        dashType: "solid",
+                        name: "TOTAL TURNOVER (%)",
+                        markers: {
+                            visible: false
+                        },
+                        axis: "turnover"
+                    }
+                ],
+                valueAxis: [
+                    {
+                        name: "termination",
+                        title: {
+                            text: ""
+                        },
+                        majorUnit: 2.0,
+                        //minorUnit: 0.5,
+                    },
+                    {
+                        name: "turnover",
+                        title: {
+                            text: ""
+                        },
+                        labels: {
+                            template:  kendo.template("#= kendo.toString(value * (1/100), 'p') #")
+                        },
+                        majorUnit: 1.5,
+                        //minorUnit: 0.5,
                     }
                 ],
                 categoryAxis: {
