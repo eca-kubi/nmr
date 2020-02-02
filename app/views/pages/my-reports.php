@@ -192,6 +192,7 @@
                                     content: previewEditor.value(),
                                     //spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
                                 }, null, "json");
+                                draftWindow.close();
                                 dfd.resolve(post);
                                 return dfd.promise();
                             };
