@@ -200,7 +200,7 @@
                                 showWindow('This report has already been submitted. Are you sure you want to update it?')
                                     .done(e => {
                                         submit().done(post => post.done(data => {
-                                            let alert = kendoAlert("Report Updated!", "Report updated successfully.");
+                                            let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
                                             setTimeout(() => alert.close(), 1500);
                                         }));
                                     });
