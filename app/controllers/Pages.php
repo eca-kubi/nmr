@@ -397,7 +397,7 @@ class Pages extends Controller
                // $db->where('prop', $table_prefix . '_current_submission_month')->update('settings', ['value' => '']);
                // $db->where('prop', $table_prefix . '_current_submission_year')->update('settings', ['value' => '']);
             }
-            echo json_encode(['isSubmissionClosedByPowerUser' => true, 'targetYear' => $target_year, 'targetMonth' => $target_month]);
+            echo json_encode(['isSubmissionClosedByPowerUser' => true, 'targetYear' => $target_year, 'targetMonth' => $target_month, 'success' => true]);
         }
     }
 
@@ -498,6 +498,7 @@ class Pages extends Controller
 
     public function editFinalReport(string $target_month, $target_year, $table_prefix = 'nmr')
     {
+        if (!isLoggedIn()) redirect('users/login/pages/edit-final-report/'. $target_month . '/'. $target_year . '/' . $table_prefix);
         $db = Database::getDbh();
         $current_user = getUserSession();
         $payload['page_title'] = 'Edit Final Report ' . $table_prefix === 'nmr' ? '(Flash Report)' : 'Full Report';

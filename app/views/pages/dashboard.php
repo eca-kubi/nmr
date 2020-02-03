@@ -175,7 +175,7 @@
                 }).done(function (data) {
                     //$("#closeSubmission").parent().removeClass('d-none');
                     let alert = kendoAlert("Submission " + `${id === 'openSubmission' ? 'Opened!' : 'Closed!'}`, "Report submission " + `${id === 'openSubmission' ? 'opened' : 'closed'}` + " for " + data.targetMonth + " " + data.targetYear);
-                    setTimeout(() => alert.close(), 3000);
+                    setTimeout(() => alert.close(), 1500);
                     if (currentSubmissionYear === targetYear && currentSubmissionMonth === targetMonth)
                         if (id === 'openSubmission')
                             $("#submissionNotice p").removeClass('text-danger').addClass('text-success').html("<i class=\"fa fa-info-circle\"></i> Report Submission Opened for the Current Month");
