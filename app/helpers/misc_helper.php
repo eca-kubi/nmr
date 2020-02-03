@@ -815,7 +815,8 @@ function year($timeString)
 
 function isPowerUser($user_id)
 {
-    return Database::getDbh()->where('prop', 'nmr_power_user')->getValue('settings', 'value') == $user_id;
+    $power_users =  Database::getDbh()->where('prop', 'nmr_power_user')->getValue('settings', 'value', null);
+    return in_array($user_id, $power_users);
 }
 
 function getTargetMonthYearsSubmissionStatus($table_prefix) {
