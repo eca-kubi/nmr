@@ -529,7 +529,7 @@ class Pages extends Controller
         redirect('pages/draft-report');
     }
 
-    public function draftReport($target_month='', $target_year='', $table_prefix='nmr')
+    public function draftReport($target_month='', $target_year='')
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
