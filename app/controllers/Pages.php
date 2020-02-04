@@ -529,7 +529,7 @@ class Pages extends Controller
         redirect('pages/draft-report');
     }
 
-    public function draftReport()
+    public function draftReport($target_month='', $target_year='', $table_prefix='nmr')
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
@@ -538,8 +538,8 @@ class Pages extends Controller
         }
         $table_prefixes = ['nmr', 'nmr_fr'];
         $payload['page_title'] = 'Draft Report (Start Monthly Report Here)';
-        $current_sub_month = currentSubmissionMonth() ?: monthName(monthNumber(now()));
-        $current_sub_year = currentSubmissionYear() ?: year(now());
+        $current_sub_month = $target_month? : currentSubmissionMonth();
+        $current_sub_year = $target_year? : currentSubmissionYear();
         $previous_month = explode(" ", getPreviousMonthYear($current_sub_month))[0];
         $previous_year = explode(" ", getPreviousMonthYear($current_sub_month))[1];
         foreach ($table_prefixes as $table_prefix) {
