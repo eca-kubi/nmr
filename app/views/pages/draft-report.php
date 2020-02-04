@@ -106,10 +106,9 @@
     <!-- /.content -->
 </div>
 <style>
-
     #previewEditorParent .k-editor {
-        visibility: hidden;
-        z-index: -1;
+        visibility: hidden!important;
+        z-index: -1!important;
     }
 </style>
 <!-- /.content-wrapper -->
