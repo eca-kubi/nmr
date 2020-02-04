@@ -56,7 +56,7 @@
                                                  <a class="dropdown-item"
                                        href="<?php echo URL_ROOT . '/pages/edit-draft/' . $draft['draft_id'] . '/' . $table_prefix; ?>"
                                                     ><i class="fa fa-file-edit"></i> Edit</a>
-                                                    <a class="dropdown-item preview-fr-btn"
+                                                    <a class="dropdown-item preview-btn"
                                                        data-draft-id="<?php echo $draft['draft_id']; ?>"
                                                        data-title="<?php echo $draft['title']; ?>"
                                                        data-table-prefix="<?php echo $table_prefix; ?>"
@@ -184,7 +184,8 @@
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
                     margin: "1.3cm",
-                    multipage: true
+                    multipage: true,
+                    forcePageBreak: ".page-break"
                 }).then(function (group) {
                     // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
