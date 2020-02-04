@@ -1973,9 +1973,11 @@ echo $spreadsheet_templates; ?>'>
     function submitReport(e) {
         let draftId = $("#draftId");
         let title = $("#draftTitleInput").val();
+        let targetMonth = $("#targetMonth").val();
+        let targetYear = $("#targetYear").val();
         let submit = () => {
             let dfd = $.Deferred();
-            let post = $.post(URL_ROOT + "/pages/submit-report/"  + tablePrefix, {
+            let post = $.post(URL_ROOT + "/pages/submit-report/"  + tablePrefix + "/" + targetMonth + "/" + targetYear, {
                 title: title,
                 draft_id: draftId.val(),
                 content: editor.value(),
