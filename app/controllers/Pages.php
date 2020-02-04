@@ -524,9 +524,9 @@ class Pages extends Controller
         echo json_encode(['submission_closed' => isSubmissionClosedByPowerUser($target_month, $target_year)]);
     }
 
-    public function draftReports()
+    public function draftReports($target_month='', $target_year='')
     {
-        redirect('pages/draft-report');
+        redirect('pages/draft-report/'.$target_month . '/' . $target_year);
     }
 
     public function draftReport($target_month='', $target_year='')
