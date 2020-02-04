@@ -545,10 +545,12 @@ class Pages extends Controller
         foreach ($table_prefixes as $table_prefix) {
             // If user has a draft for the target month and year load it
             if (hasDraftForTargetMonthYear($current_sub_month, $current_sub_year, $current_user->user_id, $table_prefix)) {
+                $payload['target_month'] = $current_sub_month; $payload['target_year'] = $current_sub_year;
                 $payload['drafts'][$table_prefix] = getDraftForTargetMonthYear($current_sub_month, $current_sub_year, $current_user->user_id, $table_prefix);
             } else if (hasDraftForTargetMonthYear($previous_month, $previous_year, $current_user->user_id, $table_prefix)) {
                 // if a draft exists for the previous month create a new one based on it
                 $previous_draft = getDraftForTargetMonthYear($previous_month, $previous_year, $current_user->user_id, $table_prefix);
+                $payload['target_month'] = $previous_month; $payload['target_year'] = $previous_year;
                 if ($draft_id = $db->insert($table_prefix . '_editor_draft', [
                     'content' => $previous_draft['content'],
                     'spreadsheet_content' => $previous_draft['spreadsheet_content'],
@@ -565,6 +567,7 @@ class Pages extends Controller
             } else if ($db->where('department_id', $current_user->department_id)->has($table_prefix . '_preloaded_draft')) {
                 // Create a new draft based on preloaded draft
                 $preloaded_draft = $db->where('department_id', $current_user->department_id)->getOne($table_prefix . '_preloaded_draft');
+                $payload['target_month'] = $current_sub_month; $payload['target_year'] = $current_sub_year;
                 if ($draft_id = $db->insert($table_prefix . '_editor_draft', [
                     'content' => $preloaded_draft['editor_content'],
                     'spreadsheet_content' => $preloaded_draft['spreadsheet_content'],
@@ -579,6 +582,7 @@ class Pages extends Controller
                 }
             } else {
                 // Create a new draft
+                $payload['target_month'] = $current_sub_month; $payload['target_year'] = $current_sub_year;
                 if ($draft_id = $db->insert($table_prefix . '_editor_draft', [
                     'target_month' => $current_sub_month,
                     'target_year' => $current_sub_year,

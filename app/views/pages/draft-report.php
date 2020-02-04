@@ -38,7 +38,7 @@
                         <?php /** @var array $drafts */
                         foreach ($drafts as $table_prefix => $draft) { ?>
                             <?php if (count($draft) > 0): ?>
-                                <div class="col-md-6 col-sm-6 col-xs-12" id="draft_<?php echo $draft['draft_id']; ?>">
+                                <div class="col-md-6 col-sm-6 col-xs-12" id="draft_<?php echo $draft['draft_id']; ?>" title="<?php echo $target_month?? ''; ?> <?php echo $target_year?? ''; ?>">
                                     <div class="info-box p-0">
                                 <span class="info-box-icon bg-gray-light border rounded-0 rounded-left"><svg
                                             class="fontastic-draft"
