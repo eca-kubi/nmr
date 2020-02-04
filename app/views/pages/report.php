@@ -355,7 +355,7 @@ echo $spreadsheet_templates; ?>'>
                     },
                     hidden: true
                 },
-                <?php if (isset($edit_draft) && isSubmissionOpened()): ?>
+                <?php if (isset($edit_draft) && isSubmissionOpened($target_month?? '', $target_year?? '', $table_prefix??  'nmr')): ?>
                 {
                     type: "button",
                     text: "Submit Report",
@@ -509,7 +509,7 @@ echo $spreadsheet_templates; ?>'>
             },
             encoded: false
         }).data("kendoEditor");
-
+        //$(editor.body).off("paste")
         if (editor)
             appendScriptsToEditor(editor.document, [
                 `${URL_ROOT}/public/assets/js/subjx/subjx.min.js`,

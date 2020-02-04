@@ -828,9 +828,10 @@ function getTargetMonthYearsSubmissionStatus($table_prefix) {
     return $mapped;
 }
 
-function isSubmissionOpened()
+function isSubmissionOpened($target_month ='', $target_year='', $table_prefix='nmr')
 {
-    return Database::getDbh()->where('prop', 'nmr_submission_opened')->getValue('settings', 'value');
+    return !isSubmissionClosedByPowerUser($target_month? : currentSubmissionMonth(), $target_year? : currentSubmissionYear(), $table_prefix);
+    //return Database::getDbh()->where('prop', 'nmr_submission_opened')->getValue('settings', 'value');
 }
 
 function isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefix='nmr')
