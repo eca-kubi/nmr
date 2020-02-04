@@ -26,7 +26,7 @@
                             </h5>
                             <!-- small box -->
                             <div class="small-box show border" style="cursor:pointer"
-                                 data-url="<?php echo URL_ROOT . '/pages/draft-reports/' ?>">
+                                 data-url="<?php echo URL_ROOT . '/pages/draft-report/' ?>">
                                 <div class="inner">
                                     <h3 class="w3-hide-small ">Draft Report</h3>
                                     <h5 class="w3-hide-large w3-hide-medium text-bold">Draft Report</h5>
