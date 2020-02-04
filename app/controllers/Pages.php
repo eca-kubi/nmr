@@ -94,19 +94,19 @@ class Pages extends Controller
         $this->view('pages/report', $payload);
     }
 
-    public function editReport($draft_id, $table_prefix='nmr'): void
+    public function editReport($draft_id, $table_prefix = 'nmr'): void
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
         if (!isLoggedIn()) {
             redirect('users/login/pages/edit-report/' . $draft_id);
         }
-        if (!$db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has($table_prefix. '_editor_draft'))
+        if (!$db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has($table_prefix . '_editor_draft'))
             redirect('errors/index/404');
         $payload['page_title'] = 'My Reports (' . flashOrFull($table_prefix) . ') Report)';
         $payload['draft_id'] = $draft_id;
         $payload['edit_report'] = true;
-        $draft = $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->getOne($table_prefix. '_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_month', 'target_year']);
+        $draft = $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->getOne($table_prefix . '_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_month', 'target_year']);
         $payload['content'] = $draft['content'];
         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
         $payload['title'] = $payload['page_title'];
@@ -394,8 +394,8 @@ class Pages extends Controller
             if (currentSubmissionYear() === $target_year && currentSubmissionMonth() === $target_month) {
                 $db->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 0]);
                 $db->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 1]);
-               // $db->where('prop', $table_prefix . '_current_submission_month')->update('settings', ['value' => '']);
-               // $db->where('prop', $table_prefix . '_current_submission_year')->update('settings', ['value' => '']);
+                // $db->where('prop', $table_prefix . '_current_submission_month')->update('settings', ['value' => '']);
+                // $db->where('prop', $table_prefix . '_current_submission_year')->update('settings', ['value' => '']);
             }
             echo json_encode(['isSubmissionClosedByPowerUser' => true, 'targetYear' => $target_year, 'targetMonth' => $target_month, 'success' => true]);
         }
@@ -409,7 +409,7 @@ class Pages extends Controller
         $payload['is_power_user'] = isPowerUser(getUserSession()->user_id);
         $table_prefixes = ['nmr', 'nmr_fr'];
         foreach ($table_prefixes as $table_prefix) {
-            $payload['report_submissions'][$table_prefix] = array_reverse(groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id, $table_prefix))) ;
+            $payload['report_submissions'][$table_prefix] = array_reverse(groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id, $table_prefix)));
             $payload['target_month_years'][$table_prefix] = Database::getDbh()->getValue($table_prefix . '_final_report', 'concat_ws(" ", target_month, target_year)', null) ?: [];
         }
         $this->view('pages/submitted-reports', $payload);
@@ -498,7 +498,7 @@ class Pages extends Controller
 
     public function editFinalReport(string $target_month, $target_year, $table_prefix = 'nmr')
     {
-        if (!isLoggedIn()) redirect('users/login/pages/edit-final-report/'. $target_month . '/'. $target_year . '/' . $table_prefix);
+        if (!isLoggedIn()) redirect('users/login/pages/edit-final-report/' . $target_month . '/' . $target_year . '/' . $table_prefix);
         $db = Database::getDbh();
         $current_user = getUserSession();
         $payload['page_title'] = 'Edit Final Report ' . $table_prefix === 'nmr' ? '(Flash Report)' : 'Full Report';
@@ -524,12 +524,12 @@ class Pages extends Controller
         echo json_encode(['submission_closed' => isSubmissionClosedByPowerUser($target_month, $target_year)]);
     }
 
-    public function draftReports($target_month='', $target_year='')
+    public function draftReports($target_month = '', $target_year = '')
     {
-        redirect('pages/draft-report/'.$target_month . '/' . $target_year);
+        redirect('pages/draft-report/' . $target_month . '/' . $target_year);
     }
 
-    public function draftReport($target_month='', $target_year='')
+    public function draftReport($target_month = '', $target_year = '')
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
@@ -538,19 +538,21 @@ class Pages extends Controller
         }
         $table_prefixes = ['nmr', 'nmr_fr'];
         $payload['page_title'] = 'Draft Report (Start Monthly Report Here)';
-        $current_sub_month = $target_month? : currentSubmissionMonth();
-        $current_sub_year = $target_year? : currentSubmissionYear();
+        $current_sub_month = $target_month ?: currentSubmissionMonth();
+        $current_sub_year = $target_year ?: currentSubmissionYear();
         $previous_month = explode(" ", getPreviousMonthYear($current_sub_month))[0];
         $previous_year = explode(" ", getPreviousMonthYear($current_sub_month))[1];
         foreach ($table_prefixes as $table_prefix) {
             // If user has a draft for the target month and year load it
             if (hasDraftForTargetMonthYear($current_sub_month, $current_sub_year, $current_user->user_id, $table_prefix)) {
-                $payload['target_month'] = $current_sub_month; $payload['target_year'] = $current_sub_year;
+                $payload['target_month'] = $current_sub_month;
+                $payload['target_year'] = $current_sub_year;
                 $payload['drafts'][$table_prefix] = getDraftForTargetMonthYear($current_sub_month, $current_sub_year, $current_user->user_id, $table_prefix);
             } else if (hasDraftForTargetMonthYear($previous_month, $previous_year, $current_user->user_id, $table_prefix)) {
                 // if a draft exists for the previous month create a new one based on it
                 $previous_draft = getDraftForTargetMonthYear($previous_month, $previous_year, $current_user->user_id, $table_prefix);
-                $payload['target_month'] = $previous_month; $payload['target_year'] = $previous_year;
+                $payload['target_month'] = $previous_month;
+                $payload['target_year'] = $previous_year;
                 if ($draft_id = $db->insert($table_prefix . '_editor_draft', [
                     'content' => $previous_draft['content'],
                     'spreadsheet_content' => $previous_draft['spreadsheet_content'],
@@ -567,7 +569,8 @@ class Pages extends Controller
             } else if ($db->where('department_id', $current_user->department_id)->has($table_prefix . '_preloaded_draft')) {
                 // Create a new draft based on preloaded draft
                 $preloaded_draft = $db->where('department_id', $current_user->department_id)->getOne($table_prefix . '_preloaded_draft');
-                $payload['target_month'] = $current_sub_month; $payload['target_year'] = $current_sub_year;
+                $payload['target_month'] = $current_sub_month;
+                $payload['target_year'] = $current_sub_year;
                 if ($draft_id = $db->insert($table_prefix . '_editor_draft', [
                     'content' => $preloaded_draft['editor_content'],
                     'spreadsheet_content' => $preloaded_draft['spreadsheet_content'],
@@ -582,7 +585,8 @@ class Pages extends Controller
                 }
             } else {
                 // Create a new draft
-                $payload['target_month'] = $current_sub_month; $payload['target_year'] = $current_sub_year;
+                $payload['target_month'] = $current_sub_month;
+                $payload['target_year'] = $current_sub_year;
                 if ($draft_id = $db->insert($table_prefix . '_editor_draft', [
                     'target_month' => $current_sub_month,
                     'target_year' => $current_sub_year,
@@ -669,7 +673,7 @@ class Pages extends Controller
         echo json_encode($report, JSON_UNESCAPED_SLASHES);
     }
 
-    public function submitReport($table_prefix = 'nmr')
+    public function submitReport($table_prefix = 'nmr', $target_month = '', $target_year = '')
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
@@ -683,8 +687,8 @@ class Pages extends Controller
             //'spreadsheet_content' => $_POST['spreadsheet_content'],
             'date_submitted' => now(),
             //'date_modified' => now(),
-            'target_month' => $db->func('MonthName(?)', [now()]),
-            'target_year' => $db->func('Year(?)', [now()])
+            'target_month' => $target_month ?: $db->func('MonthName(?)', [now()]),
+            'target_year' => $target_year ?: $db->func('Year(?)', [now()])
         ]);
         if ($success) {
             if ($db->where('draft_id', $draft_id)->has($table_prefix . '_editor_draft')) {
@@ -695,16 +699,18 @@ class Pages extends Controller
                     //'time_modified' => now()
                 ]);
                 if ($success) echo json_encode(['success' => true, 'draftId' => $draft_id]);
-            } else {
+            } /*else {
                 $success = $db->insert($table_prefix . '_editor_draft', [
-                    //'title' => $_POST['title'],
+                    //'title' => 'Draft (Flash Report)',
                     'user_id' => $current_user->user_id,
                     'content' => $_POST['content'],
-                    //'spreadsheet_content' => $_POST['spreadsheet_content'],
+                    'target_month' => $target_month ?: $db->func('MonthName(?)', [now()]),
+                    'target_year' => $target_year ?: $db->func('Year(?)', [now()]),
                     //'time_modified' => now()
+                    //'spreadsheet_content' => $_POST['spreadsheet_content'],
                 ]);
                 if ($success) echo json_encode(['success' => true, 'draftId' => $success]);
-            }
+            }*/
         }
     }
 
