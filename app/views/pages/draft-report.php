@@ -106,8 +106,10 @@
     <!-- /.content -->
 </div>
 <style>
-    .k-editor {
-        z-index: -1 !important;
+
+    #previewEditorParent .k-editor {
+        visibility: hidden;
+        z-index: -1;
     }
 </style>
 <!-- /.content-wrapper -->
@@ -127,7 +129,7 @@
     $(function () {
         jQSelectors.draftViewerWindow = $("<div id='draftViewerWindow'/>").appendTo("body");
         jQSelectors.draftPreviewViewer = $("<div id='draftPreviewViewer'/>").appendTo(jQSelectors.draftViewerWindow);
-        jQSelectors.draftPreviewEditor = $("<textarea id='draftPreviewEditor' style='width: 100%;'/>").appendTo("body");
+        jQSelectors.draftPreviewEditor = $("<div id='previewEditorParent'><textarea id='draftPreviewEditor' style='width: 100%;'/></div>").appendTo("body");
 
         draftWindow = jQSelectors.draftViewerWindow.kendoWindow({
             modal: true,
