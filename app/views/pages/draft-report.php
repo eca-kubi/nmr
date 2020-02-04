@@ -128,7 +128,7 @@
     $(function () {
         jQSelectors.draftViewerWindow = $("<div id='draftViewerWindow'/>").appendTo("body");
         jQSelectors.draftPreviewViewer = $("<div id='draftPreviewViewer'/>").appendTo(jQSelectors.draftViewerWindow);
-        jQSelectors.draftPreviewEditor = $("<div id='previewEditorParent'><textarea id='draftPreviewEditor' style='width: 100%;'/></div>").appendTo("body");
+        jQSelectors.draftPreviewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/></div>").appendTo("body");
 
         draftWindow = jQSelectors.draftViewerWindow.kendoWindow({
             modal: true,
