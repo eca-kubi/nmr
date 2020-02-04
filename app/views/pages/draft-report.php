@@ -164,7 +164,7 @@
             }
         }).getKendoPDFViewer();
         setTimeout(function () {
-            previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
+            previewEditor = $("#previewEditor").kendoEditor({
                 tools: [],
                 stylesheets: [
                     "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
