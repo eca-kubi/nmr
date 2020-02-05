@@ -50,3 +50,4 @@ const TABLE_NMR_SPREADSHEET_TEMPLATES = 'nmr_spreadsheet_templates';
 const TABLE_NMR_SAVED_SPREADSHEETS = 'nmr_saved_spreadsheets';
 const ICON_PATH = URL_ROOT . '/public/assets/images/icons/icons.svg';
 const PAGE_TITLE_DRAFT_REPORT = 'Draft Report';
+const CKFILEFINDER_CONNECTOR_PATH = "/public/assets/js/ckfinder/core/connector/php/connector.php";

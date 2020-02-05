@@ -15,6 +15,8 @@
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/displace/displace.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/pako-deflate/pako-deflate.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/pdfjs/pdf.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/ckfinder/ckfinder.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/ckeditor/ckeditor.js"></script>
 <script>
     window.pdfjsLib.GlobalWorkerOptions.workerSrc = '<?php echo URL_ROOT; ?>/public/assets/js/pdfjs/pdf.worker.js';
 </script>

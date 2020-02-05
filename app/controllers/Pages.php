@@ -763,4 +763,11 @@ class Pages extends Controller
     {
         echo Database::getDbh()->where('draft_id', $draft_id)->getValue($table_prefix . '_preloaded_draft', 'editor_content');
     }
+
+    public function cKEditorTest(){
+        if (!isLoggedIn()) redirect('users/login/pages/ckeditor-test');
+        $payload['page_title'] = 'CKEditor Test';
+        $payload['content'] = '<p>Hello World</p>';
+        $this->view('pages/ckeditor-test', $payload);
+    }
 }

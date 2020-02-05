@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/kendo-ui/kendo.bootstrap-v4.min.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/js/ckeditor/contents.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css"/>
 <!--    <script>
         var events = {};
