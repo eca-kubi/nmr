@@ -812,6 +812,100 @@ return wrapper;
 
 
 intellisense.annotate(kendo.data, {
+    FileEntry: function() {
+        /// <signature>
+        /// <summary>Constructor of kendo.data.FileEntry</summary>
+        /// </signature>
+    }
+});
+
+kendo.data.FileEntry = (function() {
+var original = kendo.data.FileEntry;
+var wrapper = function() {
+var instance = new original();
+intellisense.annotate(instance, {
+
+    bind: function(event, callback) {
+        /// <signature>
+        /// <summary>
+        /// Binds to a widget event.
+        /// </summary>
+        /// <param name="event" type="String">The event name</param>
+        /// <param name="callback" type="Function">The callback to be executed when the event is triggered.</param>
+        /// </signature>
+    },
+
+    unbind: function(event, callback) {
+        /// <signature>
+        /// <summary>
+        /// Unbinds a callback from a widget event.
+        /// </summary>
+        /// <param name="event" type="String">The event name</param>
+        /// <param name="callback" type="Function">The callback to be removed.</param>
+        /// </signature>
+    }
+
+});
+
+return instance;
+
+};
+
+intellisense.redirectDefinition(wrapper, original);
+
+return wrapper;
+
+})();
+
+
+intellisense.annotate(kendo.data, {
+    FileManagerDataSource: function() {
+        /// <signature>
+        /// <summary>Constructor of kendo.data.FileManagerDataSource</summary>
+        /// </signature>
+    }
+});
+
+kendo.data.FileManagerDataSource = (function() {
+var original = kendo.data.FileManagerDataSource;
+var wrapper = function() {
+var instance = new original();
+intellisense.annotate(instance, {
+
+    bind: function(event, callback) {
+        /// <signature>
+        /// <summary>
+        /// Binds to a widget event.
+        /// </summary>
+        /// <param name="event" type="String">The event name</param>
+        /// <param name="callback" type="Function">The callback to be executed when the event is triggered.</param>
+        /// </signature>
+    },
+
+    unbind: function(event, callback) {
+        /// <signature>
+        /// <summary>
+        /// Unbinds a callback from a widget event.
+        /// </summary>
+        /// <param name="event" type="String">The event name</param>
+        /// <param name="callback" type="Function">The callback to be removed.</param>
+        /// </signature>
+    }
+
+});
+
+return instance;
+
+};
+
+intellisense.redirectDefinition(wrapper, original);
+
+return wrapper;
+
+})();
+
+
+intellisense.annotate(kendo.data, {
     GanttDataSource: function() {
         /// <signature>
         /// <summary>Constructor of kendo.data.GanttDataSource</summary>
@@ -2666,7 +2760,7 @@ intellisense.annotate(instance, {
         /// Gets or sets the current source of the connection.This object can be a Point for a floating endpoint (i.e. not attached to a shape), a Shape or a Connector of a Shape. You can use the Shape.getConnector() method to fetch a Connector on the basis of its name. If a Shape is specified the Connection will attach to the "Auto" connector.
         /// </summary>
         /// <param name="source" type="Object" >Point: any Point on the canvas. This creates an unattached floating endpoint.; Shape: will bind the endpoint to the"Auto" Connector which will switch between the other connectors to minimize the length of the connection. or Connector: the connection's endpoint will remain fixed attached to the specified Connector.. If no source is specified the method will return the current object to which the Connection's endpoint is attached.</param>
-        /// <returns type="Object">the connection source.The following example shows how to change the source shape of a connection:```dojo     Change Connection Source     <div id="diagram"></div>            var Shape = kendo.dataviz.diagram.Shape;       $("#diagram").kendoDiagram();       var diagram = $("#diagram").data("kendoDiagram");       var shape1 = diagram.addShape( new Shape({ x: 100, y: 100 }));       var shape2 = diagram.addShape( new Shape({ x: 300, y: 180 }));       var shape3 = diagram.addShape( new Shape({ x: 300, y: 20 }));```</returns>
+        /// <returns type="Object">the connection source.The following example shows how to change the source shape of a connection:</returns>
         /// </signature>
     },
     sourcePoint: function() {
@@ -2674,7 +2768,7 @@ intellisense.annotate(instance, {
         /// <summary>
         /// Gets the global coordinate of the connection's start (initial endpoint). The method returns a Point independently of the object to which the source is attached.
         /// </summary>
-        /// <returns type="kendo.dataviz.diagram.Point">the coordinates of the connection source.```dojo     Get Connection Source Point     <div id="diagram"></div>            var Shape = kendo.dataviz.diagram.Shape;       $("#diagram").kendoDiagram();       var diagram = $("#diagram").data("kendoDiagram");       var shape1 = diagram.addShape( new Shape({ x: 100, y: 100 }));       var shape2 = diagram.addShape( new Shape({ x: 300, y: 180 }));```</returns>
+        /// <returns type="kendo.dataviz.diagram.Point">the coordinates of the connection source.</returns>
         /// </signature>
     },
     target: function(target) {
@@ -2682,7 +2776,7 @@ intellisense.annotate(instance, {
         /// <summary>
         /// Gets or set the target of the Connection.This object can be a Point for a floating endpoint (i.e. not attached to a shape), a Shape or a Connector of a Shape. You can use the Shape.getConnector() method to fetch a Connector on the basis of its name. If a Shape is specified the Connection will attach to the "Auto" connector.
         /// </summary>
-        /// <param name="target" type="Object" >Point: any Point on the canvas. This creates an unattached floating endpoint.; Shape: will bind the endpoint to the"Auto" Connector which will switch between the other connectors to minimize the length of the connection. or Connector: the connection's endpoint will remain fixed attached to the specified Connector.. If no source is specified the method will return the current object to which the Connection's endpoint is attached.```dojo     Change Connection Target     <div id="diagram"></div>            var Shape = kendo.dataviz.diagram.Shape;       $("#diagram").kendoDiagram();       var diagram = $("#diagram").data("kendoDiagram");       var shape1 = diagram.addShape( new Shape({ x: 120, y: 180 }));       var shape2 = diagram.addShape( new Shape({ x: 120, y: 30 }));       var shape3 = diagram.addShape( new Shape({ x: 120, y: 330 }));```</param>
+        /// <param name="target" type="Object" >Point: any Point on the canvas. This creates an unattached floating endpoint.; Shape: will bind the endpoint to the"Auto" Connector which will switch between the other connectors to minimize the length of the connection. or Connector: the connection's endpoint will remain fixed attached to the specified Connector.. If no source is specified the method will return the current object to which the Connection's endpoint is attached.</param>
         /// <returns type="Object">the connection target.</returns>
         /// </signature>
     },
@@ -2691,7 +2785,7 @@ intellisense.annotate(instance, {
         /// <summary>
         /// Similar to the sourcePoint, this gets the coordinates of the target of the Connection independently of its endpoint attachment.
         /// </summary>
-        /// <returns type="kendo.dataviz.diagram.Point">the coordinates of the connection target.```dojo     Get Connection Target Point     <div id="diagram"></div>            var Shape = kendo.dataviz.diagram.Shape;       $("#diagram").kendoDiagram();       var diagram = $("#diagram").data("kendoDiagram");       var shape1 = diagram.addShape( new Shape({ x: 100, y: 100 }));       var shape2 = diagram.addShape( new Shape({ x: 300, y: 180 }));```</returns>
+        /// <returns type="kendo.dataviz.diagram.Point">the coordinates of the connection target.</returns>
         /// </signature>
     },
     select: function(value) {
@@ -2699,7 +2793,7 @@ intellisense.annotate(instance, {
         /// <summary>
         /// Select or deselects the Connection.
         /// </summary>
-        /// <param name="value" type="Boolean" >True to select the Connection and false to deselect it.```dojo     Select Connection     <div id="diagram"></div>            var Shape = kendo.dataviz.diagram.Shape;       $("#diagram").kendoDiagram();       var diagram = $("#diagram").data("kendoDiagram");       var shape1 = diagram.addShape( new Shape({ x: 100, y: 100 }));       var shape2 = diagram.addShape( new Shape({ x: 300, y: 100 }));```</param>
+        /// <param name="value" type="Boolean" >True to select the Connection and false to deselect it.</param>
         /// </signature>
     },
     type: function(value) {
@@ -2707,13 +2801,13 @@ intellisense.annotate(instance, {
         /// <summary>
         /// Gets or sets the (sub-) type of the Connection which defines the way it routes.The routing of a connection is the way that intermediate points of a Connection defines a route. A route is usually defined on the basis of constraints or behaviors. Currently the framework defines a default polyline route (which simply connects the given intermediate points) and a simple rectangular (aka cascading) route. The cascading type is useful when using tree layout and hierarchies; the routed Connection will in this case enhance the representation of the hierarchy and thus reproduce a classic organization diagram.
         /// </summary>
-        /// <param name="value" type="String" >"polyline" - connects the defined intermediate points. See the points() method. or "cascading" - discards given points and defines a cascading path between the endpoints.. ```dojo     Change Connection Type     <div id="diagram"></div>            var Shape = kendo.dataviz.diagram.Shape;       $("#diagram").kendoDiagram();       var diagram = $("#diagram").data("kendoDiagram");       var shape1 = diagram.addShape( new Shape({ x: 100, y: 100 }));       var shape2 = diagram.addShape( new Shape({ x: 300, y: 180 }));```</param>
+        /// <param name="value" type="String" >"polyline" - connects the defined intermediate points. See the points() method. or "cascading" - discards given points and defines a cascading path between the endpoints..</param>
         /// </signature>
     },
     points: function() {
         /// <signature>
         /// <summary>
-        /// Gets the intermediate points of the connection.```dojo     Get Connection Points     <div id="diagram"></div>            var Shape = kendo.dataviz.diagram.Shape;       $("#diagram").kendoDiagram();       var diagram = $("#diagram").data("kendoDiagram");       var shape1 = diagram.addShape( new Shape({ x: 20, y: 180 }));       var shape2 = diagram.addShape( new Shape({ x: 300, y: 180 }));```
+        /// Gets the intermediate points of the connection.
         /// </summary>
         /// <returns type="Array">the intermediate points of the connection.</returns>
         /// </signature>
@@ -2723,7 +2817,7 @@ intellisense.annotate(instance, {
         /// <summary>
         /// Gets all points of the Connection. This is the union of the endpoints and the intermediate points.
         /// </summary>
-        /// <returns type="Array">all points of the connection.```dojo     Get Connection Points     <div id="diagram"></div>            var Shape = kendo.dataviz.diagram.Shape;       $("#diagram").kendoDiagram();       var diagram = $("#diagram").data("kendoDiagram");       var shape1 = diagram.addShape( new Shape({ x: 20, y: 180 }));       var shape2 = diagram.addShape( new Shape({ x: 300, y: 180 }));```</returns>
+        /// <returns type="Array">all points of the connection.</returns>
         /// </signature>
     },
     redraw: function(options) {
@@ -2731,7 +2825,7 @@ intellisense.annotate(instance, {
         /// <summary>
         /// Redraws the Connection with the given options.
         /// </summary>
-        /// <param name="options" type="Object" >The new options for the connection. This object should follow the configuration structure.```dojo     Redraw Connection     <div id="diagram"></div>            var Shape = kendo.dataviz.diagram.Shape;       $("#diagram").kendoDiagram();       var diagram = $("#diagram").data("kendoDiagram");       var shape1 = diagram.addShape( new Shape({ x: 20, y: 100 }));       var shape2 = diagram.addShape( new Shape({ x: 300, y: 100 }));```</param>
+        /// <param name="options" type="Object" >The new options for the connection. This object should follow the configuration structure.</param>
         /// </signature>
     },
     visible: function(visible) {
@@ -2739,7 +2833,7 @@ intellisense.annotate(instance, {
         /// <summary>
         /// Gets or sets the connection visible state.
         /// </summary>
-        /// <param name="visible" type="Boolean" >Indicates whether the connection should be visible in the Diagram. If skipped, the method will return the current visible state of the connection.```dojo```</param>
+        /// <param name="visible" type="Boolean" >Indicates whether the connection should be visible in the Diagram. If skipped, the method will return the current visible state of the connection.</param>
         /// </signature>
     },
 
@@ -4979,7 +5073,7 @@ intellisense.annotate(jQuery.fn, {
         /// &#10;The default options for all series.
         /// &#10;
         /// &#10;theme - String 
-        /// &#10;The chart theme. This can be either a built-in theme or "sass". When set to "sass" the chart will read the variables from the Sass-based themes.The supported values are: "sass" - special value, see notes; "black"; "blueopal"; "bootstrap"; "default"; "highcontrast"; "metro"; "metroblack"; "moonlight"; "silver" or "uniform".
+        /// &#10;The chart theme. This can be either a built-in theme or "sass". When set to "sass" the chart will read the variables from the Sass-based themes. More information on the built-in themes could be found in the Less-based themes article.The supported values are: "sass" - special value, see notes; "black"; "blueopal"; "bootstrap"; "default"; "highcontrast"; "metro"; "metroblack"; "moonlight"; "silver" or "uniform".
         /// &#10;
         /// &#10;title - String 
         /// &#10;The chart title configuration options or text.
@@ -5041,7 +5135,7 @@ intellisense.annotate(instance, {
     addShape: function(obj,undoable) {
         /// <signature>
         /// <summary>
-        /// Adds a new shape to the diagram.
+        /// Adds a new shape to the diagram. If the diagram is bound to a data source, do not use addShae(newShape). Instead, use diagram.dataSource.add(newShape); and optionally .sync() the data source.
         /// </summary>
         /// <param name="obj" type="Object" >A Shape instance or a Point where the default shape type will be added.</param>
         /// <param name="undoable" type="Boolean" >Whether the addition should be recorded in the undo-redo stack.</param>
@@ -13084,12 +13178,13 @@ intellisense.annotate(instance, {
         /// <param name="index" type="Number" >The zero-based index of the column</param>
         /// </signature>
     },
-    deleteRow: function(index) {
+    deleteRow: function(index,skipDataSourceDelete) {
         /// <signature>
         /// <summary>
         /// Deletes the contents of the row at the provided index and shifts the remaining contents of the sheet up.
         /// </summary>
         /// <param name="index" type="Number" >The zero-based index of the row</param>
+        /// <param name="skipDataSourceDelete" type="Boolean" >If passed true, the method does not delete item from the DataSource.</param>
         /// </signature>
     },
     fromJSON: function(data) {
@@ -13142,12 +13237,13 @@ intellisense.annotate(instance, {
         /// <param name="index" type="Number" >The zero-based index of the column</param>
         /// </signature>
     },
-    insertRow: function(index) {
+    insertRow: function(index,skipDataSourceInsert) {
         /// <signature>
         /// <summary>
         /// Inserts a new, empty row at the provided index. The contents of the spreadsheet (including the ones in the current row index) are shifted down.
         /// </summary>
         /// <param name="index" type="Number" >The zero-based index of the column</param>
+        /// <param name="skipDataSourceInsert" type="Boolean" >If passed true, the method does not insert item in the DataSource.</param>
         /// </signature>
     },
     range: function(ref,rowIndex,columnIndex,rowCount,columnCount) {
@@ -13720,6 +13816,249 @@ intellisense.annotate(jQuery.fn, {
 });
 
 intellisense.annotate(kendo.ui, {
+    Badge: function() {
+        /// <signature>
+        /// <summary>Constructor of kendo.ui.Badge</summary>
+        /// </signature>
+    }
+});
+
+kendo.ui.Badge = (function() {
+var original = kendo.ui.Badge;
+var wrapper = function() {
+var instance = new original();
+intellisense.annotate(instance, {
+    hide: function() {
+        /// <signature>
+        /// <summary>
+        /// Hides the badge.
+        /// </summary>
+        /// </signature>
+    },
+    setOptions: function(options) {
+        /// <signature>
+        /// <summary>
+        /// Modifies the initial configuration of the badge
+        /// </summary>
+        /// <param name="options" type="Object" >The new options.</param>
+        /// </signature>
+    },
+    show: function() {
+        /// <signature>
+        /// <summary>
+        /// Shows the badge.
+        /// </summary>
+        /// </signature>
+    },
+    value: function(newValue) {
+        /// <signature>
+        /// <summary>
+        /// Sets/gets the value of the badge.
+        /// </summary>
+        /// <param name="newValue" type="Object" >The new value of the badge.</param>
+        /// </signature>
+    },
+
+    bind: function(event, callback) {
+        /// <signature>
+        /// <summary>
+        /// Binds to a widget event.
+        /// </summary>
+        /// <param name="event" type="String">The event name</param>
+        /// <param name="callback" type="Function">The callback to be executed when the event is triggered.</param>
+        /// </signature>
+    },
+
+    unbind: function(event, callback) {
+        /// <signature>
+        /// <summary>
+        /// Unbinds a callback from a widget event.
+        /// </summary>
+        /// <param name="event" type="String">The event name</param>
+        /// <param name="callback" type="Function">The callback to be removed.</param>
+        /// </signature>
+    }
+
+});
+
+return instance;
+
+};
+
+intellisense.redirectDefinition(wrapper, original);
+
+return wrapper;
+
+})();
+
+
+jQuery.fn.kendoBadge = function() {
+    this.data("kendoBadge", new kendo.ui.Badge());
+
+    return this;
+};
+
+intellisense.annotate(jQuery.fn, {
+    getKendoBadge: function() {
+        /// <signature>
+        /// <summary>
+        /// Returns a reference to the kendo.ui.Badge widget, instantiated on the selector.
+        /// </summary>
+        /// <returns type="kendo.ui.Badge">The kendo.ui.Badge instance (if present).</returns>
+        /// </signature>
+    },
+    kendoBadge: function(options) {
+        /// <signature>
+        /// <summary>
+        /// Instantiates a kendo.ui.Badge widget based the DOM elements that match the selector.
+        /// &#10;Accepts an object with the following configuration options:
+        /// &#10;
+        /// &#10;appearance - String (default: pill)
+        /// &#10;Specifies the shape of the badge - rectangle or pill.
+        /// &#10;
+        /// &#10;look - String (default: flat)
+        /// &#10;Specifies the look of the badge - flat or outline.
+        /// &#10;
+        /// &#10;template - String|Function 
+        /// &#10;The template which renders the content of the badge
+        /// &#10;
+        /// &#10;type - String 
+        /// &#10;Specifies the type of the badge - primary, secondary, info, success, warning and error.
+        /// &#10;
+        /// &#10;value - String|Number 
+        /// &#10;The value of the badge
+        /// &#10;
+        /// &#10;visible - Boolean 
+        /// &#10;If set to false the badge will not be displayed.
+        /// &#10;
+        /// </summary>
+        /// <param name="options" type="Object">
+        /// The widget configuration options
+        /// </param>
+        /// </signature>
+    }
+});
+
+intellisense.annotate(kendo.ui, {
+    Breadcrumb: function() {
+        /// <signature>
+        /// <summary>Constructor of kendo.ui.Breadcrumb</summary>
+        /// </signature>
+    }
+});
+
+kendo.ui.Breadcrumb = (function() {
+var original = kendo.ui.Breadcrumb;
+var wrapper = function() {
+var instance = new original();
+intellisense.annotate(instance, {
+    value: function(path) {
+        /// <signature>
+        /// <summary>
+        /// A getter and setter for the value of the component.
+        /// </summary>
+        /// <param name="path" type="String" >The path segments separated by slash.</param>
+        /// </signature>
+    },
+    items: function(items) {
+        /// <signature>
+        /// <summary>
+        /// A getter and setter for the items rendered in the component.
+        /// </summary>
+        /// <param name="items" type="Array" >The path segments separated by slash.</param>
+        /// </signature>
+    },
+
+    bind: function(event, callback) {
+        /// <signature>
+        /// <summary>
+        /// Binds to a widget event.
+        /// </summary>
+        /// <param name="event" type="String">The event name</param>
+        /// <param name="callback" type="Function">The callback to be executed when the event is triggered.</param>
+        /// </signature>
+    },
+
+    unbind: function(event, callback) {
+        /// <signature>
+        /// <summary>
+        /// Unbinds a callback from a widget event.
+        /// </summary>
+        /// <param name="event" type="String">The event name</param>
+        /// <param name="callback" type="Function">The callback to be removed.</param>
+        /// </signature>
+    }
+
+});
+
+return instance;
+
+};
+
+intellisense.redirectDefinition(wrapper, original);
+
+return wrapper;
+
+})();
+
+
+jQuery.fn.kendoBreadcrumb = function() {
+    this.data("kendoBreadcrumb", new kendo.ui.Breadcrumb());
+
+    return this;
+};
+
+intellisense.annotate(jQuery.fn, {
+    getKendoBreadcrumb: function() {
+        /// <signature>
+        /// <summary>
+        /// Returns a reference to the kendo.ui.Breadcrumb widget, instantiated on the selector.
+        /// </summary>
+        /// <returns type="kendo.ui.Breadcrumb">The kendo.ui.Breadcrumb instance (if present).</returns>
+        /// </signature>
+    },
+    kendoBreadcrumb: function(options) {
+        /// <signature>
+        /// <summary>
+        /// Instantiates a kendo.ui.Breadcrumb widget based the DOM elements that match the selector.
+        /// &#10;Accepts an object with the following configuration options:
+        /// &#10;
+        /// &#10;bindToLocation - Boolean (default: false)
+        /// &#10;Indicates whether the Breadcrumb will enable/disable the binding to the location object of the browser on initialization.
+        /// &#10;
+        /// &#10;delimiterIcon - String (default: "arrow-chevron-right")
+        /// &#10;Defines a name of an existing icon in the Kendo UI Web Font Icons. The icon will be applied as separator between the segments of the Breadcrumb path.
+        /// &#10;
+        /// &#10;editable - Boolean (default: false)
+        /// &#10;Indicates whether the editing functionality of the Breadcrumb will be enabled/disabled.If the option is enabled the path will be editable. Clicking in an empty area of the component will trigger editing mode. Editing mode shows an input showing the value of the component enabling the end user to type a new path.
+        /// &#10;
+        /// &#10;items - Array 
+        /// &#10;Array of items to be rendered in Breadcrumb.
+        /// &#10;
+        /// &#10;gap - Number (default: 0)
+        /// &#10;Defines the space in pixels after the last item to stay empty.The gap value is taken into account when items overflow and continues to remain empty.
+        /// &#10;
+        /// &#10;messages - Object 
+        /// &#10;Defines the text of the root icon title that is displayed within the Breadcrumb.
+        /// &#10;
+        /// &#10;navigational - Boolean (default: false)
+        /// &#10;Indicates whether the navigation functionality of the Breadcrumb will be enabled/disabled.When navigational is set to false, automatic navigation (changing url location) is disabled by default. In this state, the click event will be prevented and navigation will occur only if programmatic navigation is implemented.When navigational is set to true, the url (path) will be automatically added to the href attribute of the rendered links. In this state, the click event will trigger navigation.
+        /// &#10;
+        /// &#10;rootIcon - String (default: "home")
+        /// &#10;Defines a name of an existing icon in the Kendo UI Web Font Icons. The icon will be applied as the first item(root) of Breadcrumb path.The root icon is clickable and resets the value of the component.
+        /// &#10;
+        /// &#10;value - String (default: "")
+        /// &#10;Defines the value/path of the component. Each segments is separated by a slash.
+        /// &#10;
+        /// </summary>
+        /// <param name="options" type="Object">
+        /// The widget configuration options
+        /// </param>
+        /// </signature>
+    }
+});
+
+intellisense.annotate(kendo.ui, {
     Button: function() {
         /// <signature>
         /// <summary>Constructor of kendo.ui.Button</summary>
@@ -13794,6 +14133,12 @@ intellisense.annotate(jQuery.fn, {
         /// <summary>
         /// Instantiates a kendo.ui.Button widget based the DOM elements that match the selector.
         /// &#10;Accepts an object with the following configuration options:
+        /// &#10;
+        /// &#10;badge - Boolean|String 
+        /// &#10;If set to true a default overlay badge will be displayed. If set to a string, an ovelay with content set to the specified string will be displayed. Can be set to a JavaScript object which represents the configuration of the Badge widget.
+        /// &#10;
+        /// &#10;badge - Object 
+        /// &#10;If set to true a default overlay badge will be displayed. If set to a string, an ovelay with content set to the specified string will be displayed. Can be set to a JavaScript object which represents the configuration of the Badge widget.
         /// &#10;
         /// &#10;enable - Boolean (default: true)
         /// &#10;Indicates whether the Button should be enabled or disabled. By default, it is enabled, unless a disabled="disabled" attribute is detected.
@@ -15517,7 +15862,7 @@ intellisense.annotate(jQuery.fn, {
         /// &#10;disableDates - Array|Function (default: null)
         /// &#10;An array or function that will be used to determine which dates to be disabled for selection by the widget.
         /// &#10;
-        /// &#10;footer - String|Function 
+        /// &#10;footer - String|Function|Boolean 
         /// &#10;The template which renders the footer of the calendar. If false, the footer will not be rendered.
         /// &#10;
         /// &#10;format - String (default: "M/d/yyyy")
@@ -16642,7 +16987,7 @@ intellisense.annotate(jQuery.fn, {
         /// &#10;Define the text of the default empty item. If the value is an object, then the widget will use it as a valid data item.  Note that the optionLabel will not be available if the widget is empty.
         /// &#10;
         /// &#10;optionLabelTemplate - String|Function 
-        /// &#10;The template used to render the option label.
+        /// &#10;The template used to render the option label. Use optionLabelTemplate if you want to customize the markup of the optionLabel.
         /// &#10;
         /// &#10;headerTemplate - String|Function 
         /// &#10;Specifies a static HTML content, which will be rendered as a header of the popup element.
@@ -16777,7 +17122,7 @@ intellisense.annotate(instance, {
         /// <summary>
         /// Gets or sets the value of the DropDownTree.
         /// </summary>
-        /// <param name="value" type="Object" >The value to set. A String value when checkboxes is 'false' and an Array of strings when checkboxes is true. To clear the value, pass an empty array.</param>
+        /// <param name="value" type="Object" >The value to set. A String value, when checkboxes is 'false', and an Array of items of the value field type (number or string), when checkboxes is true. To clear the value, pass an empty array.</param>
         /// <returns type="Array">The value of the DropDownTree.</returns>
         /// </signature>
     },
@@ -17349,13 +17694,204 @@ intellisense.annotate(jQuery.fn, {
         /// &#10;Allows custom stylesheets to be included within the editing area. This setting is applicable only when the Editor is initialized from a textarea and a contenteditable iframe is generated.
         /// &#10;
         /// &#10;tools - Array 
-        /// &#10;A collection of tools that are used to interact with the Editor. Tools may be switched on by specifying their name. Custom tools and tools that require configuration are defined as objects.The available editor commands are: Basic text formatting     - bold, italic, underline, strikethrough, subscript, superscript; Font and color     - fontName, fontSize, foreColor, backColor; Alignment     - justifyLeft, justifyCenter, justifyRight, justifyFull; Lists     - insertUnorderedList, insertOrderedList, indent, outdent; Links, images and files     - createLink, unlink, insertImage, insertFile; Table editing     - tableWizard, createTable, addColumnLeft, addColumnRight, addRowAbove, addRowBelow, deleteRow, deleteColumn; Structural markup and styles     - formatting, cleanFormatting; Snippets     - insertHtml; HTML code view     - viewHtml; Print edited page     - print or Export to PDF     - pdf.
+        /// &#10;A collection of tools that are used to interact with the Editor. Tools may be switched on by specifying their name. Custom tools and tools that require configuration are defined as objects.The available editor commands are: Basic text formatting     - bold, italic, underline, strikethrough, subscript, superscript; Font and color     - fontName, fontSize, foreColor, backColor; Alignment     - justifyLeft, justifyCenter, justifyRight, justifyFull; Lists     - insertUnorderedList, insertOrderedList, indent, outdent; Links, images and files     - createLink, unlink, insertImage, insertFile; Table editing     - tableWizard, createTable, addColumnLeft, addColumnRight, addRowAbove, addRowBelow, deleteRow, deleteColumn; Structural markup and styles     - formatting, cleanFormatting; Snippets     - insertHtml; HTML code view     - viewHtml; Print edited page     - print; Export to PDF     - pdf or Format painter     - copyFormat, applyFormat.
         /// &#10;
         /// &#10;imageBrowser - Object 
         /// &#10;Configuration for image browser dialog.
         /// &#10;
         /// &#10;fileBrowser - Object 
         /// &#10;Configuration for file browser dialog.
+        /// &#10;
+        /// </summary>
+        /// <param name="options" type="Object">
+        /// The widget configuration options
+        /// </param>
+        /// </signature>
+    }
+});
+
+intellisense.annotate(kendo.ui, {
+    FileManager: function() {
+        /// <signature>
+        /// <summary>Constructor of kendo.ui.FileManager</summary>
+        /// </signature>
+    }
+});
+
+kendo.ui.FileManager = (function() {
+var original = kendo.ui.FileManager;
+var wrapper = function() {
+var instance = new original();
+intellisense.annotate(instance, {
+    path: function() {
+        /// <signature>
+        /// <summary>
+        /// Gets the path that teh FileManager is navigated to
+        /// </summary>
+        /// </signature>
+    },
+    view: function(view) {
+        /// <signature>
+        /// <summary>
+        /// Gets or sets the view of the FileManager.
+        /// </summary>
+        /// <param name="view" type="String" >The name of the view.</param>
+        /// <returns type="String">The current view.</returns>
+        /// </signature>
+    },
+    navigate: function(path) {
+        /// <signature>
+        /// <summary>
+        /// Navigates to the specified path.
+        /// </summary>
+        /// <param name="path" type="String" >The path to navigate.</param>
+        /// </signature>
+    },
+    refresh: function() {
+        /// <signature>
+        /// <summary>
+        /// Refreshes the current view of the FileManager. Rebinds the data.
+        /// </summary>
+        /// </signature>
+    },
+    executeCommand: function(command,args) {
+        /// <signature>
+        /// <summary>
+        /// Executes a command.
+        /// </summary>
+        /// <param name="command" type="String" >The command to execute.</param>
+        /// <param name="args" type="Object" >The command arguments.</param>
+        /// </signature>
+    },
+    getSelected: function() {
+        /// <signature>
+        /// <summary>
+        /// Gets the selected files (the JSON representation of the files).
+        /// </summary>
+        /// </signature>
+    },
+    getSize: function() {
+        /// <signature>
+        /// <summary>
+        /// Gets the size of the FileManager wrapper.
+        /// </summary>
+        /// </signature>
+    },
+    destroy: function() {
+        /// <signature>
+        /// <summary>
+        /// Destroys the FileManagers.
+        /// </summary>
+        /// </signature>
+    },
+
+    bind: function(event, callback) {
+        /// <signature>
+        /// <summary>
+        /// Binds to a widget event.
+        /// </summary>
+        /// <param name="event" type="String">The event name</param>
+        /// <param name="callback" type="Function">The callback to be executed when the event is triggered.</param>
+        /// </signature>
+    },
+
+    unbind: function(event, callback) {
+        /// <signature>
+        /// <summary>
+        /// Unbinds a callback from a widget event.
+        /// </summary>
+        /// <param name="event" type="String">The event name</param>
+        /// <param name="callback" type="Function">The callback to be removed.</param>
+        /// </signature>
+    }
+
+});
+
+return instance;
+
+};
+
+intellisense.redirectDefinition(wrapper, original);
+
+return wrapper;
+
+})();
+
+
+jQuery.fn.kendoFileManager = function() {
+    this.data("kendoFileManager", new kendo.ui.FileManager());
+
+    return this;
+};
+
+intellisense.annotate(jQuery.fn, {
+    getKendoFileManager: function() {
+        /// <signature>
+        /// <summary>
+        /// Returns a reference to the kendo.ui.FileManager widget, instantiated on the selector.
+        /// </summary>
+        /// <returns type="kendo.ui.FileManager">The kendo.ui.FileManager instance (if present).</returns>
+        /// </signature>
+    },
+    kendoFileManager: function(options) {
+        /// <signature>
+        /// <summary>
+        /// Instantiates a kendo.ui.FileManager widget based the DOM elements that match the selector.
+        /// &#10;Accepts an object with the following configuration options:
+        /// &#10;
+        /// &#10;width - Number|String 
+        /// &#10;Configures the width of the FileManager.
+        /// &#10;
+        /// &#10;height - Number|String 
+        /// &#10;Configures the height of the FileManager.
+        /// &#10;
+        /// &#10;initialView - String 
+        /// &#10;Configures the initial view of the FileManager.
+        /// &#10;
+        /// &#10;resizable - Boolean 
+        /// &#10;Configures the resizable features of the FileManager.
+        /// &#10;
+        /// &#10;draggable - Boolean (default: true)
+        /// &#10;Enables or disables the drag and drop features of the FileManager.
+        /// &#10;
+        /// &#10;dataSource - Object|Array|kendo.data.FileManagerDataSource 
+        /// &#10;Sets the FileManagerDataSource of the FileManager. Can be bound to a remote service or local data.
+        /// &#10;
+        /// &#10;upload - Object 
+        /// &#10;Configures the composite Upload widget of the FileManager. Accepts the same options as the kendoUpload widget.
+        /// &#10;
+        /// &#10;uploadUrl - String 
+        /// &#10;Sets the upload url for the Upload widget.
+        /// &#10;
+        /// &#10;toolbar - Boolean (default: true)
+        /// &#10;Configures the Toolbar of the FileManager
+        /// &#10;
+        /// &#10;toolbar - Object (default: true)
+        /// &#10;Configures the Toolbar of the FileManager
+        /// &#10;
+        /// &#10;dialogs - Object 
+        /// &#10;Specifies the composite Dialog widgets of the FileManager.
+        /// &#10;
+        /// &#10;contextMenu - Boolean (default: true)
+        /// &#10;Configures the ContextMenu of the FileManager.
+        /// &#10;
+        /// &#10;contextMenu - Object (default: true)
+        /// &#10;Configures the ContextMenu of the FileManager.
+        /// &#10;
+        /// &#10;views - Object 
+        /// &#10;Configures every view registered for the FileManager.
+        /// &#10;
+        /// &#10;previewPane - Object 
+        /// &#10;Configures the Preview Pane of the FileManager.
+        /// &#10;
+        /// &#10;breadcrumb - Boolean (default: true)
+        /// &#10;Configures or disables the Breadcrumb component.
+        /// &#10;
+        /// &#10;breadcrumb - Object (default: true)
+        /// &#10;Configures or disables the Breadcrumb component.
+        /// &#10;
+        /// &#10;messages - Object 
+        /// &#10;Defines the text of the localizable UI parts of the FileManager.
         /// &#10;
         /// </summary>
         /// <param name="options" type="Object">
@@ -20628,7 +21164,7 @@ intellisense.annotate(instance, {
     loadPage: function() {
         /// <signature>
         /// <summary>
-        /// Loads the page by number.
+        /// Renders page canvas by number
         /// </summary>
         /// </signature>
     },
@@ -22513,7 +23049,7 @@ intellisense.annotate(jQuery.fn, {
         /// &#10;If set to true the scheduler will display a slot for "all day" events.
         /// &#10;
         /// &#10;autoBind - Boolean (default: true)
-        /// &#10;If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the data source is fired. By default the widget will bind to the data source specified in the configuration.
+        /// &#10;If set to false the widget will not bind to the data source during initialization. In this case data binding will occur when the change event of the data source is fired. That will also apply for data sources for the resources used in the widget. By default the widget will bind to the data source specified in the configuration.
         /// &#10;
         /// &#10;currentTimeMarker - Boolean (default: true)
         /// &#10;If set to false the "current time" marker of the scheduler would not be displayed.
@@ -24296,6 +24832,9 @@ intellisense.annotate(jQuery.fn, {
         /// Instantiates a kendo.ui.Timeline widget based the DOM elements that match the selector.
         /// &#10;Accepts an object with the following configuration options:
         /// &#10;
+        /// &#10;autoBind - Boolean (default: true)
+        /// &#10;If set to false, the Timeline will not bind to the data source during initialization, i.e. it will not call the fetch method of the dataSource instance. In such scenarios data binding will occur when the change event of the dataSource instance is fired. By default, autoBind is set to true and the widget will bind to the data source specified in the configuration.
+        /// &#10;
         /// &#10;alternatingMode - Boolean (default: false)
         /// &#10;Indicates whether events should be positioned on both sides of the timeline axis. By default all events are displayed on the right side of the timeline axis.
         /// &#10;
@@ -25103,6 +25642,9 @@ intellisense.annotate(jQuery.fn, {
         /// &#10;scrollable - Boolean|Object (default: true)
         /// &#10;If set to true, the TreeList will display a scrollbar when the total row height or width exceeds the TreeList height or width. By default, scrolling is enabled. Scrolling renders separate tables for the header and data area. For accessibility-conscious applications, disable scrolling.
         /// &#10;
+        /// &#10;search - Object 
+        /// &#10;Configures the Kendo UI TreeList search bar settings.
+        /// &#10;
         /// &#10;selectable - Boolean|String (default: false)
         /// &#10;If set to true, the user will be able to select TreeList rows. By default, selection is disabled.Can also be set to the following string values: row - The user can select a single row.; cell - The user can select a single cell.; multiple, row - The user can select multiple rows. or multiple, cell - The user can select multiple cells..
         /// &#10;
@@ -25113,10 +25655,10 @@ intellisense.annotate(jQuery.fn, {
         /// &#10;If set to true, the user is able to sort the TreeList by clicking the column header cells. By default, sorting is disabled. Can be set to a JavaScript object which represents the sorting configuration.
         /// &#10;
         /// &#10;toolbar - String|Function 
-        /// &#10;If a String value is assigned to the toolbar configuration option, it will be treated as a single string template for the whole TreeList toolbar and the string value will be passed as an argument to a kendo.template() function.; If a Function value is assigned (it may be a kendo.template() function call or a generic function reference), then the return value of the function will be used to render the contents of the TreeList toolbar. or If an Array value is assigned, it will be treated as the list of commands which are displayed in the TreeList toolbar. Commands can be custom or built-in. The supported built-in commands are:create - Adds an empty data item to the treelist.excel - Exports the TreeList data in MS Excel format.pdf - Exports the TreeList data in PDF format..
+        /// &#10;If a String value is assigned to the toolbar configuration option, it will be treated as a single string template for the whole TreeList toolbar and the string value will be passed as an argument to a kendo.template() function.; If a Function value is assigned (it may be a kendo.template() function call or a generic function reference), then the return value of the function will be used to render the contents of the TreeList toolbar. or If an Array value is assigned, it will be treated as the list of commands which are displayed in the TreeList toolbar. Commands can be custom or built-in. The supported built-in commands are:create - Adds an empty data item to the treelist.excel - Exports the TreeList data in MS Excel format.pdf - Exports the TreeList data in PDF format.search - built-in search panel for the TreeList..
         /// &#10;
         /// &#10;toolbar - Array 
-        /// &#10;If a String value is assigned to the toolbar configuration option, it will be treated as a single string template for the whole TreeList toolbar and the string value will be passed as an argument to a kendo.template() function.; If a Function value is assigned (it may be a kendo.template() function call or a generic function reference), then the return value of the function will be used to render the contents of the TreeList toolbar. or If an Array value is assigned, it will be treated as the list of commands which are displayed in the TreeList toolbar. Commands can be custom or built-in. The supported built-in commands are:create - Adds an empty data item to the treelist.excel - Exports the TreeList data in MS Excel format.pdf - Exports the TreeList data in PDF format..
+        /// &#10;If a String value is assigned to the toolbar configuration option, it will be treated as a single string template for the whole TreeList toolbar and the string value will be passed as an argument to a kendo.template() function.; If a Function value is assigned (it may be a kendo.template() function call or a generic function reference), then the return value of the function will be used to render the contents of the TreeList toolbar. or If an Array value is assigned, it will be treated as the list of commands which are displayed in the TreeList toolbar. Commands can be custom or built-in. The supported built-in commands are:create - Adds an empty data item to the treelist.excel - Exports the TreeList data in MS Excel format.pdf - Exports the TreeList data in PDF format.search - built-in search panel for the TreeList..
         /// &#10;
         /// </summary>
         /// <param name="options" type="Object">
