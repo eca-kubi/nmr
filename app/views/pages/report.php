@@ -167,7 +167,7 @@ echo $spreadsheet_templates; ?>'>
     let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
     let tablePrefix = "<?php echo $table_prefix ?? 'nmr'; ?>";
     let clearedContents = "";
-    let targetMonthYearsSubmissionStatus = JSON.parse('<?php echo json_encode(getTargetMonthYearsSubmissionStatus($table_prefix?? 'nmr')) ?>') ;
+    let targetMonthYearsSubmissionStatus = JSON.parse('<?php echo json_encode(getTargetMonthYearsSubmissionStatus($table_prefix ?? 'nmr')) ?>');
     /** @type {kendo.ui.ToolBar}*/
     let editorActionToolbar;
     let seriesColor = {
@@ -355,7 +355,7 @@ echo $spreadsheet_templates; ?>'>
                     },
                     hidden: true
                 },
-                <?php if (isset($edit_draft) && isSubmissionOpened($target_month?? '', $target_year?? '', $table_prefix??  'nmr')): ?>
+                <?php if (isset($edit_draft) && isSubmissionOpened($target_month ?? '', $target_year ?? '', $table_prefix ?? 'nmr')): ?>
                 {
                     type: "button",
                     text: "Submit Report",
@@ -363,7 +363,7 @@ echo $spreadsheet_templates; ?>'>
                     id: "submitReportBtn",
                     attributes: {"class": "submit-report-btn"},
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted($target_month?? '', $target_year?? '', $current_user->department_id, $table_prefix?? 'nmr') ? 'true' : '' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted($target_month ?? '', $target_year ?? '', $current_user->department_id, $table_prefix ?? 'nmr') ? 'true' : '' ?>")
                 },
                 {
                     type: "button",
@@ -372,7 +372,7 @@ echo $spreadsheet_templates; ?>'>
                     attributes: {"class": "update-submitted-report-btn"},
                     text: "Update Submitted Report",
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted($target_month?? '', $target_year?? '', $current_user->department_id, $table_prefix?? 'nmr') ? '' : 'true' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted($target_month ?? '', $target_year ?? '', $current_user->department_id, $table_prefix ?? 'nmr') ? '' : 'true' ?>")
                 },
                 <?php endif; ?>
 
@@ -410,12 +410,16 @@ echo $spreadsheet_templates; ?>'>
             ]
         }).data("kendoToolBar");
 
+function appendTocHTag(value) {
+    let randomId = value +'tag_' + Date.now();
+    editor.exec('insertHtml', {value: `<${value} id=${randomId}></${value}>`});
+}
         editor = $("#editor").kendoEditor({
             tools: [
-               /* {
-                    name: "MoveResize",
-                    template: "<a class=' k-button m-1 d-invisible' title='Move/Resize'> <i class='k-icon k-i-arrows-resizing'></i>&nbsp;Move/Resize</a>"
-                },*/
+                /* {
+                     name: "MoveResize",
+                     template: "<a class=' k-button m-1 d-invisible' title='Move/Resize'> <i class='k-icon k-i-arrows-resizing'></i>&nbsp;Move/Resize</a>"
+                 },*/
                 "bold",
                 "italic",
                 "underline",
@@ -454,6 +458,16 @@ echo $spreadsheet_templates; ?>'>
                 "foreColor",
                 "backColor",
                 "viewHtml",
+                {
+                    name: "toc",
+                    tooltip: "ToC Headings",
+                    template: `<select id="toc" style="width: 100%;">
+                <option value="h1"><h1>H1</h1></option>
+                <option value="h2"><h2>H2</h2></option>
+                <option value="h3"><h3>H3</h3></option>
+                <option value="h4"><h4>H4</h4></option>
+            </select>`
+                },
                 {
                     name: "pageBreak",
                     tooltip: "Insert Page Break",
@@ -510,11 +524,29 @@ echo $spreadsheet_templates; ?>'>
             encoded: false
         }).data("kendoEditor");
         //$(editor.body).off("paste")
-        if (editor)
+        if (editor) {
+            let tocDropDown = $("#toc").kendoDropDownList({
+                select(e) {
+                    appendTocHTag(this.value());
+                    /*if (this.value === 'h1') {
+                        editor.exec('insertHtml', {value: `<h1 id=${}></h1>`});
+                    } else if (this.value === 'h2') {
+                        editor.exec('insertHtml', {value: `<h2 id=${}></h2>`});
+                    } else if (this.value === 'h3') {
+                        editor.exec('insertHtml', {value: `<h3 id=${}></h3>`});
+                    } else if (this.value === 'h4') {
+                        editor.exec('insertHtml', {value: `<h4 id=${}></h4>`});
+                    }*/
+                }
+            });
             appendScriptsToEditor(editor.document, [
                 `${URL_ROOT}/public/assets/js/subjx/subjx.min.js`,
                 `${URL_ROOT}/public/assets/js/displace/displace.min.js`,
             ]);
+            editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
+        }
+
+
         /*
         // Limit image upload size
         $(".k-i-image").on('click', function () {
@@ -529,10 +561,6 @@ echo $spreadsheet_templates; ?>'>
                 });
             });
         });*/
-
-        if (editor) {
-            editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
-        }
 
         $(".page-break-btn").on('click', (e) => editor.paste("<p style='page-break-before: always'></p>"));
         let chartMenuCommand = {
@@ -561,7 +589,7 @@ echo $spreadsheet_templates; ?>'>
                     //["cut", "copy", "paste"],
                     ["bold", "italic", "underline"],
                     "fontSize",
-                    //"fontFamily",
+                    "fontFamily",
                     "alignment",
                     "backgroundColor",
                     "textColor",
@@ -651,7 +679,7 @@ echo $spreadsheet_templates; ?>'>
     function loadDraft() {
         let json = $("#spreadsheetContent").val();
         if (json)
-        spreadsheet.fromJSON(JSON.parse(json));
+            spreadsheet.fromJSON(JSON.parse(json));
         let sheets = spreadsheet.sheets();
         for (let i = 0; i < sheets.length; i++) {
             createChartFromSheet(sheets[i])
@@ -1492,8 +1520,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        }
-        else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER_2)) {
+        } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER_2)) {
             sheet.range("B3:M5").format('#,###');
             let valueRange = sheet.range("B2:G6");
             let fieldRange = sheet.range("A2:G6");
@@ -1857,7 +1884,10 @@ echo $spreadsheet_templates; ?>'>
             // Render the result as a PDF file
             return kendo.drawing.exportPDF(group, {});
         }).done(dataURI => {
-            $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`,{html_content: editor.value(), data_uri: dataURI}, () => {
+            $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`, {
+                html_content: editor.value(),
+                data_uri: dataURI
+            }, () => {
                 let alert = kendoAlert('Save Flash Report', `${targetMonth} ${targetYear} Flash Report saved successfully!`);
                 setTimeout(() => alert.close(), 1500);
             }, "json")
@@ -1977,7 +2007,7 @@ echo $spreadsheet_templates; ?>'>
         let targetYear = $("#targetYear").val();
         let submit = () => {
             let dfd = $.Deferred();
-            let post = $.post(URL_ROOT + "/pages/submit-report/"  + tablePrefix + "/" + targetMonth + "/" + targetYear, {
+            let post = $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
                 title: title,
                 draft_id: draftId.val(),
                 content: editor.value(),
