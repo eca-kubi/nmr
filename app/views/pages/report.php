@@ -1114,6 +1114,9 @@ echo $spreadsheet_templates; ?>'>
                         title: {
                             text: "Gold Produced (Oz)",
                             font: "10px sans-serif"
+                        },
+                        labels: {
+                            format: "{0:n}"
                         }
                     }
                 ]
