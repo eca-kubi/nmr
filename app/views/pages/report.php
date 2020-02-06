@@ -1103,7 +1103,7 @@ function appendTocHTag(value) {
                         visible: false
                     },
                     labels: {
-                        font: "12px"
+                        font: "10px sans-serif"
                     }
                 },
                 valueAxis: [
@@ -1111,7 +1111,7 @@ function appendTocHTag(value) {
                         name: "goldProduced",
                         title: {
                             text: "Gold Produced (Oz)",
-                            font: "12px"
+                            font: "10px sans-serif"
                         }
                     }
                 ]
@@ -1150,7 +1150,7 @@ function appendTocHTag(value) {
                     }
                 },
                 title: {
-                    text: "GOLD PRODUCED AND TONNES MILLED"
+                    text: CHART_PROCESSING
                 },
                 dataSource: {data: data},
                 series: [
@@ -1189,13 +1189,15 @@ function appendTocHTag(value) {
                     {
                         name: "tonnes",
                         title: {
-                            text: "Tonnes Milled (t)"
+                            text: "Tonnes Milled (t)",
+                            font: "10px sans-serif"
                         }
                     },
                     {
                         name: "goldProduced",
                         title: {
-                            text: "Gold Produced (oz)"
+                            text: "Gold Produced (oz)",
+                            font: "10px sans-serif"
                         }
                     }
                 ],
@@ -1203,6 +1205,9 @@ function appendTocHTag(value) {
                     axisCrossingValues: [0, 13],
                     majorGridLines: {
                         visible: false
+                    },
+                    labels: {
+                        font: "10px sans-serif"
                     }
                 }
             })).data("kendoChart");
