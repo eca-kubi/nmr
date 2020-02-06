@@ -598,7 +598,7 @@ function appendTocHTag(value) {
                 insert: false,
                 data: false
             },
-            columns: 13,
+            columns: 14,
             rows: 8,
             removeSheet(e) {
                 chartsTabStrip.remove("li[aria-controls=" + chartTabs[e.sheet.name()] + "]");  //remove chart related to sheet
