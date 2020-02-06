@@ -772,13 +772,13 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName.startsWith(CHART_GOLD_PRODUCED_TONS_MILLED)) {
+        } else if (sheetName.startsWith(CHART_GOLD_PRODUCTION)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
                 title: {
-                    text: CHART_GOLD_PRODUCED_TONS_MILLED
+                    text: CHART_GOLD_PRODUCTION
                 },
                 dataSource: {data: data},
                 series: [

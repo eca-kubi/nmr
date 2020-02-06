@@ -1040,13 +1040,39 @@ function appendTocHTag(value) {
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName === (CHART_GOLD_PRODUCED_TONS_MILLED)) {
+        } else if (sheetName === (CHART_GOLD_PRODUCTION)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
+                legend: {
+                    visible: true,
+                    position: "bottom",
+                    item: {
+                        cursor: "pointer",
+                        visual: function (e) {
+                            let layout;
+                            let type = e.series.type;
+                            let dashType = e.series.dashType;
+                            let color = e.options.markers.background;
+                            let labelColor = e.options.labels.color;
+                            let label = e.series.name;
+
+                            if (type === "line") {
+                                return renderLegend(label, labelColor, color, 1.5, dashType, {
+                                    pathColor: seriesColor.budgetOunces,
+                                    circleColor: seriesColor.budgetOunces
+                                })
+                            } else if (type === "column") {
+                                return renderLegend(label, labelColor, color, 10)
+                            }
+
+                            return e.createVisual();
+                        }
+                    }
+                },
                 title: {
-                    text: CHART_GOLD_PRODUCED_TONS_MILLED
+                    text: CHART_GOLD_PRODUCTION
                 },
                 dataSource: {data: data},
                 series: [
@@ -1060,17 +1086,35 @@ function appendTocHTag(value) {
                         color: seriesColor.goldProduced
                     },
                     {
-                        field: "['TONS MILLED']",
+                        field: "['BUDGET OUNCES']",
                         categoryField: categoryField,
                         type: "line",
-                        name: "TONS MILLED",
-                        color: seriesColor.budgetOunces
+                        name: "BUDGET OUNCES",
+                        color: seriesColor.budgetOunces,
+                        markers: {
+                            visible: true,
+                            background: seriesColor.budgetOunces
+                        }
                     }
                 ],
+                categoryAxis: {
+                    axisCrossingValues: [0, 13],
+                    majorGridLines: {
+                        visible: false
+                    }
+                },
+                valueAxis: [
+                    {
+                        name: "goldProduced",
+                        title: {
+                            text: "Gold Produced (Oz)"
+                        }
+                    }
+                ]
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === CHART_GOLD_PRODUCED_TONS_MILLED_2) {
+        } else if (sheetName === CHART_PROCESSING) {
             let valueRange = sheet.range("B2:M5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
