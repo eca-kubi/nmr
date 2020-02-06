@@ -410,10 +410,11 @@ echo $spreadsheet_templates; ?>'>
             ]
         }).data("kendoToolBar");
 
-function appendTocHTag(value) {
-    let randomId = value +'tag_' + Date.now();
-    editor.exec('insertHtml', {value: `<${value} id=${randomId}></${value}>`});
-}
+        function appendTocHTag(value) {
+            let randomId = value + 'tag_' + Date.now();
+            editor.exec('insertHtml', {value: `<${value} id=${randomId}></${value}>`});
+        }
+
         editor = $("#editor").kendoEditor({
             tools: [
                 /* {
@@ -1186,20 +1187,39 @@ function appendTocHTag(value) {
                     }
                 ],
                 valueAxis: [
+
+                    {
+                        line: {visible:false},
+                        labels: {
+                            visible: false
+                        }
+                    },
                     {
                         name: "tonnes",
                         title: {
                             text: "Tonnes Milled (t)",
                             font: "10px sans-serif"
-                        }
+                        },
+                        labels: {
+                            font: "10px sans-serif",
+                            format: "{0:n}"
+                        },
+                        narrowRange: true
+                        // majorUnit: 20000
                     },
                     {
                         name: "goldProduced",
                         title: {
                             text: "Gold Produced (oz)",
-                            font: "10px sans-serif"
-                        }
-                    }
+                            font: "10px sans-serif",
+                        },
+                        labels: {
+                            font: "10px sans-serif",
+                            format: "{0:n}"
+                        },
+                        narrowRange: true
+                        //majorUnit: 2000
+                    },
                 ],
                 categoryAxis: {
                     axisCrossingValues: [0, 13],
