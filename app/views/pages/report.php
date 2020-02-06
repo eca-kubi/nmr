@@ -1101,13 +1101,17 @@ function appendTocHTag(value) {
                     axisCrossingValues: [0, 13],
                     majorGridLines: {
                         visible: false
+                    },
+                    labels: {
+                        font: "12px"
                     }
                 },
                 valueAxis: [
                     {
                         name: "goldProduced",
                         title: {
-                            text: "Gold Produced (Oz)"
+                            text: "Gold Produced (Oz)",
+                            font: "12px"
                         }
                     }
                 ]
