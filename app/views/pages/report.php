@@ -1090,6 +1090,7 @@ echo $spreadsheet_templates; ?>'>
                         field: "['BUDGET OUNCES']",
                         categoryField: categoryField,
                         type: "line",
+                        style: "normal",
                         name: "BUDGET OUNCES",
                         color: seriesColor.budgetOunces,
                         markers: {
