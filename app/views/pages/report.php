@@ -1919,7 +1919,7 @@ echo $spreadsheet_templates; ?>'>
         let dfd = $.Deferred();
         let promise = dfd.promise();
         promise.done((description) => {
-            $.post(`${URL_ROOT}/pages/save-report-part/${reportPartId}/${tablePrefix}`, {
+            $.post(`${URL_ROOT}/pages/save-report-part/${tablePrefix}/${reportPartId}`, {
                 content: editor.value(),
                 description: description
             }, null, "json").done(d => {
@@ -1927,7 +1927,7 @@ echo $spreadsheet_templates; ?>'>
                 setTimeout(() => alert.close(), 1500);
             });
         });
-        if (parseInt(reportPartId) < 1) {
+        if (!description) {
             kendo.prompt('Enter the description', '').done(description => {
                 dfd.resolve(description);
             })
