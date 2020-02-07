@@ -1927,7 +1927,7 @@ echo $spreadsheet_templates; ?>'>
                 setTimeout(() => alert.close(), 1500);
             });
         });
-        if (!reportPartId) {
+        if (parseInt(reportPartId) < 1) {
             kendo.prompt('Enter the description', '').done(description => {
                 dfd.resolve(description);
             })
