@@ -226,7 +226,7 @@ class Pages extends Controller
         }
     }
 
-    public function saveReportPart($report_part_id = "", $table_prefix = 'nmr')
+    public function saveReportPart($report_part_id = -1, $table_prefix = 'nmr')
     {
         $db = Database::getDbh();
         if ($report_part_id) {
