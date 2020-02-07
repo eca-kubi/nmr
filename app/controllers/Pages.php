@@ -229,7 +229,7 @@ class Pages extends Controller
     public function saveReportPart($report_part_id = -1, $table_prefix = 'nmr')
     {
         $db = Database::getDbh();
-        if ($report_part_id) {
+        if ((int) $report_part_id) {
             if ($db->where('report_part_id', $report_part_id)->update($table_prefix . '_report_parts', [
                 'content' => $_POST['content']
             ])) {
