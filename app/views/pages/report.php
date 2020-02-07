@@ -51,9 +51,9 @@
                                         <input type="hidden" id="reportSubmissionsId" name="report_submissions_id"
                                                value="<?php echo $report_submissions_id ?? ''; ?>">
                                         <input type="hidden" id="editSubmittedReport" name="edit_submitted_report"
-                                               value="<?php echo $edit_submitted_report ?? -1; ?>">
+                                               value="<?php echo $edit_submitted_report ?? ''; ?>">
                                         <input type="hidden" id="reportPartId" name="report_part_id"
-                                               value="<?php echo $report_part_id ?? ''; ?>">
+                                               value="<?php echo $report_part_id ?? -1; ?>">
                                         <input type="hidden" id="reportPartIdTemp" name="report_part_id_temp">
                                         <input type="hidden" id="reportPartDescription" name="report_part_description"
                                                value="<?php echo $report_part_description ?? ''; ?>">
