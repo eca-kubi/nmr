@@ -446,15 +446,16 @@ class Pages extends Controller
         }
     }
 
-    public function editReportPart($report_part_id)
+    public function editReportPart($report_part_id, $table_prefix='nmr')
     {
         $db = Database::getDbh();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/edit-report-part/' . $report_part_id);
+            redirect('users/login/pages/edit-report-part/' . $report_part_id . ($table_prefix? '/' . $table_prefix : '') );
         }
         $payload['edit_report_part'] = true;
-        $report_part = $db->where('report_part_id', $report_part_id)->getOne('nmr_report_parts');
+        $report_part = $db->where('report_part_id', $report_part_id)->getOne($table_prefix .'_report_parts');
         $payload['content'] = $report_part['content'];
+        $payload['table_prefix'] = $table_prefix;
         $payload['report_part_id'] = $report_part_id;
         $payload['report_part_description'] = $report_part['description'];
         $payload['page_title'] = 'Edit ' . $report_part['description'];

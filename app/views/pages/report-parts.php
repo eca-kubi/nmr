@@ -42,16 +42,18 @@
                                                                         data-toggle="dropdown" role="button"></a>
                                                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                                         <a class="dropdown-item preview-btn"
+                                                           data-table-prefix="<?php echo 'nmr'; ?>"
                                                            data-report-part-id="<?php echo $report_part['report_part_id']; ?>"
                                                            data-description="<?php echo $report_part['description']; ?>"
                                                            href="#"
                                                         ><i class="fa fa-play-circle-o"></i> Preview</a>
 
                                                         <a class="dropdown-item"
-                                                           href="<?php echo URL_ROOT . '/pages/edit-report-part/' . $report_part['report_part_id']; ?>"
+                                                           href="<?php echo URL_ROOT . '/pages/edit-report-part/' . $report_part['report_part_id'] . '/nmr'; ?>"
                                                         ><i class="fa fa-file-edit"></i> Edit</a>
 
                                                         <a class="dropdown-item delete-draft-btn d-none" href="#"
+                                                           data-table-prefix="<?php echo 'nmr'; ?>"
                                                            data-report-part-id="<?php echo $report_part['report_part_id']; ?>"
                                                            data-parent="#report_part_<?php echo $report_part['report_part_id']; ?>"><i
                                                                     class="fa fa-trash-o"></i> Delete</a>
@@ -61,12 +63,14 @@
 
                                             <a href="#" style="position: absolute; bottom: 20px; right: 70px"
                                                class="text-sm font-poppins w3-text-dark-grey preview-btn"
+                                               data-table-prefix="<?php echo 'nmr'; ?>"
                                                data-report-part-id="<?php echo $report_part['report_part_id']; ?>"
                                                data-description="<?php echo $report_part['description']; ?>"><i
                                                         class="fa fa-play-circle-o"></i> Preview</a>
-                                            <a href="<?php echo URL_ROOT . '/pages/edit-report-part/' . $report_part['report_part_id']; ?>"
+                                            <a href="<?php echo URL_ROOT . '/pages/edit-report-part/' . $report_part['report_part_id'] . '/nmr'; ?>"
                                                class="text-sm font-poppins w3-text-dark-grey edit-btn mx-4"
                                                style="position: absolute; bottom: 20px; right: 0"
+                                               data-table-prefix="<?php echo 'nmr'; ?>"
                                                data-report-part-id="<?php echo $report_part['report_part_id']; ?>"
                                                data-description="<?php echo $report_part['description']; ?>"><i
                                                         class="fa fa-file-edit"></i> Edit</a>
@@ -93,7 +97,7 @@
                             <?php echo 'Report Parts <span class="text-warning">(Full Report)</span>'; ?>
                         </h5>
                         <div class="box-tools pull-right ml-auto <?php echo isITAdmin($current_user->user_id) ? '' : 'd-none'; ?>">
-                            <a type="button" href="<?php echo URL_ROOT . '/fr/add-report-part' ?>"
+                            <a type="button" href="<?php echo URL_ROOT . '/pages/add-report-part/nmr_fr' ?>"
                                class="btn btn-app btn-box-tool btn-outline-light btn-sm">
                                 <i class="fa fa-file"></i> <span><i
                                             class="fa fa-plus"></i> Add Report Part</span>
@@ -122,13 +126,15 @@
                                                                         data-toggle="dropdown" role="button"></a>
                                                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                                         <a class="dropdown-item preview-fr-btn"
+                                                           data-table-prefix="<?php echo 'nmr_fr'; ?>"
                                                            data-report-part-id="<?php echo $report_part['report_part_id']; ?>"
                                                            data-description="<?php echo $report_part['description']; ?>"
                                                            href="#"
                                                         ><i class="fa fa-play-circle-o"></i> Preview</a>
 
                                                         <a class="dropdown-item"
-                                                           href="<?php echo URL_ROOT . '/fr/edit-report-part/' . $report_part['report_part_id']; ?>"
+                                                           data-table-prefix="<?php echo 'nmr_fr'; ?>"
+                                                           href="<?php echo URL_ROOT . '/pages/edit-report-part/' . $report_part['report_part_id'] . '/nmr_fr'; ?>"
                                                         ><i class="fa fa-file-edit"></i> Edit</a>
 
                                                         <a class="dropdown-item delete-draft-btn d-none" href="#"
@@ -141,12 +147,14 @@
 
                                             <a href="#" style="position: absolute; bottom: 20px; right: 70px"
                                                class="text-sm font-poppins w3-text-dark-grey preview-fr-btn"
+                                               data-table-prefix="<?php echo 'nmr_fr'; ?>"
                                                data-report-part-id="<?php echo $report_part['report_part_id']; ?>"
                                                data-description="<?php echo $report_part['description']; ?>"><i
                                                         class="fa fa-play-circle-o"></i> Preview</a>
-                                            <a href="<?php echo URL_ROOT . '/fr/edit-report-part/' . $report_part['report_part_id']; ?>"
+                                            <a href="<?php echo URL_ROOT . '/pages/edit-report-part/' . $report_part['report_part_id'] . '/nmr_fr'; ?>"
                                                class="text-sm font-poppins w3-text-dark-grey edit-btn mx-4"
                                                style="position: absolute; bottom: 20px; right: 0"
+                                               data-table-prefix="<?php echo 'nmr_fr'; ?>"
                                                data-report-part-id="<?php echo $report_part['report_part_id']; ?>"
                                                data-description="<?php echo $report_part['description']; ?>"><i
                                                         class="fa fa-file-edit"></i> Edit</a>
@@ -238,48 +246,30 @@
 
         }, 1000);
 
-        $("a.preview-btn").on("click", function (e) {
-            let reportPartId = $(e.currentTarget).data('reportPartId');
-            window.reportPartId = reportPartId;
-            let description = $(e.currentTarget).data('description');
-            $.get(URL_ROOT + "/pages/fetch-report-part/" + reportPartId).done(function (data, successTextStatus, jQueryXHR) {
-
-                previewEditor.value(data);
-                kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'a3',
-                    margin: "1.3cm",
-                    multipage: true
-                }).then(function (group) {
-                    // Render the result as a PDF file
-                    return kendo.drawing.exportPDF(group, {});
-                })
-                    .done(function (data) {
-                        draftWindow.center().open().maximize();
-                        pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                        setTimeout(() => pdfViewer.activatePage(1), 500)
-                    });
+        let showPdfViewer = () => {
+            kendo.drawing.drawDOM($(previewEditor.body), {
+                paperSize: 'a3',
+                margin: "1.3cm",
+                multipage: true,
+                forcePageBreak: '.page-break'
+            }).then(function (group) {
+                return kendo.drawing.exportPDF(group, {});
+            }).done(function (data) {
+                pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                setTimeout(() => pdfViewer.activatePage(1), 500)
             });
-        });
-        $("a.preview-fr-btn").on("click", function (e) {
+        };
+
+        $("a.preview-btn, a.preview-fr-btn").on("click", function (e) {
             let reportPartId = $(e.currentTarget).data('reportPartId');
+            let tablePrefix = $(e.currentTarget).data('tablePrefix');
             window.reportPartId = reportPartId;
             let description = $(e.currentTarget).data('description');
-            $.get(URL_ROOT + "/fr/fetch-report-part/" + reportPartId).done(function (data, successTextStatus, jQueryXHR) {
-
+            $.post(URL_ROOT + "/pages/preview-content/", {
+                content: editor.value()
+            }, null, "html").done((data) => {
                 previewEditor.value(data);
-                kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'a3',
-                    margin: "1.3cm",
-                    multipage: true
-                }).then(function (group) {
-                    // Render the result as a PDF file
-                    return kendo.drawing.exportPDF(group, {});
-                })
-                    .done(function (data) {
-                        draftWindow.center().open().maximize();
-                        pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                        setTimeout(() => pdfViewer.activatePage(1), 500)
-                    });
+                showPdfViewer();
             });
         });
     });

@@ -478,6 +478,21 @@ echo $spreadsheet_templates; ?>'>
             select(e) {
                 //console.log('select')
             },
+            execute: function(e) {
+                var editor = this;
+                if (e.name === "createtable") {
+                    setTimeout(function() {
+                        var table = $(editor.body).find("table:not(.custom-table)");
+                        table.addClass("custom-table");
+                        table.attr("style", "border: 1px solid black;");
+                        table.find("tr td")
+                            .each(function () {
+                                var currentStyle = $(this).attr("style");
+                                $(this).attr("style", currentStyle + " border: 1px solid black;");
+                            });
+                    }, 0);
+                }
+            },
             stylesheets: [
                 "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                 "<?php echo URL_ROOT; ?>/public/assets/css/overlay-scrollbar/OverlayScrollbars.min.css",
