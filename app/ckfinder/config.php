@@ -33,7 +33,8 @@ $config['authentication'] = function () {
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_licenseKey
 
 $config['licenseName'] = 'sms2.arlgh.com';
-$config['licenseKey'] = '*F2J-*1**-M**M-*M**-*1**-T*9*-J**P';
+//$config['licenseKey'] = '*F2J-*1**-M**M-*M**-*1**-T*9*-J**P';
+$config['licenseKey'] = '*T?V-*1**-7**U-*7**-*M**-T*M*-3**B'; // Any hostname
 
 /*============================ CKFinder Internal Directory ============================*/
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_privateDir
