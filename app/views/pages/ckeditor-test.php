@@ -42,7 +42,7 @@
     $(function () {
         CKEDITOR.replace('content', {
             filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse',
-            filebrowserUploadUrl: URL_ROOT + '/ckfinder/upload?command=QuickUpload&type=Files'
+           filebrowserUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files'
         });
         CKEDITOR.config.extraPlugins = 'image2';
     });

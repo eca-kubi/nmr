@@ -14,6 +14,13 @@ class CkFinder extends Controller
        require_once APP_ROOT . '../ckfinder/ckfinder.html';
     }
 
+    public function get($type, $folder, $file_name)
+    {
+        //$file_name = isset($_GET['f']) ? $_GET['f'] : '';
+        $file_name = FILE_UPLOAD_PATH . "/" . uniqueId() . "/" . $file_name;
+        sendFile($file_name);
+    }
+
     public function upload()
     {
         $command = $_GET['command'];

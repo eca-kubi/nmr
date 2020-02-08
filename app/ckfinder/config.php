@@ -32,8 +32,8 @@ $config['authentication'] = function () {
 /*============================ License Key ============================================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_licenseKey
 
-$config['licenseName'] = '';
-$config['licenseKey'] = '';
+$config['licenseName'] = 'sms2.arlgh.com';
+$config['licenseKey'] = '*F2J-*1**-M**M-*M**-*1**-T*9*-J**P';
 
 /*============================ CKFinder Internal Directory ============================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_privateDir
@@ -66,8 +66,8 @@ $config['images'] = array(
 $config['backends'][] = array(
     'name' => 'default',
     'adapter' => 'local',
-    'baseUrl' => URL_ROOT . '/file-service/files/',
-    'root' => FILE_UPLOAD_PATH . '/' . uniqueId(), // Can be used to explicitly set the CKFinder user files directory.
+    'baseUrl' => URL_ROOT . '/public/uploads/' . uniqueId(),
+    'root' => APP_ROOT . '/../public/uploads/' . uniqueId(), // Can be used to explicitly set the CKFinder user files directory.
     'chmodFiles' => 0777,
     'chmodFolders' => 0755,
     'filesystemEncoding' => 'UTF-8',
