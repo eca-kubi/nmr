@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
-Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.html or https://ckeditor.com/sales/license/ckfinder
+Copyright (c) 2007-2017, CKSource - Frederico Knabben. All rights reserved.
+For licensing, see LICENSE.html or http://cksource.com/ckfinder/license
 -->
 <html>
 <head>
@@ -21,7 +21,7 @@ For licensing, see LICENSE.html or https://ckeditor.com/sales/license/ckfinder
 		</h1>
 		<nav class="navigation-b grid-width-70">
 			<ul>
-				<li><a href="https://ckeditor.com/docs/ckfinder/ckfinder3/" class="button-a">Documentation</a></li>
+				<li><a href="http://docs.cksource.com/ckfinder3/" class="button-a">Documentation</a></li>
 			</ul>
 		</nav>
 	</div>
@@ -39,7 +39,6 @@ For licensing, see LICENSE.html or https://ckeditor.com/sales/license/ckfinder
 		<h2 class="tree-a-no-sub"><a href="ckeditor.html">CKEditor Integration</a></h2>
 		<h2>Skins</h2>
 		<ul>
-			<li><a href="skins-neko.html">Neko</a></li>
 			<li><a href="skins-moono.html">Moono</a></li>
 			<li><a href="skins-jquery-mobile.html">jQuery Mobile</a></li>
 		</ul>
@@ -61,7 +60,7 @@ For licensing, see LICENSE.html or https://ckeditor.com/sales/license/ckfinder
 	<section class="content grid-width-70">
 		<h1>Popup Mode</h1>
 
-		<p>The <a href="https://ckeditor.com/docs/ckfinder/ckfinder3/#!/guide/dev_installation-section-using-ckfinder-in-a-popup-window">popup mode</a> is most suitable for selecting files that are stored on a server.<br />
+		<p>The <a href="http://docs.cksource.com/ckfinder3/#!/guide/dev_installation-section-using-ckfinder-in-a-popup-window">popup mode</a> is most suitable for selecting files that are stored on a server.<br />
 		Click the button below to open the popup and choose any file. After that you will see basic information
 		about the file that was selected, including the URL.</p>
 
@@ -123,18 +122,18 @@ function selectFileWithCKFinder( elementId ) {
 <footer class="footer-a grid-container">
 	<div class="grid-container">
 		<p class="grid-width-100">
-			CKFinder 3 for PHP &ndash; <a href="https://ckeditor.com/ckeditor-4/ckfinder/">https://ckeditor.com/ckeditor-4/ckfinder/</a>
+			CKFinder 3 for PHP &ndash; <a href="http://cksource.com/ckfinder">http://cksource.com/ckfinder</a>
 		</p>
 		<p class="grid-width-100">
-			Copyright &copy; 2003-2019, <a class="samples" href="http://cksource.com/">CKSource</a> &ndash; Frederico
-			Knabben. <a href="https://ckeditor.com/sales/license/ckfinder">All rights reserved</a>.
+			Copyright &copy; 2003-2015, <a class="samples" href="http://cksource.com/">CKSource</a> &ndash; Frederico
+			Knabben. <a href="http://cksource.com/ckfinder/license">All rights reserved</a>.
 		</p>
 	</div>
 </footer>
 <nav class="navigation-a">
 	<div class="grid-container">
 		<ul class="navigation-a-left grid-width-70">
-			<li><a href="https://ckeditor.com/ckeditor-4/ckfinder/">Project Homepage</a></li>
+			<li><a href="http://cksource.com/ckfinder">Project Homepage</a></li>
 			<li class="global-is-mobile-hidden"><a href="https://github.com/ckfinder/ckfinder/issues">I found a bug in CKFinder</a></li>
 			<li class="global-is-mobile-hidden"><a class="icon-pos-right icon-navigation-a-github" href="https://github.com/ckfinder/ckfinder-docs-samples">Sample Plugins on GitHub</a></li>
 		</ul>
@@ -145,15 +144,6 @@ function selectFileWithCKFinder( elementId ) {
 <script src="js/tree-a.js"></script>
 <script src="../ckfinder.js"></script>
 <script>
-	function escapeHtml(unsafe) {
-		return unsafe
-			.replace(/&/g, "&amp;")
-			.replace(/</g, "&lt;")
-			.replace(/>/g, "&gt;")
-			.replace(/"/g, "&quot;")
-			.replace(/'/g, "&#039;");
-	}
-
 	var button = document.getElementById( 'ckfinder-popup' );
 
 	button.onclick = function() {
@@ -165,12 +155,12 @@ function selectFileWithCKFinder( elementId ) {
 				finder.on( 'files:choose', function( evt ) {
 					var file = evt.data.files.first();
 					var output = document.getElementById( 'output' );
-					output.innerHTML = 'Selected: ' + escapeHtml( file.get( 'name' ) ) + '<br>URL: ' + escapeHtml( file.getUrl() );
+					output.innerHTML = 'Selected: ' + file.get( 'name' ) + '<br>URL: ' + file.getUrl();
 				} );
 
 				finder.on( 'file:choose:resizedImage', function( evt ) {
 					var output = document.getElementById( 'output' );
-					output.innerHTML = 'Selected resized image: ' + escapeHtml( evt.data.file.get( 'name' ) ) + '<br>url: ' + escapeHtml( evt.data.resizedUrl );
+					output.innerHTML = 'Selected resized image: ' + evt.data.file.get( 'name' ) + '<br>url: ' + evt.data.resizedUrl;
 				} );
 			}
 		} );

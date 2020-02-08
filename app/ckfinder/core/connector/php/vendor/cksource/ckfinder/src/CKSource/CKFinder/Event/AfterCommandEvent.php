@@ -18,7 +18,7 @@ use CKSource\CKFinder\CKFinder;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * The AfterCommandEvent event class.
+ * The BeforeCommandEvent event class.
  */
 class AfterCommandEvent extends CKFinderEvent
 {

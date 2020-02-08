@@ -293,10 +293,6 @@ class Utils
     {
         $pieces = explode('.', $fileName);
 
-        if (count($pieces) === 1) {
-            return current($pieces);
-        }
-
         $basename = array_shift($pieces);
         $lastExtension = array_pop($pieces);
 

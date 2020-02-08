@@ -1,6 +1,6 @@
 /*
  Copyright (c) 2007-2019, CKSource - Frederico Knabben. All rights reserved.
- For licensing, see LICENSE.html or https://ckeditor.com/sales/license/ckfinder
+ For licensing, see LICENSE.html or http://cksource.com/ckfinder/license
  */
 
 var config = {};
@@ -9,6 +9,6 @@ var config = {};
 
 // Examples:
 // config.language = 'pl';
-// config.skin = 'jquery-mobile';
+config.skin = 'neko';
 config.connectorPath = '/nmr/ckfinder/';
 CKFinder.define( config );

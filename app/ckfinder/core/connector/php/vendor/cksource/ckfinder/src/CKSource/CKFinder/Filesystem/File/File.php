@@ -28,11 +28,6 @@ use CKSource\CKFinder\Filesystem\Path;
 abstract class File
 {
     /**
-     * Constant used to mark files without extension.
-     */
-    const NO_EXTENSION = 'NO_EXT';
-
-    /**
      * File name.
      *
      * @var string $fileName
@@ -110,7 +105,7 @@ abstract class File
         $fileName = $newFileName ?: $this->fileName;
 
         if (strpos($fileName, '.') === false) {
-            return null;
+            return true;
         }
 
         $pieces = explode('.', $fileName);
@@ -149,7 +144,7 @@ abstract class File
         $i = 0;
         while (true) {
             $i++;
-            $this->fileName = "{$basename}({$i})" . (!empty($extension) ? ".{$extension}" : '');
+            $this->fileName = "{$basename}({$i}).{$extension}";
 
             $filePath = Path::combine($path, $this->fileName);
 

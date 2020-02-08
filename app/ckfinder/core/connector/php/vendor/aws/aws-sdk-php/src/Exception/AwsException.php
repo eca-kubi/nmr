@@ -1,25 +1,21 @@
 <?php
 namespace Aws\Exception;
 
-use Aws\CommandInterface;
-use Aws\HasDataTrait;
 use Aws\HasMonitoringEventsTrait;
 use Aws\MonitoringEventsInterface;
 use Aws\ResponseContainerInterface;
-use Aws\ResultInterface;
-use JmesPath\Env as JmesPath;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\RequestInterface;
+use Aws\CommandInterface;
+use Aws\ResultInterface;
 
 /**
  * Represents an AWS exception that is thrown when a command fails.
  */
 class AwsException extends \RuntimeException implements
     MonitoringEventsInterface,
-    ResponseContainerInterface,
-    \ArrayAccess
+    ResponseContainerInterface
 {
-    use HasDataTrait;
     use HasMonitoringEventsTrait;
 
     /** @var ResponseInterface */
@@ -48,7 +44,6 @@ class AwsException extends \RuntimeException implements
         array $context = [],
         \Exception $previous = null
     ) {
-        $this->data = isset($context['body']) ? $context['body'] : [];
         $this->command = $command;
         $this->response = isset($context['response']) ? $context['response'] : null;
         $this->request = isset($context['request']) ? $context['request'] : null;
@@ -238,20 +233,5 @@ class AwsException extends \RuntimeException implements
     public function setMaxRetriesExceeded()
     {
         $this->maxRetriesExceeded = true;
-    }
-
-    public function hasKey($name)
-    {
-        return isset($this->data[$name]);
-    }
-
-    public function get($key)
-    {
-        return $this[$key];
-    }
-
-    public function search($expression)
-    {
-        return JmesPath::search($expression, $this->toArray());
     }
 }

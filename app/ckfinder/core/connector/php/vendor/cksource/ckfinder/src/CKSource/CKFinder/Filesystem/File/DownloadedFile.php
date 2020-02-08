@@ -86,6 +86,10 @@ class DownloadedFile extends ExistingFile
      */
     public function hasAllowedExtension()
     {
+        if (strpos($this->fileName, '.') === false) {
+            return true;
+        }
+
         $extension = $this->getExtension();
 
         return $this->workingFolder->getResourceType()->isAllowedExtension($extension);

@@ -82,11 +82,9 @@ class Proxy extends CommandAbstract
         }
 
         $response = new StreamedResponse();
-        $headers = $response->headers;
-        $headers->set('Content-Type', $file->getMimeType());
-        $headers->set('Content-Length', $file->getSize());
-        $headers->set('X-Content-Type-Options', 'nosniff');
-        $headers->set('Content-Disposition', 'inline; filename="' . $fileName. '"');
+        $response->headers->set('Content-Type', $file->getMimeType());
+        $response->headers->set('Content-Length', $file->getSize());
+        $response->headers->set('Content-Disposition', 'inline; filename="' . $fileName. '"');
 
         if ($cacheLifetime > 0) {
             Utils::removeSessionCacheHeaders();

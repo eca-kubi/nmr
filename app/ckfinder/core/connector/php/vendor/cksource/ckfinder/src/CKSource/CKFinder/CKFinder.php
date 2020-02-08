@@ -61,7 +61,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  */
 class CKFinder extends Container implements HttpKernelInterface
 {
-    const VERSION = '3.5.1';
+    const VERSION = '3.5.0';
 
     const COMMANDS_NAMESPACE = 'CKSource\\CKFinder\\Command\\';
     const PLUGINS_NAMESPACE = 'CKSource\\CKFinder\\Plugin\\';

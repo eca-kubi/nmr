@@ -121,6 +121,10 @@ abstract class ExistingFile extends File
      */
     public function hasAllowedExtension()
     {
+        if (strpos($this->getFilename(), '.') === false) {
+            return true;
+        }
+
         $extension = $this->getExtension();
 
         return $this->resourceType->isAllowedExtension($extension);

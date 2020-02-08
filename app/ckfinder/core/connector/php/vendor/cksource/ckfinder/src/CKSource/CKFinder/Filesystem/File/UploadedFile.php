@@ -131,11 +131,11 @@ class UploadedFile extends File
      */
     public function hasAllowedExtension()
     {
-        $ext = strpos($this->fileName, '.') === false
-            ? null
-            : $this->getExtension();
+        if (strpos($this->fileName, '.') === false) {
+            return true;
+        }
 
-        return $this->workingFolder->getResourceType()->isAllowedExtension($ext);
+        return $this->workingFolder->getResourceType()->isAllowedExtension($this->getExtension());
     }
 
     /**

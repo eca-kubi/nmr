@@ -5,23 +5,14 @@ For licensing, see LICENSE.html or https://ckeditor.com/sales/license/ckfinder
 -->
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-    <title>CKFinder 3 - File Browser</title>
-	<style>
-		.ui-title {
-			display: none!important;
-		}
-	</style>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+	<title>CKFinder 3 - File Browser</title>
 </head>
 <body>
 <script src="<?php echo URL_ROOT. '/public/assets/ckfinder/ckfinder.js' ?>"></script>
 <script>
-    CKFinder.start();
-	window.addEventListener('DOMContentLoaded', (event) => {
-		   document.querySelector('title').innerText = '';
-		   //document.querySelector('.ui-title').innerText = '';
-	});
+	CKFinder.start();
 </script>
 
 </body>
