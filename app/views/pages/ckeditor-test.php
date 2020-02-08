@@ -41,8 +41,8 @@
 <script>
     $(function () {
         CKEDITOR.replace('content', {
-            filebrowserBrowseUrl: URL_ROOT + '/public/assets/js/ckfinder/ckfinder.html',
-            filebrowserUploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files'
+            filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse',
+            filebrowserUploadUrl: URL_ROOT + '/ckfinder/upload?command=QuickUpload&type=Files'
         });
         CKEDITOR.config.extraPlugins = 'image2';
     });

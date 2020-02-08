@@ -53,7 +53,7 @@
                                         <input type="hidden" id="editSubmittedReport" name="edit_submitted_report"
                                                value="<?php echo $edit_submitted_report ?? ''; ?>">
                                         <input type="hidden" id="reportPartId" name="report_part_id"
-                                               value="<?php echo $report_part_id ?? -1; ?>">
+                                               value="<?php echo $report_part_id ?? ''; ?>">
                                         <input type="hidden" id="reportPartIdTemp" name="report_part_id_temp">
                                         <input type="hidden" id="reportPartDescription" name="report_part_description"
                                                value="<?php echo $report_part_description ?? ''; ?>">
@@ -72,7 +72,7 @@
                 <div class="box-footer d-none"></div>
                 <!-- /.box-footer-->
             </div>
-            <div class="box collapsed border-warning  <?php echo isset($is_submission_closed) && $is_submission_closed ? 'd-none' : ''; ?>">
+            <div class="box collapsed border-warning <?php echo isset($is_submission_closed) && $is_submission_closed ? 'd-none' : ''; ?>">
                 <div class="box-header">
                     <h5 class="box-title text-bold"><span class="fa fa-chart-bar text-warning"></span> Charts</h5>
                     <div class="box-tools pull-right d-none">
@@ -587,7 +587,6 @@ echo $spreadsheet_templates; ?>'>
             template: kendo.template($("#copyToEditor").html())
         };
 
-
         spreadsheet = $("#spreadSheet").kendoSpreadsheet({
             columnWidth: 50,
             toolbar: {
@@ -626,6 +625,7 @@ echo $spreadsheet_templates; ?>'>
                 selectChartTab(e.sheet.name());
             }
         }).data("kendoSpreadsheet");
+        spreadsheet.activeSheet().range("A:N").enable(false);
 
         $("#copyToEditorButton").on("click", function () {
             let activeSheetName = spreadsheet.activeSheet().name();
