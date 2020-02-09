@@ -6,6 +6,10 @@
     .cke_reset_all {
         z-index: 9999999 !important;
     }
+
+    .cke_maximized {
+        z-index: 99999995 !important;
+    }
 </style>
 <div class="content-wrapper animated fadeInRight" style="margin-top: <?php //echo NAVBAR_MT; ?>">
     <!-- content -->
@@ -40,12 +44,28 @@
 <?php include_once(APP_ROOT . '/views/includes/scripts.php'); ?>
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
 <script>
+    let editor;
     $(function () {
         CKEDITOR.replace('content', {
+            title: "Nzema Monthly Report",
             filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse',
             filebrowserUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files'
         });
-        CKEDITOR.config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn';
+        CKEDITOR.config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn, autogrow, preview';
+        CKEDITOR.config.removePlugins = 'save, forms, preview, sourcearea, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo,div';
+        editor = CKEDITOR.instances.content;
+        editor.value = () => editor.getData();
+        editor.addCommand('save', {
+            exec: (editor) => {
+
+            }
+        });
+
+        editor.ui.addButton('Save', {
+            label: 'Save',
+            command: 'save',
+            icon: this.path + "images/save.png"
+        })
     });
 
 </script>
