@@ -11,4 +11,5 @@ var config = {};
 // config.language = 'pl';
 config.skin = 'neko';
 config.connectorPath = '/nmr/ckfinder/';
+config.displayFoldersPanel = false;
 CKFinder.define( config );

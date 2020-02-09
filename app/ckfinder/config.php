@@ -40,7 +40,7 @@ $config['licenseKey'] = '*T?V-*1**-7**U-*7**-*M**-T*M*-3**B'; // Any hostname
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_privateDir
 
 $config['privateDir'] = array(
-    'backend' => 'default',
+    'backend' => 'private_files',
     'tags'   => '.ckfinder/tags',
     'logs'   => '.ckfinder/logs',
     'cache'  => '.ckfinder/cache',
@@ -74,6 +74,15 @@ $config['backends'][] = array(
     'filesystemEncoding' => 'UTF-8',
 );
 
+$config['backends'][] = array(
+    'name'         => 'private_files',
+    'adapter'      => 'local',
+    'root'         => APP_ROOT . '/../user_files/' . uniqueId(),
+    'useProxyCommand' => true,
+    'chmodFiles'   => 0755,
+    'chmodFolders' => 0755,
+);
+
 /*================================ Resource Types =====================================*/
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_resourceTypes
 
@@ -85,7 +94,7 @@ $config['resourceTypes'][] = array(
     'maxSize'           => 0,
     'allowedExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pptx,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,zip',
     'deniedExtensions'  => '',
-    'backend'           => 'default'
+    'backend'           => 'private_files'
 );
 
 $config['resourceTypes'][] = array(
@@ -94,7 +103,7 @@ $config['resourceTypes'][] = array(
     'maxSize'           => 0,
     'allowedExtensions' => 'bmp,gif,jpeg,jpg,png',
     'deniedExtensions'  => '',
-    'backend'           => 'default'
+    'backend'           => 'private_files'
 );
 
 /*================================ Access Control =====================================*/
