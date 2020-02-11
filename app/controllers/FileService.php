@@ -23,8 +23,8 @@ class FileService extends Controller
 
     public function files()
     {
-        $file_name = isset($_GET['f']) ? $_GET['f'] : '';
-        $file_name = FILE_UPLOAD_PATH . "/" . uniqueId() . "/" . $file_name;
+       // $file_name = FILE_UPLOAD_PATH . "/" . uniqueId() . "/" . strtolower($_GET['type']) . $_GET['currentFolder']  . $_GET['fileName'];
+        $file_name = FILE_UPLOAD_PATH . "/" . uniqueId() . $_GET['path'];
         sendFile($file_name);
     }
 

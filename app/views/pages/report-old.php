@@ -32,7 +32,7 @@
                                 <div id="editorActionToolbar"></div>
                                 <div style="width: 100%">
                                     <form id="editorForm">
-                                    <textarea name="content" id="content" cols="30" rows="10"
+                                    <textarea name="content" id="editor" cols="30" rows="10"
                                               style="height: 500px;"><?php echo $content ?? ''; ?></textarea>
                                         <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
                                                value='<?php echo $spreadsheet_content ?? ''; ?>'>
@@ -126,19 +126,14 @@ echo $spreadsheet_templates; ?>'>
     </style>
 <?php endif; ?>
 <style>
+    .page-break-btn {
+        display: none !important;
+    }
+
     #previewEditorParent .k-editor {
         visibility: hidden;
         z-index: -1;
     }
-
-    .cke_reset_all {
-        z-index: 9999999 !important;
-    }
-
-    .cke_maximized {
-        z-index: 99999995 !important;
-    }
-
 </style>
 <script>
     const HEADER_BACKGROUND_COLOR = "#9c27b0";
@@ -158,7 +153,7 @@ echo $spreadsheet_templates; ?>'>
     let editorTabStrip;
     let chartTabs = [];
     let charts = [];
-    /** @type {CKEDITOR.editor}*/
+    /** @type {kendo.ui.Editor}*/
     let editor;
     let firstSheetLoading = true;
     let editDraft = Boolean(<?php echo $edit_draft ?? '' ?>);
@@ -196,36 +191,6 @@ echo $spreadsheet_templates; ?>'>
     let previewEditor;
 
     $(function () {
-        CKEDITOR.editor.prototype.value = function () {
-            return this.getData();
-        };
-        CKEDITOR.editor.prototype.body = function () {
-            return this.document.$.body;
-        };
-        CKEDITOR.editor.prototype.update = function () {
-            this.updateElement();
-        };
-        CKEDITOR.editor.prototype.exec = function (command, content) {
-            if (command === 'insertHtml')
-                this.insertHtml(content);
-        };
-        CKEDITOR.editor.prototype.paste = function (content) {
-            this.insertHtml(content);
-        };
-
-        CKEDITOR.config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn, autogrow, preview';
-        CKEDITOR.config.removePlugins = 'save, forms, preview, sourcearea, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div';
-
-        CKEDITOR.replace('content', {
-            title: "Nzema Monthly Report",
-            uploadUrl: '/nmr/ckfinder/?command=QuickUpload&type=Files&responseType=json',
-            filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse/?type=Files',
-            filebrowserImageBrowseUrl: URL_ROOT + '/ckfinder/browse?type=Images',
-            filebrowserUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files',
-            filebrowserImageUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Images'
-        });
-
-        editor = CKEDITOR.instances.content;
 
         previewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/> </div>").appendTo("body");
         previewEditor = $("#previewEditor").kendoEditor({
@@ -450,6 +415,154 @@ echo $spreadsheet_templates; ?>'>
             editor.exec('insertHtml', {value: `<${value} id=${randomId}></${value}>`});
         }
 
+        editor = $("#editor").kendoEditor({
+            tools: [
+                /* {
+                     name: "MoveResize",
+                     template: "<a class=' k-button m-1 d-invisible' title='Move/Resize'> <i class='k-icon k-i-arrows-resizing'></i>&nbsp;Move/Resize</a>"
+                 },*/
+                "bold",
+                "italic",
+                "underline",
+                //"strikethrough",
+                "justifyLeft",
+                "justifyCenter",
+                "justifyRight",
+                "justifyFull",
+                "insertUnorderedList",
+                "insertOrderedList",
+                "indent",
+                "outdent",
+                "createLink",
+                "unlink",
+                "insertImage",
+                "insertFile",
+                "subscript",
+                "superscript",
+                "tableWizard",
+                "createTable",
+                "addRowAbove",
+                "addRowBelow",
+                "addColumnLeft",
+                "addColumnRight",
+                "deleteRow",
+                "deleteColumn",
+                "mergeCellsHorizontally",
+                "mergeCellsVertically",
+                "splitCellHorizontally",
+                "splitCellVertically",
+                "print",
+                "formatting",
+                "cleanFormatting",
+                "fontName",
+                "fontSize",
+                "foreColor",
+                "backColor",
+                "viewHtml",
+                {
+                    name: "toc",
+                    tooltip: "ToC Headings",
+                    template: `<select id="toc" style="width: 100%;">
+                <option value="h1"><h1>H1</h1></option>
+                <option value="h2"><h2>H2</h2></option>
+                <option value="h3"><h3>H3</h3></option>
+                <option value="h4"><h4>H4</h4></option>
+            </select>`
+                },
+                {
+                    name: "pageBreak",
+                    tooltip: "Insert Page Break",
+                    template: `<a tabindex="0" role="button" class="k-tool k-group-start k-group-end page-break-btn" unselectable="on" title="Page Break" aria-label="Page Break"><span unselectable="on" class="k-tool-icon k-icon k-i-arrow-parent"></span></a>`,
+                }
+            ],
+            select(e) {
+                //console.log('select')
+            },
+            execute: function(e) {
+                var editor = this;
+                if (e.name === "createtable") {
+                    setTimeout(function() {
+                        var table = $(editor.body).find("table:not(.custom-table)");
+                        table.addClass("custom-table");
+                        table.attr("style", "border: 1px solid black;");
+                        table.find("tr td")
+                            .each(function () {
+                                var currentStyle = $(this).attr("style");
+                                $(this).attr("style", currentStyle + " border: 1px solid black;");
+                            });
+                    }, 0);
+                }
+            },
+            stylesheets: [
+                "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                "<?php echo URL_ROOT; ?>/public/assets/css/overlay-scrollbar/OverlayScrollbars.min.css",
+                "<?php echo URL_ROOT; ?>/public/assets/css/subjx/subjx.min.css",
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+            ],
+            imageBrowser: {
+                transport: {
+                    read: {
+                        url: URL_ROOT + "/image-service/read",
+                        dataType: "json"
+                    },
+                    uploadUrl: URL_ROOT + "/image-service/upload",
+                    thumbnailUrl: function (path, file) {
+                        return URL_ROOT + "/image-service/thumbnail-service/?i=" + path + file;
+                    },
+                    imageUrl: function (e) {
+                        return URL_ROOT + "/image-service/images/?i=" + e
+                    }
+                }
+            },
+            fileBrowser: {
+                transport: {
+                    read: {
+                        url: URL_ROOT + "/file-service/read",
+                        dataType: "json"
+                    },
+                    fileUrl: function (e) {
+                        return URL_ROOT + "/file-service/read/?f=" + e;
+                    },
+                    uploadUrl: URL_ROOT + "/file-service/upload",
+                    create: {
+                        url() {
+                            return URL_ROOT + "/file-service/create-directory"
+                        },
+                        dataType: "json"
+                    },
+                },
+                fileTypes: "*.docx, *.doc, *.ppt, *.pptx"
+            },
+            resizable: {
+                content: true,
+                //toolbar: true
+            },
+            encoded: false
+        }).data("kendoEditor");
+        //$(editor.body).off("paste")
+        if (editor) {
+            let tocDropDown = $("#toc").kendoDropDownList({
+                select(e) {
+                    appendTocHTag(this.value());
+                    /*if (this.value === 'h1') {
+                        editor.exec('insertHtml', {value: `<h1 id=${}></h1>`});
+                    } else if (this.value === 'h2') {
+                        editor.exec('insertHtml', {value: `<h2 id=${}></h2>`});
+                    } else if (this.value === 'h3') {
+                        editor.exec('insertHtml', {value: `<h3 id=${}></h3>`});
+                    } else if (this.value === 'h4') {
+                        editor.exec('insertHtml', {value: `<h4 id=${}></h4>`});
+                    }*/
+                }
+            });
+            appendScriptsToEditor(editor.document, [
+                `${URL_ROOT}/public/assets/js/subjx/subjx.min.js`,
+                `${URL_ROOT}/public/assets/js/displace/displace.min.js`,
+            ]);
+            editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
+        }
+
+
         /*
         // Limit image upload size
         $(".k-i-image").on('click', function () {
@@ -465,16 +578,13 @@ echo $spreadsheet_templates; ?>'>
             });
         });*/
 
+        $(".page-break-btn").on('click', (e) => editor.paste("<p style='page-break-before: always'></p>"));
         let chartMenuCommand = {
             template: kendo.template($("#chartsMenuTemplate").html())
         };
 
         let copyToEditor = {
             template: kendo.template($("#copyToEditor").html())
-        };
-
-        let updateCharts = {
-            template: kendo.template($("#updateCharts").html())
         };
 
         spreadsheet = $("#spreadSheet").kendoSpreadsheet({
@@ -484,7 +594,6 @@ echo $spreadsheet_templates; ?>'>
                 home: [
                     chartMenuCommand,
                     copyToEditor,
-                    //updateCharts,
                     <?php if (isITAdmin($current_user->user_id)) : ?>
                     {
                         type: "button",
@@ -519,23 +628,17 @@ echo $spreadsheet_templates; ?>'>
         spreadsheet.activeSheet().range("A:N").enable(false);
 
         $("#copyToEditorButton").on("click", function () {
-            let name = spreadsheet.activeSheet().name();
-            if (charts[name]) {
-                appendChartSheet(name);
-            }
-        });
-
-        $("#updateChartsButton").on("click", function () {
-            let name = spreadsheet.activeSheet().name();
-            if (charts[name]) {
-                appendChartSheet(name, true);
+            let activeSheetName = spreadsheet.activeSheet().name();
+            if (charts[activeSheetName]) {
+                addChartImageToEditor(activeSheetName, true);
+                addSheetImageToEditor(activeSheetName, true);
             }
         });
 
         setTimeout(function () {
-            //$("div#spreadSheet").trigger("resize");
+            $("div#spreadSheet").trigger("resize");
             //overlayScrollbarsInstances.body.scroll($("#editorTabStrip"), 5000, {x: 'swing', y: 'swing'})
-            //setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {x: 'swing', y: 'swing'}), 500);
+            setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {x: 'swing', y: 'swing'}), 500);
 
         }, 3000);
 
@@ -674,7 +777,7 @@ echo $spreadsheet_templates; ?>'>
                     chartsTabStrip.activateTab($(chartTab));
             }
 
-            /*if (response[2].added.length > 0) {
+            if (response[2].added.length > 0) {
                 response[2].added.forEach(function (e) {
                     if (e.id === 'k-editor-accessibility-summary')
                         initOverlayScrollbars(e, {
@@ -693,16 +796,16 @@ echo $spreadsheet_templates; ?>'>
                 let textarea = $(response[3].added).find('textarea');
                 textarea.attr('rows', 8);
                 $(response[3].added).find('.k-dialog-update').on('click', function (e) {
-                    editor.body().innerHTML = textarea.val();
+                    editor.body.innerHTML = textarea.val();
                     editor.update();
                 });
-            }*/
+            }
         },
         queries: [
             {element: "[data-role=window]"},
             {element: ".k-item[role=tab]"},
-            // {element: "textarea"},
-            //{element: '.k-viewhtml-dialog'}
+            {element: "textarea"},
+            {element: '.k-viewhtml-dialog'}
         ]
     });
 
@@ -1105,7 +1208,7 @@ echo $spreadsheet_templates; ?>'>
                 valueAxis: [
 
                     {
-                        line: {visible: false},
+                        line: {visible:false},
                         labels: {
                             visible: false
                         }
@@ -1597,7 +1700,7 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
         }
-        //scrollToChartsTabstrip();
+        scrollToChartsTabstrip();
     }
 
 
@@ -1703,9 +1806,12 @@ echo $spreadsheet_templates; ?>'>
 
         function update() {
             chart.dataSource.data(fetchData(sheet, valueRange, fieldRange));
-            /*if ($(editor.body()).find("img[id='chart_img_" + sheet.name() + "']").length || $(editor.body()).find("img[id='sheet_img_" + sheet.name() + "']").length) {
-                appendChartSheet(sheet.name());
-            }*/
+            if ($(editor.body).find("img[data-id='chart_img_" + sheet.name() + "']").length) {
+                addChartImageToEditor(sheet.name());
+            }
+            if ($(editor.body).find("img[data-id='sheet_img_" + sheet.name() + "']").length) {
+                addSheetImageToEditor(sheet.name())
+            }
         }
     }
 
@@ -1714,70 +1820,38 @@ echo $spreadsheet_templates; ?>'>
         let sheet = spreadsheet.sheetByName(name);
         let promises = [];
         sheet.draw({}, group => {
-            let imgs = editor.body().querySelectorAll("div[id='sheet_img_" + name + "'] img");
             if (group.children.length > 0) {
                 for (var i = 0; i < group.children.length; i++) {
                     promises.push(draw.exportImage(group.children[i], {}));
                 }
                 for (let i = 0; i < promises.length; i++) {
-                    if (ignoreExisting || !imgs) {
-                        promises[i].done(data => editor.paste("<div id='sheet_img_" + name + "'> <img src='" + data + "'   alt=''/> </div>"));
+                    if (ignoreExisting) {
+                        promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;/*margin-left:auto;*/margin-right:auto;'/>"));
                     } else {
-                        promises[i].done(data => $(imgs).attr("src", data));
+                        let imgs = editor.body.querySelectorAll("img[data-id='sheet_img_" + sheet.name() + "']");
+                        if (imgs)
+                            promises[i].done(data => $(imgs).attr("src", data));
+                        else
+                            promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;/*margin-left:auto;*/margin-right:auto;'/>"));
                     }
                 }
             }
         })
     }
 
-    function appendChartSheet(name, ignoreExisting = false) {
-        let draw = kendo.drawing;
-        let chart = charts[name];
-        let sheet = spreadsheet.sheetByName(name);
-        let dataUri = {};
-        let imgs = {};
-        sheet.draw({}, group => {
-            let editorDataHtml = $(editor.getData());
-            let chartImg = $("img[id='chart_img_" + name + "']", editorDataHtml);
-            let sheetImg = $("img[id='sheet_img_" + name + "']", editorDataHtml);
-            let chartImgElem;
-            let sheetImgElem;
-            let exportChart = chart.exportImage().then(data => data);
-            let exportSheet = draw.exportImage(group, {}).then(data => data);
-            exportChart.done((data => {
-                dataUri.chart = data;
-                if (ignoreExisting || chartImg.length === 0) {
-                    chartImgElem = CKEDITOR.dom.element.createFromHtml("<img id='chart_img_" + name + "' src='" + dataUri.chart + "' alt='' />");
-                    editor.insertElement(chartImgElem);
-                    editor.widgets.initOn(chartImgElem, 'image');
-                } else {
-                    chartImg.attr('src', dataUri.chart);
-                }
-                exportSheet.done(data => {
-                    dataUri.sheet = data;
-                    if (ignoreExisting || sheetImg.length === 0) {
-                        sheetImgElem = CKEDITOR.dom.element.createFromHtml("<img id='sheet_img_" + name + "' src='" + dataUri.sheet + "'   alt=''/>");
-                        editor.insertElement(sheetImgElem);
-                        editor.widgets.initOn(sheetImgElem, 'image');
-                    } else {
-                        sheetImg.attr('src', dataUri.sheet);
-                    }
-                    if (editorDataHtml.length) {
-                        editor.setData(CKEDITOR.dom.element.createFromHtml($('<div />').append(editorDataHtml).html()).getOuterHtml());
-                    }
-                });
-            }));
-        });
-    }
 
-    function addChartImageToEditor(name, ignoreExisting) {
-        let chart = charts[name];
+    function addChartImageToEditor(chartName, ignoreExisting) {
+        let chart = charts[chartName];
         chart.exportImage().done(data => {
-            let imgs = editor.body().querySelectorAll("div[data-id='chart_img_" + name + "'] img");
-            if (ignoreExisting || !imgs) {
-                editor.paste("<div id='chart_img_" + name + "'><img  src='" + data + "' alt='' data-id='chart_img_" + name + "'/></div>");
+            if (ignoreExisting) {
+                editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;/*margin-left:auto;*/margin-right:auto;' />");
             } else {
-                $(imgs).attr("src", data);
+                let imgs = editor.body.querySelectorAll("img[data-id='chart_img_" + chartName + "']");
+                if (!imgs) {
+                    editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;//**/*margin-left:auto;*/margin-right:auto;' />");
+                } else {
+                    $(imgs).attr("src", data);
+                }
             }
         })
     }

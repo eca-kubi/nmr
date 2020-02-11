@@ -10,6 +10,6 @@ var config = {};
 // Examples:
 // config.language = 'pl';
 config.skin = 'neko';
-config.connectorPath = '/nmr/ckfinder/';
+config.connectorPath =  '/nmr/ckfinder/';
 config.displayFoldersPanel = false;
 CKFinder.define( config );

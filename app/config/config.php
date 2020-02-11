@@ -41,7 +41,7 @@ const ADMIN = [
     'Manager'
 ];
 const ROLE_SECRETARY = 'Secretary';
-const FILE_UPLOAD_PATH = APP_ROOT . '/uploads/files';
+const FILE_UPLOAD_PATH = APP_ROOT . '/../user_files';
 const IMAGE_UPLOAD_PATH = APP_ROOT . '/uploads/images';
 const THUMBNAIL_PATH = APP_ROOT . '/uploads/thumbnails';
 

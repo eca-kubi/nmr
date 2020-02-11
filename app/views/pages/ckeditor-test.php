@@ -46,15 +46,34 @@
 <script>
     let editor;
     $(function () {
+        CKEDITOR.editor.prototype.value = function () {
+            this.getData();
+        };
+        CKEDITOR.editor.prototype.body = function () {
+            this.document.$.body;
+        };
+        CKEDITOR.editor.prototype.update = function () {
+            this.updateElement();
+        };
+        CKEDITOR.editor.prototype.exec = function (command, content) {
+            if (command  === 'insertHtml')
+                editor.insertHtml(content);
+        };
+        CKEDITOR.editor.prototype.paste = function (content) {
+            editor.insertHtml(content);
+        }
+
         CKEDITOR.replace('content', {
             title: "Nzema Monthly Report",
-            filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse',
-            filebrowserUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files'
+            filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse/?type=Files',
+            filebrowserImageBrowseUrl : URL_ROOT + '/ckfinder/browse?type=Images',
+            filebrowserUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files',
+            filebrowserImageUploadUrl : URL_ROOT + '/ckfinder/?command=QuickUpload&type=Images'
         });
         CKEDITOR.config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn, autogrow, preview';
-        CKEDITOR.config.removePlugins = 'save, forms, preview, sourcearea, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo,div';
-        editor = CKEDITOR.instances.content;
-        editor.value = () => editor.getData();
+        //CKEDITOR.config.removePlugins = 'save, forms, preview, sourcearea, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo,div';
+       editor = CKEDITOR.instances.content;
+
         editor.addCommand('save', {
             exec: (editor) => {
 
