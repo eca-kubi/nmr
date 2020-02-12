@@ -473,10 +473,6 @@ echo $spreadsheet_templates; ?>'>
             template: kendo.template($("#copyToEditor").html())
         };
 
-        let updateCharts = {
-            template: kendo.template($("#updateCharts").html())
-        };
-
         spreadsheet = $("#spreadSheet").kendoSpreadsheet({
             columnWidth: 50,
             toolbar: {
