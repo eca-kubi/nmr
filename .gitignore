@@ -79,3 +79,4 @@ app/config/host.php
 /user_files/
 /vendor/
 /node_modules/
+/.idea/
