@@ -124,7 +124,7 @@ function validatePost($form)
 
                 // Verify staff id
                 if (!User::has('staff_id', $post->staff_id)) {
-                    $post->staff_id_err = 'No staff found with this id';
+                    $post->staff_id_err = 'Invalid Username/Password';
                     return $post;
                 }
 
