@@ -13,9 +13,4 @@ class CkFinder extends Controller
     {
        require_once APP_ROOT . '../ckfinder/ckfinder.html';
     }
-
-    public function test()
-    {
-        
-    }
 }
