@@ -1,0 +1,112 @@
+<script id="chart-s" type="text/x-kendo-template">
+    <span title="New Chart" class="k-widget k-dropdown" unselectable="on" role="listbox" aria-haspopup="true"
+          aria-expanded="false" tabindex="0"
+          aria-label="New Chart" aria-live="polite" aria-disabled="false" aria-busy="false" style="width: auto;">
+        <span unselectable="on" class="k-dropdown-wrap k-state-default">
+            <span unselectable="on" class="k-input">
+                <span class="fa fa-chart-bar" style="line-height: 1em; width: 1.35em;"></span>
+            </span>
+            <span unselectable="on" class="k-select" aria-label="select">
+                <span class="k-icon k-i-arrow-60-down"></span>
+            </span>
+        </span>
+        <select title="New Chart" aria-label="New Chart" data-role="dropdownlist" style="display: none;">
+            <option value="Bar Chart">Bar Chart</option>
+            <option value="Text">Text</option>
+            <option value="Number">Number</option>
+    </select>
+    </span>
+</script>
+
+<script id="chartsMenuTemplate" type="text/x-kendo-template">
+    <a href='\\#' class='k-button k-button-icon px-4' id="chartsMenuButton" title="Charts" data-tool='charts'><span
+            class='fa fa-chart-bar mx-1'></span> <span class='k-icon k-i-arrow-60-down'></span></a>
+    <div id="chartsMenuPopup">
+        <select id="chartsMenuListBox">
+        </select>
+    </div>
+</script>
+
+<script id="copyToEditor" type="text/x-kendo-template">
+    <a href='\\#' class='k-button k-button-icon px-4' id="copyToEditorButton" title="Copy To Editor"
+       data-tool='copyToEditor'><span class='fa fa-clipboard mx-1'></span></a>
+</script>
+
+<script id="openCloseSubmissionContent" type="text/x-kendo-template">
+    <form id="openCloseSubmissionForm" class="demo-section k-content">
+        <h4 style=""><label for="targetMonthCB">Target Month</label></h4>
+        <input id="targetMonthCB" class="k-input" placeholder="Select Target Month" style="width: 100%;"
+               name="target_month" value="<?php echo date('F'); ?>"/>
+
+        <h4 class="mt-2"><label for="targetYearCB">Target Year</label></h4>
+        <input id="targetYearCB" class="k-input" placeholder="Target Year" style="width: 100%;"
+               name="target_year" value="<?php echo date('Y'); ?>"/>
+        <div class="dialog_buttons mt-2 float-right">
+            <input type="button" class="confirm_yes k-button" value="Yes" style="width: 70px"/>
+            &nbsp;
+            <input type="button" class="confirm_no k-button" value="No" style="width: 70px"/>
+        </div>
+    </form>
+</script>
+
+<script id="confirmationTemplate" type="text/x-kendo-template">
+    <div class="popupMessage"></div>
+    <br>
+
+    <div class="dialog_buttons">
+        <input type="button" class="confirm_yes k-button" value="Yes" style="width: 70px"/>
+        &nbsp;
+        <input type="button" class="confirm_no k-button" value="No" style="width: 70px"/>
+    </div>
+</script>
+
+<script id="selectDepartmentConfirmationTemplate" type="text/x-kendo-template">
+    <div class="popupMessage"></div>
+    <div class="mb-2">
+        <span class="h6">Select a Department</span>
+        <div class="">
+            <input id="department" placeholder="Department" style="width: 100%;" name="department" data-role="combobox"
+                   data-source="{data: departments}" data-change="selectDepartment_onChange"
+                   data-required-msg="Department is required." required/>
+            <span class="k-invalid-msg" data-for="department"></span>
+
+        </div>
+    </div>
+    <div class="dialog_buttons">
+        <input type="button" class="confirm_yes k-button" value="Okay" style="width: 70px"/>
+        &nbsp;
+        <input type="button" class="confirm_no k-button" value="Cancel" style="width: 70px"/>
+    </div>
+</script>
+
+<script id="selectDepartmentConfirmationTemplate_2" type="text/x-kendo-template">
+    <div class="popupMessage"></div>
+    <div class="mb-2">
+        <span class="h6 mb-0">Description</span>
+        <div class="">
+            <input class="k-input" id="description" placeholder="Description" style="width: 100%;" name="description"/>
+        </div>
+    </div>
+    <div class="mb-2">
+        <span class="h6 mb-0">Select a Department</span>
+        <div class="">
+            <input id="department_2" placeholder="Department" style="width: 100%;" name="department"
+                   data-role="combobox" data-source="{data: departments}" data-change="selectDepartment_onChange"
+                   required data-required-msg="Department is required."/>
+            <span class="k-invalid-msg" data-for="department"></span>
+        </div>
+    </div>
+    <div class="dialog_buttons">
+        <input type="button" class="confirm_yes k-button" value="Okay" style="width: 70px"/>
+        &nbsp;
+        <input type="button" class="confirm_no k-button" value="Cancel" style="width: 70px"/>
+    </div>
+</script>
+<script id="generateSpreadSheetTemplate" type="text/x-kendo-template">
+
+</script>
+<script id="updateSubmittedReportBtnTemplate" type="text/x-kendo-template">
+<a class="text-bold"><i class="k-icon k-i-upload"></i> Update Submitted Report</a>
+</script>
+
+
