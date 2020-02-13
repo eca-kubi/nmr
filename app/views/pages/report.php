@@ -218,7 +218,7 @@ echo $spreadsheet_templates; ?>'>
 
         CKEDITOR.replace('content', {
             title: "Nzema Monthly Report",
-            uploadUrl: '/nmr/ckfinder/?command=QuickUpload&type=Files&responseType=json',
+            uploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files&responseType=json',
             filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse/?type=Files',
             filebrowserImageBrowseUrl: URL_ROOT + '/ckfinder/browse?type=Images',
             filebrowserUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files',

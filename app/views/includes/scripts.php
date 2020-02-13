@@ -20,5 +20,6 @@
 <script src="<?php echo URL_ROOT; ?>/public/assets/ckeditor/ckeditor.js"></script>
 <script>
     window.pdfjsLib.GlobalWorkerOptions.workerSrc = '<?php echo URL_ROOT; ?>/public/assets/js/pdfjs/pdf.worker.js';
+    let URL_ROOT = "<?php echo URL_ROOT; ?>"
 </script>
 <script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js"></script>

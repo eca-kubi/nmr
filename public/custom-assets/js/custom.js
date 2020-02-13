@@ -1,4 +1,4 @@
-let URL_ROOT = "";
+//let URL_ROOT = "";
 let overlayScrollbarsInstances = [];
 /**
  * @type {Object.<jQuery>}
@@ -38,7 +38,7 @@ $(function () {
     $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
 
     //jQuery.fx.off = true;
-    URL_ROOT = $('#url_root').val();
+    //URL_ROOT = $('#url_root').val();
     //$('.print-it').printPage();
     $('.content-wrapper').css('margin-top', $('.navbar-fixed').height() + 'px');
 
