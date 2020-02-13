@@ -12,7 +12,10 @@ CKEDITOR.editorConfig = function( config ) {
     config.autoGrow_onStartup = true;
     config.baseHref = URL_ROOT;
     config.uploadUrl = URL_ROOT;
+    config.height = 500;
     config.autoGrow_minHeight = 200;
     config.autoGrow_maxHeight = 600;
     config.autoGrow_bottomSpace = 50;
+    config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn';
+    config.removePlugins = 'save, forms, preview, sourcearea, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div, preview';
 };

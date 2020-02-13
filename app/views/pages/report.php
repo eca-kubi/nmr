@@ -213,9 +213,6 @@ echo $spreadsheet_templates; ?>'>
             this.insertHtml(content);
         };
 
-        CKEDITOR.config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn, autogrow';
-        CKEDITOR.config.removePlugins = 'save, forms, preview, sourcearea, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div, preview';
-
         CKEDITOR.replace('content', {
             title: "Nzema Monthly Report",
             uploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files&responseType=json',
