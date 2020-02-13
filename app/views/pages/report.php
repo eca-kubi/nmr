@@ -214,7 +214,7 @@ echo $spreadsheet_templates; ?>'>
         };
 
         CKEDITOR.config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn, autogrow, preview';
-        CKEDITOR.config.removePlugins = 'save, forms, preview, sourcearea, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div';
+        // CKEDITOR.config.removePlugins = 'save, forms, preview, sourcearea, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div';
 
         CKEDITOR.replace('content', {
             title: "Nzema Monthly Report",
@@ -465,22 +465,20 @@ echo $spreadsheet_templates; ?>'>
             });
         });*/
 
-        let chartMenuCommand = {
-            template: kendo.template($("#chartsMenuTemplate").html())
-        };
-
-        let copyToEditor = {
-            template: kendo.template($("#copyToEditor").html())
-        };
-
         spreadsheet = $("#spreadSheet").kendoSpreadsheet({
             columnWidth: 50,
             toolbar: {
                 //home: [chartMenuCommand].concat(kendo.spreadsheet.ToolBar.fn.options.tools.home),
                 home: [
-                    chartMenuCommand,
-                    copyToEditor,
-                    //updateCharts,
+                    {
+                        template: kendo.template($("#chartsMenuTemplate").html())
+                    },
+                    {
+                        template: kendo.template($("#copyToEditor").html())
+                    },
+                    {
+                        template: kendo.template($("#updateCharts").html())
+                    },
                     <?php if (isITAdmin($current_user->user_id)) : ?>
                     {
                         type: "button",
@@ -517,14 +515,14 @@ echo $spreadsheet_templates; ?>'>
         $("#copyToEditorButton").on("click", function () {
             let name = spreadsheet.activeSheet().name();
             if (charts[name]) {
-                appendChartSheet(name);
+                appendChartSheetImage(name, true);
             }
         });
 
         $("#updateChartsButton").on("click", function () {
             let name = spreadsheet.activeSheet().name();
             if (charts[name]) {
-                appendChartSheet(name, true);
+                appendChartSheetImage(name);
             }
         });
 
@@ -1726,40 +1724,33 @@ echo $spreadsheet_templates; ?>'>
         })
     }
 
-    function appendChartSheet(name, ignoreExisting = false) {
+    function appendChartSheetImage(name, insertNewImage = false) {
         let draw = kendo.drawing;
         let chart = charts[name];
         let sheet = spreadsheet.sheetByName(name);
         let dataUri = {};
-        let imgs = {};
         sheet.draw({}, group => {
-            let editorDataHtml = $(editor.getData());
-            let chartImg = $("img[id='chart_img_" + name + "']", editorDataHtml);
-            let sheetImg = $("img[id='sheet_img_" + name + "']", editorDataHtml);
-            let chartImgElem;
-            let sheetImgElem;
             let exportChart = chart.exportImage().then(data => data);
             let exportSheet = draw.exportImage(group, {}).then(data => data);
             exportChart.done((data => {
                 dataUri.chart = data;
-                if (ignoreExisting || chartImg.length === 0) {
-                    chartImgElem = CKEDITOR.dom.element.createFromHtml("<img id='chart_img_" + name + "' src='" + dataUri.chart + "' alt='' />");
+                if (insertNewImage) {
+                    let chartImgElem = CKEDITOR.dom.element.createFromHtml("<img id='chart_img_" + name + "' src='" + dataUri.chart + "' alt='' />");
                     editor.insertElement(chartImgElem);
                     editor.widgets.initOn(chartImgElem, 'image');
-                } else {
-                    chartImg.attr('src', dataUri.chart);
                 }
                 exportSheet.done(data => {
                     dataUri.sheet = data;
-                    if (ignoreExisting || sheetImg.length === 0) {
-                        sheetImgElem = CKEDITOR.dom.element.createFromHtml("<img id='sheet_img_" + name + "' src='" + dataUri.sheet + "'   alt=''/>");
+                    if (insertNewImage) {
+                        let sheetImgElem = CKEDITOR.dom.element.createFromHtml("<img id='sheet_img_" + name + "' src='" + dataUri.sheet + "'   alt=''/>");
                         editor.insertElement(sheetImgElem);
                         editor.widgets.initOn(sheetImgElem, 'image');
-                    } else {
-                        sheetImg.attr('src', dataUri.sheet);
                     }
+                    let editorDataHtml = $(editor.getData());
                     if (editorDataHtml.length) {
-                        editor.setData(CKEDITOR.dom.element.createFromHtml($('<div />').append(editorDataHtml).html()).getOuterHtml());
+                        $("img[id='sheet_img_" + name + "']", editorDataHtml).attr('src', dataUri.sheet);
+                        $("img[id='chart_img_" + name + "']", editorDataHtml).attr('src', dataUri.chart);
+                        editor.setData($('<div />').append(editorDataHtml).html());
                     }
                 });
             }));
