@@ -9,6 +9,7 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.uiColor = '#AADC6E';
     config.skin = 'office2013';
     config.allowedContent = true;
+    config.line_height="1em;1.1em;1.2em;1.3em;1.4em;1.5em" ;
     config.autoGrow_onStartup = true;
     config.baseHref = URL_ROOT;
     config.uploadUrl = URL_ROOT;
@@ -16,6 +17,6 @@ CKEDITOR.editorConfig = function( config ) {
     config.autoGrow_minHeight = 200;
     config.autoGrow_maxHeight = 600;
     config.autoGrow_bottomSpace = 50;
-    config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn';
+    config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn,lineheight';
     config.removePlugins = 'save, forms, preview, sourcearea, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div, preview';
 };
