@@ -40,7 +40,7 @@ $config['licenseKey'] = '*T?V-*1**-7**U-*7**-*M**-T*M*-3**B'; // Any hostname
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_privateDir
 
 $config['privateDir'] = array(
-    'backend' => 'private_files',
+    'backend' => 'default',
     'tags' => '.ckfinder/tags',
     'logs' => '.ckfinder/logs',
     'cache' => '.ckfinder/cache',
@@ -68,8 +68,8 @@ $config['images'] = array(
 $config['backends'][] = array(
     'name' => 'default',
     'adapter' => 'local',
-    'baseUrl' => URL_ROOT . '/public/uploads/' . uniqueId(),
-    'root' => APP_ROOT . '/../public/uploads/' . uniqueId(), // Can be used to explicitly set the CKFinder user files directory.
+    'baseUrl' => URL_ROOT . '/public/uploads/',
+    'root' => APP_ROOT . '/../public/uploads/', // Can be used to explicitly set the CKFinder user files directory.
     'chmodFiles' => 0777,
     'chmodFolders' => 0755,
     'filesystemEncoding' => 'UTF-8',
@@ -97,7 +97,7 @@ $config['resourceTypes'][] = array(
     'maxSize' => 0,
     'allowedExtensions' => '7z,aiff,asf,avi,bmp,csv,doc,docx,fla,flv,gif,gz,gzip,jpeg,jpg,mid,mov,mp3,mp4,mpc,mpeg,mpg,ods,odt,pdf,png,ppt,pptx,pxd,qt,ram,rar,rm,rmi,rmvb,rtf,sdc,sitd,swf,sxc,sxw,tar,tgz,tif,tiff,txt,vsd,wav,wma,wmv,xls,xlsx,zip',
     'deniedExtensions' => '',
-    'backend' => 'private_files'
+    'backend' => 'default'
 );
 
 $config['resourceTypes'][] = array(
@@ -106,7 +106,7 @@ $config['resourceTypes'][] = array(
     'maxSize' => 0,
     'allowedExtensions' => 'bmp,gif,jpeg,jpg,png',
     'deniedExtensions' => '',
-    'backend' => 'private_files'
+    'backend' => 'default'
 );
 
 /*================================ Access Control =====================================*/
