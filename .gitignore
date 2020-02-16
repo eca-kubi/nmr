@@ -77,6 +77,7 @@ app/config/host.php
 /app/uploads/
 /public/reports/
 /user_files/
-/vendor/
 /node_modules/
 /.idea/
+/public/uploads/
+/vendor/

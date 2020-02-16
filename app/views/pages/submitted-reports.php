@@ -32,16 +32,16 @@
                             <div class="accordion"
                                  id="accordionReportSubmissions<?php echo flashOrFull($table_prefix) ?>">
                                 <?php $i = 0;
-                                foreach ($report_submission as $key => $group) { ?>
+                                foreach ($report_submission as $key => $group) { $i++ ?>
                                     <div class="cardd mb-1">
                                         <div class="card-header with-plus-icon" id="heading_<?php echo $key; ?>">
                                             <h5 class="mb-0">
                                                 <button class="btn btn-link <?php echo $table_prefix === 'nmr' ? 'text-primary' : 'text-warning' ?>"
                                                         type="button"
                                                         data-toggle="collapse"
-                                                        data-target="#collapseOne<?php echo flashOrFull($table_prefix) ?>"
+                                                        data-target="#collapseOne<?php echo flashOrFull($table_prefix) . $i; ?>"
                                                         aria-expanded="true"
-                                                        aria-controls="collapseOne<?php echo flashOrFull($table_prefix) ?>">
+                                                        aria-controls="collapseOne<?php echo flashOrFull($table_prefix) . $i ?>">
                                                     <i
                                                             class="collapse-icon fa fa-plus"></i>
                                                     <?php echo $key; ?>
@@ -95,9 +95,9 @@
                                             </h5>
                                         </div>
 
-                                        <div id="collapseOne<?php echo flashOrFull($table_prefix) ?>"
-                                             class="with-plus-icon collapse <?php echo $i === 0 ? 'show' : '';
-                                             $i++ ?>"
+                                        <div id="collapseOne<?php echo flashOrFull($table_prefix) . $i ?>"
+                                             class="with-plus-icon collapse <?php //echo $i === 0 ? 'show' : '';
+                                             //$i++ ?>"
                                              aria-labelledby="heading_<?php echo $key; ?>"
                                              data-parent="#accordionReportSubmissions<?php echo flashOrFull($table_prefix) ?>">
                                             <div class="card-body border rounded-bottom">
