@@ -118,6 +118,10 @@ toastSuccess = function f(message, timeout = 3000) {
     });
 };
 
+function progress(target, toggle = false) {
+    var element = $(target);
+    kendo.ui.progress(element, toggle);
+}
 
 function createKendoTooltip(target, filter, position = "top") {
     return target.kendoTooltip({
