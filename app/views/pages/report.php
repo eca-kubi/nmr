@@ -224,6 +224,18 @@ echo $spreadsheet_templates; ?>'>
 
         editor = CKEDITOR.instances.content;
 
+    /*    editor.on('paste', function (ev) {
+            let imgs = $(ev.data.dataValue).find('img');
+            imgs.each(elem => {
+                editor.widgets.initOn(this, 'image');
+            });
+        });
+        */
+      /*  editor.on('paste', function (ev) {
+            ev.data.html = ev.data.html.replace(/<img( [^>]*)?>/gi, '');
+        });*/
+
+
         previewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/> </div>").appendTo("body");
         previewEditor = $("#previewEditor").kendoEditor({
             tools: [],
