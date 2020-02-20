@@ -591,7 +591,7 @@ echo $spreadsheet_templates; ?>'>
 
         spreadsheet = $("#spreadSheet").kendoSpreadsheet({
             columnWidth: 50,
-            toolbar: {
+           /* toolbar: {
                 //home: [chartMenuCommand].concat(kendo.spreadsheet.ToolBar.fn.options.tools.home),
                 home: [
                     chartMenuCommand,
@@ -601,7 +601,7 @@ echo $spreadsheet_templates; ?>'>
                         type: "button",
                         template: '<a href="#" id="#saveSpreadsheetBtn" data-role="button" tabindex="0" title="Save Spreadsheet as Template" data-tool="saveSheetTemplate" class="k-button k-button-icon"  data-overflow="auto" onclick="saveSpreadsheetTemplate(event)"><span class="k-icon k-i-save"></span></a>',
                     }, <?php endif; ?>
-                    //"open",
+                    "open",
                     "exportAs",
                     //["cut", "copy", "paste"],
                     ["bold", "italic", "underline"],
@@ -614,7 +614,7 @@ echo $spreadsheet_templates; ?>'>
                 ],
                 insert: false,
                 data: false
-            },
+            },*/
            // columns: 14,
             //rows: 8,
             removeSheet(e) {
@@ -624,10 +624,10 @@ echo $spreadsheet_templates; ?>'>
                 )
             },
             selectSheet(e) {
-                selectChartTab(e.sheet.name());
+               // selectChartTab(e.sheet.name());
             }
         }).data("kendoSpreadsheet");
-        spreadsheet.activeSheet().range("A:N").enable(false);
+        //spreadsheet.activeSheet().range("A:N").enable(false);
 
         $("#copyToEditorButton").on("click", function () {
             let activeSheetName = spreadsheet.activeSheet().name();

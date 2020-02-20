@@ -44,7 +44,8 @@ class Pages extends Controller
         }
         $payload['report_parts'] = $db->get('nmr_report_parts');
         $payload['report_parts_fr'] = $db->get('nmr_fr_report_parts');
-        $this->view('pages/report-parts', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+
     }
 
     public function newDraft(): void
@@ -66,7 +67,7 @@ class Pages extends Controller
             }
         }
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
     }
 
     public function editDraft($draft_id, $table_prefix = 'nmr'): void
@@ -91,7 +92,7 @@ class Pages extends Controller
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
         $payload['edit_draft'] = true;
         $payload['table_prefix'] = $table_prefix;
-        $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
     }
 
     public function editReport($draft_id, $table_prefix = 'nmr'): void
@@ -114,7 +115,7 @@ class Pages extends Controller
         $target_year = $draft['target_year'];
         $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefix);
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
     }
 
     public function editSubmittedReport($report_submissions_id, $table_prefix = 'nmr'): void
@@ -145,7 +146,7 @@ class Pages extends Controller
             $payload['target_month'] = $submitted_report['target_month'];
             $payload['target_year'] = $submitted_report['target_year'];
             $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-            $this->view('pages/report', $payload);
+            isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
         } catch (Exception $e) {
         }
     }
@@ -191,7 +192,7 @@ class Pages extends Controller
         $payload['title'] = $draft['title'];
         $payload['spreadsheet_templates'] = json_encode(getSpreadsheetTemplate());
         $payload['edit_preloaded_draft'] = true;
-        $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
     }
 
     public function deleteDraft($draft_id)
@@ -460,7 +461,7 @@ class Pages extends Controller
         $payload['report_part_description'] = $report_part['description'];
         $payload['page_title'] = 'Edit ' . $report_part['description'];
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
     }
 
     public function addReportPart()
@@ -468,7 +469,7 @@ class Pages extends Controller
         $payload['page_title'] = 'New Report Part';
         $payload['add_report_part'] = true;
         $payload['spreadsheet_templates'] = json_encode(Database::getDbh()->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
     }
 
     /*
@@ -514,7 +515,7 @@ class Pages extends Controller
             $payload['target_year'] = $target_year;
             $payload['target_month'] = $target_month;
             $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-            $this->view('pages/report', $payload);
+            isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
         } else {
             redirect('errors/index/404');
         }
@@ -770,5 +771,10 @@ class Pages extends Controller
         $payload['page_title'] = 'CKEditor Test';
         $payload['content'] = '<p>Hello World</p>';
         $this->view('pages/ckeditor-test', $payload);
+    }
+
+    public function test()
+    {
+        echo 'test';
     }
 }

@@ -46,9 +46,51 @@
                                                             class="collapse-icon fa fa-plus"></i>
                                                     <?php echo $key; ?>
                                                 </button>
+                                                <span class="toolbar float-right">
+                                                    <span class="row">
+                                                        <a
+                                                                class="dropdown-item preview-final-report-btn col"
+                                                                href="#" data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                                data-table-prefix="<?php echo $table_prefix ?>"
+                                                                data-target-year="<?php echo explode(" ", $key)[1] ?>"><i
+                                                                    class="fa fa-play-circle-o"></i> Preview</a>
+                                                    <?php if (isPowerUser($current_user->user_id) && isset($is_power_user)): ?>
+                                                        <a
+                                                                class="dropdown-item generate-report-btn col"
+                                                                href="<?php echo "#" ?>"
+                                                                data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                                data-target-year="<?php echo explode(" ", $key)[1] ?>"
+                                                                data-table-prefix="<?php echo $table_prefix ?>"
+                                                        ><i class="fas fa-cogs"></i> Generate Report
+                                                    </a>
+                                                        <a id="<?php echo 'editFinalReportBtn_' . $key ?>"
+                                                           class="dropdown-item edit-final-report-btn col <?php echo isPowerUser($current_user->user_id) ? '' : 'd-none' ?> <?php /** @var array $target_month_years */
+                                                           echo in_array($key, $target_month_years[$table_prefix]) ? '' : 'd-none' ?>"
+                                                           href="#"
+                                                           data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                           data-target-year="<?php echo explode(" ", $key)[1] ?>"
+                                                           data-table-prefix="<?php echo $table_prefix ?>"
+                                                        ><i class="fa fa-file-edit"></i> Edit
+                                                    </a> <?php endif; ?>
+                                                <a
+                                                        class="dropdown-item download-final-report-btn col <?php echo !empty($group[0]['download_url']) ? '' : 'd-none' ?>"
+                                                        href="<?php echo $group[0]['download_url'] ?? "#" ?>"
+                                                        data-download-url="<?php echo $group[0]['download_url'] ?? ''; ?>"
+                                                        target="_blank"
+                                                        data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                        data-target-year="<?php echo explode(" ", $key)[1] ?>"
+                                                        data-table-prefix="<?php echo $table_prefix ?>"
+                                                ><i class="fa fa-file-download"></i> Download</a><a
+                                                                class="dropdown-item d-none col"
+                                                                href="<?php echo "#" ?>"
+                                                                data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                                data-target-year="<?php echo explode(" ", $key)[1] ?>"
+                                                                data-table-prefix="<?php echo $table_prefix ?>"
+                                                        ><i class="fa fa-megaphone"></i> Notify HoDs</a>
+                                                </span>
                                                 <a
                                                         href="#"
-                                                        class="fa fa-ellipsis-v font-weight-lighter float-right w3-text-dark-grey"
+                                                        class="fa fa-ellipsis-v font-weight-lighter float-right w3-text-dark-grey d-none"
                                                         data-toggle="dropdown"
                                                         role="button"></a>
                                                 <span class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -91,6 +133,8 @@
                                                             data-target-year="<?php echo explode(" ", $key)[1] ?>"
                                                             data-table-prefix="<?php echo $table_prefix ?>"
                                                     ><i class="fa fa-megaphone"></i> Notify HoDs</a>
+                                                    </span>
+
                                             </span>
                                             </h5>
                                         </div>

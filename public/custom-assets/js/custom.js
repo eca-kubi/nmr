@@ -35,7 +35,8 @@ $(function () {
     $.blockUI.defaults.overlayCSS.opacity = 0.3;
     $.blockUI.defaults.overlayCSS.cursor = 'default';
     $.blockUI.defaults.message = "<i class='k-loading-mask k-loading-image'></i>";
-    $(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+    $.blockUI.defaults.applyPlatformOpacityRules = false;
+    //$(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
 
     //jQuery.fx.off = true;
     //URL_ROOT = $('#url_root').val();
