@@ -461,7 +461,7 @@ echo $spreadsheet_templates; ?>'>
                 "foreColor",
                 "backColor",
                 "viewHtml",
-                {
+                /*{
                     name: "toc",
                     tooltip: "ToC Headings",
                     template: `<select id="toc" style="width: 100%;">
@@ -470,7 +470,7 @@ echo $spreadsheet_templates; ?>'>
                 <option value="h3"><h3>H3</h3></option>
                 <option value="h4"><h4>H4</h4></option>
             </select>`
-                },
+                },*/
                 {
                     name: "pageBreak",
                     tooltip: "Insert Page Break",
