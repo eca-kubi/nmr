@@ -72,9 +72,8 @@
                                  data-url="<?php echo URL_ROOT ?>/pages/submitted-reports/">
                                 <div class="inner">
                                     <h3 class="w3-hide-small text-wrap">Submitted Reports (Departments)</h3>
-                                    <h5 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports
-                                        (Departments)</h5>
-                                    <p>View reports submitted by departments</p>
+                                    <h5 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports (Departments)</h5>
+                                    <!--<p>View reports submitted by departments</p>-->
                                 </div>
                                 <div class="icon" style="color: goldenrod">
                                     <i class="fa fa-check-double"></i>
