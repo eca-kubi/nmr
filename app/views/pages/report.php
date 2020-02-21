@@ -642,7 +642,7 @@ echo $spreadsheet_templates; ?>'>
             //overlayScrollbarsInstances.body.scroll($("#editorTabStrip"), 5000, {x: 'swing', y: 'swing'})
             setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {x: 'swing', y: 'swing'}), 500);
 
-        }, 3000);
+        }, 1500);
 
         let chartMenuButton = $("#chartsMenuButton");
         let chartsMenuPopup = $("#chartsMenuPopup").kendoPopup({
@@ -2117,14 +2117,14 @@ echo $spreadsheet_templates; ?>'>
                     submit().done(post => post.done(data => {
                         draftId.val(data.draftId);
                         let alert = kendoAlert("Report Updated!", "Report updated successfully.");
-                        setTimeout(() => alert.close(), 3000);
+                        setTimeout(() => alert.close(), 1500);
                     }));
                 });
         } else if ($(e.target).hasClass("submit-report-btn")) {
             submit().done(post => post.done(data => {
                 draftId.val(data.draftId);
                 let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
-                setTimeout(() => alert.close(), 3000);
+                setTimeout(() => alert.close(), 1500);
                 editorActionToolbar.hide(".submit-report-btn");
                 editorActionToolbar.show(".update-submitted-report-btn");
             }));
