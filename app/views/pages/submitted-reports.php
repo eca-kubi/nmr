@@ -513,7 +513,7 @@
             },
             success: function (data) {
                 previewEditor.value(data);
-                //progress('.content-wrapper', true);
+                progress('.content-wrapper', true);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
                     margin: "1.3cm",
@@ -523,7 +523,7 @@
                     // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
                 }).done(data => {
-                    //progress('.content-wrapper');
+                    progress('.content-wrapper');
                     draftWindow.center().open().maximize();
                     pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                     setTimeout(() => pdfViewer.activatePage(1), 500)

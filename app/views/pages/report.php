@@ -210,7 +210,7 @@ echo $spreadsheet_templates; ?>'>
 
         let previewContent = function (contentUrl, datafilter = false, fileName = "Document") {
             let showPdfViewer = () => {
-                //progress('.content-wrapper', true);
+                progress('.content-wrapper', true);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'a3',
                     margin: "1.3cm",
@@ -220,7 +220,7 @@ echo $spreadsheet_templates; ?>'>
                     // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
                 }).done(function (data) {
-                    //progress('.content-wrapper');
+                    progress('.content-wrapper');
                     pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                     setTimeout(() => pdfViewer.activatePage(1), 500)
                 });
