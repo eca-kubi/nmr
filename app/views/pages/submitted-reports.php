@@ -53,7 +53,7 @@
                                                                 href="#" data-target-month="<?php echo explode(" ", $key)[0] ?>"
                                                                 data-table-prefix="<?php echo $table_prefix ?>"
                                                                 data-target-year="<?php echo explode(" ", $key)[1] ?>"><i
-                                                                    class="fa fa-play-circle-o"></i> Preview</a>
+                                                                    class="fa fa-play-circle-o"></i> View Report</a>
                                                     <?php if (isPowerUser($current_user->user_id) && isset($is_power_user)): ?>
                                                         <a
                                                                 class="dropdown-item generate-report-btn col"
@@ -99,7 +99,7 @@
                                                         href="#" data-target-month="<?php echo explode(" ", $key)[0] ?>"
                                                         data-table-prefix="<?php echo $table_prefix ?>"
                                                         data-target-year="<?php echo explode(" ", $key)[1] ?>"><i
-                                                            class="fa fa-play-circle-o"></i> Preview</a>
+                                                            class="fa fa-play-circle-o"></i> View Report</a>
                                                 <?php if (isPowerUser($current_user->user_id) && isset($is_power_user)): ?>
                                                     <a
                                                             class="dropdown-item generate-report-btn"
@@ -220,7 +220,7 @@
                                                      href="#"
                                              ><i class="fa fa-file-edit"></i> Edit</a>
                                              <a class="dropdown-item preview-btn" href="#"><i
-                                                         class="fa fa-play-circle-o"></i> Preview</a>
+                                                         class="fa fa-play-circle-o"></i> View Report</a>
                                         </div>
                                     </span>
                                                                     <span class="text-sm"><i
@@ -236,7 +236,7 @@
                                                                        data-target-month="<?php echo $report['target_month'] ?>"
                                                                        data-target-year="<?php echo $report['target_year'] ?>"><i
                                                                                 class="fa fa-play-circle-o mr-0"></i>
-                                                                        Preview</a>
+                                                                        View Report</a>
                                                                     <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 edit-submitted-report <?php echo isPowerUser($current_user->user_id) ? '' : 'd-none' ?>"
                                                                        href="#"
                                                                        data-table-prefix="<?php echo $table_prefix ?>"
