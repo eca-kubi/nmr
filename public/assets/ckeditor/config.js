@@ -17,6 +17,6 @@ CKEDITOR.editorConfig = function( config ) {
     config.autoGrow_minHeight = 200;
     config.autoGrow_maxHeight = 600;
     config.autoGrow_bottomSpace = 50;
-    config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn,lineheight';
+    config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn';
     config.removePlugins = 'save, forms, preview, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div, preview, pastebase64';
 };
