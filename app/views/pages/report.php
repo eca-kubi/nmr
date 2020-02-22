@@ -2099,35 +2099,46 @@ echo $spreadsheet_templates; ?>'>
         let title = $("#draftTitleInput").val();
         let targetMonth = $("#targetMonth").val();
         let targetYear = $("#targetYear").val();
-        let submit = () => {
-            let dfd = $.Deferred();
-            let post = $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
-                title: title,
-                draft_id: draftId.val(),
-                content: editor.value(),
-                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-            }, null, "json");
-            dfd.resolve(post);
-            return dfd.promise();
-        };
-
+        /*   let submit = () => {
+               let dfd = $.Deferred();
+               let post = $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
+                   title: title,
+                   draft_id: draftId.val(),
+                   content: editor.value(),
+                   spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+               }, null, "json");
+               dfd.resolve(post);
+               return dfd.promise();
+           };
+   */
         if ($(e.target).hasClass('update-submitted-report-btn')) {
             showWindow('This report has already been submitted. Are you sure you want to update it?')
                 .done(e => {
-                    submit().done(post => post.done(data => {
-                        draftId.val(data.draftId);
-                        let alert = kendoAlert("Report Updated!", "Report updated successfully.");
-                        setTimeout(() => alert.close(), 1500);
-                    }));
+                    $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
+                        title: title,
+                        draft_id: draftId.val(),
+                        content: editor.value(),
+                        //spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                    }, null, "json")
+                        .done(data => {
+                            draftId.val(data.draftId);
+                            let alert = kendoAlert("Report Updated!", "Report updated successfully.");
+                            setTimeout(() => alert.close(), 1500);
+                        });
                 });
         } else if ($(e.target).hasClass("submit-report-btn")) {
-            submit().done(post => post.done(data => {
+            $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
+                title: title,
+                draft_id: draftId.val(),
+                content: editor.value(),
+                //spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+            }, null, "json").done(data => {
                 draftId.val(data.draftId);
                 let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
                 setTimeout(() => alert.close(), 1500);
                 editorActionToolbar.hide(".submit-report-btn");
                 editorActionToolbar.show(".update-submitted-report-btn");
-            }));
+            });
         }
     }
 
