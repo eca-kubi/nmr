@@ -45,8 +45,7 @@ class Pages extends Controller
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
         $payload['report_parts'] = $db->get('nmr_report_parts');
         $payload['report_parts_fr'] = $db->get('nmr_fr_report_parts');
-        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
-
+        $this->view('pages/report-parts', $payload);
     }
 
     public function newDraft(): void
@@ -448,14 +447,14 @@ class Pages extends Controller
         }
     }
 
-    public function editReportPart($report_part_id, $table_prefix='nmr')
+    public function editReportPart($report_part_id, $table_prefix = 'nmr')
     {
         $db = Database::getDbh();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/edit-report-part/' . $report_part_id . ($table_prefix? '/' . $table_prefix : '') );
+            redirect('users/login/pages/edit-report-part/' . $report_part_id . ($table_prefix ? '/' . $table_prefix : ''));
         }
         $payload['edit_report_part'] = true;
-        $report_part = $db->where('report_part_id', $report_part_id)->getOne($table_prefix .'_report_parts');
+        $report_part = $db->where('report_part_id', $report_part_id)->getOne($table_prefix . '_report_parts');
         $payload['content'] = $report_part['content'];
         $payload['table_prefix'] = $table_prefix;
         $payload['report_part_id'] = $report_part_id;
@@ -767,7 +766,8 @@ class Pages extends Controller
         echo Database::getDbh()->where('draft_id', $draft_id)->getValue($table_prefix . '_preloaded_draft', 'editor_content');
     }
 
-    public function cKEditorTest(){
+    public function cKEditorTest()
+    {
         if (!isLoggedIn()) redirect('users/login/pages/ckeditor-test');
         $payload['page_title'] = 'CKEditor Test';
         $payload['content'] = '<p>Hello World</p>';

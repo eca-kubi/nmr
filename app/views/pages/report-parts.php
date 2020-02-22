@@ -247,6 +247,7 @@
         }, 1000);
 
         let showPdfViewer = () => {
+            progress('.content-wrapper', true);
             kendo.drawing.drawDOM($(previewEditor.body), {
                 paperSize: 'a3',
                 margin: "1.3cm",
@@ -255,6 +256,8 @@
             }).then(function (group) {
                 return kendo.drawing.exportPDF(group, {});
             }).done(function (data) {
+                progress('.content-wrapper');
+                draftWindow.center().open().maximize();
                 pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                 setTimeout(() => pdfViewer.activatePage(1), 500)
             });
@@ -265,9 +268,7 @@
             let tablePrefix = $(e.currentTarget).data('tablePrefix');
             window.reportPartId = reportPartId;
             let description = $(e.currentTarget).data('description');
-            $.post(URL_ROOT + "/pages/preview-content/", {
-                content: editor.value()
-            }, null, "html").done((data) => {
+            $.get(URL_ROOT + "/pages/fetch-report-part/" +  reportPartId + "/" + tablePrefix).done((data) => {
                 previewEditor.value(data);
                 showPdfViewer();
             });
