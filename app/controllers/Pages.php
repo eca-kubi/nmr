@@ -42,6 +42,7 @@ class Pages extends Controller
         if (!isLoggedIn()) {
             redirect('users/login/pages/report-parts');
         }
+        $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
         $payload['report_parts'] = $db->get('nmr_report_parts');
         $payload['report_parts_fr'] = $db->get('nmr_fr_report_parts');
         isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
