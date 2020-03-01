@@ -149,7 +149,7 @@ input:not([type="hidden"]):not([type="submit"]):not([type="reset"]):not(button),
 }
 
 .main-sidebar {
-    z-index: 10003
+    z-index: 9995
 }
 
 /*.with-errors {
@@ -655,8 +655,12 @@ a.k-link.k-state-active {
     z-index: auto !important;
 }
 
+.os-scrollbar {
+    z-index: 9994!important;
+}
+
 .wrapper > header {
-    z-index: 10003;
+    z-index: 9995;
     position: absolute;
 }
 
@@ -674,19 +678,19 @@ div.k-listbox li.k-item {
 }
 
 header {
-    z-index: 9999999 !important;
+    z-index: 9995 !important;
 }
 
 aside.main-sidebar {
-    z-index: 9999999 !important;
+    z-index: 9995 !important;
 }
 
 .k-overlay {
-    z-index: 9999999 !important;
+    z-index: 9995 !important;
 }
 
 .k-window {
-    z-index: 9999999 !important;
+    z-index: 9995 !important;
 }
 
 .k-spreadsheet-scroller {
@@ -721,6 +725,7 @@ a.bg-aqua:hover {
 a:hover {
     text-decoration: none!important;
 }
+
 
 /*Adapt Red theme*/
 

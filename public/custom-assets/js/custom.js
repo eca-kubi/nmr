@@ -31,6 +31,15 @@ const CHART_MINE_SITE_EMPLOYEE_TURNOVER = 'MINE SITE EMPLOYEE TURNOVER';
 const CHART_MINE_SITE_EMPLOYEE_TURNOVER_2 = 'MINE SITE EMPLOYEE TURNOVER 2';
 
 let monthNames = kendo.cultures.current.calendars.standard.months.names;
+let pdfExportOptions = {
+    allPages: true,
+    paperSize: 'A4',
+    margin: {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"},
+    scale: 0.7,
+    multipage: true,
+    forcePageBreak: '.page-break'
+};
+
 $(function () {
     $.blockUI.defaults.overlayCSS.opacity = 0.3;
     $.blockUI.defaults.overlayCSS.cursor = 'default';
@@ -263,24 +272,77 @@ function notify(message, type = 'success') {
 }
 
 function getYearsBetween(startDate, endDate) {
-    let s = new Date( startDate);
+    let s = new Date(startDate);
     let start = s.getFullYear();
 
-    let e = new Date( endDate);
+    let e = new Date(endDate);
     let end = e.getFullYear();
     let arr = Array();
 
-    for(let i = start; i <= end; i++) arr.push(i);
+    for (let i = start; i <= end; i++) arr.push(i);
     return arr;
 }
 
-/*kendo.pdf.defineFont({
-    "DejaVu Sans"             : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
-    "DejaVu Sans|Bold"        : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",
-    "DejaVu Sans|Bold|Italic" : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
-    "DejaVu Sans|Italic"      : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
-    "WebComponentsIcons"      : "https://kendo.cdn.telerik.com/2017.1.223/styles/fonts/glyphs/WebComponentsIcons.ttf"
-});*/
+function arabicToRoman(number) {
+    let roman = "";
+    const romanNumList = {
+        M: 1000,
+        CM: 900,
+        D: 500,
+        CD: 400,
+        C: 100,
+        XC: 90,
+        L: 50,
+        XV: 40,
+        X: 10,
+        IX: 9,
+        V: 5,
+        IV: 4,
+        I: 1
+    };
+    let a;
+    if (number < 1 || number > 3999)
+        return "Enter a number between 1 and 3999";
+    else {
+        for (let key in romanNumList) {
+            a = Math.floor(number / romanNumList[key]);
+            if (a >= 0) {
+                for (let i = 0; i < a; i++) {
+                    roman += key;
+                }
+            }
+            number = number % romanNumList[key];
+        }
+    }
+
+    return roman;
+}
+
+function pageMeta(page) {
+    switch (page) {
+        case 'editDraft':
+            return {
+                templateId: `#page-template-body_${tablePrefix}`,
+                fileName: 'Nzema Monthly Report'
+            };
+        default:
+            return {};
+    }
+}
+
+function removeTagAndContent(tag, str) {
+    let regex = new RegExp("<" + tag + ".*>.*?<\/" + tag + ">", "ig");
+    return str.replace(regex, '');
+}
+
+function extractTag(tag, str) {
+    let regex = new RegExp("<" + tag + ".*>.*?<\/" + tag + ">", "ig");
+    return str.match(regex, '');
+}
+
+function getPageBreak() {
+return "<div class=\"page-break\" style=\"page-break-after:always;\"><span style=\"display:none;\">&nbsp;</span></div><p></p>";
+}
 /*
 $.when(showConfirmationWindow('Are you sure?')).then(function(confirmed){
 

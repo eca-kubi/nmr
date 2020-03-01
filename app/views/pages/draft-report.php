@@ -38,7 +38,8 @@
                         <?php /** @var array $drafts */
                         foreach ($drafts as $table_prefix => $draft) { ?>
                             <?php if (count($draft) > 0): ?>
-                                <div class="col-md-6 col-sm-6 col-xs-12" id="draft_<?php echo $draft['draft_id']; ?>" title="<?php echo $target_month?? ''; ?> <?php echo $target_year?? ''; ?>">
+                                <div class="col-md-6 col-sm-6 col-xs-12" id="draft_<?php echo $draft['draft_id']; ?>"
+                                     title="<?php echo $target_month ?? ''; ?> <?php echo $target_year ?? ''; ?>">
                                     <div class="info-box p-0">
                                 <span class="info-box-icon bg-gray-light border rounded-0 rounded-left"><svg
                                             class="fontastic-draft"
@@ -47,14 +48,14 @@
 
                                         <div class="info-box-content">
                                             <div class="info-box-text text-bold"> Draft <span
-                                                        class="text-<?php echo $table_prefix === 'nmr'? 'primary' : 'warning'; ?>">(<?php echo flashOrFull($table_prefix) ?> Report) </span>
+                                                        class="text-<?php echo $table_prefix === 'nmr' ? 'primary' : 'warning'; ?>">(<?php echo flashOrFull($table_prefix) ?> Report) </span>
                                                 <a href="#"
                                                    class="fa fa-ellipsis-v font-weight-lighter float-right draft-menu w3-text-dark-grey"
                                                    data-toggle="dropdown"
                                                    role="button"></a>
                                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                                 <a class="dropdown-item"
-                                       href="<?php echo URL_ROOT . '/pages/edit-draft/' . $draft['draft_id'] . '/' . $table_prefix; ?>"
+                                                    <a class="dropdown-item"
+                                                       href="<?php echo URL_ROOT . '/pages/edit-draft/' . $draft['draft_id'] . '/' . $table_prefix; ?>"
                                                     ><i class="fa fa-file-edit"></i> Edit</a>
                                                     <a class="dropdown-item preview-btn"
                                                        data-draft-id="<?php echo $draft['draft_id']; ?>"
@@ -107,8 +108,8 @@
 </div>
 <style>
     #previewEditorParent .k-editor {
-        visibility: hidden!important;
-        z-index: -1!important;
+        visibility: hidden !important;
+        z-index: -1 !important;
     }
 </style>
 <!-- /.content-wrapper -->
@@ -134,20 +135,20 @@
             modal: true,
             visible: false,
             width: "80%",
-            scrollable: false
-            //height: "80%",
+            scrollable: true,
             // (Optional) Will limit the percentage dimensions as well:
             // maxWidth: 1200,
             // maxHeight: 800,
             //open: adjustSize
         }).data("kendoWindow");
+
         pdfViewer = jQSelectors.draftPreviewViewer.kendoPDFViewer({
             pdfjsProcessing: {
                 file: ""
             },
             width: "100%",
-            height: 550,
-            scale: 1,
+            height: 800,
+            scale: 1.27,
             toolbar: {
                 items: [
                     "pager", "zoom", "toggleSelection", "search", "download", "print",
@@ -163,6 +164,7 @@
                 ]
             }
         }).getKendoPDFViewer();
+
         setTimeout(function () {
             previewEditor = $("#previewEditor").kendoEditor({
                 tools: [],
@@ -171,7 +173,6 @@
                     "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
                 ]
             }).data("kendoEditor");
-
         }, 1000);
 
         $("a.preview-btn").on("click", function (e) {
@@ -179,23 +180,24 @@
             window.previewDraftId = draftId;
             let title = $(e.currentTarget).data('title');
             let tablePrefix = $(e.currentTarget).data('tablePrefix');
-            $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + '/' + tablePrefix).done(function (data, successTextStatus, jQueryXHR) {
-
+            progress('.content-wrapper', true);
+            $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + '/' + tablePrefix).done(function (data) {
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'a3',
-                    margin: "1.3cm",
+                    paperSize: 'A4',
+                    margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                    scale: 0.7,
                     multipage: true,
-                    forcePageBreak: ".page-break"
+                    forcePageBreak: ".page-break",
+                    template: $(`#page-template-body_${tablePrefix}`).html()
                 }).then(function (group) {
-                    // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
-                })
-                    .done(function (data) {
-                        draftWindow.center().open().maximize();
-                        pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                        setTimeout(() => pdfViewer.activatePage(1), 500)
-                    });
+                }).done(function (data) {
+                    progress('.content-wrapper');
+                    draftWindow.center().open().maximize();
+                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                    setTimeout(() => pdfViewer.activatePage(1), 500)
+                });
             });
         });
     });

@@ -18,6 +18,9 @@ define('DATE_FORMATS', [
     'num_xs' => 'Y/n/j',
 ]);
 
+const DEFAULT_DRAFT_MONTH = 'February';
+const DEFAULT_DRAFT_YEAR = '2020';
+
 const NO_PROFILE = 'no_profile.jpg';
 const DEFAULT_PROFILE_PIC = 'no_profile.jpg';
 const INTRANET = 'http://intranet.arlgh.com';

@@ -29,7 +29,7 @@ class Core
                 if (method_exists($this->currentController, $this->currentMethod)) {
                     $this->params = $url ? array_values($url) : [];
                     if ($this->currentMethod === 'login') {
-                        $this->params = [implode('/', $this->params). fetchGetParams()];
+                        $this->params = [implode('/', $this->params). '?' . fetchGetParams()];
                     }
                     call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
                     return;

@@ -111,7 +111,65 @@
 
 </script>
 <script id="updateSubmittedReportBtnTemplate" type="text/x-kendo-template">
-<a class="text-bold"><i class="k-icon k-i-upload"></i> Update Submitted Report</a>
+    <a class="text-bold"><i class="k-icon k-i-upload"></i> Update Submitted Report</a>
 </script>
 
+<script type="x/kendo-template" id="page-template-body_nmr_fr">
+    <div class="page-template" style="position:absolute; top:0; left:0; width:100%; height:100%">
+        <div class="header" style="position:absolute; top:20px; left:30px; right:30px; width:100%; font-size: medium;">
+            <table style="border: 1px dashed lightgray; margin: auto; ">
+                <colgroup>
+                    <col style="width:25%;"/>
+                    <col style="width:25%;"/>
+                    <col style="width:25%;"/>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td style="text-align: center;"><span><img src="/nmr/public/assets/images/adamus.jpg" width="150px"
+                                                               alt=""></span></td>
+                    <td style="font-size: x-small; text-align: left; border-left: 1px dashed lightgray; border-right: 1px dashed lightgray; padding-left: 10px">
+                        Y/B 15 AUGUSTO NETO ROAD <br>
+                        AIRPORT, ACCRA, GHANA <br>
+                        KAPMB 93, AIRPORT-ACCRA <br>
+                        Tel: +233 (0)21-776 821
+                    </td>
+                    <td style="font-size: x-small; text-align: left; padding-left: 10px"> P. O. BOX 31 <br>
+                        ESSIAMA – ELLEMBELLE DISTRICT <br>
+                        WESTERN REGION <br>
+                        GHANA
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="spacer"></div>
+        </div>
+        <div class="footer"
+             style="position:absolute; bottom:20px; right:10px; width:90%;border-top: 1px solid darkgray; margin: 0 10px 0 10px; font-size: small">
+            <div style="float: right">#: pageNum #</div>
+        </div>
+    </div>
+</script>
 
+<script type="x/kendo-template" id="page-template-body_nmr">
+    <div class="page-template" style="position:absolute;top:0;left:0;width:100%;height:100%;">
+        <div class="footer"
+             style="position:absolute;bottom:20px;right:10px;border-top:1px solid darkgray;width:7%;margin:0 10px 0 10px;font-size:small;">
+            <div style="text-align:center;color:\\#f7bf99;">#: pageNum #</div>
+        </div>
+    </div>
+</script>
+
+<script type="x/kendo-template" id="page-template-cover-toc_nmr">
+    <div class="page-template" style="position:absolute; top:0; left:0; width:100%; height:100%">
+    </div>
+</script>
+
+<script type="x/kendo-template" id="page-template-cover-toc_nmr_fr">
+    <div class="page-template" style="position:absolute; top:0; left:0; width:100%; height:100%;">
+        <div class="footer"
+             style="position:absolute; bottom:20px; right:10px; width:90%;border-top: 1px solid lightgray; margin: 0 10px 0 10px; font-size: small; ">
+            <div style="float: left; color: lightgray">Monthly Report</div>
+            <div style="float: right; color: lightgray">Page | #= arabicToRoman(pageNum).toLowerCase() #</div>
+        </div>
+    </div>
+</script>

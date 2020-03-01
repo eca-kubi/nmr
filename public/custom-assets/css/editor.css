@@ -1,3 +1,42 @@
-.k-table, .k-table td {
-    border: 1px solid #ccc!important;
+span[lang] {
+    font-style: normal;
 }
+
+.page-template {
+    font-family: "DejaVu Sans", "Arial", sans-serif;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+.page-template .header {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    right: 30px;
+    color: #888;
+}
+
+/*.page-template .spacer {
+    height: 50px;
+    margin: 0 0 -50px 0;
+    !* margin: 20px 0 -50px 0; use this if you want #container to have a 'bottom padding', in this case of 20px *!
+    background: transparent; !* you'll need this if #container's parent element has a different background from #container itself *!
+}*/
+/*.page-template .footer {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    right: 30px;
+    border-top: 1px solid #888;
+    text-align: center;
+    color: #888;
+}*/
+
+@media print {
+   .cke_pagebreak, .page-break {
+        opacity: 0!important;
+    }
+}
+

@@ -220,10 +220,10 @@ $user = getUserSession();
     <div class="notfound">
         <div class="notfound-404">
             <div>
-                <h1 class="d-md-block d-none" style="font-size: 50px">NMR Login</h1>
-                <h4 class="pt-2">Nzema Monthly Report</h4>
+                <h1 class="d-md-block d-none" style="font-size: 50px">NMRs Login</h1>
+                <h4 class="pt-2">Nzema Monthly Reports</h4>
             </div>
-            <h5 class="font-passion-one d-md-none text-uppercase text-center">NMR Login</h5>
+            <h5 class="font-passion-one d-md-none text-uppercase text-center">NMRs Login</h5>
         </div>
         <?php flash('flash_login') ?>
         <!-- .col-10 -->

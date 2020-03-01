@@ -843,12 +843,14 @@ function isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefi
 function currentSubmissionMonth()
 {
     //return Database::getDbh()->where('prop', 'nmr_current_submission_month')->getValue('settings', 'value');
-    return date('F');
+    //return date('F');
+    return DEFAULT_DRAFT_MONTH;
 }
 
 function currentSubmissionYear()
 {
-    return date('Y');
+    return DEFAULT_DRAFT_YEAR;
+    //return date('Y');
     //return Database::getDbh()->where('prop', 'nmr_current_submission_year')->getValue('settings', 'value');
 }
 
@@ -870,6 +872,7 @@ function generateFinalReport(string $target_month, $target_year, $table_prefix =
 {
     $db = Database::getDbh();
     $cover_page = $db->where('name', 'cover_page')->getValue($table_prefix . '_report_parts', 'content');
+    $cover_page = str_replace('#: monthYear #', strtoupper($target_month). ' '. $target_year, $cover_page);
     $distribution_list = $db->where('name', 'distribution_list')->getValue($table_prefix . '_report_parts', 'content');
     $callback = function ($array) {
         return $array['content'];
@@ -882,10 +885,9 @@ function generateFinalReport(string $target_month, $target_year, $table_prefix =
 
     /*$db->onDuplicate(['html_content']);
     $db->where('target_month', $target_month)->where('target_year', $target_year)->insert($table_prefix . '_final_report', ["html_content" => $content]);*/
-
-    return "<coverpage>$cover_page</coverpage>" . "<p class='page-break'></p>" .
-        "<distributionlist>$distribution_list</distributionlist>" . "<p class='page-break'></p>" .
-        array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year, $table_prefix)), $join, "<br/>");
+    return "<coverpage>$cover_page</coverpage>" .
+        "<distributionlist>$distribution_list</distributionlist>".
+        "<content>". array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year, $table_prefix)), $join, "<br/>") ."</content>";
 }
 
 function fetchFinalReportAsHtml(string $target_month, $target_year, $table_prefix = 'nmr')
@@ -955,7 +957,7 @@ function getReportMonthYears($table_prefix = 'nmr')
 
 function fetchGetParams()
 {
-    $get_params = "?";
+    $get_params = "";
     foreach ($_GET as $key => $value) {
         if ($key == 'url') continue;
         $get_params = $get_params . $key . "=" . $value . "&";

@@ -245,7 +245,6 @@
             }).data("kendoEditor");
 
         }, 1000);
-
         let showPdfViewer = () => {
             progress('.content-wrapper', true);
             kendo.drawing.drawDOM($(previewEditor.body), {

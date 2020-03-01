@@ -171,7 +171,7 @@
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
                             style="position:absolute">
                             <li><a class="dropdown-item"
-                                   href="<?php echo site_url('pages/draft-report') ?>"><i>
+                                   href="<?php echo site_url('pages/draft-reports') ?>"><i>
                                         <svg class="fontastic-draft"
                                              style="fill: currentColor; height: 14px; width: 14px">
                                             <use

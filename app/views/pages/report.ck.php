@@ -30,38 +30,45 @@
                         <?php if (!(isset($is_submission_closed) && $is_submission_closed)): ?>
                             <div id="editorTab">
                                 <div id="editorActionToolbar"></div>
-                                <div style="width: 100%">
-                                    <form id="editorForm">
+                                <div style="padding: 30px;
+			display: flex;
+			align-items: center;
+			text-align: center;">
+                                    <div style="margin: 0 auto">
+                                        <form id="editorForm">
                                     <textarea name="content" id="content" cols="30" rows="10"
                                               style="height: 500px;"><?php echo $content ?? ''; ?></textarea>
-                                        <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
-                                               value='<?php echo $spreadsheet_content ?? ''; ?>'>
-                                        <input type="hidden" id="title" name="title"
-                                               value="<?php echo $title ?? ''; ?>">
-                                        <input type="hidden" id="draftId" name="draft_id"
-                                               value="<?php echo $draft_id ?? ''; ?>">
-                                        <input type="hidden" id="draftTitleInput" name="draft_title_input"
-                                               value="<?php echo $title ?? ''; ?>">
+                                            <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
+                                                   value='<?php echo $spreadsheet_content ?? ''; ?>'>
+                                            <input type="hidden" id="title" name="title"
+                                                   value="<?php echo $title ?? ''; ?>">
+                                            <input type="hidden" id="draftId" name="draft_id"
+                                                   value="<?php echo $draft_id ?? ''; ?>">
+                                            <input type="hidden" id="draftTitleInput" name="draft_title_input"
+                                                   value="<?php echo $title ?? ''; ?>">
 
-                                        <input type="hidden" id="targetYear" name="target_year"
-                                               value="<?php echo $target_year ?? ''; ?>">
-                                        <input type="hidden" id="targetMonth" name="target_month"
-                                               value="<?php echo $target_month ?? ''; ?>">
-                                        <input type="hidden" id="departmentName" name="department_name">
-                                        <input type="hidden" id="reportSubmissionsId" name="report_submissions_id"
-                                               value="<?php echo $report_submissions_id ?? ''; ?>">
-                                        <input type="hidden" id="editSubmittedReport" name="edit_submitted_report"
-                                               value="<?php echo $edit_submitted_report ?? ''; ?>">
-                                        <input type="hidden" id="reportPartId" name="report_part_id"
-                                               value="<?php echo $report_part_id ?? ''; ?>">
-                                        <input type="hidden" id="reportPartIdTemp" name="report_part_id_temp">
-                                        <input type="hidden" id="reportPartDescription" name="report_part_description"
-                                               value="<?php echo $report_part_description ?? ''; ?>">
-                                        <input type="hidden" id="finalReportId" name="final_report_id"
-                                               value="<?php echo $final_report_id ?? ''; ?>">
+                                            <input type="hidden" id="targetYear" name="target_year"
+                                                   value="<?php echo $target_year ?? ''; ?>">
+                                            <input type="hidden" id="targetMonth" name="target_month"
+                                                   value="<?php echo $target_month ?? ''; ?>">
+                                            <input type="hidden" id="departmentName" name="department_name">
+                                            <input type="hidden" id="reportSubmissionsId" name="report_submissions_id"
+                                                   value="<?php echo $report_submissions_id ?? ''; ?>">
+                                            <input type="hidden" id="editSubmittedReport" name="edit_submitted_report"
+                                                   value="<?php echo $edit_submitted_report ?? ''; ?>">
+                                            <input type="hidden" id="reportPartId" name="report_part_id"
+                                                   value="<?php echo $report_part_id ?? ''; ?>">
+                                            <input type="hidden" id="reportPartIdTemp" name="report_part_id_temp">
+                                            <input type="hidden" id="reportPartDescription"
+                                                   name="report_part_description"
+                                                   value="<?php echo $report_part_description ?? ''; ?>">
+                                            <input type="hidden" id="finalReportId" name="final_report_id"
+                                                   value="<?php echo $final_report_id ?? ''; ?>">
 
-                                    </form>
+                                        </form>
+                                    </div>
                                 </div>
+
                             </div> <?php endif; ?>
                         <div id="previewTab">
                             <div id="previewContent"></div>
@@ -131,13 +138,13 @@ echo $spreadsheet_templates; ?>'>
         z-index: -1;
     }
 
-    .cke_reset_all {
-        z-index: 9999999 !important;
-    }
+    /* .cke_reset_all, .cke_panel {
+         z-index: 99999991 !important;
+     }
 
-    .cke_maximized {
-        z-index: 99999995 !important;
-    }
+     .cke_maximized {
+         z-index: 99999995 !important;
+     }*/
 
 </style>
 <script>
@@ -196,6 +203,10 @@ echo $spreadsheet_templates; ?>'>
     let previewEditor;
 
     $(function () {
+        $("body").on('click', 'a[href^="#"], a[href^="javascript:"]', function (e) {
+            e.preventDefault();
+        });
+
         CKEDITOR.editor.prototype.value = function () {
             return this.getData();
         };
@@ -212,39 +223,75 @@ echo $spreadsheet_templates; ?>'>
         CKEDITOR.editor.prototype.paste = function (content) {
             this.insertHtml(content);
         };
-
+        CKEDITOR.on('instanceReady', (evt) => {
+            evt.editor.document.$.querySelector('html').style.backgroundColor = "#eeeeee";
+            $(evt.editor.document.$.body).on('click', 'a[href^="#"], a[href^="javascript:"]', function (e) {
+                e.preventDefault();
+            });
+        });
         CKEDITOR.replace('content', {
+            allowedContent: true,
+            format_tags: CKEDITOR.config.format_tags + ';div',
+            font_names: 'Calibri Light; Calibri;' + CKEDITOR.config.font_names,
+            contentsCss: [
+                URL_ROOT + '/public/assets/ckeditor/contents.css',
+                URL_ROOT + '/public/custom-assets/css/ckeditor-sample-file.css',
+                //URL_ROOT + '/public/assets/fonts/font-face/css/fonts.css',
+                URL_ROOT + '/public/custom-assets/css/editor.css'
+            ],
+            bodyClass: "document-editor",
+            height: "29.7cm",
             title: "Nzema Monthly Report",
+            toolbar: [
+                {name: 'document', items: ['Print']},
+                {name: 'clipboard', items: ['Undo', 'Redo']},
+                {name: 'styles', items: ['Format', 'Font', 'FontSize']},
+                {
+                    name: 'basicstyles',
+                    items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat', 'CopyFormatting']
+                },
+                {name: 'colors', items: ['TextColor', 'BGColor']},
+                {name: 'align', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
+                {name: 'links', items: ['Link', 'Unlink', 'TableOfContents']},
+                {
+                    name: 'paragraph',
+                    items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote']
+                },
+                {name: 'insert', items: ['Image', 'Table']},
+                {name: 'tools', items: ['Maximize']},
+                {name: 'editing', items: ['PageBreak', 'Source']}
+            ],
             uploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files&responseType=json',
-            filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse/?type=Files',
-            filebrowserImageBrowseUrl: URL_ROOT + '/ckfinder/browse?type=Images',
-            filebrowserUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files',
-            filebrowserImageUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Images'
+            filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse/',
+            //filebrowserImageBrowseUrl: URL_ROOT + '/ckfinder/browse?type=Images',
+            //filebrowserUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files',
+            //filebrowserImageUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Images'
         });
 
         editor = CKEDITOR.instances.content;
-
-    /*    editor.on('paste', function (ev) {
-            let imgs = $(ev.data.dataValue).find('img');
-            imgs.each(elem => {
-                editor.widgets.initOn(this, 'image');
+        /*    editor.on('paste', function (ev) {
+                let imgs = $(ev.data.dataValue).find('img');
+                imgs.each(elem => {
+                    editor.widgets.initOn(this, 'image');
+                });
             });
-        });
-        */
-      /*  editor.on('paste', function (ev) {
-            ev.data.html = ev.data.html.replace(/<img( [^>]*)?>/gi, '');
-        });*/
+            */
+        /*  editor.on('paste', function (ev) {
+              ev.data.html = ev.data.html.replace(/<img( [^>]*)?>/gi, '');
+          });*/
 
 
         previewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/> </div>").appendTo("body");
         previewEditor = $("#previewEditor").kendoEditor({
             tools: [],
             stylesheets: [
-                "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css",
-
+                //"<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                //"<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css",
+                "<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ]
         }).data("kendoEditor");
+
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
 
         $(window).on("resize", function () {
@@ -252,14 +299,16 @@ echo $spreadsheet_templates; ?>'>
             spreadsheet.resize(true);
         });
 
-        let previewContent = function (contentUrl, datafilter = false, fileName = "Document") {
+        let previewContent = function (contentUrl, datafilter = false, fileName = "Nzema Monthly Report") {
             let showPdfViewer = () => {
                 progress('.content-wrapper', true);
                 kendo.drawing.drawDOM($(previewEditor.body), {
+                    allPages: true,
                     paperSize: 'a3',
                     margin: "1.3cm",
                     multipage: true,
-                    forcePageBreak: '.page-break'
+                    forcePageBreak: '.page-break',
+                    template: $("#page-template").html()
                 }).then(function (group) {
                     // Render the result as a PDF file
                     return kendo.drawing.exportPDF(group, {});
@@ -521,7 +570,14 @@ echo $spreadsheet_templates; ?>'>
                 selectChartTab(e.sheet.name());
             }
         }).data("kendoSpreadsheet");
-        spreadsheet.activeSheet().range("A:N").enable(false);
+        //spreadsheet.activeSheet().range("A:N").enable(false);
+        setTimeout(function () {
+            $(window).trigger("resize");
+            setTimeout(() => {
+                if (editor) editor.focus()
+            }, 1000);
+            setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {x: 'swing', y: 'swing'}), 500);
+        }, 1500);
 
         $("#copyToEditorButton").on("click", function () {
             let name = spreadsheet.activeSheet().name();
@@ -536,13 +592,6 @@ echo $spreadsheet_templates; ?>'>
                 appendChartSheetImage(name);
             }
         });
-
-        setTimeout(function () {
-            //$("div#spreadSheet").trigger("resize");
-            //overlayScrollbarsInstances.body.scroll($("#editorTabStrip"), 5000, {x: 'swing', y: 'swing'})
-            //setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {x: 'swing', y: 'swing'}), 500);
-
-        }, 3000);
 
         let chartMenuButton = $("#chartsMenuButton");
         let chartsMenuPopup = $("#chartsMenuPopup").kendoPopup({

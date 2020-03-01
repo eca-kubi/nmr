@@ -1,0 +1,21 @@
+/*.k-table, .k-table td {
+    border: 1px solid #ccc !important;
+}*/
+
+.page-break {
+    background: url('images/pagebreak.gif') no-repeat center center;
+    clear: both;
+    width: 100%;
+    border-top: #999 1px dotted;
+    border-bottom: #999 1px dotted;
+    padding: 1px;
+    height: 4px;
+    cursor: default;
+}
+
+@media print {
+    .page-break {
+        opacity: 0!important;
+    }
+}
+

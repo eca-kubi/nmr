@@ -20,6 +20,30 @@
 <script src="<?php echo URL_ROOT; ?>/public/assets/ckeditor/ckeditor.js"></script>
 <script>
     window.pdfjsLib.GlobalWorkerOptions.workerSrc = '<?php echo URL_ROOT; ?>/public/assets/js/pdfjs/pdf.worker.js';
-    let URL_ROOT = "<?php echo URL_ROOT; ?>"
+    let URL_ROOT = "<?php echo URL_ROOT; ?>";
+    kendo.pdf.defineFont({
+        "Arial" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/arial.ttf'?>",
+        "Arial|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/ArialI.ttf'?>",
+        "Arial|Bold" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/arialbd.ttf'?>",
+        "Arial|Bold|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/ArialBoldItalic.ttf'?>",
+        "Comic Sans MS" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/ComicSansMS3.ttf'?>",
+        "Comic Sans MS|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/comici.ttf'?>",
+        "Comic Sans MS|Bold" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/ComicSansMSBold.ttf'?>",
+        "Comic Sans MS|Bold|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/comicz.ttf'?>",
+        "Calibri"  : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/calibri.ttf'?>",
+        "Calibri|Bold"  : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/calibrib.ttf'?>",
+        "Calibri|Italic"  : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/calibrii.ttf'?>",
+        "Calibri|Bold|Italic"  : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/calibriz.ttf'?>",
+        "Calibri Light"  : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/calibril.ttf'?>",
+        "Calibri Light|Italic"  : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/calibrili.ttf'?>",
+        "Times New Roman" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/times.ttf'?>",
+        "Times New Roman|Bold" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/timesbd.ttf'?>",
+        "Times New Roman|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/timesi.ttf'?>",
+        "Times New Roman|Bold|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/timesbi.ttf'?>",
+        "Verdana" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/verdana.ttf'?>",
+        "Verdana|Bold" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/VerdanaBold.ttf'?>",
+        "Verdana|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/VerdanaItalic.ttf'?>",
+        "Verdana|Bold|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/verdanaz.ttf'?>",
+    });
 </script>
 <script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js"></script>

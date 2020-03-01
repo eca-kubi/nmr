@@ -161,8 +161,7 @@
             scrollable: false,
             title: {
                 encoded: false
-            }
-            //height: "80%",
+            },
             // (Optional) Will limit the percentage dimensions as well:
             // maxWidth: 1200,
             // maxHeight: 800,
@@ -173,8 +172,8 @@
                 file: ""
             },
             width: "100%",
-            height: 550,
-            scale: 1,
+            height: 800,
+            scale: 1.27,
             toolbar: {
                 items: [
                     "pager", "zoom", "toggleSelection", "search", "download", "print",
@@ -245,16 +244,21 @@
             let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
             let toolbar = pdfViewer.toolbar;
             window.previewDraftId = draftId;
+            progress('.content-wrapper', true);
             $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + "/" + tablePrefix).done(function (data) {
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'a3',
-                    margin: "1.3cm",
+                    allPages: true,
+                    paperSize: 'A4',
+                    margin: "1cm",
                     multipage: true,
-                    forcePageBreak: ".page-break"
+                    scale: 0.7,
+                    forcePageBreak: ".page-break",
+                    template: $(`#page-template-body_${tablePrefix}`).html()
                 }).then(function (group) {
                     return kendo.drawing.exportPDF(group, {});
                 }).done(function (data) {
+                    progress('.content-wrapper');
                     if (closedStatus)
                         toolbar.hide("#submitReport");
                     else
@@ -277,13 +281,16 @@
             let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
             let toolbar = pdfViewer.toolbar;
             window.previewDraftId = draftId;
+            progress('.content-wrapper', true);
             $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + '/' + tablePrefix).done(function (data) {
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'a3',
-                    margin: "1.3cm",
+                    paperSize: 'A4',
+                    margin: { top: "3cm", right: "1cm", bottom: "1cm", left: "1cm" },
+                    scale: 0.7,
                     forcePageBreak: ".page-break",
-                    multipage: true
+                    multipage: true,
+                    template: $(`#page-template-body_${tablePrefix}`).html()
                 }).then(function (group) {
                     return kendo.drawing.exportPDF(group, {});
                 }).done(function (data) {
@@ -291,6 +298,7 @@
                         toolbar.hide("#submitReport");
                     else
                         toolbar.show("#submitReport");
+                    progress('.content-wrapper');
                     draftWindow.center().open().maximize().title(closedStatus ? {
                         encoded: false,
                         text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"

@@ -32,7 +32,9 @@
                             <div class="accordion"
                                  id="accordionReportSubmissions<?php echo flashOrFull($table_prefix) ?>">
                                 <?php $i = 0;
-                                foreach ($report_submission as $key => $group) { $i++ ?>
+                                foreach ($report_submission as $key => $g) {
+                                    $group = array_values($g);
+                                    $i++ ?>
                                     <div class="cardd mb-1">
                                         <div class="card-header with-plus-icon" id="heading_<?php echo $key; ?>">
                                             <h5 class="mb-0">
@@ -50,7 +52,8 @@
                                                     <span class="row">
                                                         <a
                                                                 class="dropdown-item preview-final-report-btn col"
-                                                                href="#" data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                                href="#"
+                                                                data-target-month="<?php echo explode(" ", $key)[0] ?>"
                                                                 data-table-prefix="<?php echo $table_prefix ?>"
                                                                 data-target-year="<?php echo explode(" ", $key)[1] ?>"><i
                                                                     class="fa fa-play-circle-o"></i> View Report</a>
@@ -282,6 +285,15 @@
 <!-- /.wrapper -->
 <?php include_once(APP_ROOT . '/views/includes/scripts.php'); ?>
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
+<?php
+$table_prefixes = ['nmr', 'nmr_fr'];
+$cover_pages = [];
+foreach ($table_prefixes as $tb_p) {
+    $cover_pages[$tb_p] = Database::getDbh()->where('name', 'cover_page')->getValue($tb_p .'_report_parts', 'content');
+}
+$distribution_list = Database::getDbh()->where('name', 'distribution_list')->getValue('nmr_report_parts', 'content');
+$blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_report_parts', 'content');
+?>
 <script>
     let previewEditor;
     let draftWindow;
@@ -293,172 +305,320 @@
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
 
+    const COVER_PAGES = {
+        nmr: '<?php echo $cover_pages['nmr']; ?>',
+        nmr_fr: `<?php echo $cover_pages['nmr_fr']; ?>`
+    };
+
+
+    const BLANK_PAGE = `<?php echo $blank_page; ?>`;
+
+    const DISTRIBUTION_LIST = `<?php echo $distribution_list ?>`;
 
     $(function () {
-        // Add minus icon for collapse element which is open by default
-        /* $("#submissionStatusGrid").kendoGrid({
-             height: 300,
-             sortable: true
-         });*/
-        $(".collapse.show").each(function () {
-            $(this).prev(".card-header").find(".collapse-icon").addClass("fa-minus").removeClass("fa-plus");
-        });
-
-        // Toggle plus minus icon on show hide of collapse element
-        $(".collapse").on('show.bs.collapse', function () {
-            $(this).prev(".card-header").find(".collapse-icon").removeClass("fa-plus").addClass("fa-minus");
-        }).on('hide.bs.collapse', function () {
-            $(this).prev(".card-header").find(".collapse-icon").removeClass("fa-minus").addClass("fa-plus");
-        });
-
-        $("[id^='submissionCollapse']").on('hide.bs.collapse show.bs.collapse', e => e.stopPropagation());
-
-        jQSelectors.draftViewerWindow = $("<div id='draftViewerWindow'/>").appendTo("body");
-        jQSelectors.draftPreviewViewer = $("<div id='draftPreviewViewer'/>").appendTo(jQSelectors.draftViewerWindow);
-        jQSelectors.draftPreviewEditor = $("<textarea id='draftPreviewEditor' style='width: 100%;'/>").appendTo("body");
-
-        draftWindow = jQSelectors.draftViewerWindow.kendoWindow({
-            modal: true,
-            visible: false,
-            width: "80%",
-            scrollable: false
-            //height: "80%",
-            // (Optional) Will limit the percentage dimensions as well:
-            // maxWidth: 1200,
-            // maxHeight: 800,
-            //open: adjustSize
-        }).data("kendoWindow");
-
-        pdfViewer = jQSelectors.draftPreviewViewer.kendoPDFViewer({
-            pdfjsProcessing: {
-                file: ""
-            },
-            width: "100%",
-            height: 550,
-            scale: 1,
-            toolbar: {
-                items: [
-                    "pager", "zoom", "toggleSelection", "search", "download", "print",
-                    /*   {
-                           id: "generateReport",
-                           template: `<a role='button' class='d-none' title='Generate Report'><span class='fa fa-cogs'></span>&nbsp;Generate Report</a>`,
-                       },
-
-                       */
-                    {
-                        id: "editFinalReport",
-                        overflow: "auto",
-                        type: "button",
-                        text: " <i class=\"fa fa-edit mt-1\"></i>&nbsp;Edit",
-                        click: onEditFinalReport
-                        //template: `<a role="button" class="k-button k-flat" onclick="onEditFinalReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`
-                    },
-                    {
-                        id: "editSubmittedReport",
-                        overflow: "auto",
-                        type: "button",
-                        text: "<i class='fa fa-edit mt-1'></i> Edit",
-                        click: onEditSubmittedReport
-                        //template: `<a role="button" class="k-button k-flat d-none" onclick="onEditSubmittedReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`,
-                    },
-                    {
-                        id: "cancel",
-                        overflow: "auto",
-                        template: `<a role="button" class="k-button k-flat" onclick="draftWindow.close();" title="Cancel"> <i class="k-i-cancel k-icon"></i>&nbsp; Cancel</a>`
-                    }
-                ]
-            }
-        }).getKendoPDFViewer();
-
-        setTimeout(function () {
-            previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
-                tools: [],
-                stylesheets: [
-                    "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
-                ]
-            }).data("kendoEditor");
-        }, 1000);
-
-        $("a.preview-btn").on("click", function (e) {
-            let target = $(e.target);
-            let tablePrefix = window.tablePrefix = target.data('tablePrefix');
-            let targetMonth = window.targetMonth = target.data('targetMonth');
-            let targetYear = window.targetYear = target.data('targetYear');
-            let reportSubmissionsId = window.reportSubmissionsId = target.data('reportSubmissionsId');
-            pdfViewer.toolbar.hide("#editFinalReport");
-            if (!isPowerUser)
-                pdfViewer.toolbar.hide("#editSubmittedReport");
-            previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`, data => JSON.parse(data).content);
-        });
-
-        $(".preview-final-report-btn").on("click", e => {
-            let target = $(e.currentTarget);
-            let tablePrefix = window.tablePrefix = target.data('tablePrefix');
-            let targetMonth = window.targetMonth = target.data('targetMonth');
-            let targetYear = window.targetYear = target.data('targetYear');
-            pdfViewer.toolbar.hide("#editSubmittedReport");
-            if (!target.siblings('.edit-final-report-btn').hasClass('d-none') && isPowerUser)
-                pdfViewer.toolbar.show("#editFinalReport");
-            else
-                pdfViewer.toolbar.hide("#editFinalReport");
-            previewContent(`${URL_ROOT}/pages/preview-final-report/${targetMonth}/${targetYear}/${tablePrefix}`, data => data);
-        });
-
-        $(".generate-report-btn").on('click', e => {
-            let target = $(e.currentTarget);
-            let tablePrefix = target.data('tablePrefix');
-            let targetMonth = window.targetMonth = target.data('targetMonth');
-            let targetYear = window.targetYear = target.data('targetYear');
-            let html_content = "";
-            // todo issue warning to user.
-            $.ajax({
-                url: `${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`,
-                dataType: "html",
-                /*dataFilter(data, type) {
-                    return JSON.parse(data).content;
-                },*/
-                success: data => {
-                    previewEditor.value(data);
-                    html_content = data;
-                    kendo.drawing.drawDOM($(previewEditor.body), {
-                        paperSize: 'a3',
-                        margin: "1.3cm",
-                        multipage: true,
-                        forcePageBreak: ".page-break"
-                    }).then(function (group) {
-                        return kendo.drawing.exportPDF(group, {});
-                    }).done(dataUri => {
-                        $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`, {
-                            data_uri: dataUri,
-                            html_content: html_content
-                        }, (data1) => {
-                            kendoAlert('Report Generated Successfully', `${targetMonth} ${targetYear} Nzema Report generated successfully! <p><u>Download Link:</u> <a class="" href="${data1.downloadUrl}" target="_blank">${data1.downloadUrl}</a> <a id="copyDownloadLink" class="d-none" href="#" role="button" title="Copy download link"><i class="fa fa-copy"></i> </a></p>`);
-                            target.siblings('.download-final-report-btn').attr('href', data1.downloadUrl).attr('data-download-url', data1.downloadUrl).removeClass('d-none');
-                            target.siblings('.edit-final-report-btn').removeClass('d-none')
-                        }, "json")
-                    });
-                }
+            // Add minus icon for collapse element which is open by default
+            /* $("#submissionStatusGrid").kendoGrid({
+                 height: 300,
+                 sortable: true
+             });*/
+            $(".collapse.show").each(function () {
+                $(this).prev(".card-header").find(".collapse-icon").addClass("fa-minus").removeClass("fa-plus");
             });
-        });
 
-        $(".edit-final-report-btn").on('click', e => {
-            let target = $(e.currentTarget);
-            let tablePrefix = window.tablePrefix = target.data('tablePrefix');
-            let targetMonth = window.targetMonth = target.data('targetMonth');
-            let targetYear = window.targetYear = target.data('targetYear');
-            onEditFinalReport();
-        });
+            // Toggle plus minus icon on show hide of collapse element
+            $(".collapse").on('show.bs.collapse', function () {
+                $(this).prev(".card-header").find(".collapse-icon").removeClass("fa-plus").addClass("fa-minus");
+            }).on('hide.bs.collapse', function () {
+                $(this).prev(".card-header").find(".collapse-icon").removeClass("fa-minus").addClass("fa-plus");
+            });
 
-        $(".edit-submitted-report").on('click', e => {
-            let target = $(e.currentTarget);
-            let tablePrefix = window.tablePrefix = target.data('tablePrefix');
-            let targetMonth = window.targetMonth = target.data('targetMonth');
-            let targetYear = window.targetYear = target.data('targetYear');
-            let submissionsId = window.reportSubmissionsId = target.data('submissionsId');
-            onEditSubmittedReport();
-        });
-    });
+            $("[id^='submissionCollapse']").on('hide.bs.collapse show.bs.collapse', e => e.stopPropagation());
+
+            jQSelectors.draftViewerWindow = $("<div id='draftViewerWindow'/>").appendTo("body");
+            jQSelectors.draftPreviewViewer = $("<div id='draftPreviewViewer'/>").appendTo(jQSelectors.draftViewerWindow);
+            jQSelectors.draftPreviewEditor = $("<textarea id='draftPreviewEditor' style='width: 100%;'/>").appendTo("body");
+
+            draftWindow = jQSelectors.draftViewerWindow.kendoWindow({
+                modal: true,
+                visible: false,
+                width: "80%",
+                scrollable: true,
+                // (Optional) Will limit the percentage dimensions as well:
+                // maxWidth: 1200,
+                // maxHeight: 800,
+                //open: adjustSize
+            }).data("kendoWindow");
+
+            pdfViewer = jQSelectors.draftPreviewViewer.kendoPDFViewer({
+                pdfjsProcessing: {
+                    file: ""
+                },
+                width: "100%",
+                height: 800,
+                scale: 1.27,
+                toolbar: {
+                    items: [
+                        "pager", "zoom", "toggleSelection", "search", "download", "print",
+                        /*   {
+                               id: "generateReport",
+                               template: `<a role='button' class='d-none' title='Generate Report'><span class='fa fa-cogs'></span>&nbsp;Generate Report</a>`,
+                           },
+
+                           */
+                        {
+                            id: "editFinalReport",
+                            overflow: "auto",
+                            type: "button",
+                            text: " <i class=\"fa fa-edit mt-1\"></i>&nbsp;Edit",
+                            click: onEditFinalReport
+                            //template: `<a role="button" class="k-button k-flat" onclick="onEditFinalReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`
+                        },
+                        {
+                            id: "editSubmittedReport",
+                            overflow: "auto",
+                            type: "button",
+                            text: "<i class='fa fa-edit mt-1'></i> Edit",
+                            click: onEditSubmittedReport
+                            //template: `<a role="button" class="k-button k-flat d-none" onclick="onEditSubmittedReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`,
+                        },
+                        {
+                            id: "cancel",
+                            overflow: "auto",
+                            template: `<a role="button" class="k-button k-flat" onclick="draftWindow.close();" title="Cancel"> <i class="k-i-cancel k-icon"></i>&nbsp; Cancel</a>`
+                        }
+                    ]
+                }
+            }).getKendoPDFViewer();
+
+            setTimeout(function () {
+                previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
+                    tools: [],
+                    stylesheets: [
+                        "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                        "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                    ]
+                }).data("kendoEditor");
+            }, 1000);
+
+            $("a.preview-btn").on("click", function (e) {
+                let target = $(e.target);
+                let tablePrefix = window.tablePrefix = target.data('tablePrefix');
+                let targetMonth = window.targetMonth = target.data('targetMonth');
+                let targetYear = window.targetYear = target.data('targetYear');
+                let reportSubmissionsId = window.reportSubmissionsId = target.data('reportSubmissionsId');
+                pdfViewer.toolbar.hide("#editFinalReport");
+                if (!isPowerUser)
+                    pdfViewer.toolbar.hide("#editSubmittedReport");
+                progress('.content-wrapper', true);
+                $.ajax({
+                    url: `${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`,
+                    dataType: "html",
+                    success: (data) => {
+                        previewEditor.value(data);
+                        kendo.drawing.drawDOM($(previewEditor.body), {
+                            allPages: true,
+                            paperSize: 'A4',
+                            margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                            multipage: true,
+                            scale: 0.7,
+                            forcePageBreak: ".page-break",
+                            template: $(`#page-template-body_${tablePrefix}`).html()
+                        }).done(function (group) {
+                            kendo.drawing.exportPDF(group, {
+                                allPages: true,
+                                paperSize: 'A4',
+                                margin: "1cm",
+                                multipage: true,
+                                scale: 0.7,
+                                forcePageBreak: ".page-break"
+                            }).done(data => {
+                                progress('.content-wrapper');
+                                draftWindow.center().open().maximize();
+                                pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                                setTimeout(() => pdfViewer.activatePage(1), 500)
+                            });
+                        })
+                    }
+                });
+                //previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`, data => JSON.parse(data).content);
+            });
+
+            $(".preview-final-report-btn").on("click", e => {
+                let target = $(e.currentTarget);
+                let tablePrefix = window.tablePrefix = target.data('tablePrefix');
+                let targetMonth = window.targetMonth = target.data('targetMonth');
+                let targetYear = window.targetYear = target.data('targetYear');
+                pdfViewer.toolbar.hide("#editSubmittedReport");
+                if (!target.siblings('.edit-final-report-btn').hasClass('d-none') && isPowerUser)
+                    pdfViewer.toolbar.show("#editFinalReport");
+                else
+                    pdfViewer.toolbar.hide("#editFinalReport");
+                progress('.content-wrapper', true);
+                $.ajax({
+                    url: `${URL_ROOT}/pages/preview-final-report/${targetMonth}/${targetYear}/${tablePrefix}`,
+                    dataType: "html",
+                    success: (data) => {
+                        const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
+                        let content = COVER_PAGE + getPageBreak() + DISTRIBUTION_LIST + getPageBreak() + BLANK_PAGE;
+                        previewEditor.value(content);
+                        kendo.drawing.drawDOM($(previewEditor.body), {
+                            allPages: true,
+                            paperSize: 'A4',
+                            margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                            multipage: true,
+                            scale: 0.7,
+                            forcePageBreak: ".page-break",
+                            template: $(`#page-template-cover-toc_${tablePrefix}`).html()
+                        }).done(function (group) {
+                            // Remove  Cover and Distribution List
+                            let content = data;
+                            content = removeTagAndContent('coverpage', content);
+                            content = removeTagAndContent('distributionlist', content);
+
+                            previewEditor.value(content);
+
+                            kendo.drawing.drawDOM($(previewEditor.body), {
+                                allPages: true,
+                                paperSize: 'A4',
+                                margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                                multipage: true,
+                                scale: 0.7,
+                                forcePageBreak: ".page-break",
+                                template: $(`#page-template-body_${tablePrefix}`).html()
+                            }).done((group2) => {
+                                group.append(...group2.children);
+                                kendo.drawing.exportPDF(group, {
+                                    allPages: true,
+                                    paperSize: 'A4',
+                                    margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                                    multipage: true,
+                                    scale: 0.7,
+                                    forcePageBreak: ".page-break"
+                                }).done(data2 => {
+                                    progress('.content-wrapper');
+                                    draftWindow.center().open().maximize();
+                                    pdfViewer.fromFile({data: data2.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                                    setTimeout(() => pdfViewer.activatePage(1), 500)
+                                })
+                            })
+                        })
+                    }
+                });
+                //previewContent(`${URL_ROOT}/pages/preview-final-report/${targetMonth}/${targetYear}/${tablePrefix}`, data => data);
+            });
+
+            $(".generate-report-btn").on('click', e => {
+                let target = $(e.currentTarget);
+                let tablePrefix = target.data('tablePrefix');
+                let targetMonth = window.targetMonth = target.data('targetMonth');
+                let targetYear = window.targetYear = target.data('targetYear');
+                let html_content = "";
+                // todo issue warning to user.
+                progress('.content-wrapper', true);
+                $.ajax({
+                    url: `${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`,
+                    dataType: "html",
+                    /*dataFilter(data, type) {
+                        return JSON.parse(data).content;
+                    },*/
+                    success: data => {
+                        const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
+                        let content = COVER_PAGE + getPageBreak() + DISTRIBUTION_LIST + getPageBreak() + BLANK_PAGE;
+                        previewEditor.value(content);
+                        kendo.drawing.drawDOM($(previewEditor.body), {
+                            allPages: true,
+                            paperSize: 'A4',
+                            margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                            multipage: true,
+                            scale: 0.7,
+                            forcePageBreak: ".page-break",
+                            template: $(`#page-template-cover-toc_${tablePrefix}`).html()
+                        }).done(function (group) {
+                            // Remove  Cover and Distribution List
+                            let content = data;
+                            content = removeTagAndContent('coverpage', content);
+                            content = removeTagAndContent('distributionlist', content);
+
+                            previewEditor.value(content);
+
+                            kendo.drawing.drawDOM($(previewEditor.body), {
+                                allPages: true,
+                                paperSize: 'A4',
+                                margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                                multipage: true,
+                                scale: 0.7,
+                                forcePageBreak: ".page-break",
+                                template: $(`#page-template-body_${tablePrefix}`).html()
+                            }).done((group2) => {
+                                group.append(...group2.children);
+                                kendo.drawing.exportPDF(group, {
+                                    allPages: true,
+                                    paperSize: 'A4',
+                                    margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                                    multipage: true,
+                                    scale: 0.7,
+                                    forcePageBreak: ".page-break"
+                                }).done(data2 => {
+                                    progress('.content-wrapper');
+                                    $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`, {
+                                        data_uri: data2,
+                                        html_content: data
+                                    }, (data1) => {
+                                        progress('.content-wrapper');
+                                        kendoAlert('Report Generated Successfully', `${targetMonth} ${targetYear} Nzema Report generated successfully! <p><u>Download Link:</u> <a class="" href="${data1.downloadUrl}" target="_blank">${data1.downloadUrl}</a> <a id="copyDownloadLink" class="d-none" href="#" role="button" title="Copy download link"><i class="fa fa-copy"></i> </a></p>`);
+                                        target.siblings('.download-final-report-btn').attr('href', data1.downloadUrl).attr('data-download-url', data1.downloadUrl).removeClass('d-none');
+                                        target.siblings('.edit-final-report-btn').removeClass('d-none')
+                                    }, "json");
+                                })
+                            })
+                        })
+                    }
+                    /*success: data => {
+                        previewEditor.value(data);
+                        html_content = data;
+                        kendo.drawing.drawDOM($(previewEditor.body), {
+                            paperSize: 'A4',
+                            margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                            multipage: true,
+                            forcePageBreak: ".page-break",
+                            scale: 0.7,
+                            template: $(`#page-template-body_${tablePrefix}`).html()
+                        }).then(function (group) {
+                            return kendo.drawing.exportPDF(group, {});
+                        }).done(dataUri => {
+                            $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`, {
+                                data_uri: dataUri,
+                                html_content: html_content
+                            }, (data1) => {
+                                progress('.content-wrapper');
+                                kendoAlert('Report Generated Successfully', `${targetMonth} ${targetYear} Nzema Report generated successfully! <p><u>Download Link:</u> <a class="" href="${data1.downloadUrl}" target="_blank">${data1.downloadUrl}</a> <a id="copyDownloadLink" class="d-none" href="#" role="button" title="Copy download link"><i class="fa fa-copy"></i> </a></p>`);
+                                target.siblings('.download-final-report-btn').attr('href', data1.downloadUrl).attr('data-download-url', data1.downloadUrl).removeClass('d-none');
+                                target.siblings('.edit-final-report-btn').removeClass('d-none')
+                            }, "json")
+                        });
+                    }*/
+                });
+            });
+
+            $(".edit-final-report-btn").on('click', e => {
+                let target = $(e.currentTarget);
+                let tablePrefix = window.tablePrefix = target.data('tablePrefix');
+                let targetMonth = window.targetMonth = target.data('targetMonth');
+                let targetYear = window.targetYear = target.data('targetYear');
+                onEditFinalReport();
+            });
+
+            $(".edit-submitted-report").on('click', e => {
+                let target = $(e.currentTarget);
+                let tablePrefix = window.tablePrefix = target.data('tablePrefix');
+                let targetMonth = window.targetMonth = target.data('targetMonth');
+                let targetYear = window.targetYear = target.data('targetYear');
+                let submissionsId = window.reportSubmissionsId = target.data('submissionsId');
+                onEditSubmittedReport();
+            });
+        }
+    )
+    ;
 
     function onEditSubmittedReport() {
         $.ajax({
@@ -505,6 +665,7 @@
     }
 
     function previewContent(previewURL, dataFilter) {
+        progress('.content-wrapper', true);
         $.ajax({
             url: previewURL,
             dataType: "html",
@@ -513,11 +674,12 @@
             },
             success: function (data) {
                 previewEditor.value(data);
-                progress('.content-wrapper', true);
                 kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'a3',
-                    margin: "1.3cm",
+                    allPages: true,
+                    paperSize: 'A4',
+                    margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
                     multipage: true,
+                    scale: 0.7,
                     forcePageBreak: ".page-break"
                 }).then(function (group) {
                     // Render the result as a PDF file
