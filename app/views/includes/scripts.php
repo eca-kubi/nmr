@@ -46,4 +46,4 @@
         "Verdana|Bold|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/verdanaz.ttf'?>",
     });
 </script>
-<script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js?t=<?php echo now(); ?>"></script>
