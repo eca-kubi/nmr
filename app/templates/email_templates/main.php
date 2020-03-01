@@ -19,7 +19,7 @@ echo <<<html
 <body style="margin: 0; padding: 0;">
 <table align="center" cellpadding="10" cellspacing="0" width="600" style="border-collapse: collapse;">
     <tr bgcolor="#70bbd9" style="padding: 30px 30px 30px 30px;">
-        <td style="color: #153643; font-family: Arial, sans-serif; font-size: 24px; font-weight: bold; border-bottom: #f8f8f8 2px solid;">
+        <td style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; border-bottom: #f8f8f8 2px solid;">
             <b>NZEMA MONTHLY REPORTS ($target_month_year)</b>
         </td>
     </tr>
@@ -38,8 +38,8 @@ echo <<<html
         <td>
             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
-                    <td style="color: #ffffff; font-family: Arial, sans-serif; font-size: 10px; font-weight: bold">
-                        &copy; 2020 - Developed by Adamus IT<br/>
+                    <td style="color: #ffffff; font-family: Arial, sans-serif; font-size: 10px; font-weight: bold"> 
+                        (c) 2020- Developed by Adamus IT<br/>
                         Email: ithelpdesk@adamusgh.com <br/>
                         Ext: 1000
                     </td>
