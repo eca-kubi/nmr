@@ -582,7 +582,7 @@ class Pages extends Controller
                 ])) {
                     $payload['drafts'][$table_prefix] = $db->where('draft_id', $draft_id)->getOne($table_prefix . '_editor_draft');
                     // Create an entry into my reports
-                    //$db->insert($table_prefix . '_my_reports', ['draft_id' => $draft_id]);
+                    $db->insert($table_prefix . '_my_reports', ['draft_id' => $draft_id]);
                 }
             } else if ($db->where('department_id', $current_user->department_id)
                 ->where('target_month', $previous_month)->where('target_year', $previous_year)->has($table_prefix . '_report_submissions')) {
