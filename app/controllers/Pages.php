@@ -716,9 +716,12 @@ class Pages extends Controller
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
-        $db->onDuplicate(['content']);
         $draft_id = '';
+        $send_email = !$db->where('department_id', $current_user->department_id)
+            ->where('target_month', $target_month)
+            ->where('target_year', $target_year)->has($table_prefix .'_report_submissions');
         if (isset($_POST['draft_id'])) $draft_id = $_POST['draft_id'];
+        $db->onDuplicate(['content']);
         $success = $db->insert($table_prefix . '_report_submissions', [
             'department_id' => $current_user->department_id,
             'user_id' => $current_user->user_id,
@@ -738,25 +741,34 @@ class Pages extends Controller
                     'spreadsheet_content' => $_POST['spreadsheet_content'],
                     //'time_modified' => now()
                 ]);
-                $gm = new User(getCurrentGM());
-                $subject = "Nzema Monthly Reports (" . flashOrFull($table_prefix) .")";
-                $data = ['link' => URL_ROOT . '/submitted-reports/' . $report_submissions_id];
-                $body = get_include_contents('email_templates/report_submitted_notify_gm', $data);
-                $data['body'] = $body;
-                $email = get_include_contents('email_templates/main', $data);
-                if ($current_user->user_id !== $gm->user_id) {
-                    insertEmail($subject, $email, $gm->email);
+                if ($send_email) {
+                    // New submission, thus, notify GM
+                    $target_month_year = strtoupper($target_month . ' ' . $target_year);
+                    $gm = new User(getCurrentGM());
+                    $subject = "Nzema Monthly Reports (" . flashOrFull($table_prefix) .")";
+                    $data = [
+                        'link' => URL_ROOT . '/pages/submitted-reports/?' .'i=' . $report_submissions_id . '&s=true&d=' . $current_user->department,
+                        'target_month_year' => $target_month_year,
+                        'target_month' => $target_month,
+                        'target_year' => $target_year,
+                        'department' => $current_user->department,
+                        'flash_or_full' => flashOrFull($table_prefix)
+                    ];
+                    $body = get_include_contents('email_templates/report_submitted_notify_gm', $data);
+                    $data['body'] = $body;
+                    $email = get_include_contents('email_templates/main', $data);
+                    if ($current_user->user_id !== $gm->user_id) {
+                        insertEmail($subject, $email, $gm->email);
+                    }
+                    // Send email to Applicant
+                    $body = get_include_contents('email_templates/report_submitted_notify_applicant', $data);
+                    $data['body'] = $body;
+                    $email = get_include_contents('email_templates/main', $data);
+                    insertEmail($subject, $email, $current_user->email);
                 }
-                // Send email to Applicant
-                $data = ['link' => URL_ROOT . '/submitted-reports/' . $report_submissions_id];
-                $body = get_include_contents('email_templates/report_submitted_notify_applicant', $data);
-                $data['body'] = $body;
-                $email = get_include_contents('email_templates/main', $data);
-                insertEmail($subject, $email, $current_user->email);
-
                 if ($success) echo json_encode(['success' => true, 'draftId' => $draft_id]);
             } /*else {
-                $success = $db->insert($table_prefix . '_editor_draft', [
+                $success!12 = $db->insert($table_prefix . '_editor_draft', [
                     //'title' => 'Draft (Flash Report)',
                     'user_id' => $current_user->user_id,
                     'content' => $_POST['content'],
