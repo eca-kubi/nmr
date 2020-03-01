@@ -148,7 +148,7 @@
                                              aria-labelledby="heading_<?php echo $key; ?>"
                                              data-parent="#accordionReportSubmissions<?php echo flashOrFull($table_prefix) ?>">
                                             <div class="card-body border rounded-bottom">
-                                                <?php if (isPowerUser($current_user->user_id)) { ?>
+                                                <?php if (true /*isPowerUser($current_user->user_id)*/) { ?>
                                                     <a href="#submissionCollapse<?php echo flashOrFull($table_prefix) ?>"
                                                        class="btn btn-<?php echo $table_prefix === 'nmr' ? 'primary' : 'warning'; ?> mb-3"
                                                        data-toggle="collapse" role="button"><i
