@@ -747,7 +747,7 @@ class Pages extends Controller
                     $gm = new User(getCurrentGM());
                     $subject = "Nzema Monthly Reports (" . flashOrFull($table_prefix) .")";
                     $data = [
-                        'link' => URL_ROOT . '/pages/submitted-reports/?' .'i=' . $report_submissions_id . '&s=true&d=' . $current_user->department,
+                        'link' => URL_ROOT . '/pages/submitted-reports/?' .'i=' . $report_submissions_id . '&s=true&d=' . $current_user->department . '&fof=' . flashOrFull($table_prefix) . '&tmy=' . $target_month_year ,
                         'target_month_year' => $target_month_year,
                         'target_month' => $target_month,
                         'target_year' => $target_year,

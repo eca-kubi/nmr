@@ -289,7 +289,7 @@
 $table_prefixes = ['nmr', 'nmr_fr'];
 $cover_pages = [];
 foreach ($table_prefixes as $tb_p) {
-    $cover_pages[$tb_p] = Database::getDbh()->where('name', 'cover_page')->getValue($tb_p .'_report_parts', 'content');
+    $cover_pages[$tb_p] = Database::getDbh()->where('name', 'cover_page')->getValue($tb_p . '_report_parts', 'content');
 }
 $distribution_list = Database::getDbh()->where('name', 'distribution_list')->getValue('nmr_report_parts', 'content');
 $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_report_parts', 'content');
@@ -301,6 +301,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     let previewTargetYear;
     let reportSubmissionsId;
     let tablePrefix;
+    let notify_submission = "<?php echo isset($_GET['s']) ? 1 : 0; ?>";
+    let notify_submission_department = "<?php echo $_GET['d'] ?: ''; ?>";
+    let notify_submission_rsid = "<?php echo $_GET['i'] ?: ''; ?>"; // Report_submissions_id
+    let notify_submission_flash_or_full = "<?php echo $_GET['fof'] ?: ''; ?>";
+    let notify_submission_target_month_year = "<?php echo $_GET['tmy'] ?: ''; ?>";
     /**
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
@@ -316,11 +321,14 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     const DISTRIBUTION_LIST = `<?php echo $distribution_list ?>`;
 
     $(function () {
-            // Add minus icon for collapse element which is open by default
-            /* $("#submissionStatusGrid").kendoGrid({
-                 height: 300,
-                 sortable: true
-             });*/
+            // Show submission notification
+            if (notify_submission) {
+                let title = notify_submission_department + ' ' + '<span class="text-capitalize">' + notify_submission_target_month_year +'</span>' + ' ' + notify_submission_flash_or_full + ' Report Submitted ';
+                let content = notify_submission_department.toUpperCase() + ' has submitted their ' + notify_submission_target_month_year + ' '  + notify_submission_flash_or_full + ' report.<br>' +
+                    `Click <a href="javascript: $('a.preview-btn[data-report-submissions-id=${notify_submission_rsid}]').click()">here</a> to view it.`;
+                kendoAlert(false, content);
+            }
+
             $(".collapse.show").each(function () {
                 $(this).prev(".card-header").find(".collapse-icon").addClass("fa-minus").removeClass("fa-plus");
             });
@@ -418,7 +426,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         kendo.drawing.drawDOM($(previewEditor.body), {
                             allPages: true,
                             paperSize: 'A4',
-                            margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                            margin: tablePrefix === 'nmr_fr' ? {
+                                top: "3cm",
+                                right: "1cm",
+                                bottom: "1cm",
+                                left: "1cm"
+                            } : "1cm",
                             multipage: true,
                             scale: 0.7,
                             forcePageBreak: ".page-break",
@@ -464,7 +477,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         kendo.drawing.drawDOM($(previewEditor.body), {
                             allPages: true,
                             paperSize: 'A4',
-                            margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                            margin: tablePrefix === 'nmr_fr' ? {
+                                top: "3cm",
+                                right: "1cm",
+                                bottom: "1cm",
+                                left: "1cm"
+                            } : "1cm",
                             multipage: true,
                             scale: 0.7,
                             forcePageBreak: ".page-break",
@@ -480,7 +498,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             kendo.drawing.drawDOM($(previewEditor.body), {
                                 allPages: true,
                                 paperSize: 'A4',
-                                margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                                margin: tablePrefix === 'nmr_fr' ? {
+                                    top: "3cm",
+                                    right: "1cm",
+                                    bottom: "1cm",
+                                    left: "1cm"
+                                } : "1cm",
                                 multipage: true,
                                 scale: 0.7,
                                 forcePageBreak: ".page-break",
@@ -490,7 +513,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 kendo.drawing.exportPDF(group, {
                                     allPages: true,
                                     paperSize: 'A4',
-                                    margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                                    margin: tablePrefix === 'nmr_fr' ? {
+                                        top: "3cm",
+                                        right: "1cm",
+                                        bottom: "1cm",
+                                        left: "1cm"
+                                    } : "1cm",
                                     multipage: true,
                                     scale: 0.7,
                                     forcePageBreak: ".page-break"
@@ -528,7 +556,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         kendo.drawing.drawDOM($(previewEditor.body), {
                             allPages: true,
                             paperSize: 'A4',
-                            margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                            margin: tablePrefix === 'nmr_fr' ? {
+                                top: "3cm",
+                                right: "1cm",
+                                bottom: "1cm",
+                                left: "1cm"
+                            } : "1cm",
                             multipage: true,
                             scale: 0.7,
                             forcePageBreak: ".page-break",
@@ -544,7 +577,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             kendo.drawing.drawDOM($(previewEditor.body), {
                                 allPages: true,
                                 paperSize: 'A4',
-                                margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                                margin: tablePrefix === 'nmr_fr' ? {
+                                    top: "3cm",
+                                    right: "1cm",
+                                    bottom: "1cm",
+                                    left: "1cm"
+                                } : "1cm",
                                 multipage: true,
                                 scale: 0.7,
                                 forcePageBreak: ".page-break",
@@ -554,7 +592,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 kendo.drawing.exportPDF(group, {
                                     allPages: true,
                                     paperSize: 'A4',
-                                    margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                                    margin: tablePrefix === 'nmr_fr' ? {
+                                        top: "3cm",
+                                        right: "1cm",
+                                        bottom: "1cm",
+                                        left: "1cm"
+                                    } : "1cm",
                                     multipage: true,
                                     scale: 0.7,
                                     forcePageBreak: ".page-break"
