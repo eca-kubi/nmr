@@ -2082,7 +2082,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     draft_id: draftId.val(),
                     content: editor.value(),
                     spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                }, null, "json");.done(function (response, textStatus, jQueryXHR) {
+                }, null, "json").done(function (response, textStatus, jQueryXHR) {
                     progress('.content-wrapper');
                     if (response.success) {
                         let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
