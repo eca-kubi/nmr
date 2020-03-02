@@ -2075,12 +2075,13 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         progress('.content-wrapper', true);
         postDfrPromise.done(function () {
             spreadsheet.saveJSON().then(function (data) {
-                $("#spreadsheetContent").val(JSON.stringify(data, null, 2));
-                $.post({
-                    url: "<?php echo URL_ROOT . '/pages/save-draft' ?>",
-                    data: $("#editorForm").serialize(),
-                    dataType: 'json'
-                }).done(function (response, textStatus, jQueryXHR) {
+                // Save draft explicitly
+                $.post(URL_ROOT + "/pages/save-draft/" + tablePrefix, {
+                    title: title,
+                    draft_id: draftId.val(),
+                    content: editor.value(),
+                    spreadsheet_content: JSON.stringify(data, null, 2)
+                }, null, "json").done(function (response, textStatus, jQueryXHR) {
                     progress('.content-wrapper');
                     if (response.success) {
                         let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');

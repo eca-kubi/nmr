@@ -800,9 +800,9 @@ class Pages extends Controller
         $report = generateFinalReport($target_month, $target_year, $table_prefix);
         $pdf = new TCPDF();
         $pdf->AddPage();
-        $pdf->writeHTML($report);
+        $pdf->writeHTML('<p>Hello</p><img src= "' . URL_ROOT . '/public/assets/images/adamus.jpg" alt="">');
         ob_end_clean();
-        $pdf->Output('doc.pdf', 'D');
+        $pdf->Output('doc.pdf', 'I');
     }
 
     public function fetchFinalReport($target_month, $target_year, $table_prefix = 'nmr')
