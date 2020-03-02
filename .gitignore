@@ -82,3 +82,4 @@ app/config/host.php
 /public/uploads/
 /vendor/
 .htaccess
+PHP_errors.log
