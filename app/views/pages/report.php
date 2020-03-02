@@ -458,8 +458,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     text: "Save Draft",
                     icon: "save",
                     click: saveDraft,
-                    // hidden: "<?php echo isset($edit_draft) ? '' : 'true' ?>"
-                    hidden: true
+                    hidden: "<?php echo isset($edit_draft) ? '' : 'true' ?>"
+                    //hidden: true
                 },
                 {
                     type: "button",
@@ -2086,10 +2086,10 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
                         if (response.draft_id)
                             $('#draftId').val(response.draft_id);
-                        setTimeout(() => kAlert.close(), 2500);
+                        setTimeout(() => kAlert.close(), 1500);
                     } else {
                         let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
-                        setTimeout(() => kAlert.close(), 2500);
+                        setTimeout(() => kAlert.close(), 1500);
                     }
                 });
             });
@@ -2137,10 +2137,10 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         let kAlert = kendoAlert('Save Preloaded Draft', 'Draft saved successfully!');
                         if (response.draft_id)
                             $('#draftId').val(response.draft_id);
-                        setTimeout(() => kAlert.close(), 2500);
+                        setTimeout(() => kAlert.close(), 1500);
                     } else {
                         let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
-                        setTimeout(() => kAlert.close(), 2500);
+                        setTimeout(() => kAlert.close(), 1500);
                     }
                 });
             });
@@ -2192,7 +2192,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         }).done(function (response, textStatus, jQueryXHR) {
                             if (response.success) {
                                 let kAlert = kendoAlert('Save Draft As Preloaded', 'Draft saved successfully!');
-                                setTimeout(() => kAlert.close(), 2500);
+                                setTimeout(() => kAlert.close(), 1500);
                             } else {
                                 let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
                             }
@@ -2289,21 +2289,19 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         let title = $("#draftTitleInput").val();
         let targetMonth = $("#targetMonth").val();
         let targetYear = $("#targetYear").val();
-        /*   let submit = () => {
-               let dfd = $.Deferred();
-               let post = $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
-                   title: title,
-                   draft_id: draftId.val(),
-                   content: editor.value(),
-                   spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-               }, null, "json");
-               dfd.resolve(post);
-               return dfd.promise();
-           };
-   */
+
+        // Save draft explicitly
+        $.post(URL_ROOT + "/pages/save-draft/" + tablePrefix, {
+            title: title,
+            draft_id: draftId.val(),
+            content: editor.value(),
+            spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+        }, null, "json");
+
         if ($(e.target).hasClass('update-submitted-report-btn')) {
             showWindow('This report has already been submitted. Are you sure you want to update it?')
                 .done(e => {
+                    progress('.content-wrapper', true);
                     $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
                         title: title,
                         draft_id: draftId.val(),
@@ -2311,23 +2309,28 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
                     }, null, "json")
                         .done(data => {
+                            progress('.content-wrapper');
                             draftId.val(data.draftId);
                             let alert = kendoAlert("Report Updated!", "Report updated successfully.");
                             setTimeout(() => alert.close(), 1500);
                         });
                 });
         } else if ($(e.target).hasClass("submit-report-btn")) {
-            $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
-                title: title,
-                draft_id: draftId.val(),
-                content: editor.value(),
-                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-            }, null, "json").done(data => {
-                draftId.val(data.draftId);
-                let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
-                setTimeout(() => alert.close(), 1500);
-                editorActionToolbar.hide(".submit-report-btn");
-                editorActionToolbar.show(".update-submitted-report-btn");
+            showWindow('This report will be submitted. Are you sure you want to proceed?').done(function () {
+                progress('.content-wrapper', true);
+                $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
+                    title: title,
+                    draft_id: draftId.val(),
+                    content: editor.value(),
+                    spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                }, null, "json").done(data => {
+                    progress('.content-wrapper');
+                    draftId.val(data.draftId);
+                    let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
+                    setTimeout(() => alert.close(), 1500);
+                    editorActionToolbar.hide(".submit-report-btn");
+                    editorActionToolbar.show(".update-submitted-report-btn");
+                });
             });
         }
     }

@@ -892,9 +892,10 @@ function generateFinalReport(string $target_month, $target_year, $table_prefix =
 
 function fetchFinalReportAsHtml(string $target_month, $target_year, $table_prefix = 'nmr')
 {
-    $db = Database::getDbh();
+    /*$db = Database::getDbh();
     return $db->where('target_year', $target_year)->where('target_month', $target_month)
-        ->getValue($table_prefix . '_final_report', 'html_content');
+        ->getValue($table_prefix . '_final_report', 'html_content');*/
+    return generateFinalReport($target_month, $target_year, $table_prefix);
 }
 
 function flashOrFull($table_prefix)

@@ -301,11 +301,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     let previewTargetYear;
     let reportSubmissionsId;
     let tablePrefix;
-    let notify_submission = "<?php echo isset($_GET['s']) ? 1 : 0; ?>";
-    let notify_submission_department = "<?php echo $_GET['d'] ?: ''; ?>";
-    let notify_submission_rsid = "<?php echo $_GET['i'] ?: ''; ?>"; // Report_submissions_id
-    let notify_submission_flash_or_full = "<?php echo $_GET['fof'] ?: ''; ?>";
-    let notify_submission_target_month_year = "<?php echo $_GET['tmy'] ?: ''; ?>";
+    let notify_submission = <?php echo isset($_GET['s']) ? 1 : 0; ?>;
+    let notify_submission_department = "<?php echo isset($_GET['d'])? $_GET['d']: ''; ?>";
+    let notify_submission_rsid = "<?php echo isset($_GET['i'])? $_GET['i']: ''; ?>"; // Report_submissions_id
+    let notify_submission_flash_or_full = "<?php echo isset($_GET['fof'])? $_GET['fof']: ''; ?>";
+    let notify_submission_target_month_year = "<?php echo isset($_GET['tmy'])? $_GET['tmy']: ''; ?>";
     /**
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
