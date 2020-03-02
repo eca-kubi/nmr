@@ -2074,6 +2074,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         let postDfrPromise = postDfr.promise();
         progress('.content-wrapper', true);
         postDfrPromise.done(function () {
+            let draftId = $("#draftId");
+            let title = $("#draftTitleInput").val();
             spreadsheet.saveJSON().then(function (data) {
                 // Save draft explicitly
                 $.post(URL_ROOT + "/pages/save-draft/" + tablePrefix, {
