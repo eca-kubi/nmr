@@ -53,7 +53,7 @@
                         <?php if (!(isset($is_submission_closed) && $is_submission_closed)): ?>
                             <div id="editorTab">
                                 <div id="editorActionToolbar"></div>
-                                <div style="width: 100%">
+                                <div id="editorWrapper" style="width: 100%">
                                     <form id="editorForm">
                                     <textarea name="content" id="editor" cols="30" rows="10"
                                               style="height: 500px;"><?php echo $content ?? ''; ?></textarea>
