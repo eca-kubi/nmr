@@ -17,7 +17,6 @@ define('DATE_FORMATS', [
     'num_sm' => 'Y/m/d',
     'num_xs' => 'Y/n/j',
 ]);
-
 const DEFAULT_DRAFT_MONTH = 'February';
 const DEFAULT_DRAFT_YEAR = '2020';
 

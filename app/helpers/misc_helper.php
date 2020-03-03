@@ -474,7 +474,7 @@ function getDepartmentMembers($department_id)
 function get_include_contents($filename, $variablesToMakeLocal): string
 {
     extract($variablesToMakeLocal, EXTR_OVERWRITE);
-    $file = APP_ROOT . "/templates/$filename.php";
+    $file = APP_ROOT . "/$filename.php";
     if (is_file($file)) {
         ob_start();
         require($file);
@@ -1049,4 +1049,15 @@ function regenerateBeforePreview($value = null)
     if ($value === null)
         return Database::getDbh()->where('prop', 'nmr_regenerate_before_preview')->getValue('settings', 'value');
     return $value && Database::getDbh()->where('prop', 'nmr_regenerate_before_preview')->update('settings', ['value' => $value]);
+}
+
+function file_get_contents_curl($url) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //Set curl to return the data instead of printing it to the browser.
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    $data = curl_exec($ch);
+    curl_close($ch);
+    return $data;
 }

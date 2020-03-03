@@ -754,16 +754,16 @@ class Pages extends Controller
                         'department' => $current_user->department,
                         'flash_or_full' => flashOrFull($table_prefix)
                     ];
-                    $body = get_include_contents('email_templates/report_submitted_notify_gm', $data);
+                    $body = get_include_contents('templates/email_templates/report_submitted_notify_gm', $data);
                     $data['body'] = $body;
-                    $email = get_include_contents('email_templates/main', $data);
+                    $email = get_include_contents('templates/email_templates/main', $data);
                     if ($current_user->user_id !== $gm->user_id) {
                         insertEmail($subject, $email, $gm->email);
                     }
                     // Send email to Applicant
-                    $body = get_include_contents('email_templates/report_submitted_notify_applicant', $data);
+                    $body = get_include_contents('templates/email_templates/report_submitted_notify_applicant', $data);
                     $data['body'] = $body;
-                    $email = get_include_contents('email_templates/main', $data);
+                    $email = get_include_contents('templates/email_templates/main', $data);
                     insertEmail($subject, $email, $current_user->email);
                 }
                 if ($success) echo json_encode(['success' => true, 'draftId' => $draft_id]);
@@ -800,7 +800,7 @@ class Pages extends Controller
         $report = generateFinalReport($target_month, $target_year, $table_prefix);
         $pdf = new TCPDF();
         $pdf->AddPage();
-        $pdf->writeHTML('<p>Hello</p><img src= "' . URL_ROOT . '/public/assets/images/adamus.jpg" alt="">');
+        $pdf->writeHTML('<p>Hello</p><img src= "' . URL_ROOT . '/public/assets/images/i.jpg" alt="">');
         ob_end_clean();
         $pdf->Output('doc.pdf', 'I');
     }
