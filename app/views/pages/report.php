@@ -662,12 +662,13 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     setTimeout(function () {
                         var table = $(editor.body).find("table:not(.custom-table)");
                         table.addClass("custom-table");
-                        table.attr("style", "border: 1px dashed black;");
+                        table.attr("style", "border: 1px solid black;");
                         table.find("tr td")
                             .each(function () {
                                 var currentStyle = $(this).attr("style");
-                                $(this).attr("style", currentStyle + " border: 1px dashed black;");
+                                $(this).attr("style", currentStyle + " border: 1px solid black;");
                             });
+                        table.attr("style", "border-collapse:collapse;");
                     }, 0);
                 }
             },
