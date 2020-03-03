@@ -72,8 +72,8 @@
                                                 </div>
                                             </div>
                                             <span class="text-sm"><i
-                                                        class="fa fa-calendar"></i> <?php echo echoDateOfficial($draft['time_modified'], true); ?></span>
-                                            <span style="font-size: 0.7rem;display: block"><i
+                                                        class="fa fa-calendar"></i> <?php echo $target_month ?? ''; ?> <?php echo $target_year ?? ''; ?> <?php /*echo echoDateOfficial($draft['time_modified'], true); */?></span>
+                                            <span class="invisible" style="font-size: 0.7rem;display: block"><i
                                                         class="fa fa-clock-o"></i> <?php echo getTime($draft['time_modified']); ?></span>
                                             <a href="#"
                                                class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
