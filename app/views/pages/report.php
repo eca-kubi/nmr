@@ -1339,7 +1339,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === CHART_PROCESSING) {
+        } else if (sheetName === CHART_TONS_MILLED_AND_GOLD_PRODUCED) {
             let valueRange = sheet.range("B2:C5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1371,7 +1371,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     }
                 },
                 title: {
-                    text: CHART_PROCESSING
+                    text: CHART_TONS_MILLED_AND_GOLD_PRODUCED
                 },
                 dataSource: {data: data},
                 series: [
