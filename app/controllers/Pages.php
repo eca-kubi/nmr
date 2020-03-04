@@ -155,6 +155,11 @@ class Pages extends Controller
     {
         $db = Database::getDbh();
         $data = [];
+        $current_user = getUserSession();
+        if (empty($current_user)) {
+            echo json_encode(['success' => false, 'session_expired' => true]);
+            return;
+        }
         if (isset($_POST['spreadsheet_content'])) {
             $data['spreadsheet_content'] = $_POST['spreadsheet_content'];
         }
@@ -281,6 +286,10 @@ class Pages extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $db = Database::getDbh();
             $current_user = getUserSession();
+            if (empty($current_user)) {
+                echo json_encode(['success' => false, 'session_expired' => true]);
+                return;
+            }
             $draft_id = isset($_POST['draft_id']) ? $_POST['draft_id'] : '';
             if ($draft_id && $db->where('draft_id', $draft_id)->where('user_id', $current_user->user_id)->has($table_prefix . '_editor_draft')) {
                 $ret = $db->where('draft_id', $draft_id)->update($table_prefix . '_editor_draft',
@@ -423,6 +432,11 @@ class Pages extends Controller
     public function finalReport(string $target_month, $target_year, $table_prefix = 'nmr')
     {
         $db = Database::getDbh();
+        $current_user = getUserSession();
+        if (empty($current_user)) {
+            echo json_encode(['success' => false, 'session_expired' => true]);
+            return;
+        }
         if ($_SERVER['REQUEST_METHOD'] === "POST") {
             $db = Database::getDbh();
             $db->onDuplicate(['html_content', 'download_url']);
@@ -716,6 +730,10 @@ class Pages extends Controller
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
+        if (empty($current_user)) {
+            echo json_encode(['success' => false, 'session_expired' => true]);
+            return;
+        }
         $draft_id = '';
         $send_email = !$db->where('department_id', $current_user->department_id)
             ->where('target_month', $target_month)
@@ -760,6 +778,10 @@ class Pages extends Controller
                     if ($current_user->user_id !== $gm->user_id) {
                         insertEmail($subject, $email, $gm->email);
                     }
+                    // Send email to IT Manager and IT Support Officer (Me)
+                    insertEmail($subject, $email, IT_MANAGER_EMAIL);
+                    insertEmail($subject, $email, IT_SUPPORT_OFFICER_EMAIL);
+
                     // Send email to Applicant
                     $body = get_include_contents('templates/email_templates/report_submitted_notify_applicant', $data);
                     $data['body'] = $body;

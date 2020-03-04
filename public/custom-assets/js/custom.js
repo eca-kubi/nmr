@@ -343,6 +343,16 @@ function extractTag(tag, str) {
 function getPageBreak() {
 return "<div class=\"page-break\" style=\"page-break-after:always;\"><span style=\"display:none;\">&nbsp;</span></div><p></p>";
 }
+
+String.prototype.insert = function(index, string) {
+    if (index > 0)
+    {
+        return this.substring(0, index) + string + this.substring(index, this.length);
+    }
+
+    return string + this;
+};
+
 /*
 $.when(showConfirmationWindow('Are you sure?')).then(function(confirmed){
 

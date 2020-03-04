@@ -44,6 +44,6 @@ CKEDITOR.editorConfig = function (config) {
     //config.pasteFromWord_inlineImages = true;
     //config.pasteFromWordRemoveFontStyles = false; //preserve ms format
     config.removePlugins = 'save, forms, preview, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div, preview';
-    config.extraPlugins = 'image2, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn,pagebreak, pastebase64, uploadfile';
-    //config.fontSize_sizes = '8/8pt;9/9pt;10/10pt;11/11pt;12/12pt;14/14pt;16/16pt;18/18pt;20/20pt;22/22pt;24/24pt;26/26pt;28/28pt;36/36pt;48/48pt;72/72pt';
+    config.extraPlugins = 'image, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn,pagebreak, pastebase64, uploadfile';
+    config.fontSize_sizes = '8pt/8pt;9pt/9pt;10pt/10pt;11pt/11pt;12pt/12pt;14pt/14pt;16pt/16pt;18pt/18pt;20pt/20pt;22pt/22pt;24pt/24pt;26pt/26pt;28pt/28pt;36pt/36pt;48pt/48pt;72pt/72pt';
 };

@@ -15,7 +15,8 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/fonts/font-awesome-pro/css/all.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/fonts/font-awesome-pro/css/v4-shims.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/w3/w3.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/subjx/subjx.min.css"/>
+<!--    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/css/subjx/subjx.min.css"/>
+-->
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css"/>
     <!--<link rel="stylesheet" href="<?php /*echo URL_ROOT;  */?>/public/assets/css/adminlte/adminlte.css"/>-->
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte/adminlte-alpha.css"/>
@@ -24,7 +25,8 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/kendo-ui/kendo.bootstrap-v4.min.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/toc/tocbot.css"/>
+<!--    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/css/toc/tocbot.css"/>
+-->
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/ckeditor/contents.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css"/>
 <!--    <script>

@@ -224,12 +224,13 @@ echo $spreadsheet_templates; ?>'>
             this.insertHtml(content);
         };
         CKEDITOR.on('instanceReady', (evt) => {
-            evt.editor.document.$.querySelector('html').style.backgroundColor = "#eeeeee";
-            $(evt.editor.document.$.body).on('click', 'a[href^="#"], a[href^="javascript:"]', function (e) {
-                e.preventDefault();
-            });
+            let editor = evt.editor;
+
+            editor.document.$.querySelector('html').style.backgroundColor = "#eeeeee";
         });
         CKEDITOR.replace('content', {
+            removePlugins: 'save, forms, preview, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div',
+            extraPlugins: 'image, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn,pagebreak, pastebase64, uploadfile,saveaspdf',
             allowedContent: true,
             format_tags: CKEDITOR.config.format_tags + ';div',
             font_names: 'Calibri Light; Calibri;' + CKEDITOR.config.font_names,
@@ -240,10 +241,10 @@ echo $spreadsheet_templates; ?>'>
                 URL_ROOT + '/public/custom-assets/css/editor.css'
             ],
             bodyClass: "document-editor",
-            height: "29.7cm",
+            height: "500px",
             title: "Nzema Monthly Report",
             toolbar: [
-                {name: 'document', items: ['Print']},
+                {name: 'document', items: ['saveaspdf']},
                 {name: 'clipboard', items: ['Undo', 'Redo']},
                 {name: 'styles', items: ['Format', 'Font', 'FontSize']},
                 {
@@ -252,14 +253,14 @@ echo $spreadsheet_templates; ?>'>
                 },
                 {name: 'colors', items: ['TextColor', 'BGColor']},
                 {name: 'align', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-                {name: 'links', items: ['Link', 'Unlink', 'TableOfContents']},
+                {name: 'links', items: ['toc', 'Link', 'Unlink', 'insertToc']},
                 {
                     name: 'paragraph',
                     items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote']
                 },
                 {name: 'insert', items: ['Image', 'Table']},
                 {name: 'tools', items: ['Maximize']},
-                {name: 'editing', items: ['PageBreak', 'Source']}
+                {name: 'editing', items: ['PageBreak', isITAdmin ? 'Source' : '']}
             ],
             uploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files&responseType=json',
             filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse/',
@@ -269,6 +270,7 @@ echo $spreadsheet_templates; ?>'>
         });
 
         editor = CKEDITOR.instances.content;
+
         /*    editor.on('paste', function (ev) {
                 let imgs = $(ev.data.dataValue).find('img');
                 imgs.each(elem => {
@@ -284,8 +286,17 @@ echo $spreadsheet_templates; ?>'>
         previewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/> </div>").appendTo("body");
         previewEditor = $("#previewEditor").kendoEditor({
             tools: [],
+            pdf: {
+                allPages: true,
+                paperSize: "A4",
+                margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                forcePageBreak: '.page-break',
+                scale: 0.7,
+                fileName: "Nzema Monthly Report",
+                template: $(`#page-template-body_${tablePrefix}`).html()
+            },
             stylesheets: [
-                //"<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                 //"<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css",
                 "<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
                 "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
@@ -304,8 +315,9 @@ echo $spreadsheet_templates; ?>'>
                 progress('.content-wrapper', true);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     allPages: true,
-                    paperSize: 'a3',
-                    margin: "1.3cm",
+                    paperSize: 'A4',
+                    scale: 0.7,
+                    margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
                     multipage: true,
                     forcePageBreak: '.page-break',
                     template: $("#page-template").html()
@@ -328,8 +340,8 @@ echo $spreadsheet_templates; ?>'>
                         file: ""
                     },
                     width: "100%",
-                    height: 550,
-                    scale: 1,
+                    height: 800,
+                    scale: 1.5,
                     toolbar: {
                         items: [
                             "pager", "zoom", "toggleSelection", "search", "download", "print", {
@@ -1796,15 +1808,20 @@ echo $spreadsheet_templates; ?>'>
                 dataUri.chart = data;
                 if (insertNewImage) {
                     let chartImgElem = CKEDITOR.dom.element.createFromHtml("<img id='chart_img_" + name + "' src='" + dataUri.chart + "' alt='' />");
-                    editor.insertElement(chartImgElem);
-                    editor.widgets.initOn(chartImgElem, 'image');
+                   setTimeout(function () {
+                       editor.insertElement(chartImgElem);
+                       editor.widgets.initOn(chartImgElem, 'image');
+                   },10);
+
                 }
                 exportSheet.done(data => {
                     dataUri.sheet = data;
                     if (insertNewImage) {
                         let sheetImgElem = CKEDITOR.dom.element.createFromHtml("<img id='sheet_img_" + name + "' src='" + dataUri.sheet + "'   alt=''/>");
-                        editor.insertElement(sheetImgElem);
-                        editor.widgets.initOn(sheetImgElem, 'image');
+                        setTimeout(function () {
+                            editor.insertElement(sheetImgElem);
+                            editor.widgets.initOn(sheetImgElem, 'image');
+                        },10)
                     }
                     let editorDataHtml = $(editor.getData());
                     if (editorDataHtml.length) {

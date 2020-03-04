@@ -140,7 +140,7 @@ echo $spreadsheet_templates; ?>'>
 $table_prefixes = ['nmr', 'nmr_fr'];
 $cover_pages = [];
 foreach ($table_prefixes as $tb_p) {
-    $cover_pages[$tb_p] = Database::getDbh()->where('name', 'cover_page')->getValue($tb_p .'_report_parts', 'content');
+    $cover_pages[$tb_p] = Database::getDbh()->where('name', 'cover_page')->getValue($tb_p . '_report_parts', 'content');
 }
 $distribution_list = Database::getDbh()->where('name', 'distribution_list')->getValue('nmr_report_parts', 'content');
 $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_report_parts', 'content');
@@ -365,7 +365,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     allPages: true,
                     paperSize: 'A4',
-                    margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                    margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
                     multipage: true,
                     scale: 0.7,
                     forcePageBreak: ".page-break",
@@ -374,7 +374,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     kendo.drawing.drawDOM($(editor.body), {
                         allPages: true,
                         paperSize: 'A4',
-                        margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                        margin: tablePrefix === 'nmr_fr' ? {
+                            top: "3cm",
+                            right: "1cm",
+                            bottom: "1cm",
+                            left: "1cm"
+                        } : "1cm",
                         multipage: true,
                         scale: 0.7,
                         forcePageBreak: ".page-break",
@@ -384,7 +389,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         kendo.drawing.exportPDF(group, {
                             allPages: true,
                             paperSize: 'A4',
-                            margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                            margin: tablePrefix === 'nmr_fr' ? {
+                                top: "3cm",
+                                right: "1cm",
+                                bottom: "1cm",
+                                left: "1cm"
+                            } : "1cm",
                             multipage: true,
                             scale: 0.7,
                             forcePageBreak: ".page-break"
@@ -398,7 +408,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             } else {
                 let template = $(`#page-template-body_${tablePrefix}`).html();
                 let pdfOptions = $.extend({template: template}, pdfExportOptions);
-                tablePrefix === 'nmr_fr'? pdfOptions.margin = { top: "3cm", right: "1cm", bottom: "1cm", left: "1cm" } : pdfOptions.margin = "1cm";
+                tablePrefix === 'nmr_fr' ? pdfOptions.margin = {
+                    top: "3cm",
+                    right: "1cm",
+                    bottom: "1cm",
+                    left: "1cm"
+                } : pdfOptions.margin = "1cm";
                 let content = editor ? editor.value() : previewEditor.value();
                 previewEditor.value(content);
                 drawing.drawDOM($(previewEditor.body), pdfOptions).then(group => {
@@ -633,7 +648,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             pdf: {
                 allPages: true,
                 paperSize: "A4",
-                margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
                 forcePageBreak: '.page-break',
                 scale: 0.7,
                 fileName: "Nzema Monthly Report",
@@ -821,7 +836,10 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         setTimeout(function () {
             $("div#spreadSheet").trigger("resize");
             //overlayScrollbarsInstances.body.scroll($("#editorTabStrip"), 5000, {x: 'swing', y: 'swing'})
-            setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {x: 'swing', y: 'swing'}), 1500);
+            setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {
+                x: 'swing',
+                y: 'swing'
+            }), 1500);
             if (editor) editor.focus();
         }, 3000);
 
@@ -2085,6 +2103,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
                 }, null, "json").done(function (response, textStatus, jQueryXHR) {
                     progress('.content-wrapper');
+                    if (response['session_expired']) {
+                        let href = window.location.href.insert(URL_ROOT.length, '/users/login');
+                        kendoAlert('Session Expired!',`Your session has expired! Please login and try saving your draft again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                        return;
+                    }
                     if (response.success) {
                         let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
                         if (response.draft_id)
@@ -2159,7 +2182,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         progress('.content-wrapper', true);
         kendo.drawing.drawDOM($(previewEditor.body), {
             paperSize: 'A4',
-            margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+            margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
             multipage: true,
             scale: 0.7,
             forcePageBreak: ".page-break"
@@ -2170,8 +2193,13 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`, {
                 html_content: editor.value(),
                 data_uri: dataURI
-            }, () => {
+            }, (data) => {
                 progress('.content-wrapper');
+                if (!data.success && data['session_expired']) {
+                    let href = window.location.href.insert(URL_ROOT.length, '/users/login');
+                    kendoAlert('Session Expired!',`Your session has expired! Please login and try saving the report again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                    return;
+                }
                 let alert = kendoAlert('Save Flash Report', `${targetMonth} ${targetYear} Flash Report saved successfully!`);
                 setTimeout(() => alert.close(), 1500);
             }, "json")
@@ -2263,13 +2291,18 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         };
 
         submit().done(post => post.done(data => {
+            if (!data.success && data['session_expired']) {
+                let href = window.location.href.insert(URL_ROOT.length, '/users/login');
+                kendoAlert('Session Expired!',`Your session has expired! Please login and try saving again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                return;
+            }
             let url = `${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`;
             progress('.content-wrapper', true);
             $.get(url).done(html => {
                 previewEditor.value(html);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'A4',
-                    margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
+                    margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
                     multipage: true,
                     forcePageBreak: '.page-break',
                     scale: 0.7,
@@ -2288,54 +2321,63 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
 
     function submitReport(e) {
-        let draftId = $("#draftId");
+        let $draftId = $("#draftId");
+        let draftId = $draftId.val();
         let title = $("#draftTitleInput").val();
         let targetMonth = $("#targetMonth").val();
         let targetYear = $("#targetYear").val();
-
+        progress('.content-wrapper', true);
         // Save draft explicitly
         $.post(URL_ROOT + "/pages/save-draft/" + tablePrefix, {
             title: title,
-            draft_id: draftId.val(),
+            draft_id: draftId,
             content: editor.value(),
             spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-        }, null, "json");
-
-        if ($(e.target).hasClass('update-submitted-report-btn')) {
-            showWindow('This report has already been submitted. Are you sure you want to update it?')
-                .done(e => {
+        }, null, "json").always(function (data) {
+            progress('.content-wrapper');
+            if (!data.success && data['session_expired']) {
+                let href = window.location.href.insert(URL_ROOT.length, '/users/login');
+                kendoAlert('Session Expired!',`Your session has expired! Please login and try submission again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                return;
+            }
+            if ($(e.target).hasClass('update-submitted-report-btn')) {
+                showWindow('This report has already been submitted. Are you sure you want to update it?')
+                    .done(e => {
+                        progress('.content-wrapper', true);
+                        $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
+                            title: title,
+                            draft_id: draftId,
+                            content: editor.value(),
+                            spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                        }, null, "json")
+                            .done(data => {
+                                progress('.content-wrapper');
+                                $draftId.val(data.draftId);
+                                let alert = kendoAlert("Report Updated!", "Report updated successfully.");
+                                setTimeout(() => alert.close(), 1500);
+                            });
+                    });
+            } else if ($(e.target).hasClass("submit-report-btn")) {
+                showWindow('This report will be submitted. Are you sure you want to proceed?').done(function () {
                     progress('.content-wrapper', true);
                     $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
                         title: title,
-                        draft_id: draftId.val(),
+                        draft_id: draftId,
                         content: editor.value(),
                         spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                    }, null, "json")
-                        .done(data => {
-                            progress('.content-wrapper');
-                            draftId.val(data.draftId);
-                            let alert = kendoAlert("Report Updated!", "Report updated successfully.");
-                            setTimeout(() => alert.close(), 1500);
-                        });
+                    }, null, "json").done(data => {
+                        progress('.content-wrapper');
+                        $draftId.val(data.draftId);
+                        let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
+                        setTimeout(() => alert.close(), 1500);
+                        editorActionToolbar.hide(".submit-report-btn");
+                        editorActionToolbar.show(".update-submitted-report-btn");
+                    });
                 });
-        } else if ($(e.target).hasClass("submit-report-btn")) {
-            showWindow('This report will be submitted. Are you sure you want to proceed?').done(function () {
-                progress('.content-wrapper', true);
-                $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
-                    title: title,
-                    draft_id: draftId.val(),
-                    content: editor.value(),
-                    spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                }, null, "json").done(data => {
-                    progress('.content-wrapper');
-                    draftId.val(data.draftId);
-                    let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
-                    setTimeout(() => alert.close(), 1500);
-                    editorActionToolbar.hide(".submit-report-btn");
-                    editorActionToolbar.show(".update-submitted-report-btn");
-                });
-            });
-        }
+            }
+        });
+
+
     }
 
     function getArrayData() {

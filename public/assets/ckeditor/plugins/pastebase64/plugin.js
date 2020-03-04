@@ -62,6 +62,7 @@
             // position
             setTimeout(function () {
                 editor.insertElement(element);
+                editor.widgets.initOn(element, 'image');
             }, 10);
         };
 
