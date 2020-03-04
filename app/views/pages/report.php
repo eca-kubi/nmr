@@ -947,14 +947,17 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         /*  if (sheets.length > 0) {
               sheetJSON.name = sheetJSON.name + " " + (parseInt(sheets.length) + 1);
           }*/
-        if (firstSheetLoading) {
+        /*if (firstSheetLoading) {
+        This was necessary to replace Sheet1 which was loaded by default in the workbook
             firstSheetLoading = false;
             sheet = spreadsheet.activeSheet();
             sheet.fromJSON(sheetJSON);
         } else {
             sheet = spreadsheet.insertSheet({});
             sheet.fromJSON(sheetJSON);
-        }
+        }*/
+        sheet = spreadsheet.insertSheet({});
+        sheet.fromJSON(sheetJSON);
         spreadsheet.activeSheet(sheet);
         return sheet;
     }
@@ -1178,7 +1181,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName === (CHART_GOLD_RECOVERED_ARL_AND_TOLL)) {
+        }
+        else if (sheetName === (CHART_GOLD_RECOVERED_ARL_AND_TOLL)) {
             let valueRange = sheet.range("B2:C5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1226,7 +1230,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName === (CHART_GOLD_PRODUCTION)) {
+        }
+        else if (sheetName === (CHART_GOLD_PRODUCTION)) {
             let valueRange = sheet.range("B2:C4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1308,7 +1313,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === CHART_TONS_MILLED_AND_GOLD_PRODUCED) {
+        }
+        else if (sheetName === CHART_TONS_MILLED_AND_GOLD_PRODUCED) {
             let valueRange = sheet.range("B2:C5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1423,7 +1429,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        } else if (sheetName === (CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
+        }
+        else if (sheetName === (CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
             let valueRange = sheet.range("B2:C4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1483,7 +1490,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === (CHART_PLANNED_VRS_ACTUAL_METRES)) {
+        }
+        else if (sheetName === (CHART_PLANNED_VRS_ACTUAL_METRES)) {
             let valueRange = sheet.range("B2:C4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1513,7 +1521,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === (CHART_CLOSING_STOCKPILE_BALANCE)) {
+        }
+        else if (sheetName === (CHART_CLOSING_STOCKPILE_BALANCE)) {
             let valueRange = sheet.range("B2:C6");
             let fieldRange = sheet.range("A2:A6");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1597,7 +1606,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === (CHART_TOLL_DELIVERY)) {
+        }
+        else if (sheetName === (CHART_TOLL_DELIVERY)) {
             let valueRange = sheet.range("B2:C8");
             let fieldRange = sheet.range("A2:A8");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1699,7 +1709,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER_2)) {
+        }
+        else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER_2)) {
             sheet.range("B3:M5").format('#,###');
             sheet.range("B6:M6").format('#.0000');
             let valueRange = sheet.range("B2:C6");
@@ -1782,7 +1793,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER)) {
+        }
+        else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER)) {
             sheet.range("B3:M5").format('#,###');
             let valueRange = sheet.range("B2:C6");
             let fieldRange = sheet.range("A2:G6");
@@ -2064,29 +2076,27 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         postDfrPromise.done(function () {
             let draftId = $("#draftId");
             let title = $("#draftTitleInput").val();
-            spreadsheet.saveJSON().then(function (data) {
-                $.post(URL_ROOT + "/pages/save-draft/" + tablePrefix, {
-                    title: title,
-                    draft_id: draftId.val(),
-                    content: editor.value(),
-                    spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                }, null, "json").done(function (response, textStatus, jQueryXHR) {
-                    progress('.content-wrapper');
-                    if (response['session_expired']) {
-                        let href = window.location.href.insert(URL_ROOT.length, '/users/login');
-                        kendoAlert('Session Expired!', `Your session has expired! Please login and try saving your draft again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
-                        return;
-                    }
-                    if (response.success) {
-                        let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
-                        if (response.draft_id)
-                            $('#draftId').val(response.draft_id);
-                        setTimeout(() => kAlert.close(), 1500);
-                    } else {
-                        let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
-                        setTimeout(() => kAlert.close(), 1500);
-                    }
-                });
+            $.post(URL_ROOT + "/pages/save-draft/" + tablePrefix, {
+                title: title,
+                draft_id: draftId.val(),
+                content: editor.value(),
+                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+            }, null, "json").done(function (response, textStatus, jQueryXHR) {
+                progress('.content-wrapper');
+                if (response['session_expired']) {
+                    let href = window.location.href.insert(URL_ROOT.length, '/users/login');
+                    kendoAlert('Session Expired!', `Your session has expired! Please login and try saving your draft again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                    return;
+                }
+                if (response.success) {
+                    let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
+                    if (response.draft_id)
+                        $('#draftId').val(response.draft_id);
+                    setTimeout(() => kAlert.close(), 1500);
+                } else {
+                    let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
+                    setTimeout(() => kAlert.close(), 1500);
+                }
             });
         });
         postDfr.resolve();
@@ -2231,7 +2241,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 $.post({
                     url: URL_ROOT + '/pages/save-spreadsheet-template',
                     data: JSON.stringify({
-                        template: JSON.stringify(activeSheet.toJSON(), null, 2),
+                        template: activeSheet.toJSON(),
                         department: departmentName,
                         description: description
                     }, null, 2),

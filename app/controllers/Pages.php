@@ -710,7 +710,12 @@ class Pages extends Controller
             $department_id = $db->where('department', $data->department)->getValue('departments', 'department_id');
             $db->onDuplicate(['template', 'department_id']);
             $success = $db->insert(TABLE_NMR_SPREADSHEET_TEMPLATES,
-                ['description' => $data->description, 'template' => $data->template, 'department_id' => $department_id]);
+                [
+                    'description' => $data->description,
+                    'template' => json_encode($data->template) ,
+                    'department_id' => $department_id
+                ]
+            );
             if ($success) {
                 echo json_encode(['success' => true]);
             } else {
