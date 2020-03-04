@@ -820,7 +820,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 )
             },
             selectSheet(e) {
-                // selectChartTab(e.sheet.name());
+                 selectChartTab(e.sheet.name());
             }
         }).data("kendoSpreadsheet");
         //spreadsheet.activeSheet().range("A:N").enable(false);
@@ -1087,37 +1087,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             transitions: false
         };
         if (sheetName === (CHART_RECOVERY_HEAD_GRADE)) {
-            let valueRange = sheet.range("B2:C4");
-            let fieldRange = sheet.range("A2:A4");
-            data = fetchData(sheet, valueRange, fieldRange);
-            chart = div.kendoChart($.extend(kendoChartOptions, {
-                title: {
-                    text: CHART_RECOVERY_HEAD_GRADE
-                },
-                dataSource: {data: data},
-                series: [
-                    {
-                        // Notice the syntax for fields
-                        // that are not valid JS identifiers
-                        field: "['RECOVERY']",
-                        categoryField: categoryField,
-                        type: "column",
-                        name: "RECOVERY",
-                        color: seriesColor.goldProduced
-                    },
-                    {
-                        field: "['HEAD GRADE']",
-                        categoryField: categoryField,
-                        type: "line",
-                        name: "HEAD GRADE",
-                        color: seriesColor.budgetOunces
-                    }
-                ],
-            })).data("kendoChart");
-            charts[sheetName] = chart;
-            bindChart(chart, sheet, valueRange, fieldRange);
-
-        } else if (sheetName === (CHART_RECOVERY_HEAD_GRADE_2)) {
             let valueRange = sheet.range("B2:C5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -2105,7 +2074,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     progress('.content-wrapper');
                     if (response['session_expired']) {
                         let href = window.location.href.insert(URL_ROOT.length, '/users/login');
-                        kendoAlert('Session Expired!',`Your session has expired! Please login and try saving your draft again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                        kendoAlert('Session Expired!', `Your session has expired! Please login and try saving your draft again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
                         return;
                     }
                     if (response.success) {
@@ -2197,7 +2166,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 progress('.content-wrapper');
                 if (!data.success && data['session_expired']) {
                     let href = window.location.href.insert(URL_ROOT.length, '/users/login');
-                    kendoAlert('Session Expired!',`Your session has expired! Please login and try saving the report again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                    kendoAlert('Session Expired!', `Your session has expired! Please login and try saving the report again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
                     return;
                 }
                 let alert = kendoAlert('Save Flash Report', `${targetMonth} ${targetYear} Flash Report saved successfully!`);
@@ -2293,7 +2262,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         submit().done(post => post.done(data => {
             if (!data.success && data['session_expired']) {
                 let href = window.location.href.insert(URL_ROOT.length, '/users/login');
-                kendoAlert('Session Expired!',`Your session has expired! Please login and try saving again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                kendoAlert('Session Expired!', `Your session has expired! Please login and try saving again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
                 return;
             }
             let url = `${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`;
@@ -2337,7 +2306,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             progress('.content-wrapper');
             if (!data.success && data['session_expired']) {
                 let href = window.location.href.insert(URL_ROOT.length, '/users/login');
-                kendoAlert('Session Expired!',`Your session has expired! Please login and try submission again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                kendoAlert('Session Expired!', `Your session has expired! Please login and try submission again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
                 return;
             }
             if ($(e.target).hasClass('update-submitted-report-btn')) {
