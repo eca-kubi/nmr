@@ -1265,10 +1265,10 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     {
                         // Notice the syntax for fields
                         // that are not valid JS identifiers
-                        field: "['GOLD PRODUCED']",
+                        field: "['ACTUAL GOLD PRODUCED (Oz)']",
                         categoryField: categoryField,
                         type: "column",
-                        name: "GOLD PRODUCED",
+                        name: "ACTUAL GOLD PRODUCED (Oz)",
                         color: seriesColor.goldProduced
                     },
                     {
