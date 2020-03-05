@@ -2263,7 +2263,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             let dfd = $.Deferred();
             let post = $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId + "/" + tablePrefix, {
                 content: editor.value(),
-                //spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
             }, null, "json");
             dfd.resolve(post);
             return dfd.promise();

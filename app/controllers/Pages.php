@@ -122,27 +122,30 @@ class Pages extends Controller
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
-        if (!isLoggedIn()) {
+        $report = $db->where('report_submissions_id', $report_submissions_id)->getOne($table_prefix.'_report_submissions');
+        if (!isLoggedIn() || empty($report)) {
             redirect('users/login/pages/edit-submitted-report/' . $report_submissions_id . '/' . $table_prefix);
         }
-        if (!isPowerUser($current_user->user_id) || isITAdmin($current_user->user_id)) {
+
+        if (!(isPowerUser($current_user->user_id) || isITAdmin($current_user->user_id) || $report['department_id'] == $current_user->department_id)) {
             redirect('errors/index/404');
         }
 
-        if (!$db->where('report_submissions_id', $report_submissions_id)->has($table_prefix . '_report_submissions')) {
+        /*if (!$db->where('report_submissions_id', $report_submissions_id)->has($table_prefix . '_report_submissions')) {
             redirect('errors/index/404');
-        }
+        }*/
+
         $payload['report_submissions_id'] = $report_submissions_id;
         $payload['edit_submitted_report'] = true;
         $payload['table_prefix'] = $table_prefix;
         try {
             $submitted_report = $db->where('report_submissions_id', $report_submissions_id)
                 ->join('departments d', 'r.department_id=d.department_id')
-                ->getOne($table_prefix . '_report_submissions r', ['content', 'spreadsheet_content', 'target_month', 'target_year', 'department']);
+                ->getOne($table_prefix . '_report_submissions r', ['content', 'spreadsheet_content', 'target_month', 'target_year', 'department', 'd.department_id']);
             $payload['content'] = $submitted_report['content'];
             $payload['spreadsheet_content'] = $submitted_report['spreadsheet_content'];
-            $payload['title'] = "Flash Report (" . $submitted_report['department'] . ")";
-            $payload['page_title'] = 'Flash Report (' . $submitted_report['department'] . ')';
+            $payload['title'] = flashOrFull($table_prefix) . " Report (" . $submitted_report['department'] . ")";
+            $payload['page_title'] = flashOrFull($table_prefix) . ' Report (' . $submitted_report['department'] . ')';
             $payload['target_month'] = $submitted_report['target_month'];
             $payload['target_year'] = $submitted_report['target_year'];
             $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
@@ -165,8 +168,7 @@ class Pages extends Controller
         }
         $data['content'] = $_POST['content'];
         $data['date_modified'] = now();
-        $success = $db->where('report_submissions_id', $report_submissions_id)
-            ->update($table_prefix . '_report_submissions', $data);
+        $success = $db->where('report_submissions_id', $report_submissions_id)->update($table_prefix . '_report_submissions', $data);
 
         if ($success) {
             // At the client end do a get request followed by a post request to 'pages/final-report' in order to update pdf file and html of final report at the backend
@@ -540,7 +542,7 @@ class Pages extends Controller
         if ($db->where('target_month', $target_month)->where('target_year', $target_year)->has($table_prefix . '_final_report')) {
             $final_report = $db->where('target_month', $target_month)->where('target_year', $target_year)->getOne($table_prefix . '_final_report');
             $payload['final_report_id'] = $final_report['final_report_id'];
-            $payload['content'] = $final_report['html_content'];
+            $payload['content'] = $final_report['html_content']; // generateFinalReport($target_month, $target_year, $table_prefix); Let's rather regenerate since individual submissions may have been updated.
             $payload['title'] = "$target_month $target_year " . flashOrFull($table_prefix) . " Report";
             $payload['target_year'] = $target_year;
             $payload['target_month'] = $target_month;

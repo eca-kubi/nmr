@@ -178,9 +178,9 @@ $.fn.outerHTML = function () {
         })(this[0]));
 };
 
-function kendoAlert(title, content) {
+function kendoAlert(title, content, options={}) {
     let kAlert = $("<div/>").appendTo("body").kendoDialog({
-        width: "450px",
+        width: "300px",
         title: title,
         //closable: false,
         //modal: false,

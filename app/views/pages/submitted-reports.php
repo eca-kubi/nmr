@@ -240,7 +240,7 @@
                                                                        data-target-year="<?php echo $report['target_year'] ?>"><i
                                                                                 class="fa fa-play-circle-o mr-0"></i>
                                                                         View Report</a>
-                                                                    <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 edit-submitted-report <?php echo isPowerUser($current_user->user_id) ? '' : 'd-none' ?>"
+                                                                    <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 edit-submitted-report <?php echo isPowerUser($current_user->user_id) || $report['department_id'] == $current_user->department_id ? '' : 'd-none' ?>"
                                                                        href="#"
                                                                        data-table-prefix="<?php echo $table_prefix ?>"
                                                                        data-submissions-id="<?php echo $report['report_submissions_id']; ?>"
@@ -668,9 +668,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             url: `${URL_ROOT}/pages/is-submission-closed/${window.targetMonth}/${window.targetYear}`,
             dataType: "json",
             success: data => {
-                if (data.submission_closed) {
-                    window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${window.reportSubmissionsId}/${window.tablePrefix}`;
-                } else {
+                if (isPowerUser && !data.submission_closed) {
+                    // Is is power user, close submission and proceed to edit
                     showWindow('You must first close submission of reports for this month! This will ensure that no one can undo the changes you are about to make.<br>Do you wish to close submission?',
                         'Close Submission First').done(() => {
                         $.get({
@@ -680,6 +679,10 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             if (data.success) window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${window.reportSubmissionsId}/${window.tablePrefix}`;
                         })
                     })
+                } else if (isPowerUser || isITAdmin || !data.submission_closed) {
+                    window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${window.reportSubmissionsId}/${window.tablePrefix}`;
+                } else {
+                    kendoAlert('Submission Closed', 'Sorry report submission has been closed. You cannot edit this report.');
                 }
             }
         });
@@ -690,9 +693,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             url: `${URL_ROOT}/pages/is-submission-closed/${window.targetMonth}/${window.targetYear}`,
             dataType: "json",
             success: data => {
-                if (data.submission_closed) {
-                    window.location.href = `${URL_ROOT}/pages/edit-final-report/${window.targetMonth}/${window.targetYear}/${window.tablePrefix}`;
-                } else {
+                if (isPowerUser && !data.submission_closed) {
+                    // Is is power user, close submission and proceed to edit
                     showWindow('You must first close submission of reports for this month! This will ensure that no one can undo the changes you are about to make.<br>Do you wish to close submission?',
                         'Close Submission First').done(() => {
                         $.get({
@@ -702,6 +704,10 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             if (data.success) window.location.href = `${URL_ROOT}/pages/edit-final-report/${window.targetMonth}/${window.targetYear}/${window.tablePrefix}`;
                         })
                     })
+                } else if (isPowerUser || isITAdmin || !data.submission_closed) {
+                    window.location.href = `${URL_ROOT}/pages/edit-final-report/${window.targetMonth}/${window.targetYear}/${window.tablePrefix}`;
+                } else {
+                    kendoAlert('Submission Closed', 'Sorry report submission has been closed. You cannot edit this report.');
                 }
             }
         });
