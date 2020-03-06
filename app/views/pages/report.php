@@ -2072,11 +2072,13 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     function saveDraft(e) {
         let postDfr = jQuery.Deferred();
         let postDfrPromise = postDfr.promise();
+        let targetMonth = $("#targetMonth").val();
+        let targetYear = $("#targetYear").val();
         progress('.content-wrapper', true);
         postDfrPromise.done(function () {
             let draftId = $("#draftId");
             let title = $("#draftTitleInput").val();
-            $.post(URL_ROOT + "/pages/save-draft/" + tablePrefix, {
+            $.post(URL_ROOT + "/pages/save-draft/" + targetMonth  + "/" + targetYear + "/" +  tablePrefix, {
                 title: title,
                 draft_id: draftId.val(),
                 content: editor.value(),
@@ -2307,7 +2309,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         let targetYear = $("#targetYear").val();
         progress('.content-wrapper', true);
         // Save draft explicitly
-        $.post(URL_ROOT + "/pages/save-draft/" + tablePrefix, {
+        $.post(URL_ROOT + "/pages/save-draft/" + targetMonth  + "/" + targetYear + "/" + tablePrefix, {
             title: title,
             draft_id: draftId,
             content: editor.value(),
