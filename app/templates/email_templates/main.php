@@ -41,7 +41,7 @@ echo <<<html
                     <td style="color: #ffffff; font-family: Arial, sans-serif; font-size: 10px; font-weight: bold"> 
                         (c) 2020- Developed by Adamus IT<br/>
                         Email: ithelpdesk@adamusgh.com <br/>
-                        Ext: 1000
+                        Ext: 1000/1011
                     </td>
                 </tr>
             </table>

@@ -1008,13 +1008,14 @@ function getNotSubmittedDepartments($target_month, $target_year, $table_prefix =
 {
     $db = Database::getDbh();
     $departments = $db->getValue('departments', 'department', null);
+    $exempted = $table_prefix == 'nmr'? NO_FLASH__REPORT_DEPT : NO_FULL_REPORT_DEPT;
     try {
         $submitted_departments = $db->where('s.target_month="' . $target_month . '"')
             ->where('s.target_year="' . $target_year . '"')
             ->join('departments d', 'd.department_id=s.department_id')
             ->getValue($table_prefix . '_report_submissions s', 'department', null);
-        $callback = function ($needle) use ($submitted_departments) {
-            return !in_array($needle, $submitted_departments) && $needle !== 'Accra Office';
+        $callback = function ($needle) use ($exempted, $submitted_departments) {
+            return !in_array($needle, $submitted_departments) && !in_array($needle, $exempted);
         };
         return array_filter($departments, $callback);
 
