@@ -74,7 +74,18 @@
                                                            data-target-year="<?php echo explode(" ", $key)[1] ?>"
                                                            data-table-prefix="<?php echo $table_prefix ?>"
                                                         ><i class="fa fa-file-edit"></i> Edit
-                                                    </a> <?php endif; ?>
+                                                    </a>
+
+                                                        <a
+                                                                class="dropdown-item send-final-report-btn col <?php echo !empty($group[0]['download_url']) ? '' : 'd-none' ?>"
+                                                                href="#"
+                                                                data-download-url="<?php echo $group[0]['download_url'] ?? ''; ?>"
+                                                                data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                                data-target-year="<?php echo explode(" ", $key)[1] ?>"
+                                                                data-table-prefix="<?php echo $table_prefix ?>"
+                                                        ><i class="fa fa-send"></i> Send Report</a>
+
+                                                    <?php endif; ?>
                                                 <a
                                                         class="dropdown-item download-final-report-btn col <?php echo !empty($group[0]['download_url']) ? '' : 'd-none' ?>"
                                                         href="<?php echo $group[0]['download_url'] ?? "#" ?>"
@@ -83,7 +94,19 @@
                                                         data-target-month="<?php echo explode(" ", $key)[0] ?>"
                                                         data-target-year="<?php echo explode(" ", $key)[1] ?>"
                                                         data-table-prefix="<?php echo $table_prefix ?>"
-                                                ><i class="fa fa-file-download"></i> Download</a><a
+                                                ><i class="fa fa-file-download"></i> Download</a>
+                                                        <span id="<?php echo $key. flashOrFull($table_prefix). 'DownloadLink' ?>" style="position: absolute; left: -9999px;"><?php echo !empty($group[0]['download_url']) ? $group[0]['download_url'] : '' ?></span>
+                                                        <a
+                                                                class="dropdown-item copy-btn col <?php echo !empty($group[0]['download_url']) ? '' : 'd-none' ?>"
+                                                                href="#"
+                                                                data-clipboard-target="[id='<?php echo $key. flashOrFull($table_prefix)  ?>DownloadLink']"
+                                                                data-download-url="<?php echo $group[0]['download_url'] ?? ''; ?>"
+                                                                data-target-month="<?php echo explode(" ", $key)[0] ?>"
+                                                                data-target-year="<?php echo explode(" ", $key)[1] ?>"
+                                                                data-table-prefix="<?php echo $table_prefix ?>"
+                                                        ><i class="fa fa-copy"></i> Copy Download Link</a>
+
+                                                        <a
                                                                 class="dropdown-item d-none col"
                                                                 href="<?php echo "#" ?>"
                                                                 data-target-month="<?php echo explode(" ", $key)[0] ?>"
@@ -323,7 +346,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
     $(function () {
             // init clipboardjs
-            let clipboard = new ClipboardJS('.copy-button');
+            let clipboard = new ClipboardJS('.copy-btn');
             clipboard.on('success', function (e) {
                 notify('Copied!', 'success');
                 e.clearSelection();
@@ -544,6 +567,21 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 //previewContent(`${URL_ROOT}/pages/preview-final-report/${targetMonth}/${targetYear}/${tablePrefix}`, data => data);
             });
 
+            $('.send-final-report-btn').on('click', function (e) {
+                let target = $(e.currentTarget);
+                let tablePrefix = target.data('tablePrefix');
+                let targetMonth = window.targetMonth = target.data('targetMonth');
+                let targetYear = window.targetYear = target.data('targetYear');
+                let downloadUrl = window.targetYear = target.data('downloadUrl');
+                $.get(
+                    {url: `${URL_ROOT}/pages/send-report/?l=${downloadUrl}&tm=${targetMonth}&ty=${targetYear}&tp=${tablePrefix}`, dataType: 'json'}).done(
+                    function(data){
+                        if(data.success) {
+                            notify('Report Sent!');
+                        }
+                    })
+            });
+
             $(".generate-report-btn").on('click', e => {
                 let target = $(e.currentTarget);
                 let tablePrefix = target.data('tablePrefix');
@@ -626,7 +664,8 @@ function(data){
     }
 })`).attr('data-download-url', data1.downloadUrl).removeClass('d-none');
                                         target.siblings('.download-final-report-btn').attr('href', data1.downloadUrl).attr('data-download-url', data1.downloadUrl).removeClass('d-none');
-                                        target.siblings('.copy-btn').removeClass('d-none');
+                                        let clipboardTarget = target.siblings('.copy-btn').removeClass('d-none').data('clipboardTarget');
+                                        $(clipboardTarget).html(data1.downloadUrl);
                                         target.siblings('.edit-final-report-btn').removeClass('d-none')
                                     }, "json");
                                 })

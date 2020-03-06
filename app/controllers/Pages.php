@@ -518,7 +518,7 @@ class Pages extends Controller
             $html_content = $_POST['html_content'];
 
             if ($db->insert($table_prefix . '_final_report', ['download_url' => $download_url, 'html_content' => $html_content, 'target_month' => $target_month, 'target_year' => $target_year])) {
-                echo json_encode(['success' => true, 'targetMonth' => $target_month, 'targetYear' => $target_year, "downloadUrl" => $download_url]);
+                echo json_encode(['success' => true, 'targetMonth' => $target_month, 'targetYear' => $target_year, "downloadUrl" => $download_url], JSON_UNESCAPED_SLASHES);
             }
         } else {
             $callback = function ($array) {
