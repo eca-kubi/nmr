@@ -1090,7 +1090,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             transitions: false
         };
         if (sheetName === (CHART_RECOVERY_HEAD_GRADE)) {
-            let valueRange = sheet.range("B2:C5");
+            let valueRange = sheet.range("B2:M5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
@@ -1232,7 +1232,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
         }
         else if (sheetName === (CHART_GOLD_PRODUCTION)) {
-            let valueRange = sheet.range("B2:C4");
+            let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
@@ -1315,7 +1315,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             bindChart(chart, sheet, valueRange, fieldRange);
         }
         else if (sheetName === CHART_TONS_MILLED_AND_GOLD_PRODUCED) {
-            let valueRange = sheet.range("B2:C5");
+            let valueRange = sheet.range("B2:M5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {

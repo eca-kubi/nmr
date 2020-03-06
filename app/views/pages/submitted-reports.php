@@ -617,15 +617,16 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                         html_content: data
                                     }, (data1) => {
                                         progress('.content-wrapper');
-                                        kendoAlert('Report Generated Successfully', `<div>${targetMonth} ${targetYear} Nzema Report generated successfully! <hr> <p><span style="position: absolute;left: -9999px" id="downloadLink" >${data1.downloadUrl}</span><a class="btn-warning btn copy-button" href="#" data-clipboard-target="#downloadLink"><i class="fa fa-copy"></i>  Copy Download Link</a> </p> <p><a class="btn-primary btn" href="${data1.downloadUrl}" target="_blank"><i class="fa fa-file-download"></i>  Download Report</a> </p> <p><a class="btn btn-success"
-href="javascript:$.get(
+                                        kendoAlert('Report Generated Successfully', `<div>${targetMonth} ${targetYear} Nzema Report generated successfully! <br> You can, copy the download link, download or send the report</div>`);
+                                        target.siblings('.send-final-report-btn').attr('href', `javascript:$.get(
 {url: '${URL_ROOT}/pages/send-report/?l=${data1.downloadUrl}&tm=${targetMonth}&ty=${targetYear}&tp=${tablePrefix}', dataType: 'json'}).done(
 function(data){
     if(data.success) {
         notify('Report Sent!');
     }
-})"><i class="fa fa-send"></i> Send Report</a></p></div>`);
+})`).attr('data-download-url', data1.downloadUrl).removeClass('d-none');
                                         target.siblings('.download-final-report-btn').attr('href', data1.downloadUrl).attr('data-download-url', data1.downloadUrl).removeClass('d-none');
+                                        target.siblings('.copy-btn').removeClass('d-none');
                                         target.siblings('.edit-final-report-btn').removeClass('d-none')
                                     }, "json");
                                 })
