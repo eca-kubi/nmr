@@ -7,6 +7,7 @@
  */
 $current_user = getUserSession();
 /** @var string $link */
+$fof = strtoupper($flash_or_full);
 echo <<<html
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html
@@ -14,13 +15,13 @@ echo <<<html
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <title>NZEMA MONTHLY REPORTS ($target_month_year)</title>
+    <title>NZEMA MONTHLY $fof REPORTS - ($target_month_year)</title>
 </head>
 <body style="margin: 0; padding: 0;">
 <table align="center" cellpadding="10" cellspacing="0" width="600" style="border-collapse: collapse;">
     <tr bgcolor="#70bbd9" style="padding: 30px 30px 30px 30px;">
         <td style="color: #153643; font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; border-bottom: #f8f8f8 2px solid;">
-            <b>NZEMA MONTHLY REPORTS ($target_month_year)</b>
+            <b>NZEMA MONTHLY $fof REPORTS ($target_month_year)</b>
         </td>
     </tr>
     <tr bgcolor="#70bbd9" style="padding: 30px 30px 30px 30px;">

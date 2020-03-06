@@ -276,7 +276,8 @@
 </div>
 <style>
     .k-editor {
-        z-index: -1 !important;
+        position: absolute;
+        left: -9999px;
     }
 </style>
 <!-- /.content-wrapper -->
@@ -302,10 +303,10 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     let reportSubmissionsId;
     let tablePrefix;
     let notify_submission = <?php echo isset($_GET['s']) ? 1 : 0; ?>;
-    let notify_submission_department = "<?php echo isset($_GET['d'])? $_GET['d']: ''; ?>";
-    let notify_submission_rsid = "<?php echo isset($_GET['i'])? $_GET['i']: ''; ?>"; // Report_submissions_id
-    let notify_submission_flash_or_full = "<?php echo isset($_GET['fof'])? $_GET['fof']: ''; ?>";
-    let notify_submission_target_month_year = "<?php echo isset($_GET['tmy'])? $_GET['tmy']: ''; ?>";
+    let notify_submission_department = "<?php echo isset($_GET['d']) ? $_GET['d'] : ''; ?>";
+    let notify_submission_rsid = "<?php echo isset($_GET['i']) ? $_GET['i'] : ''; ?>"; // Report_submissions_id
+    let notify_submission_flash_or_full = "<?php echo isset($_GET['fof']) ? $_GET['fof'] : ''; ?>";
+    let notify_submission_target_month_year = "<?php echo isset($_GET['tmy']) ? $_GET['tmy'] : ''; ?>";
     /**
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
@@ -321,10 +322,17 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     const DISTRIBUTION_LIST = `<?php echo $distribution_list ?>`;
 
     $(function () {
+            // init clipboardjs
+            let clipboard = new ClipboardJS('.copy-button');
+            clipboard.on('success', function (e) {
+                notify('Copied!', 'success');
+                e.clearSelection();
+            });
+
             // Show submission notification
             if (notify_submission) {
-                let title = notify_submission_department + ' ' + '<span class="text-capitalize">' + notify_submission_target_month_year +'</span>' + ' ' + notify_submission_flash_or_full + ' Report Submitted ';
-                let content = notify_submission_department.toUpperCase() + ' has submitted their ' + notify_submission_target_month_year + ' '  + notify_submission_flash_or_full + ' report.<br>' +
+                let title = notify_submission_department + ' ' + '<span class="text-capitalize">' + notify_submission_target_month_year + '</span>' + ' ' + notify_submission_flash_or_full + ' Report Submitted ';
+                let content = notify_submission_department.toUpperCase() + ' has submitted their ' + notify_submission_target_month_year + ' ' + notify_submission_flash_or_full + ' report.<br>' +
                     `Click <a href="javascript: $('a.preview-btn[data-report-submissions-id=${notify_submission_rsid}]').click()">here</a> to view it.`;
                 kendoAlert(false, content);
             }
@@ -409,7 +417,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             }, 1000);
 
             $("a.preview-btn").on("click", function (e) {
-                let target = $(e.target);
+                let target = $(e.currentTarget);
                 let tablePrefix = window.tablePrefix = target.data('tablePrefix');
                 let targetMonth = window.targetMonth = target.data('targetMonth');
                 let targetYear = window.targetYear = target.data('targetYear');
@@ -532,6 +540,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         })
                     }
                 });
+
                 //previewContent(`${URL_ROOT}/pages/preview-final-report/${targetMonth}/${targetYear}/${tablePrefix}`, data => data);
             });
 
@@ -608,7 +617,14 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                         html_content: data
                                     }, (data1) => {
                                         progress('.content-wrapper');
-                                        kendoAlert('Report Generated Successfully', `${targetMonth} ${targetYear} Nzema Report generated successfully! <p><u>Download Link:</u> <a class="" href="${data1.downloadUrl}" target="_blank">${data1.downloadUrl}</a> <a id="copyDownloadLink" class="d-none" href="#" role="button" title="Copy download link"><i class="fa fa-copy"></i> </a></p>`);
+                                        kendoAlert('Report Generated Successfully', `<div>${targetMonth} ${targetYear} Nzema Report generated successfully! <hr> <p><span style="position: absolute;left: -9999px" id="downloadLink" >${data1.downloadUrl}</span><a class="btn-warning btn copy-button" href="#" data-clipboard-target="#downloadLink"><i class="fa fa-copy"></i>  Copy Download Link</a> </p> <p><a class="btn-primary btn" href="${data1.downloadUrl}" target="_blank"><i class="fa fa-file-download"></i>  Download Report</a> </p> <p><a class="btn btn-success"
+href="javascript:$.get(
+{url: '${URL_ROOT}/pages/send-report/?l=${data1.downloadUrl}&tm=${targetMonth}&ty=${targetYear}&tp=${tablePrefix}', dataType: 'json'}).done(
+function(data){
+    if(data.success) {
+        notify('Report Sent!');
+    }
+})"><i class="fa fa-send"></i> Send Report</a></p></div>`);
                                         target.siblings('.download-final-report-btn').attr('href', data1.downloadUrl).attr('data-download-url', data1.downloadUrl).removeClass('d-none');
                                         target.siblings('.edit-final-report-btn').removeClass('d-none')
                                     }, "json");

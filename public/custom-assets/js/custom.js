@@ -268,7 +268,12 @@ function appendScriptsToEditor(document, urls) {
 }
 
 function notify(message, type = 'success') {
-    let notification = $('<span class="notification" />').appendTo('body').kendoNotification().data('kendoNotification');
+    let notification = $('<span class="notification" />').appendTo('body').kendoNotification({
+        position: {
+            right: 0,
+            top: 0
+        }
+    }).data('kendoNotification');
     notification.show(message, type)
 }
 

@@ -850,7 +850,7 @@ class Pages extends Controller
                     // New submission, thus, notify GM
                     $target_month_year = strtoupper($target_month . ' ' . $target_year);
                     $gm = new User(getCurrentGM());
-                    $subject = "Nzema Monthly Reports (" . flashOrFull($table_prefix) . ")";
+                    $subject = 'Nzema Monthly ' .  flashOrFull($table_prefix) . ' Report - ' . $target_month . ' ' . $target_year;
                     $data = [
                         'link' => URL_ROOT . '/pages/submitted-reports/?' . 'i=' . $report_submissions_id . '&s=true&d=' . $current_user->department . '&fof=' . flashOrFull($table_prefix) . '&tmy=' . $target_month_year,
                         'target_month_year' => $target_month_year,
@@ -861,6 +861,7 @@ class Pages extends Controller
                     ];
                     $body = get_include_contents('templates/email_templates/report_submitted_notify_gm', $data);
                     $data['body'] = $body;
+                    $data['flash_or_full'] = flashOrFull($table_prefix);
                     $email = get_include_contents('templates/email_templates/main', $data);
                     if ($current_user->user_id !== $gm->user_id) {
                         insertEmail($subject, $email, $gm->email);
@@ -872,6 +873,7 @@ class Pages extends Controller
                     // Send email to Applicant
                     $body = get_include_contents('templates/email_templates/report_submitted_notify_applicant', $data);
                     $data['body'] = $body;
+                    $data['flash_or_full'] = flashOrFull($table_prefix);
                     $email = get_include_contents('templates/email_templates/main', $data);
                     insertEmail($subject, $email, $current_user->email);
                 }
@@ -971,4 +973,18 @@ class Pages extends Controller
         echo $content;
     }
 
+    public function sendReport()
+    {
+        $link = $_GET['l'];
+        $target_month = $_GET['tm'];
+        $target_year = $_GET['ty'];
+        $table_prefix = $_GET['tp'];
+        $body = get_include_contents('templates/email_templates/distribution_list_mail', ['link' => $link, 'target_month' => $target_month, 'target_year' => $target_year, 'flash_or_full' => flashOrFull($table_prefix)]);
+        $message = get_include_contents('templates/email_templates/main', ['body' => $body, 'target_month_year' => strtoupper($target_month. ' '. $target_year), 'flash_or_full' => flashOrFull($table_prefix)]);
+        $ret = true;
+        foreach (DISTRIBUTION_LIST_EMAILS as $DISTRIBUTION_LIST_EMAIL) {
+            $ret = $ret && insertEmail('Nzema Monthly ' .  flashOrFull($table_prefix) . ' Report - ' . $target_month . ' ' . $target_year, $message, $DISTRIBUTION_LIST_EMAIL);
+        }
+        if ($ret) echo json_encode(['success' => true]);
+    }
 }

@@ -10,6 +10,7 @@
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-scrollTo/jquery.scrollTo.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-toast/jquery-toast.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-dim-background/jquery-dim-background.min.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/js/clipboardjs/clipboard.min.js"></script>
 <!--<script src="<?php /*echo URL_ROOT; */?>/public/assets/js/interactjs/interact.min.js"></script>
 -->
 <!--<script src="<?php /*echo URL_ROOT; */?>/public/assets/js/subjx/subjx.min.js"></script>
