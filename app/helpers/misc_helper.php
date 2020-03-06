@@ -232,9 +232,10 @@ function getDepartmentHod($department_id)
  * @param $body string
  * @param $recipient_address string
  * @param $recipient_name string
+ * @param string $attachment
  * @return bool
  */
-function insertEmail($subject, $body, $recipient_address, $recipient_name = '')
+function insertEmail($subject, $body, $recipient_address, $recipient_name = '', $attachment = "")
 {
     $email_model = new EmailModel();
     return $email_model->add([
@@ -242,6 +243,7 @@ function insertEmail($subject, $body, $recipient_address, $recipient_name = '')
         'body' => $body,
         'recipient_address' => $recipient_address,
         'recipient_name' => $recipient_name,
+        'attachment' => $attachment
     ]);
 }
 

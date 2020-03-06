@@ -53,6 +53,8 @@ try {
             //$mail->addCustomHeader('In-Reply-To', '<' . $email->subject . '@cms>');
             //$mail->addCustomHeader('References', '<' . $email->subject . '@cms>');
             $mail->Body = $email->body;
+            if ($email->attachment) $mail->addAttachment($email->attachment);
+
             if ($mail->send()) {
                 update_status($email->email_id);
             }

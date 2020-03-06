@@ -979,11 +979,12 @@ class Pages extends Controller
         $target_month = $_GET['tm'];
         $target_year = $_GET['ty'];
         $table_prefix = $_GET['tp'];
-        $body = get_include_contents('templates/email_templates/distribution_list_mail', ['link' => $link, 'target_month' => $target_month, 'target_year' => $target_year, 'flash_or_full' => flashOrFull($table_prefix)]);
+        $body = get_include_contents('templates/email_templates/distribution_list_mail_with_attachment', ['link' => $link, 'target_month' => $target_month, 'target_year' => $target_year, 'flash_or_full' => flashOrFull($table_prefix)]);
         $message = get_include_contents('templates/email_templates/main', ['body' => $body, 'target_month_year' => strtoupper($target_month. ' '. $target_year), 'flash_or_full' => flashOrFull($table_prefix)]);
         $ret = true;
+        $attachment = 'C:/xampp/htdocs/nmr/public/reports/' . strtolower(flashOrFull($table_prefix)) . '/' . strtoupper($target_month .'-' . $target_year .'-' . 'nzema-report(' . flashOrFull($table_prefix) . ').pdf');
         foreach (DISTRIBUTION_LIST_EMAILS as $DISTRIBUTION_LIST_EMAIL) {
-            $ret = $ret && insertEmail('Nzema Monthly ' .  flashOrFull($table_prefix) . ' Report - ' . $target_month . ' ' . $target_year, $message, $DISTRIBUTION_LIST_EMAIL);
+            $ret = $ret && insertEmail('Nzema Monthly ' .  flashOrFull($table_prefix) . ' Report - ' . $target_month . ' ' . $target_year, $message, $DISTRIBUTION_LIST_EMAIL, '', $attachment);
         }
         if ($ret) echo json_encode(['success' => true]);
     }
