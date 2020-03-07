@@ -110,6 +110,8 @@
     #previewEditorParent .k-editor {
         visibility: hidden !important;
         z-index: -1 !important;
+        position: absolute;
+        left: -9999px;
     }
 </style>
 <!-- /.content-wrapper -->
@@ -169,7 +171,7 @@
             previewEditor = $("#previewEditor").kendoEditor({
                 tools: [],
                 stylesheets: [
-                    "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                    //"<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                     "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
                 ]
             }).data("kendoEditor");

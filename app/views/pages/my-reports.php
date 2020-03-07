@@ -129,6 +129,8 @@
 <style>
     .k-editor {
         z-index: -1 !important;
+        position: absolute;
+        left: -9999px;
     }
 </style>
 <!-- /.content-wrapper -->
@@ -158,7 +160,7 @@
             modal: true,
             visible: false,
             width: "80%",
-            scrollable: false,
+            scrollable: true,
             title: {
                 encoded: false
             },
@@ -186,10 +188,10 @@
                             let submit = () => {
                                 let dfd = $.Deferred();
                                 let post = $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix, {
-                                    //title: title,
+                                    title: title,
                                     draft_id: draftId,
                                     content: previewEditor.value(),
-                                    //spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                                    spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
                                 }, null, "json");
                                 draftWindow.close();
                                 dfd.resolve(post);
@@ -198,13 +200,16 @@
                             if (reportSubmitted) {
                                 showWindow('This report has already been submitted. Are you sure you want to update it?')
                                     .done(e => {
+                                        progress('.content-wrapper', true);
                                         submit().done(post => post.done(data => {
+                                            progress('.content-wrapper');
                                             let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
                                             setTimeout(() => alert.close(), 1500);
                                         }));
                                     });
                             } else {
                                 submit().done(post => post.done(data => {
+                                    progress('.content-wrapper');
                                     reportSubmitted = 1;
                                     currentTarget.data('reportSubmitted', 1);
                                     let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
@@ -229,7 +234,7 @@
             previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
                 tools: [],
                 stylesheets: [
-                    "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                    //"<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                     "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
                 ]
             }).data("kendoEditor");

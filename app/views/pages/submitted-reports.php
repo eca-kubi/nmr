@@ -433,7 +433,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
                     tools: [],
                     stylesheets: [
-                        "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+                        //"<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                         "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
                     ]
                 }).data("kendoEditor");

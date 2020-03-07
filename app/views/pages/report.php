@@ -17,9 +17,16 @@
     }*/
 
     #previewEditorParent .k-editor {
-        visibility: hidden;
-        z-index: -1;
+        /*visibility: hidden;
+        z-index: -1;*/
+        position: absolute;
+        left: -9999px;
     }
+
+    [data-role=spreadsheettoolbar] [data-tool], [data-role=editortoolbar] .k-tool-group, [data-role=borderpallete] a[role=button] {
+        margin: 1px;
+    }
+
 
 </style>
 <?php include_once(APP_ROOT . '/views/includes/navbar.php'); ?>
@@ -106,7 +113,7 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <div class="row">
+                    <div class="row" id="chartsContainer">
                         <div class="col-md-6">
                             <div id="spreadSheet" class="w-100" style="height: 400px; width: 100%"></div>
                         </div>
@@ -216,7 +223,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         previewEditor = $("#previewEditor").kendoEditor({
             tools: [],
             stylesheets: [
-                "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
+               // "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                 // "<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css",
                 //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
                 "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
@@ -224,8 +231,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         }).data("kendoEditor");
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
         $(window).on("resize", function () {
-            kendo.resize($("#chartsTabstripHolder"));
-            spreadsheet.resize(true);
+            setTimeout(function () {
+                kendo.resize($('#chartsContainer'));
+            }, 1000)
         });
 
         let previewContent = function (contentUrl, datafilter = false, fileName = "Nzema Monthly Report", template = "") {
@@ -804,12 +812,21 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     "fontSize",
                     "fontFamily",
                     "alignment",
+                    "textWrap",
+                    "borders",
+                    ["formatDecreaseDecimal", "formatIncreaseDecimal"],
                     "backgroundColor",
                     "textColor",
-                    "format"
+                    "format",
+                    "merge",
+                    "freeze",
+                    "filter",
+                    "insertImage",
+                    "insertComment",
+                    "hyperlink"
                 ],
-                insert: false,
-                data: false
+                //insert: false,
+                //data: false
             },
             //columns: 14,
             //rows: 8,
@@ -823,7 +840,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                  selectChartTab(e.sheet.name());
             }
         }).data("kendoSpreadsheet");
-        //spreadsheet.activeSheet().range("A:N").enable(false);
+
 
         $("#copyToEditorButton").on("click", function () {
             let activeSheetName = spreadsheet.activeSheet().name();
@@ -834,7 +851,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         });
 
         setTimeout(function () {
-            $("div#spreadSheet").trigger("resize");
+            kendo.resize($('#chartsContainer'));
+            //kendo.resize($('div.box'));
             //overlayScrollbarsInstances.body.scroll($("#editorTabStrip"), 5000, {x: 'swing', y: 'swing'})
             setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {
                 x: 'swing',
