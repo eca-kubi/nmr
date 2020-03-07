@@ -379,22 +379,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     forcePageBreak: ".page-break",
                     template: $(`#page-template-cover-toc_${tablePrefix}`).html()
                 }).done(function (group) {
-                    kendo.drawing.drawDOM($(editor.body), {
-                        allPages: true,
-                        paperSize: 'A4',
-                        margin: tablePrefix === 'nmr_fr' ? {
-                            top: "3cm",
-                            right: "1cm",
-                            bottom: "1cm",
-                            left: "1cm"
-                        } : "1cm",
-                        multipage: true,
-                        scale: 0.7,
-                        forcePageBreak: ".page-break",
-                        template: $(`#page-template-body_${tablePrefix}`).html()
-                    }).done((group2) => {
-                        group.append(...group2.children);
-                        kendo.drawing.exportPDF(group, {
+                    $.post({
+                        url: URL_ROOT + '/pages/preview-content',
+                        data: {content: editor.value()}
+                    }).done(function (data) {
+                        previewEditor.value(data)
+                        kendo.drawing.drawDOM($(previewEditor.body), {
                             allPages: true,
                             paperSize: 'A4',
                             margin: tablePrefix === 'nmr_fr' ? {
@@ -405,13 +395,30 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             } : "1cm",
                             multipage: true,
                             scale: 0.7,
-                            forcePageBreak: ".page-break"
-                        }).done(data2 => {
-                            progress('.content-wrapper');
-                            pdfViewer.fromFile({data: data2.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                            setTimeout(() => pdfViewer.activatePage(1), 500)
+                            forcePageBreak: ".page-break",
+                            template: $(`#page-template-body_${tablePrefix}`).html()
+                        }).done((group2) => {
+                            group.append(...group2.children);
+                            kendo.drawing.exportPDF(group, {
+                                allPages: true,
+                                paperSize: 'A4',
+                                margin: tablePrefix === 'nmr_fr' ? {
+                                    top: "3cm",
+                                    right: "1cm",
+                                    bottom: "1cm",
+                                    left: "1cm"
+                                } : "1cm",
+                                multipage: true,
+                                scale: 0.7,
+                                forcePageBreak: ".page-break"
+                            }).done(data2 => {
+                                progress('.content-wrapper');
+                                pdfViewer.fromFile({data: data2.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                                setTimeout(() => pdfViewer.activatePage(1), 500)
+                            })
                         })
                     })
+
                 })
             } else {
                 let template = $(`#page-template-body_${tablePrefix}`).html();
