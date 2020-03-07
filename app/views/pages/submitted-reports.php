@@ -503,7 +503,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     dataType: "html",
                     success: (data) => {
                         const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
-                        let content = COVER_PAGE + getPageBreak() + DISTRIBUTION_LIST + getPageBreak() + BLANK_PAGE;
+                        let content = COVER_PAGE;
                         previewEditor.value(content);
                         kendo.drawing.drawDOM($(previewEditor.body), {
                             allPages: true,

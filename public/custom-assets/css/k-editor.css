@@ -1,6 +1,15 @@
-/*.k-table, .k-table td {
-    border: 1px solid #ccc !important;
-}*/
+table, table tr td {
+    border: 1px solid black;
+}
+
+table {
+    border: 1px solid black;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
 
 .page-break {
     background: url('images/pagebreak.gif') no-repeat center center;
@@ -13,9 +22,24 @@
     cursor: default;
 }
 
+.document-editor {
+    width: 21cm;
+    min-height: 29.7cm;
+    padding: 1cm 1cm 2cm;
+    margin: 0.5cm auto;
+    border: 1px #D3D3D3 solid;
+    background: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
 @media print {
     .page-break {
-        opacity: 0!important;
+        opacity: 0 !important;
+    }
+
+    body.document-editor {
+        border: 0;
+        box-shadow: none;
     }
 }
 

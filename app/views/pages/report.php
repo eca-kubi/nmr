@@ -6,9 +6,9 @@
 </style>
 <?php if (!isITAdmin(getUserSession()->user_id)): ?>
     <style>
-        [title='View HTML'] {
+        /*[title='View HTML'] {
             display: none !important;
-        }
+        }*/
     </style>
 <?php endif; ?>
 <style>
@@ -368,7 +368,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 let targetMonth = $("#targetMonth").val();
                 let targetYear = $("#targetYear").val();
                 const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
-                let content = COVER_PAGE + getPageBreak() + DISTRIBUTION_LIST + getPageBreak() + BLANK_PAGE;
+                let content = COVER_PAGE;
                 previewEditor.value(content);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     allPages: true,
@@ -379,11 +379,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     forcePageBreak: ".page-break",
                     template: $(`#page-template-cover-toc_${tablePrefix}`).html()
                 }).done(function (group) {
+                    progress('.content-wrapper', true);
                     $.post({
                         url: URL_ROOT + '/pages/preview-content',
                         data: {content: editor.value()}
                     }).done(function (data) {
-                        previewEditor.value(data)
+                        previewEditor.value(data);
                         kendo.drawing.drawDOM($(previewEditor.body), {
                             allPages: true,
                             paperSize: 'A4',
