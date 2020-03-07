@@ -674,7 +674,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 //console.log('select')
             },
             pdfExport(e) {
-                $(editor.document.head).append("<style id='hide-page-break'>.page-break { opacity: 0!important; height: 0!important}</style>");
+                $(editor.document.head).append("<style id='hide-page-break'>.page-break { opacity: 0!important; height: 0!important} body.document-editor { border: 0;box-shadow: none;}</style>");
                 e.promise.done(() => {
                     $(editor.document.head).find("#hide-page-break").remove();
                 });
@@ -691,9 +691,24 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 var currentStyle = $(this).attr("style");
                                 $(this).attr("style", currentStyle + " border: 1px solid black;");
                             });
-                        table.attr("style", "border-collapse:collapse;");
+                        //table.attr("style", "border-collapse:collapse;");
+                        table.attr("style", "border: 1px solid black; max-width: 716.097px!important; width:716.097px!important;");
                     }, 0);
                 }
+            },
+            paste(e) {
+                let container = $('<div/>').append(e.html);
+                var table = container.find("table:not(.custom-table)");
+                table.addClass("custom-table");
+                table.attr("style", "border: 1px solid black;");
+                table.find("tr td")
+                    .each(function () {
+                        var currentStyle = $(this).attr("style");
+                        $(this).attr("style", currentStyle + " border: 1px solid black;");
+                    });
+                table.attr("style", "border: 1px solid black; max-width: 716.097pxpx!important; width: 716.097px!important;");
+                container.find('img').attr('style', 'max-width:100%; height: auto');
+                e.html = container.prop('innerHTML');
             },
             stylesheets: [
                 // "<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css",
@@ -763,6 +778,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                  //`${URL_ROOT}/public/assets/js/displace/displace.min.js`,
              ]);*/
             editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
+            $(editor.body).addClass('document-editor');
         }
 
 
