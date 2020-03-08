@@ -89,7 +89,7 @@ class Pages extends Controller
         $target_year = $draft['target_year'];
         $payload['target_month'] = $target_month;
         $payload['target_year'] = $target_year;
-        $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year);
+        $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefix);
         $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
         $payload['title'] = $payload['page_title'];
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
@@ -151,6 +151,8 @@ class Pages extends Controller
             $payload['page_title'] = flashOrFull($table_prefix) . ' Report (' . $submitted_report['department'] . ')';
             $payload['target_month'] = $submitted_report['target_month'];
             $payload['target_year'] = $submitted_report['target_year'];
+            $payload['target_department_id'] = $submitted_report['department_id'];
+            $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($payload['target_month'], $payload['target_year'], $table_prefix);
             $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
             isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
         } catch (Exception $e) {
@@ -438,8 +440,8 @@ class Pages extends Controller
     public function openSubmission($target_month = "", $target_year = "", $table_prefix = 'nmr')
     {
         $db = Database::getDbh();
-        $target_month = $target_month ?: date('F');
-        $target_year = $target_year ?: date('Y');
+        $target_month = $target_month ?: DEFAULT_DRAFT_MONTH;
+        $target_year = $target_year ?: DEFAULT_DRAFT_YEAR;
         $ret = $db->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 1]);
         //$ret = $ret && $db->where('prop', $table_prefix . '_current_submission_month')->update('settings', ['value' => $target_month]);
         //$ret = $ret && $db->where('prop', $table_prefix . '_current_submission_year')->update('settings', ['value' => $target_year]);
@@ -447,15 +449,15 @@ class Pages extends Controller
         $db->onDuplicate(['closed_status']);
         $ret = $ret && $db->insert($table_prefix . '_target_month_year', ['target_year' => $target_year, 'target_month' => $target_month, 'closed_status' => 0]);
         if ($ret) {
-            echo json_encode(['targetYear' => $target_year, 'targetMonth' => $target_month, 'isSubmissionClosedByPowerUser' => false]);
+            echo json_encode(['targetYear' => $target_year, 'targetMonth' => $target_month, 'tablePrefix' => $table_prefix, 'isSubmissionClosedByPowerUser' => false]);
         }
     }
 
     public function closeSubmission($target_month = "", $target_year = "", $table_prefix = 'nmr')
     {
         $db = Database::getDbh();
-        $target_month = $target_month ?: date('F');
-        $target_year = $target_year ?: date('Y');
+        $target_month = $target_month ?: DEFAULT_DRAFT_MONTH;
+        $target_year = $target_year ?: DEFAULT_DRAFT_YEAR;
         /* if (currentSubmissionYear() === $target_year && (currentSubmissionMonth()) === $target_month) {
              $ret = Database::getDbh()->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 0]);
              $ret = $ret && Database::getDbh()->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 1]);
@@ -463,13 +465,11 @@ class Pages extends Controller
              $ret = $ret && Database::getDbh()->where('prop', $table_prefix . '_current_submission_year')->update('settings', ['value' => '']);
          }*/
         if ($db->where('target_month', $target_month)->where('target_year', $target_year)->update($table_prefix . '_target_month_year', ['closed_status' => 1])) {
-            if (currentSubmissionYear() === $target_year && currentSubmissionMonth() === $target_month) {
+            if (currentSubmissionYear() == $target_year && currentSubmissionMonth() == $target_month) {
                 $db->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 0]);
                 $db->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 1]);
-                // $db->where('prop', $table_prefix . '_current_submission_month')->update('settings', ['value' => '']);
-                // $db->where('prop', $table_prefix . '_current_submission_year')->update('settings', ['value' => '']);
             }
-            echo json_encode(['isSubmissionClosedByPowerUser' => true, 'targetYear' => $target_year, 'targetMonth' => $target_month, 'success' => true]);
+            echo json_encode(['isSubmissionClosedByPowerUser' => true, 'targetYear' => $target_year, 'targetMonth' => $target_month, 'tablePrefix' => $table_prefix, 'success' => true]);
         }
     }
 
@@ -499,7 +499,6 @@ class Pages extends Controller
             return;
         }
         if ($_SERVER['REQUEST_METHOD'] === "POST") {
-            $db = Database::getDbh();
             $db->onDuplicate(['html_content', 'download_url']);
             // $json = file_get_contents('php://input');
             // $data = json_decode($json);
@@ -612,9 +611,14 @@ class Pages extends Controller
         }
     }
 
-    public function isSubmissionClosed(string $target_month, $target_year)
+    public function isSubmissionClosed(string $target_month, $target_year, $table_prefix ='nmr')
     {
-        echo json_encode(['submission_closed' => isSubmissionClosedByPowerUser($target_month, $target_year)]);
+        echo json_encode(['submission_closed' => isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefix)]);
+    }
+
+    public function isSubmissionOpened(string $target_month, $target_year, $table_prefix ='nmr')
+    {
+        echo json_encode(['submission_opened' => isSubmissionOpened($target_month, $target_year, $table_prefix)]);
     }
 
     /* public function draftReports($target_month = '', $target_year = '')
@@ -771,7 +775,7 @@ class Pages extends Controller
             }
 
             $my_reports_fr = $db->where('d.user_id', $current_user->user_id)
-                ->join('nmr_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
+                ->join('nmr_fr_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
                 ->orderBy('month_no_year', 'DESC')
                 ->get('nmr_fr_editor_draft d', null, 'd.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status');
             if (is_array($my_reports_fr)) {

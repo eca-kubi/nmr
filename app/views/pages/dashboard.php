@@ -72,7 +72,8 @@
                                  data-url="<?php echo URL_ROOT ?>/pages/submitted-reports/">
                                 <div class="inner">
                                     <h3 class="w3-hide-small text-wrap">Submitted Reports (Departments)</h3>
-                                    <h5 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports (Departments)</h5>
+                                    <h5 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports
+                                        (Departments)</h5>
                                     <!--<p>View reports submitted by departments</p>-->
                                 </div>
                                 <div class="icon" style="color: goldenrod">
@@ -89,19 +90,25 @@
                                     <i class="fa fa-door-open text-aqua"></i> Open Submission
                                 </h5>
                                 <!-- small box -->
-                                <div class="small-box show border" style="cursor:pointer"
+                                <div class="small-box show border dropdown exclude-hover" style="cursor:pointer"
                                      id="openSubmission">
-                                    <div class="inner">
+                                    <div class="inner" data-toggle="dropdown">
                                         <h3 class="w3-hide-small ">Open Submission</h3>
                                         <h5 class="w3-hide-large w3-hide-medium text-bold">Open Submission</h5>
                                         <p>Open report submission.</p>
                                     </div>
-                                    <div class="icon text-aqua">
+                                    <div class="icon text-aqua" data-toggle="dropdown">
                                         <i class="fa fa-door-open"></i>
                                     </div>
-                                    <a href="#" class="small-box-footer bg-aqua">
+                                    <a href="#" class="small-box-footer bg-aqua" data-toggle="dropdown">
                                         <span class="fa fa-chevron-circle-right"></span>
                                     </a>
+                                    <div class="dropdown-menu">
+                                        <button class="dropdown-item" type="button" data-id="openSubmission"
+                                                data-table-prefix="nmr">Flash</button>
+                                        <button class="dropdown-item" type="button" data-id="openSubmission"
+                                                data-table-prefix="nmr_fr">Full</button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -109,18 +116,24 @@
                                     <i class="fa fa-door-closed text-danger"></i> Close Submission
                                 </h5>
                                 <!-- small box -->
-                                <div class="small-box show border" id="closeSubmission" style="cursor:pointer">
-                                    <div class="inner">
+                                <div class="small-box show border dropdown exclude-hover"  id="closeSubmission"  style="cursor:pointer">
+                                    <div class="inner" data-toggle="dropdown">
                                         <h3 class="w3-hide-small ">Close Submission</h3>
                                         <h5 class="w3-hide-large w3-hide-medium text-bold">Close Submission</h5>
                                         <p>Close report submission.</p>
                                     </div>
-                                    <div class="icon text-danger">
+                                    <div class="icon text-danger" data-toggle="dropdown">
                                         <i class="fa fa-door-closed"></i>
                                     </div>
-                                    <a href="#" class="small-box-footer bg-danger">
+                                    <a href="#" class="small-box-footer bg-danger" data-toggle="dropdown">
                                         <span class="fa fa-chevron-circle-right"></span>
                                     </a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#" data-id="closeSubmission"
+                                           data-table-prefix="nmr">Flash</a>
+                                        <a class="dropdown-item" href="#" data-id="closeSubmission"
+                                           data-table-prefix="nmr_fr">Full</a>
+                                    </div>
                                 </div>
                             </div>
                         <?php endif ?>
@@ -142,16 +155,17 @@
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
 <script>
 
-    let targetMonthYearsSubmissionStatus = JSON.parse('<?php echo json_encode(getTargetMonthYearsSubmissionStatus($table_prefix ?? 'nmr')) ?>');
-    let tablePrefix = "<?php echo $table_prefix ?? 'nmr'; ?>";
+    //let tablePrefix = "<?php echo $table_prefix ?? 'nmr'; ?>";
     $(function () {
         $('.small-box[data-url]').on('click', (e) => window.location.href = $(e.currentTarget).attr('data-url'));
-        $("#openSubmission, #closeSubmission").on('click', (e) => {
+        $("#openSubmission .dropdown-item, #closeSubmission .dropdown-item").on('click', (e) => {
             let targetMonth = '';
             let targetYear = '';
             let currentTarget = $(e.currentTarget);
-            let id = currentTarget.attr('id');
+            let id = currentTarget.attr('data-id');
             let title = id === 'openSubmission' ? 'Open Submission' : 'Close Submission';
+            let tablePrefix = currentTarget.attr('data-table-prefix');
+
             showWindow('Select a month and year.', title, '#openCloseSubmissionContent', () => {
 
                 targetMonth = $("#targetMonthCB").kendoComboBox({
@@ -161,12 +175,13 @@
                     }
                 }).data('kendoComboBox').value();
 
-               targetYear =  $("#targetYearCB").kendoComboBox({
+                targetYear = $("#targetYearCB").kendoComboBox({
                     dataSource: new kendo.data.DataSource({data: getYearsBetween("December 2019", "December 2030")}),
                     change(e) {
                         targetYear = this.value();
                     }
                 }).data('kendoComboBox').value();
+
             }).done(() => {
                 $.get({
                     url: URL_ROOT + `/pages/${id === 'openSubmission' ? 'open' : 'close'}-submission` + '/' + targetMonth + '/' + targetYear + '/' + tablePrefix,

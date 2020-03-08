@@ -57,7 +57,7 @@
                                                                 data-table-prefix="<?php echo $table_prefix ?>"
                                                                 data-target-year="<?php echo explode(" ", $key)[1] ?>"><i
                                                                     class="fa fa-play-circle-o"></i> View Report</a>
-                                                    <?php if (isPowerUser($current_user->user_id) && isset($is_power_user)): ?>
+                                                    <?php if (canEditReport($current_user->user_id)): ?>
                                                         <a
                                                                 class="dropdown-item generate-report-btn col"
                                                                 href="<?php echo "#" ?>"
@@ -67,7 +67,7 @@
                                                         ><i class="fas fa-cogs"></i> Generate Report
                                                     </a>
                                                         <a id="<?php echo 'editFinalReportBtn_' . $key ?>"
-                                                           class="dropdown-item edit-final-report-btn col <?php echo isPowerUser($current_user->user_id) ? '' : 'd-none' ?> <?php /** @var array $target_month_years */
+                                                           class="dropdown-item edit-final-report-btn col <?php echo canEditReport($current_user->user_id) ? '' : 'd-none' ?> <?php /** @var array $target_month_years */
                                                            echo in_array($key, $target_month_years[$table_prefix]) ? '' : 'd-none' ?>"
                                                            href="#"
                                                            data-target-month="<?php echo explode(" ", $key)[0] ?>"
@@ -95,11 +95,12 @@
                                                         data-target-year="<?php echo explode(" ", $key)[1] ?>"
                                                         data-table-prefix="<?php echo $table_prefix ?>"
                                                 ><i class="fa fa-file-download"></i> Download</a>
-                                                        <span id="<?php echo $key. flashOrFull($table_prefix). 'DownloadLink' ?>" style="position: absolute; left: -9999px;"><?php echo !empty($group[0]['download_url']) ? $group[0]['download_url'] : '' ?></span>
+                                                        <span id="<?php echo $key . flashOrFull($table_prefix) . 'DownloadLink' ?>"
+                                                              style="position: absolute; left: -9999px;"><?php echo !empty($group[0]['download_url']) ? $group[0]['download_url'] : '' ?></span>
                                                         <a
                                                                 class="dropdown-item copy-btn col <?php echo !empty($group[0]['download_url']) ? '' : 'd-none' ?>"
                                                                 href="#"
-                                                                data-clipboard-target="[id='<?php echo $key. flashOrFull($table_prefix)  ?>DownloadLink']"
+                                                                data-clipboard-target="[id='<?php echo $key . flashOrFull($table_prefix) ?>DownloadLink']"
                                                                 data-download-url="<?php echo $group[0]['download_url'] ?? ''; ?>"
                                                                 data-target-month="<?php echo explode(" ", $key)[0] ?>"
                                                                 data-target-year="<?php echo explode(" ", $key)[1] ?>"
@@ -126,7 +127,7 @@
                                                         data-table-prefix="<?php echo $table_prefix ?>"
                                                         data-target-year="<?php echo explode(" ", $key)[1] ?>"><i
                                                             class="fa fa-play-circle-o"></i> View Report</a>
-                                                <?php if (isPowerUser($current_user->user_id) && isset($is_power_user)): ?>
+                                                <?php if (canEditReport($current_user->user_id)): ?>
                                                     <a
                                                             class="dropdown-item generate-report-btn"
                                                             href="<?php echo "#" ?>"
@@ -136,7 +137,7 @@
                                                     ><i class="fas fa-cogs"></i> Generate Report
                                                     </a>
                                                     <a id="<?php echo 'editFinalReportBtn_' . $key ?>"
-                                                       class="dropdown-item edit-final-report-btn <?php echo isPowerUser($current_user->user_id) ? '' : 'd-none' ?> <?php /** @var array $target_month_years */
+                                                       class="dropdown-item edit-final-report-btn <?php echo canEditReport($current_user->user_id) ? '' : 'd-none' ?> <?php /** @var array $target_month_years */
                                                        echo in_array($key, $target_month_years[$table_prefix]) ? '' : 'd-none' ?>"
                                                        href="#"
                                                        data-target-month="<?php echo explode(" ", $key)[0] ?>"
@@ -263,7 +264,7 @@
                                                                        data-target-year="<?php echo $report['target_year'] ?>"><i
                                                                                 class="fa fa-play-circle-o mr-0"></i>
                                                                         View Report</a>
-                                                                    <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 edit-submitted-report <?php echo isPowerUser($current_user->user_id) || $report['department_id'] == $current_user->department_id ? '' : 'd-none' ?>"
+                                                                    <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 edit-submitted-report <?php echo canEditReport($current_user->user_id) || $report['department_id'] == $current_user->department_id ? '' : 'd-none' ?>"
                                                                        href="#"
                                                                        data-table-prefix="<?php echo $table_prefix ?>"
                                                                        data-submissions-id="<?php echo $report['report_submissions_id']; ?>"
@@ -426,6 +427,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             template: `<a role="button" class="k-button k-flat" onclick="draftWindow.close();" title="Cancel"> <i class="k-i-cancel k-icon"></i>&nbsp; Cancel</a>`
                         }
                     ]
+                },
+                messages: {
+                    defaultFileName: 'NZEMA MONTHLY REPORT.pdf'
                 }
             }).getKendoPDFViewer();
 
@@ -478,6 +482,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             }).done(data => {
                                 progress('.content-wrapper');
                                 draftWindow.center().open().maximize();
+                                pdfViewer.setOptions({
+                                    messages: {
+                                        defaultFileName: 'file.pdf'
+                                    }
+                                });
                                 pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                                 setTimeout(() => pdfViewer.activatePage(1), 500)
                             });
@@ -574,9 +583,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 let targetYear = window.targetYear = target.data('targetYear');
                 let downloadUrl = window.targetYear = target.data('downloadUrl');
                 $.get(
-                    {url: `${URL_ROOT}/pages/send-report/?l=${downloadUrl}&tm=${targetMonth}&ty=${targetYear}&tp=${tablePrefix}`, dataType: 'json'}).done(
-                    function(data){
-                        if(data.success) {
+                    {
+                        url: `${URL_ROOT}/pages/send-report/?l=${downloadUrl}&tm=${targetMonth}&ty=${targetYear}&tp=${tablePrefix}`,
+                        dataType: 'json'
+                    }).done(
+                    function (data) {
+                        if (data.success) {
                             notify('Report Sent!');
                         }
                     })
@@ -598,7 +610,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     },*/
                     success: data => {
                         const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
-                        let content = COVER_PAGE + getPageBreak() + DISTRIBUTION_LIST + getPageBreak() + BLANK_PAGE;
+                        //let content = COVER_PAGE + getPageBreak() + DISTRIBUTION_LIST + getPageBreak() + BLANK_PAGE;
+                        let content = COVER_PAGE;
                         previewEditor.value(content);
                         kendo.drawing.drawDOM($(previewEditor.body), {
                             allPages: true,
@@ -649,7 +662,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                     scale: 0.7,
                                     forcePageBreak: ".page-break"
                                 }).done(data2 => {
-                                    progress('.content-wrapper');
                                     $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`, {
                                         data_uri: data2,
                                         html_content: data

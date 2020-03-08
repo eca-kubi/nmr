@@ -62,9 +62,23 @@
 
 <div id="kendoAlert"></div>
 <script>
+    const DEFAULT_DRAFT_MONTH = `<?php echo DEFAULT_DRAFT_MONTH ?>`;
+    const DEFAULT_DRAFT_YEAR = `<?php echo DEFAULT_DRAFT_YEAR ?>`;
     let isPowerUser = Boolean(<?php echo isPowerUser($current_user->user_id) ?>);
-    let isSubmissionOpened = Boolean(<?php echo isSubmissionOpened(); ?>);
-    let isSubmissionClosedByPowerUser = Boolean(<?php echo isSubmissionClosedByPowerUser(monthName(monthNumber(now())), year(now())); ?>);
+    let submissionClosedStatus = {
+        nmr: JSON.parse('<?php echo json_encode(getTargetMonthYearClosedStatus('nmr')) ?>'),
+        nmr_fr: JSON.parse('<?php echo json_encode(getTargetMonthYearClosedStatus('nmr_fr')) ?>')
+    };
+
+    let isSubmissionOpened = function (targetMonth = DEFAULT_DRAFT_MONTH, targetYear = DEFAULT_DRAFT_YEAR, tablePrefix = 'nmr') {
+        return !submissionClosedStatus[tablePrefix][`${targetMonth} ${targetYear}`];
+    };
+
+    let isSubmissionClosed = function (targetMonth = DEFAULT_DRAFT_MONTH, targetYear = DEFAULT_DRAFT_YEAR, tablePrefix = 'nmr') {
+        return submissionClosedStatus[tablePrefix][`${targetMonth} ${targetYear}`];
+    };
+
+    //let isSubmissionClosedByPowerUser = Boolean(<?php echo isSubmissionClosedByPowerUser(monthName(monthNumber(now())), year(now())); ?>);
     let currentSubmissionMonth = "<?php echo currentSubmissionMonth() ?>";
     let currentSubmissionYear = "<?php echo currentSubmissionYear() ?>";
     let isITAdmin = Boolean(<?php echo isITAdmin($current_user->user_id); ?>);

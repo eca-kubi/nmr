@@ -1,8 +1,8 @@
 <?php include_once(APP_ROOT . '/views/includes/styles.php'); ?>
 <style>
-    .k-editor {
+    /*.k-editor {
         width: 842px;
-    }
+    }*/
 </style>
 <?php if (!isITAdmin(getUserSession()->user_id)): ?>
     <style>
@@ -23,7 +23,7 @@
         left: -9999px;
     }
 
-    [data-role=spreadsheettoolbar] [data-tool], [data-role=editortoolbar] .k-tool-group, [data-role=borderpallete] a[role=button] {
+    [data-role=spreadsheettoolbar] [data-tool], [data-role=editortoolbar] .k-tool-group, [data-role=borderpalette] a[role=button] {
         margin: 1px;
     }
 
@@ -63,7 +63,7 @@
                                 <div id="editorWrapper" style="width: 100%">
                                     <form id="editorForm">
                                     <textarea name="content" id="editor" cols="30" rows="10"
-                                              style="height: 500px;"><?php echo $content ?? ''; ?></textarea>
+                                              style="height: 800px;"><?php echo $content ?? ''; ?></textarea>
                                         <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
                                                value='<?php echo $spreadsheet_content ?? ''; ?>'>
                                         <input type="hidden" id="title" name="title"
@@ -77,6 +77,8 @@
                                                value="<?php echo $target_year ?? ''; ?>">
                                         <input type="hidden" id="targetMonth" name="target_month"
                                                value="<?php echo $target_month ?? ''; ?>">
+                                        <input type="hidden" id="targetDepartmentID" name="target_department_id"
+                                               value="<?php echo $target_department_id ?? ''; ?>">
                                         <input type="hidden" id="departmentName" name="department_name">
                                         <input type="hidden" id="reportSubmissionsId" name="report_submissions_id"
                                                value="<?php echo $report_submissions_id ?? ''; ?>">
@@ -190,10 +192,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     let editPreloadedDraft = Boolean(<?php echo $edit_preloaded_draft ?? ''; ?>);
     let editSubmittedReport = Boolean(<?php echo $edit_submitted_report ?? ''; ?>);
     let editFinalReport = Boolean(<?php echo $edit_final_report ?? ''; ?>);
-    let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
     let tablePrefix = "<?php echo $table_prefix ?? 'nmr'; ?>";
+    let targetMonth = "<?php echo $target_month ?? DEFAULT_DRAFT_MONTH; ?>";
+    let targetYear = "<?php echo $target_year ?? DEFAULT_DRAFT_YEAR; ?>";
+    let targetDepartmentID = "<?php echo $target_department_id ?? ''; ?>";
+
     let clearedContents = "";
-    let targetMonthYearsSubmissionStatus = JSON.parse('<?php echo json_encode(getTargetMonthYearsSubmissionStatus($table_prefix ?? 'nmr')) ?>');
     /** @type {kendo.ui.ToolBar}*/
     let editorActionToolbar;
     let seriesColor = {
@@ -236,7 +240,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             }, 1000)
         });
 
-        let previewContent = function (contentUrl, datafilter = false, fileName = "Nzema Monthly Report", template = "") {
+       /* let previewContent = function (contentUrl, datafilter = false, fileName = "Nzema Monthly Report", template = "") {
             if (template) pdfExportOptions.template = template;
             let showPdfViewer = () => {
                 progress('.content-wrapper', true);
@@ -288,7 +292,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             } else {
                 showPdfViewer();
             }
-        };
+        };*/
         if (editFinalReport) {
             let content = $("[name=content]").val();
             // Extract cover page and distribution list
@@ -324,7 +328,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             click: function () {
                                 window.history.back()
                             },
-                            hidden: !isSubmissionClosed
+                            hidden: isSubmissionClosed(targetMonth, targetYear, tablePrefix)
                         }
                     ]
                 }
@@ -448,7 +452,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         }
 
 
-        if (!isSubmissionClosed) {
+        if (isSubmissionOpened(targetMonth, targetYear, tablePrefix)) {
             editorTabStrip = $("#editorTabStrip").kendoTabStrip({
                 select(e) {
                     if (e.contentElement.id === "previewTab") {
@@ -930,7 +934,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             chartsMenuPopup.toggle();
         });
 
-        if (editDraft && !isSubmissionClosed) {
+        if (editDraft && !isSubmissionClosed(targetMonth, targetYear, tablePrefix)) {
             loadDraft();
         }
     });

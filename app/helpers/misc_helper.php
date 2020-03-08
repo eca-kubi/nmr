@@ -821,7 +821,7 @@ function isPowerUser($user_id)
     return in_array($user_id, $power_users);
 }
 
-function getTargetMonthYearsSubmissionStatus($table_prefix)
+function getTargetMonthYearClosedStatus($table_prefix)
 {
     $target_month_years = Database::getDbh()->get($table_prefix . '_target_month_year');
     $mapped = [];
@@ -1063,4 +1063,8 @@ function file_get_contents_curl($url) {
     $data = curl_exec($ch);
     curl_close($ch);
     return $data;
+}
+
+function canEditReport ($user_id) {
+    return isITAdmin($user_id) || isPowerUser($user_id);
 }

@@ -230,6 +230,7 @@
                 ]
             }
         }).getKendoPDFViewer();
+
         setTimeout(function () {
             previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
                 tools: [],
@@ -238,7 +239,6 @@
                     "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
                 ]
             }).data("kendoEditor");
-
         }, 1000);
 
         $(".view-btn").on("click", function (e) {

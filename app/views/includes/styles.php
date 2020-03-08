@@ -27,8 +27,8 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/kendo-ui/kendo.bootstrap-v4.min.css"/>
 <!--    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/css/toc/tocbot.css"/>
 -->
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/ckeditor/contents.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css"/>
+<!--    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/ckeditor/contents.css"/>
+-->    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css"/>
 <!--    <script>
         var events = {};
         var original = window.addEventListener;
