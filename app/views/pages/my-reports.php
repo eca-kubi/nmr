@@ -148,6 +148,7 @@
     /**
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
+    let reportCache = {};
 
 
     $(function () {
@@ -159,16 +160,13 @@
         draftWindow = jQSelectors.draftViewerWindow.kendoWindow({
             modal: true,
             visible: false,
-            width: "80%",
+            width: "100%",
             scrollable: true,
             title: {
                 encoded: false
             },
-            // (Optional) Will limit the percentage dimensions as well:
-            // maxWidth: 1200,
-            // maxHeight: 800,
-            //open: adjustSize
         }).data("kendoWindow");
+
         pdfViewer = jQSelectors.draftPreviewViewer.kendoPDFViewer({
             pdfjsProcessing: {
                 file: ""
@@ -231,15 +229,12 @@
             }
         }).getKendoPDFViewer();
 
-        setTimeout(function () {
-            previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
-                tools: [],
-                stylesheets: [
-                    //"<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
-                ]
-            }).data("kendoEditor");
-        }, 1000);
+        previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
+            tools: [],
+            stylesheets: [
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+            ]
+        }).data("kendoEditor");
 
         $(".view-btn").on("click", function (e) {
             currentTarget = $(e.currentTarget);
@@ -248,10 +243,11 @@
             tablePrefix = $(e.currentTarget).data('tablePrefix');
             let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
             let toolbar = pdfViewer.toolbar;
+            let cacheKey = 'my_report_' + draftId;
             window.previewDraftId = draftId;
-            progress('.content-wrapper', true);
-            $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + "/" + tablePrefix).done(function (data) {
-                previewEditor.value(data);
+            let viewContent = function (content) {
+                previewEditor.value(content);
+                progress('.content-wrapper', true);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     allPages: true,
                     paperSize: 'A4',
@@ -275,7 +271,16 @@
                     pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
                     setTimeout(() => pdfViewer.activatePage(1), 500)
                 });
-            });
+            };
+            let cached = reportCache[cacheKey];
+            if (cached) {
+                viewContent(cached)
+            } else {
+                $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + "/" + tablePrefix).done(function (data) {
+                    viewContent(data);
+                    reportCache[cacheKey] = data;
+                });
+            }
         });
 
         $(".view-fr-btn").on("click", function (e) {
@@ -291,7 +296,7 @@
                 previewEditor.value(data);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'A4',
-                    margin: { top: "3cm", right: "1cm", bottom: "1cm", left: "1cm" },
+                    margin: {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"},
                     scale: 0.7,
                     forcePageBreak: ".page-break",
                     multipage: true,
