@@ -932,22 +932,25 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             chartsMenuPopup.toggle();
         });
 
-        if (editDraft && !isSubmissionClosed(targetMonth, targetYear, tablePrefix)) {
+        /*if (editDraft && !isSubmissionClosed(targetMonth, targetYear, tablePrefix)) {
             loadDraft();
-        }
+        }*/
+        loadDraft();
     });
 
     function loadDraft() {
         let json = $("#spreadsheetContent").val();
-        if (json)
+        if (json) {
             spreadsheet.fromJSON(JSON.parse(json));
-        let sheets = spreadsheet.sheets();
-        for (let i = 0; i < sheets.length; i++) {
-            createChartFromSheet(sheets[i])
+            let sheets = spreadsheet.sheets();
+            for (let i = 0; i < sheets.length; i++) {
+                createChartFromSheet(sheets[i])
+            }
+            updateChartTabs();
+            if (sheets.length > 0) {
+                selectChartTab(sheets[0].name());
+            }
         }
-        updateChartTabs();
-        if (sheets.length > 0)
-            selectChartTab(sheets[0].name());
     }
 
     function fetchData(sheet, valueRange, fieldRange) {
