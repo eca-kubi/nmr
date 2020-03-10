@@ -384,8 +384,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 modal: true,
                 visible: false,
                 width: "100%",
-                height: 800,
-                scrollable: true
+                height: 1200,
+                scrollable: false
             }).data("kendoWindow");
 
             pdfViewer = jQSelectors.draftPreviewViewer.kendoPDFViewer({
@@ -395,6 +395,10 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 width: "100%",
                 height: 800,
                 scale: 1.27,
+                open(e) {
+                    setTimeout(() => pdfViewer.activatePage(1), 1000);
+                    draftWindow.center().open().maximize();
+                },
                 toolbar: {
                     items: [
                         "pager", "zoom", "toggleSelection", "search", "download", "print",
@@ -424,6 +428,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 }
             }).getKendoPDFViewer();
 
+            jQSelectors.draftPreviewViewer.data('kendoPDFViewer').pageContainer.addClass('bg-gray');
+
             previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
                 tools: [],
                 stylesheets: [
@@ -439,6 +445,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 let targetYear = target.data('targetYear');
                 let reportSubmissionsId = target.data('reportSubmissionsId');
                 let cacheKey = targetMonth + '_' + targetYear + '_' + department + '_' + tablePrefix;
+                let dataUriCacheKey = cacheKey + '_dataUri';
                 pdfViewer.toolbar.wrapper.find('#editSubmittedReport').data({
                     tablePrefix: tablePrefix,
                     targetMonth: targetMonth,
@@ -448,6 +455,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 pdfViewer.toolbar.hide("#editFinalReport");
                 if (!isPowerUser)
                     pdfViewer.toolbar.hide("#editSubmittedReport");
+
                 let viewContent = function (content) {
                     progress('.content-wrapper', true);
                     previewEditor.value(content);
@@ -474,21 +482,30 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             forcePageBreak: ".page-break"
                         }).done(data => {
                             progress('.content-wrapper');
-                            draftWindow.center().open().maximize();
                             pdfViewer.setOptions({
                                 messages: {
                                     defaultFileName: department.toUpperCase() + ' ' + targetMonth.toUpperCase() + ' ' + targetYear + ` ${tablePrefix === 'nmr' ? 'FLASH' : 'FULL'} REPORT`
                                 }
                             });
                             pdfViewer.fromFile({data: data.split(',')[1]});
-                            setTimeout(() => pdfViewer.activatePage(1), 500)
+                            pdfViewer.trigger('open');
+                            reportCache[dataUriCacheKey] = data;
                         });
                     })
                 };
+
                 let cached = reportCache[cacheKey];
-                if (cached) {
-                    viewContent(cached)
-                } else {
+                let dataUriCache = reportCache[dataUriCacheKey];
+
+                if (dataUriCache) {
+                    pdfViewer.setOptions({
+                        messages: {
+                            defaultFileName: department.toUpperCase() + ' ' + targetMonth.toUpperCase() + ' ' + targetYear + ` ${tablePrefix === 'nmr' ? 'FLASH' : 'FULL'} REPORT`
+                        }
+                    });
+                    pdfViewer.fromFile({data: dataUriCache.split(',')[1]});
+                    pdfViewer.trigger('open')
+                }  else {
                     $.ajax({
                         url: `${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`,
                         dataType: "html",
@@ -498,7 +515,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         }
                     });
                 }
-
             });
 
             $(".preview-final-report-btn").on("click", e => {
@@ -507,6 +523,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 let targetMonth = window.targetMonth = target.data('targetMonth');
                 let targetYear = window.targetYear = target.data('targetYear');
                 let cacheKey = targetMonth + '_' + targetYear + '_' + tablePrefix + '_final';
+                let dataUriCacheKey = cacheKey + '_dataUri';
+
                 pdfViewer.toolbar.hide("#editSubmittedReport");
                 pdfViewer.toolbar.wrapper.find('#editFinalButton').data({
                     tablePrefix: tablePrefix,
@@ -517,6 +535,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     pdfViewer.toolbar.show("#editFinalReport");
                 else
                     pdfViewer.toolbar.hide("#editFinalReport");
+
                 let viewContent = function (content) {
                     progress('.content-wrapper', true);
                     const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
@@ -570,22 +589,30 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 forcePageBreak: ".page-break"
                             }).done(data2 => {
                                 progress('.content-wrapper');
-                                draftWindow.center().open().maximize();
                                 pdfViewer.setOptions({
                                     messages: {
                                         defaultFileName: targetMonth.toUpperCase() + '-' + targetYear + `-NZEMA-REPORT(${tablePrefix === 'nmr' ? 'FLASH' : 'FULL'})`
                                     }
                                 });
                                 pdfViewer.fromFile({data: data2.split(',')[1]});
-                                setTimeout(() => pdfViewer.activatePage(1), 500)
+                                pdfViewer.trigger('open');
+                                reportCache[dataUriCacheKey] = data2;
                             })
                         })
                     })
                 };
 
                 let cached = reportCache[cacheKey];
-                if (cached) {
-                    viewContent(cached)
+                let dataUriCache = reportCache[dataUriCacheKey];
+
+                if (dataUriCache) {
+                    pdfViewer.setOptions({
+                        messages: {
+                            defaultFileName: targetMonth.toUpperCase() + '-' + targetYear + `-NZEMA-REPORT(${tablePrefix === 'nmr' ? 'FLASH' : 'FULL'})`
+                        }
+                    });
+                    pdfViewer.fromFile({data: dataUriCache.split(',')[1]});
+                    pdfViewer.trigger('open');
                 } else {
                     $.ajax({
                         url: `${URL_ROOT}/pages/preview-final-report/${targetMonth}/${targetYear}/${tablePrefix}`,
