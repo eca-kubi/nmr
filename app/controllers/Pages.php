@@ -521,18 +521,6 @@ class Pages extends Controller
                 echo json_encode(['success' => true, 'targetMonth' => $target_month, 'targetYear' => $target_year, "downloadUrl" => $download_url], JSON_UNESCAPED_SLASHES);
             }
         } else {
-            $callback = function ($array) {
-                return $array['content'];
-            };
-
-            $join = function ($content, $separator) {
-                $content .= $separator;
-                return $content;
-            };
-            /*$cover_page = $db->where('name', 'cover_page')->getValue($table_prefix . '_report_parts', 'content');
-            $distribution_list = $db->where('name', 'distribution_list')->getValue($table_prefix . '_report_parts', 'content');
-            $content = array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year, $table_prefix)), $join, "<br/>");*/
-
             echo generateFinalReport($target_month, $target_year, $table_prefix);
             //echo json_encode(['content' => generateFinalReport($target_month, $target_year, $table_prefix)], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_LINE_TERMINATORS);
         }

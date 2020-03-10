@@ -882,14 +882,13 @@ function generateFinalReport(string $target_month, $target_year, $table_prefix =
 
     $join = function ($content, $separator) {
         $content .= $separator;
-        return $content;
+        return $content . getPageBreak();
     };
 
-    /*$db->onDuplicate(['html_content']);
-    $db->where('target_month', $target_month)->where('target_year', $target_year)->insert($table_prefix . '_final_report', ["html_content" => $content]);*/
-    return "<coverpage>$cover_page</coverpage>" .
+    $content =  "<coverpage>$cover_page</coverpage>" .
         "<distributionlist>$distribution_list</distributionlist>".
-        "<content>". array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year, $table_prefix)), $join, "<br/>") ."</content>";
+        "<div class='content'>". array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year, $table_prefix)), $join, "") ."</div>";
+    return substr($content, 0,  -strlen(getPageBreak()));
 }
 
 function fetchFinalReportAsHtml(string $target_month, $target_year, $table_prefix = 'nmr')
@@ -1067,4 +1066,8 @@ function file_get_contents_curl($url) {
 
 function canEditReport ($user_id) {
     return isITAdmin($user_id) || isPowerUser($user_id);
+}
+
+function getPageBreak () {
+    return "<div class=\"page-break\" style=\"page-break-after:always;\"><span style=\"display:none;\">&nbsp;</span></div><p></p>";
 }
