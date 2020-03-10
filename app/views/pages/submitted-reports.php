@@ -332,6 +332,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     let notify_submission_rsid = "<?php echo isset($_GET['i']) ? $_GET['i'] : ''; ?>"; // Report_submissions_id
     let notify_submission_flash_or_full = "<?php echo isset($_GET['fof']) ? $_GET['fof'] : ''; ?>";
     let notify_submission_target_month_year = "<?php echo isset($_GET['tmy']) ? $_GET['tmy'] : ''; ?>";
+    let reportCache = {};
     /**
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
@@ -437,6 +438,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 let targetMonth = target.data('targetMonth');
                 let targetYear = target.data('targetYear');
                 let reportSubmissionsId = target.data('reportSubmissionsId');
+                let cacheKey = targetMonth + '_' + targetYear + '_' + department + '_' + tablePrefix;
                 pdfViewer.toolbar.wrapper.find('#editSubmittedReport').data({
                     tablePrefix: tablePrefix,
                     targetMonth: targetMonth,
@@ -446,12 +448,99 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 pdfViewer.toolbar.hide("#editFinalReport");
                 if (!isPowerUser)
                     pdfViewer.toolbar.hide("#editSubmittedReport");
-                progress('.content-wrapper', true);
-                $.ajax({
-                    url: `${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`,
-                    dataType: "html",
-                    success: (data) => {
-                        previewEditor.value(data);
+                let viewContent = function (content) {
+                    progress('.content-wrapper', true);
+                    previewEditor.value(content);
+                    kendo.drawing.drawDOM($(previewEditor.body), {
+                        allPages: true,
+                        paperSize: 'A4',
+                        margin: tablePrefix === 'nmr_fr' ? {
+                            top: "3cm",
+                            right: "1cm",
+                            bottom: "1cm",
+                            left: "1cm"
+                        } : "1cm",
+                        multipage: true,
+                        scale: 0.7,
+                        forcePageBreak: ".page-break",
+                        template: $(`#page-template-body_${tablePrefix}`).html()
+                    }).done(function (group) {
+                        kendo.drawing.exportPDF(group, {
+                            allPages: true,
+                            paperSize: 'A4',
+                            margin: "1cm",
+                            multipage: true,
+                            scale: 0.7,
+                            forcePageBreak: ".page-break"
+                        }).done(data => {
+                            progress('.content-wrapper');
+                            draftWindow.center().open().maximize();
+                            pdfViewer.setOptions({
+                                messages: {
+                                    defaultFileName: department.toUpperCase() + ' ' + targetMonth.toUpperCase() + ' ' + targetYear + ` ${tablePrefix === 'nmr' ? 'FLASH' : 'FULL'} REPORT`
+                                }
+                            });
+                            pdfViewer.fromFile({data: data.split(',')[1]});
+                            setTimeout(() => pdfViewer.activatePage(1), 500)
+                        });
+                    })
+                };
+                let cached = reportCache[cacheKey];
+                if (cached) {
+                    viewContent(cached)
+                } else {
+                    $.ajax({
+                        url: `${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`,
+                        dataType: "html",
+                        success: (data) => {
+                            reportCache[cacheKey] = data;
+                            viewContent(data)
+                        }
+                    });
+                }
+
+            });
+
+            $(".preview-final-report-btn").on("click", e => {
+                let target = $(e.currentTarget);
+                let tablePrefix = window.tablePrefix = target.data('tablePrefix');
+                let targetMonth = window.targetMonth = target.data('targetMonth');
+                let targetYear = window.targetYear = target.data('targetYear');
+                let cacheKey = targetMonth + '_' + targetYear + '_' + tablePrefix + '_final';
+                pdfViewer.toolbar.hide("#editSubmittedReport");
+                pdfViewer.toolbar.wrapper.find('#editFinalButton').data({
+                    tablePrefix: tablePrefix,
+                    targetMonth: targetMonth,
+                    targetYear: targetYear
+                });
+                if (!target.siblings('.edit-final-report-btn').hasClass('d-none') && isPowerUser)
+                    pdfViewer.toolbar.show("#editFinalReport");
+                else
+                    pdfViewer.toolbar.hide("#editFinalReport");
+                let viewContent = function (content) {
+                    progress('.content-wrapper', true);
+                    const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
+                    previewEditor.value(COVER_PAGE);
+                    kendo.drawing.drawDOM($(previewEditor.body), {
+                        allPages: true,
+                        paperSize: 'A4',
+                        margin: tablePrefix === 'nmr_fr' ? {
+                            top: "3cm",
+                            right: "1cm",
+                            bottom: "1cm",
+                            left: "1cm"
+                        } : "1cm",
+                        multipage: true,
+                        scale: 0.7,
+                        forcePageBreak: ".page-break",
+                        template: $(`#page-template-cover-toc_${tablePrefix}`).html()
+                    }).done(function (group) {
+                        // Remove  Cover and Distribution List
+                        content = removeTagAndContent('coverpage', content);
+                        content = removeTagAndContent('distributionlist', content);
+
+                        previewEditor.value(content);
+
                         kendo.drawing.drawDOM($(previewEditor.body), {
                             allPages: true,
                             paperSize: 'A4',
@@ -465,75 +554,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             scale: 0.7,
                             forcePageBreak: ".page-break",
                             template: $(`#page-template-body_${tablePrefix}`).html()
-                        }).done(function (group) {
+                        }).done((group2) => {
+                            group.append(...group2.children);
                             kendo.drawing.exportPDF(group, {
-                                allPages: true,
-                                paperSize: 'A4',
-                                margin: "1cm",
-                                multipage: true,
-                                scale: 0.7,
-                                forcePageBreak: ".page-break"
-                            }).done(data => {
-                                progress('.content-wrapper');
-                                draftWindow.center().open().maximize();
-                                pdfViewer.setOptions({
-                                    messages: {
-                                        defaultFileName: department.toUpperCase() + ' ' + targetMonth.toUpperCase() + ' ' + targetYear + ` ${tablePrefix === 'nmr' ? 'FLASH' : 'FULL'} REPORT`
-                                    }
-                                });
-                                pdfViewer.fromFile({data: data.split(',')[1]});
-                                setTimeout(() => pdfViewer.activatePage(1), 500)
-                            });
-                        })
-                    }
-                });
-            });
-
-            $(".preview-final-report-btn").on("click", e => {
-                let target = $(e.currentTarget);
-                let tablePrefix = window.tablePrefix = target.data('tablePrefix');
-                let targetMonth = window.targetMonth = target.data('targetMonth');
-                let targetYear = window.targetYear = target.data('targetYear');
-                pdfViewer.toolbar.hide("#editSubmittedReport");
-                pdfViewer.toolbar.wrapper.find('#editFinalButton').data({
-                    tablePrefix: tablePrefix,
-                    targetMonth: targetMonth,
-                    targetYear: targetYear
-                });
-                if (!target.siblings('.edit-final-report-btn').hasClass('d-none') && isPowerUser)
-                    pdfViewer.toolbar.show("#editFinalReport");
-                else
-                    pdfViewer.toolbar.hide("#editFinalReport");
-                progress('.content-wrapper', true);
-                $.ajax({
-                    url: `${URL_ROOT}/pages/preview-final-report/${targetMonth}/${targetYear}/${tablePrefix}`,
-                    dataType: "html",
-                    success: (data) => {
-                        const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
-                        let content = COVER_PAGE;
-                        previewEditor.value(content);
-                        kendo.drawing.drawDOM($(previewEditor.body), {
-                            allPages: true,
-                            paperSize: 'A4',
-                            margin: tablePrefix === 'nmr_fr' ? {
-                                top: "3cm",
-                                right: "1cm",
-                                bottom: "1cm",
-                                left: "1cm"
-                            } : "1cm",
-                            multipage: true,
-                            scale: 0.7,
-                            forcePageBreak: ".page-break",
-                            template: $(`#page-template-cover-toc_${tablePrefix}`).html()
-                        }).done(function (group) {
-                            // Remove  Cover and Distribution List
-                            let content = data;
-                            content = removeTagAndContent('coverpage', content);
-                            content = removeTagAndContent('distributionlist', content);
-
-                            previewEditor.value(content);
-
-                            kendo.drawing.drawDOM($(previewEditor.body), {
                                 allPages: true,
                                 paperSize: 'A4',
                                 margin: tablePrefix === 'nmr_fr' ? {
@@ -544,37 +567,35 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 } : "1cm",
                                 multipage: true,
                                 scale: 0.7,
-                                forcePageBreak: ".page-break",
-                                template: $(`#page-template-body_${tablePrefix}`).html()
-                            }).done((group2) => {
-                                group.append(...group2.children);
-                                kendo.drawing.exportPDF(group, {
-                                    allPages: true,
-                                    paperSize: 'A4',
-                                    margin: tablePrefix === 'nmr_fr' ? {
-                                        top: "3cm",
-                                        right: "1cm",
-                                        bottom: "1cm",
-                                        left: "1cm"
-                                    } : "1cm",
-                                    multipage: true,
-                                    scale: 0.7,
-                                    forcePageBreak: ".page-break"
-                                }).done(data2 => {
-                                    progress('.content-wrapper');
-                                    draftWindow.center().open().maximize();
-                                    pdfViewer.setOptions({
-                                        messages: {
-                                            defaultFileName: targetMonth.toUpperCase() + '-' + targetYear + `-NZEMA-REPORT(${tablePrefix === 'nmr' ? 'FLASH' : 'FULL'})`
-                                        }
-                                    });
-                                    pdfViewer.fromFile({data: data2.split(',')[1]});
-                                    setTimeout(() => pdfViewer.activatePage(1), 500)
-                                })
+                                forcePageBreak: ".page-break"
+                            }).done(data2 => {
+                                progress('.content-wrapper');
+                                draftWindow.center().open().maximize();
+                                pdfViewer.setOptions({
+                                    messages: {
+                                        defaultFileName: targetMonth.toUpperCase() + '-' + targetYear + `-NZEMA-REPORT(${tablePrefix === 'nmr' ? 'FLASH' : 'FULL'})`
+                                    }
+                                });
+                                pdfViewer.fromFile({data: data2.split(',')[1]});
+                                setTimeout(() => pdfViewer.activatePage(1), 500)
                             })
                         })
-                    }
-                });
+                    })
+                };
+
+                let cached = reportCache[cacheKey];
+                if (cached) {
+                    viewContent(cached)
+                } else {
+                    $.ajax({
+                        url: `${URL_ROOT}/pages/preview-final-report/${targetMonth}/${targetYear}/${tablePrefix}`,
+                        dataType: "html",
+                        success: (data) => {
+                            viewContent(data);
+                            reportCache[cacheKey] = data;
+                        }
+                    });
+                }
             });
 
             $('.send-final-report-btn').on('click', function (e) {
@@ -699,7 +720,7 @@ function(data){
     ;
 
     function onEditSubmittedReport(e) {
-        let target = $(e.currentTarget).length? $(e.currentTarget) : e.target;
+        let target = $(e.currentTarget).length ? $(e.currentTarget) : e.target;
         let tablePrefix = target.data('tablePrefix');
         let targetMonth = target.data('targetMonth');
         let targetYear = target.data('targetYear');
