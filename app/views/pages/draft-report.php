@@ -136,12 +136,8 @@
         draftWindow = jQSelectors.draftViewerWindow.kendoWindow({
             modal: true,
             visible: false,
-            width: "80%",
+            width: "100%",
             scrollable: true,
-            // (Optional) Will limit the percentage dimensions as well:
-            // maxWidth: 1200,
-            // maxHeight: 800,
-            //open: adjustSize
         }).data("kendoWindow");
 
         pdfViewer = jQSelectors.draftPreviewViewer.kendoPDFViewer({
@@ -167,15 +163,12 @@
             }
         }).getKendoPDFViewer();
 
-        setTimeout(function () {
-            previewEditor = $("#previewEditor").kendoEditor({
-                tools: [],
-                stylesheets: [
-                    //"<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
-                ]
-            }).data("kendoEditor");
-        }, 1000);
+        previewEditor = $("#previewEditor").kendoEditor({
+            tools: [],
+            stylesheets: [
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+            ]
+        }).data("kendoEditor");
 
         $("a.preview-btn").on("click", function (e) {
             let draftId = $(e.currentTarget).data('draftId');
