@@ -83,19 +83,23 @@ class Pages extends Controller
 
         $payload['page_title'] = 'Edit Draft ' . flashOrFull($table_prefix) . '( Report)';
         $payload['draft_id'] = $draft_id;
-        $draft = $db->where('draft_id', $draft_id)->getOne($table_prefix . '_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_year', 'target_month']);
-        $payload['content'] = $draft['content'];
-        $target_month = $draft['target_month'];
-        $target_year = $draft['target_year'];
-        $payload['target_month'] = $target_month;
-        $payload['target_year'] = $target_year;
-        $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefix);
-        $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
-        $payload['title'] = $payload['page_title'];
-        $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        $payload['edit_draft'] = true;
-        $payload['table_prefix'] = $table_prefix;
-        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+        $draft = $db->where('draft_id', $draft_id)->getOne($table_prefix . '_editor_draft', ['content', 'title', 'spreadsheet_content', 'target_year', 'target_month', 'user_id']);
+        try {
+            $payload['department_id'] = $db->where('u.user_id', $draft['user_id'])->join('users u', 'd.department_id = u.department_id')->getValue('departments d', 'd.department_id');
+            $payload['content'] = $draft['content'];
+            $target_month = $draft['target_month'];
+            $target_year = $draft['target_year'];
+            $payload['target_month'] = $target_month;
+            $payload['target_year'] = $target_year;
+            $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefix);
+            $payload['spreadsheet_content'] = $draft['spreadsheet_content'];
+            $payload['title'] = $payload['page_title'];
+            $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
+            $payload['edit_draft'] = true;
+            $payload['table_prefix'] = $table_prefix;
+            isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+        } catch (Exception $e) {
+        }
     }
 
     public function editReport($draft_id, $table_prefix = 'nmr'): void
@@ -500,15 +504,12 @@ class Pages extends Controller
         }
         if ($_SERVER['REQUEST_METHOD'] === "POST") {
             $db->onDuplicate(['html_content', 'download_url']);
-            // $json = file_get_contents('php://input');
-            // $data = json_decode($json);
             $data_uri = $_POST['data_uri'];
             $base_to_php = explode(',', $data_uri);
             $base64_decoded = base64_decode($base_to_php[1]);
             $reports_directory = APP_ROOT . "/../public/reports/" . strtolower(flashOrFull($table_prefix));
             $file_name = strtoupper("$target_month" . "-" . $target_year . "-NZEMA-REPORT(" . strtoupper(flashOrFull($table_prefix)) . ").pdf");
             $download_url = URL_ROOT . "/public/reports/" . strtolower(flashOrFull($table_prefix)) . "/$file_name";
-            //chdir(APP_ROOT . "");
             if (!is_dir($reports_directory)) {
                 mkdir($reports_directory, 0777, true);
             }
@@ -562,6 +563,17 @@ class Pages extends Controller
         isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
     }
 
+    public function reportComponents($target_month, $target_year, $table_prefix)
+    {
+        $db = Database::getDbh();
+        $current_user = getUserSession();
+        if (empty($current_user)) {
+            echo json_encode(['success' => false, 'session_expired' => true]);
+            return;
+        }
+
+    }
+
     /*
         public function finalReport(string $target_month, $target_year, $table_prefix = 'nmr')
         {
@@ -611,12 +623,12 @@ class Pages extends Controller
         }
     }
 
-    public function isSubmissionClosed(string $target_month, $target_year, $table_prefix ='nmr')
+    public function isSubmissionClosed(string $target_month, $target_year, $table_prefix = 'nmr')
     {
         echo json_encode(['submission_closed' => isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefix)]);
     }
 
-    public function isSubmissionOpened(string $target_month, $target_year, $table_prefix ='nmr')
+    public function isSubmissionOpened(string $target_month, $target_year, $table_prefix = 'nmr')
     {
         echo json_encode(['submission_opened' => isSubmissionOpened($target_month, $target_year, $table_prefix)]);
     }
@@ -825,75 +837,76 @@ class Pages extends Controller
             echo json_encode(['success' => false, 'session_expired' => true]);
             return;
         }
-        $draft_id = '';
-        $send_email = !$db->where('department_id', $current_user->department_id)
-            ->where('target_month', $target_month)
-            ->where('target_year', $target_year)->has($table_prefix . '_report_submissions');
-        if (isset($_POST['draft_id'])) $draft_id = $_POST['draft_id'];
-        $db->onDuplicate(['content']);
-        $success = $db->insert($table_prefix . '_report_submissions', [
-            'department_id' => $current_user->department_id,
-            'user_id' => $current_user->user_id,
-            'content' => $_POST['content'],
-            'spreadsheet_content' => $_POST['spreadsheet_content'],
-            'date_submitted' => now(),
-            'date_modified' => now(),
-            'target_month' => $target_month ?: $db->func('MonthName(?)', [now()]),
-            'target_year' => $target_year ?: $db->func('Year(?)', [now()])
-        ]);
-        if ($success) {
-            $report_submissions_id = $db->getInsertId();
-            if ($db->where('draft_id', $draft_id)->has($table_prefix . '_editor_draft')) {
-                $success = $db->where('draft_id', $draft_id)->update($table_prefix . '_editor_draft', [
-                    //'title' => $_POST['title'],
-                    'content' => $_POST['content'],
-                    'spreadsheet_content' => $_POST['spreadsheet_content'],
-                    'time_modified' => now()
-                ]);
-                if ($send_email) {
-                    // New submission, thus, notify GM
-                    $target_month_year = strtoupper($target_month . ' ' . $target_year);
-                    $gm = new User(getCurrentGM());
-                    $subject = 'Nzema Monthly ' . flashOrFull($table_prefix) . ' Report - ' . $target_month . ' ' . $target_year;
-                    $data = [
-                        'link' => URL_ROOT . '/pages/submitted-reports/?' . 'i=' . $report_submissions_id . '&s=true&d=' . $current_user->department . '&fof=' . flashOrFull($table_prefix) . '&tmy=' . $target_month_year,
-                        'target_month_year' => $target_month_year,
-                        'target_month' => $target_month,
-                        'target_year' => $target_year,
-                        'department' => $current_user->department,
-                        'flash_or_full' => flashOrFull($table_prefix)
-                    ];
-                    $body = get_include_contents('templates/email_templates/report_submitted_notify_gm', $data);
-                    $data['body'] = $body;
-                    $data['flash_or_full'] = flashOrFull($table_prefix);
-                    $email = get_include_contents('templates/email_templates/main', $data);
-                    if ($current_user->user_id !== $gm->user_id) {
-                        insertEmail($subject, $email, $gm->email);
-                    }
-                    // Send email to IT Manager and IT Support Officer (Me)
-                    insertEmail($subject, $email, IT_MANAGER_EMAIL);
-                    insertEmail($subject, $email, IT_SUPPORT_OFFICER_EMAIL);
+        $draft_id = $_POST['draft_id'];
+        $draft = $db->where('draft_id', $draft_id)->getOne($table_prefix . '_editor_draft');
+        try {
+            $draft_user = $db->where('user_id', $draft['user_id'])->objectBuilder()->join('departments d', 'd.department_id = u.department_id')->getOne('users u');
+            $send_email = !$db->where('department_id', $draft_user->department_id)
+                ->where('target_month', $target_month)
+                ->where('target_year', $target_year)->has($table_prefix . '_report_submissions');
+            if (isset($_POST['draft_id'])) $draft_id = $_POST['draft_id'];
+            $db->onDuplicate(['content', 'date_modified', 'spreadsheet_content']);
+            $success = $db->insert($table_prefix . '_report_submissions', [
+                'department_id' => $draft_user->department_id,
+                'user_id' => $draft_user->user_id,
+                'content' => $_POST['content'],
+                'spreadsheet_content' => $_POST['spreadsheet_content'],
+                'date_submitted' => now(),
+                'date_modified' => now(),
+                'target_month' => $target_month,
+                'target_year' => $target_year
+            ]);
+            if ($success) {
+                $report_submissions_id = $db->getInsertId();
+                if ($db->where('draft_id', $draft_id)->has($table_prefix . '_editor_draft')) {
+                    $success = $db->where('draft_id', $draft_id)->update($table_prefix . '_editor_draft', [
+                        'title' => $_POST['title'],
+                        'content' => $_POST['content'],
+                        'spreadsheet_content' => $_POST['spreadsheet_content'],
+                        'time_modified' => now()
+                    ]);
+                    if ($send_email) {
+                        // New submission, thus, notify GM
+                        $target_month_year = strtoupper($target_month . ' ' . $target_year);
+                        $gm = new User(getCurrentGM());
+                        $subject = 'Nzema Monthly ' . flashOrFull($table_prefix) . ' Report - ' . $target_month . ' ' . $target_year;
+                        $data = [
+                            'link' => URL_ROOT . '/pages/submitted-reports/?' . 'i=' . $report_submissions_id . '&s=true&d=' . $draft_user->department . '&fof=' . flashOrFull($table_prefix) . '&tmy=' . $target_month_year,
+                            'target_month_year' => $target_month_year,
+                            'target_month' => $target_month,
+                            'target_year' => $target_year,
+                            'department' => $draft_user->department,
+                            'flash_or_full' => flashOrFull($table_prefix)
+                        ];
+                        $body = get_include_contents('templates/email_templates/report_submitted_notify_gm', $data);
+                        $data['body'] = $body;
+                        $data['flash_or_full'] = flashOrFull($table_prefix);
+                        $email = get_include_contents('templates/email_templates/main', $data);
+                        if ($current_user->user_id !== $gm->user_id) {
+                            insertEmail($subject, $email, $gm->email);
+                        }
+                        // Send email to IT Manager and IT Support Officer (Me)
+                        insertEmail($subject, $email, IT_MANAGER_EMAIL);
+                        insertEmail($subject, $email, IT_SUPPORT_OFFICER_EMAIL);
 
-                    // Send email to Applicant
-                    $body = get_include_contents('templates/email_templates/report_submitted_notify_applicant', $data);
-                    $data['body'] = $body;
-                    $data['flash_or_full'] = flashOrFull($table_prefix);
-                    $email = get_include_contents('templates/email_templates/main', $data);
-                    insertEmail($subject, $email, $current_user->email);
+                        // Send email to Applicant
+                        $body = get_include_contents('templates/email_templates/report_submitted_notify_applicant', $data);
+                        $data['body'] = $body;
+                        $data['flash_or_full'] = flashOrFull($table_prefix);
+                        $email = get_include_contents('templates/email_templates/main', $data);
+                        insertEmail($subject, $email, $current_user->email);
+                    }
+                    if ($success) {
+                        echo json_encode(['success' => true, 'draftId' => $draft_id]);
+                    } else {
+                        echo json_encode(['success' => false, 'draftId' => $draft_id]);
+                    }
                 }
-                if ($success) echo json_encode(['success' => true, 'draftId' => $draft_id]);
-            } /*else {
-                $success!12 = $db->insert($table_prefix . '_editor_draft', [
-                    //'title' => 'Draft (Flash Report)',
-                    'user_id' => $current_user->user_id,
-                    'content' => $_POST['content'],
-                    'target_month' => $target_month ?: $db->func('MonthName(?)', [now()]),
-                    'target_year' => $target_year ?: $db->func('Year(?)', [now()]),
-                    //'time_modified' => now()
-                    //'spreadsheet_content' => $_POST['spreadsheet_content'],
-                ]);
-                if ($success) echo json_encode(['success' => true, 'draftId' => $success]);
-            }*/
+            } else {
+                echo json_encode(['success' => false, 'draftId' => $draft_id]);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'draftId' => $draft_id]);
         }
     }
 

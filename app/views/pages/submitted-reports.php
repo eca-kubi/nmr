@@ -260,6 +260,7 @@
                                                                        data-report-submissions-id="<?php echo $report['report_submissions_id']; ?>"
                                                                        data-title="<?php echo $report['department']; ?>"
                                                                        data-table-prefix="<?php echo $table_prefix ?>"
+                                                                       data-department="<?php echo $report['department'] ?>"
                                                                        data-target-month="<?php echo $report['target_month'] ?>"
                                                                        data-target-year="<?php echo $report['target_year'] ?>"><i
                                                                                 class="fa fa-play-circle-o mr-0"></i>
@@ -355,7 +356,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
             // Show submission notification
             if (notify_submission) {
-                let title = notify_submission_department + ' ' + '<span class="text-capitalize">' + notify_submission_target_month_year + '</span>' + ' ' + notify_submission_flash_or_full + ' Report Submitted ';
+                let title = notify_submission_flash_or_full + ' Report';
                 let content = notify_submission_department.toUpperCase() + ' has submitted their ' + notify_submission_target_month_year + ' ' + notify_submission_flash_or_full + ' report.<br>' +
                     `Click <a href="javascript: $('a.preview-btn[data-report-submissions-id=${notify_submission_rsid}]').click()">here</a> to view it.`;
                 kendoAlert(false, content);
@@ -381,12 +382,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             draftWindow = jQSelectors.draftViewerWindow.kendoWindow({
                 modal: true,
                 visible: false,
-                width: "80%",
-                scrollable: true,
-                // (Optional) Will limit the percentage dimensions as well:
-                // maxWidth: 1200,
-                // maxHeight: 800,
-                //open: adjustSize
+                width: "100%",
+                height: 800,
+                scrollable: true
             }).data("kendoWindow");
 
             pdfViewer = jQSelectors.draftPreviewViewer.kendoPDFViewer({
@@ -399,19 +397,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 toolbar: {
                     items: [
                         "pager", "zoom", "toggleSelection", "search", "download", "print",
-                        /*   {
-                               id: "generateReport",
-                               template: `<a role='button' class='d-none' title='Generate Report'><span class='fa fa-cogs'></span>&nbsp;Generate Report</a>`,
-                           },
-
-                           */
                         {
                             id: "editFinalReport",
                             overflow: "auto",
                             type: "button",
-                            text: " <i class=\"fa fa-edit mt-1\"></i>&nbsp;Edit",
+                            text: '<i class="fa fa-edit mt-1"></i>&nbsp;Edit',
                             click: onEditFinalReport
-                            //template: `<a role="button" class="k-button k-flat" onclick="onEditFinalReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`
                         },
                         {
                             id: "editSubmittedReport",
@@ -419,7 +410,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             type: "button",
                             text: "<i class='fa fa-edit mt-1'></i> Edit",
                             click: onEditSubmittedReport
-                            //template: `<a role="button" class="k-button k-flat d-none" onclick="onEditSubmittedReport()" title="Edit"> <i class="fa fa-file-edit"></i>&nbsp; Edit</a>`,
                         },
                         {
                             id: "cancel",
@@ -433,22 +423,26 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 }
             }).getKendoPDFViewer();
 
-            setTimeout(function () {
-                previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
-                    tools: [],
-                    stylesheets: [
-                        //"<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                        "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
-                    ]
-                }).data("kendoEditor");
-            }, 1000);
+            previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
+                tools: [],
+                stylesheets: [
+                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                ]
+            }).data("kendoEditor");
 
             $("a.preview-btn").on("click", function (e) {
                 let target = $(e.currentTarget);
-                let tablePrefix = window.tablePrefix = target.data('tablePrefix');
-                let targetMonth = window.targetMonth = target.data('targetMonth');
-                let targetYear = window.targetYear = target.data('targetYear');
-                let reportSubmissionsId = window.reportSubmissionsId = target.data('reportSubmissionsId');
+                let tablePrefix = target.data('tablePrefix');
+                let department = target.data('department');
+                let targetMonth = target.data('targetMonth');
+                let targetYear = target.data('targetYear');
+                let reportSubmissionsId = target.data('reportSubmissionsId');
+                pdfViewer.toolbar.wrapper.find('#editSubmittedReport').data({
+                    tablePrefix: tablePrefix,
+                    targetMonth: targetMonth,
+                    targetYear: targetYear,
+                    reportSubmissionsId: reportSubmissionsId
+                });
                 pdfViewer.toolbar.hide("#editFinalReport");
                 if (!isPowerUser)
                     pdfViewer.toolbar.hide("#editSubmittedReport");
@@ -484,16 +478,15 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 draftWindow.center().open().maximize();
                                 pdfViewer.setOptions({
                                     messages: {
-                                        defaultFileName: 'file.pdf'
+                                        defaultFileName: department.toUpperCase() + ' ' + targetMonth.toUpperCase() + ' ' + targetYear + ` ${tablePrefix === 'nmr' ? 'FLASH' : 'FULL'} REPORT`
                                     }
                                 });
-                                pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                                pdfViewer.fromFile({data: data.split(',')[1]});
                                 setTimeout(() => pdfViewer.activatePage(1), 500)
                             });
                         })
                     }
                 });
-                //previewContent(`${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`, data => JSON.parse(data).content);
             });
 
             $(".preview-final-report-btn").on("click", e => {
@@ -502,6 +495,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 let targetMonth = window.targetMonth = target.data('targetMonth');
                 let targetYear = window.targetYear = target.data('targetYear');
                 pdfViewer.toolbar.hide("#editSubmittedReport");
+                pdfViewer.toolbar.wrapper.find('#editFinalButton').data({
+                    tablePrefix: tablePrefix,
+                    targetMonth: targetMonth,
+                    targetYear: targetYear
+                });
                 if (!target.siblings('.edit-final-report-btn').hasClass('d-none') && isPowerUser)
                     pdfViewer.toolbar.show("#editFinalReport");
                 else
@@ -565,15 +563,18 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 }).done(data2 => {
                                     progress('.content-wrapper');
                                     draftWindow.center().open().maximize();
-                                    pdfViewer.fromFile({data: data2.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                                    pdfViewer.setOptions({
+                                        messages: {
+                                            defaultFileName: targetMonth.toUpperCase() + '-' + targetYear + `-NZEMA-REPORT(${tablePrefix === 'nmr' ? 'FLASH' : 'FULL'})`
+                                        }
+                                    });
+                                    pdfViewer.fromFile({data: data2.split(',')[1]});
                                     setTimeout(() => pdfViewer.activatePage(1), 500)
                                 })
                             })
                         })
                     }
                 });
-
-                //previewContent(`${URL_ROOT}/pages/preview-final-report/${targetMonth}/${targetYear}/${tablePrefix}`, data => data);
             });
 
             $('.send-final-report-btn').on('click', function (e) {
@@ -597,17 +598,13 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             $(".generate-report-btn").on('click', e => {
                 let target = $(e.currentTarget);
                 let tablePrefix = target.data('tablePrefix');
-                let targetMonth = window.targetMonth = target.data('targetMonth');
-                let targetYear = window.targetYear = target.data('targetYear');
-                let html_content = "";
+                let targetMonth = target.data('targetMonth');
+                let targetYear = target.data('targetYear');
                 // todo issue warning to user.
                 progress('.content-wrapper', true);
                 $.ajax({
                     url: `${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`,
                     dataType: "html",
-                    /*dataFilter(data, type) {
-                        return JSON.parse(data).content;
-                    },*/
                     success: data => {
                         const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
                         //let content = COVER_PAGE + getPageBreak() + DISTRIBUTION_LIST + getPageBreak() + BLANK_PAGE;
@@ -664,9 +661,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 }).done(data2 => {
                                     $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`, {
                                         data_uri: data2,
-                                        html_content: data
+                                        html_content: content
                                     }, (data1) => {
                                         progress('.content-wrapper');
+                                        /*draftWindow.center().open().maximize();
+
+                                        pdfViewer.fromFile({data: data2.split(',')[1]});*/
                                         kendoAlert('Report Generated Successfully', `<div>${targetMonth} ${targetYear} Nzema Report generated successfully! <br> You can, copy the download link, download or send the report</div>`);
                                         target.siblings('.send-final-report-btn').attr('href', `javascript:$.get(
 {url: '${URL_ROOT}/pages/send-report/?l=${data1.downloadUrl}&tm=${targetMonth}&ty=${targetYear}&tp=${tablePrefix}', dataType: 'json'}).done(
@@ -684,71 +684,49 @@ function(data){
                             })
                         })
                     }
-                    /*success: data => {
-                        previewEditor.value(data);
-                        html_content = data;
-                        kendo.drawing.drawDOM($(previewEditor.body), {
-                            paperSize: 'A4',
-                            margin: tablePrefix === 'nmr_fr'? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
-                            multipage: true,
-                            forcePageBreak: ".page-break",
-                            scale: 0.7,
-                            template: $(`#page-template-body_${tablePrefix}`).html()
-                        }).then(function (group) {
-                            return kendo.drawing.exportPDF(group, {});
-                        }).done(dataUri => {
-                            $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`, {
-                                data_uri: dataUri,
-                                html_content: html_content
-                            }, (data1) => {
-                                progress('.content-wrapper');
-                                kendoAlert('Report Generated Successfully', `${targetMonth} ${targetYear} Nzema Report generated successfully! <p><u>Download Link:</u> <a class="" href="${data1.downloadUrl}" target="_blank">${data1.downloadUrl}</a> <a id="copyDownloadLink" class="d-none" href="#" role="button" title="Copy download link"><i class="fa fa-copy"></i> </a></p>`);
-                                target.siblings('.download-final-report-btn').attr('href', data1.downloadUrl).attr('data-download-url', data1.downloadUrl).removeClass('d-none');
-                                target.siblings('.edit-final-report-btn').removeClass('d-none')
-                            }, "json")
-                        });
-                    }*/
                 });
             });
 
             $(".edit-final-report-btn").on('click', e => {
-                let target = $(e.currentTarget);
-                let tablePrefix = window.tablePrefix = target.data('tablePrefix');
-                let targetMonth = window.targetMonth = target.data('targetMonth');
-                let targetYear = window.targetYear = target.data('targetYear');
-                onEditFinalReport();
+                onEditFinalReport(e);
             });
 
             $(".edit-submitted-report").on('click', e => {
-                let target = $(e.currentTarget);
-                let tablePrefix = window.tablePrefix = target.data('tablePrefix');
-                let targetMonth = window.targetMonth = target.data('targetMonth');
-                let targetYear = window.targetYear = target.data('targetYear');
-                let submissionsId = window.reportSubmissionsId = target.data('submissionsId');
-                onEditSubmittedReport();
+                onEditSubmittedReport(e);
             });
         }
     )
     ;
 
-    function onEditSubmittedReport() {
+    function onEditSubmittedReport(e) {
+        let target = $(e.currentTarget).length? $(e.currentTarget) : e.target;
+        let tablePrefix = target.data('tablePrefix');
+        let targetMonth = target.data('targetMonth');
+        let targetYear = target.data('targetYear');
+        let submissionsId = target.data('reportSubmissionsId');
         $.ajax({
-            url: `${URL_ROOT}/pages/is-submission-closed/${window.targetMonth}/${window.targetYear}`,
+            url: `${URL_ROOT}/pages/is-submission-closed/${targetMonth}/${targetYear}`,
             dataType: "json",
             success: data => {
-                if (isPowerUser && !data.submission_closed) {
+                // Old code; No need to require closing submission prior to editing single department report
+                /*if (isPowerUser && !data.submission_closed) {
                     // Is is power user, close submission and proceed to edit
                     showWindow('You must first close submission of reports for this month! This will ensure that no one can undo the changes you are about to make.<br>Do you wish to close submission?',
                         'Close Submission First').done(() => {
                         $.get({
-                            url: `${URL_ROOT}/pages/close-submission/${window.targetMonth}/${window.targetYear}`,
+                            url: `${URL_ROOT}/pages/close-submission/${targetMonth}/${targetYear}`,
                             dataType: "json"
                         }).done(data => {
-                            if (data.success) window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${window.reportSubmissionsId}/${window.tablePrefix}`;
+                            if (data.success) window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${submissionsId}/${tablePrefix}`;
                         })
                     })
                 } else if (isPowerUser || isITAdmin || !data.submission_closed) {
-                    window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${window.reportSubmissionsId}/${window.tablePrefix}`;
+                    window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${submissionsId}/${tablePrefix}`;
+                } else {
+                    kendoAlert('Submission Closed', 'Sorry report submission has been closed. You cannot edit this report.');
+                }*/
+                if (isPowerUser || isITAdmin || !data.submission_closed) {
+                    window.location.href = `${URL_ROOT}/pages/edit-submitted-report/${submissionsId}/${tablePrefix}`;
                 } else {
                     kendoAlert('Submission Closed', 'Sorry report submission has been closed. You cannot edit this report.');
                 }
@@ -756,9 +734,13 @@ function(data){
         });
     }
 
-    function onEditFinalReport() {
+    function onEditFinalReport(e) {
+        let target = $(e.currentTarget);
+        let tablePrefix = target.data('tablePrefix');
+        let targetMonth = target.data('targetMonth');
+        let targetYear = target.data('targetYear');
         $.ajax({
-            url: `${URL_ROOT}/pages/is-submission-closed/${window.targetMonth}/${window.targetYear}`,
+            url: `${URL_ROOT}/pages/is-submission-closed/${targetMonth}/${targetYear}`,
             dataType: "json",
             success: data => {
                 if (isPowerUser && !data.submission_closed) {
@@ -766,61 +748,19 @@ function(data){
                     showWindow('You must first close submission of reports for this month! This will ensure that no one can undo the changes you are about to make.<br>Do you wish to close submission?',
                         'Close Submission First').done(() => {
                         $.get({
-                            url: `${URL_ROOT}/pages/close-submission/${window.targetMonth}/${window.targetYear}`,
+                            url: `${URL_ROOT}/pages/close-submission/${targetMonth}/${targetYear}`,
                             dataType: "json"
                         }).done(data => {
-                            if (data.success) window.location.href = `${URL_ROOT}/pages/edit-final-report/${window.targetMonth}/${window.targetYear}/${window.tablePrefix}`;
+                            if (data.success) location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}/${tablePrefix}`;
                         })
                     })
                 } else if (isPowerUser || isITAdmin || !data.submission_closed) {
-                    window.location.href = `${URL_ROOT}/pages/edit-final-report/${window.targetMonth}/${window.targetYear}/${window.tablePrefix}`;
+                    location.href = `${URL_ROOT}/pages/edit-final-report/${targetMonth}/${targetYear}/${tablePrefix}`;
                 } else {
                     kendoAlert('Submission Closed', 'Sorry report submission has been closed. You cannot edit this report.');
                 }
             }
         });
-    }
-
-    function previewContent(previewURL, dataFilter) {
-        progress('.content-wrapper', true);
-        $.ajax({
-            url: previewURL,
-            dataType: "html",
-            dataFilter(data, type) {
-                return dataFilter ? dataFilter(data, type) : data;
-            },
-            success: function (data) {
-                previewEditor.value(data);
-                kendo.drawing.drawDOM($(previewEditor.body), {
-                    allPages: true,
-                    paperSize: 'A4',
-                    margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
-                    multipage: true,
-                    scale: 0.7,
-                    forcePageBreak: ".page-break"
-                }).then(function (group) {
-                    // Render the result as a PDF file
-                    return kendo.drawing.exportPDF(group, {});
-                }).done(data => {
-                    progress('.content-wrapper');
-                    draftWindow.center().open().maximize();
-                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                    setTimeout(() => pdfViewer.activatePage(1), 500)
-                });
-            }
-        })
-    }
-
-    function adjustSize() {
-        // For small screens, maximize the window when it is shown.
-        // You can also make the check again in $(window).resize if you want to
-        // but you will have to change the way to reference the widget and then
-        // to use $("#theWindow").data("kendoWindow").
-        // Alternatively, you may want to .center() the window.
-
-        if ($(window).width() < 800 || $(window).height() < 600) {
-            this.maximize();
-        }
     }
 
 

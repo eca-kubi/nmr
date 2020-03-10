@@ -552,7 +552,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     id: "submitReportBtn",
                     attributes: {"class": "submit-report-btn"},
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted($target_month ?? '', $target_year ?? '', $current_user->department_id, $table_prefix ?? 'nmr') ? 'true' : '' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted($target_month ?? '', $target_year ?? '', $department_id ?? '', $table_prefix ?? 'nmr') ? 'true' : '' ?>")
                 },
                 {
                     type: "button",
@@ -561,7 +561,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     attributes: {"class": "update-submitted-report-btn"},
                     text: "Update Submitted Report",
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted($target_month ?? '', $target_year ?? '', $current_user->department_id, $table_prefix ?? 'nmr') ? '' : 'true' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted($target_month ?? '', $target_year ?? '', $department_id ?? '', $table_prefix ?? 'nmr') ? '' : 'true' ?>")
                 },
                 <?php endif; ?>
 
@@ -2227,7 +2227,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     kendoAlert('Session Expired!', `Your session has expired! Please login and try saving the report again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
                     return;
                 }
-                let alert = kendoAlert('Save Flash Report', `${targetMonth} ${targetYear} Flash Report saved successfully!`);
+                let alert = kendoAlert('Save Report', `${targetMonth} ${targetYear} Report saved successfully!`);
                 setTimeout(() => alert.close(), 1500);
             }, "json")
         });
@@ -2307,6 +2307,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         let reportSubmissionsId = $("#reportSubmissionsId").val();
         let targetMonth = $("#targetMonth").val();
         let targetYear = $("#targetYear").val();
+        progress('.content-wrapper', true);
         let submit = () => {
             let dfd = $.Deferred();
             let post = $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId + "/" + tablePrefix, {
@@ -2324,8 +2325,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 return;
             }
             let url = `${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`;
-            progress('.content-wrapper', true);
-            $.get(url).done(html => {
+            progress('.content-wrapper');
+            let alert = kendoAlert("Report Saved!", "Report saved successfully.");
+            setTimeout(() => alert.close(), 1500);
+            // Don't Modify Final Report
+            /*$.get(url).done(html => {
                 previewEditor.value(html);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     paperSize: 'A4',
@@ -2342,7 +2346,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         setTimeout(() => alert.close(), 1500);
                     });
                 });
-            });
+            });*/
         }));
     }
 
