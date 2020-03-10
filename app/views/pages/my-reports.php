@@ -194,6 +194,16 @@
                 items: [
                     "pager", "zoom", "toggleSelection", "search", "download", "print",
                     {
+                        id: "edit",
+                        type: "button",
+                        text: "Edit",
+                        icon: "edit",
+                        click: function (e) {
+                            let target = $(e.target);
+                            location.href = URL_ROOT + '/pages/edit-draft/' + target.data('draftId') + '/' + target.data('tablePrefix');
+                        }
+                    },
+                    {
                         id: "submitReport",
                         type: "button",
                         text: "Submit Report",
@@ -271,9 +281,12 @@
             window.previewDraftId = draftId;
             if (closedStatus) {
                 toolbar.hide("#submitReport");
+                toolbar.hide("#edit");
             } else {
                 toolbar.wrapper.find('#submitReport').data({viewBtn: currentTarget});
+                toolbar.wrapper.find('#edit').data({draftId: draftId, tablePrefix: tablePrefix});
                 toolbar.show("#submitReport");
+                toolbar.show("#edit");
             }
 
             let viewContent = function (content) {
@@ -282,7 +295,7 @@
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     allPages: true,
                     paperSize: 'A4',
-                    margin: tablePrefix == 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : 'nmr',
+                    margin: tablePrefix == 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : '1cm',
                     multipage: true,
                     scale: 0.7,
                     forcePageBreak: ".page-break",
