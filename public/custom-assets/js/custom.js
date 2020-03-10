@@ -36,7 +36,7 @@ let pdfExportOptions = {
     allPages: true,
     paperSize: 'A4',
     margin: {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"},
-    scale: 0.75,
+    scale: 0.7,
     multipage: true,
     forcePageBreak: '.page-break'
 };

@@ -932,9 +932,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             chartsMenuPopup.toggle();
         });
 
-        /*if (editDraft && !isSubmissionClosed(targetMonth, targetYear, tablePrefix)) {
-            loadDraft();
-        }*/
         loadDraft();
     });
 
