@@ -1,3 +1,20 @@
+/*
+body
+{
+    !* Font *!
+    font-family: "Calibri Light", Calibri, sans-serif, Arial, Verdana, "Trebuchet MS";
+    font-size: 11pt;
+
+    !* Text color *!
+    color: #333;
+
+    !* Remove the background color to make it transparent *!
+    background-color: #fff;
+
+   !* margin: 20px;*!
+}
+*/
+
 table, table tr td {
     border: 1px solid black;
 }

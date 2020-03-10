@@ -968,7 +968,13 @@ class Pages extends Controller
 
     public function test()
     {
-        echo 'test';
+        $db = Database::getDbh();
+        $pdf = new TCPDF();
+        $pdf->AddPage();
+        $html = $db->where('department_id', '7')->getValue('nmr_report_submissions', 'content');
+        $pdf->writeHTML($html);
+        ob_end_clean();
+        $pdf->Output('test.pdf', 'I');
     }
 
     public function getPage($page, $target_month, $target_year, $table_prefix)

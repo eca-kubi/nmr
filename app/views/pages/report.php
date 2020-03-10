@@ -227,13 +227,13 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         previewEditor = $("#previewEditor").kendoEditor({
             tools: [],
             stylesheets: [
-               // "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                // "<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css",
                 //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
                 "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ]
         }).data("kendoEditor");
+
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
+
         $(window).on("resize", function () {
             setTimeout(function () {
                 kendo.resize($('#chartsContainer'));
@@ -723,11 +723,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 e.html = container.prop('innerHTML');
             },
             stylesheets: [
-                // "<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css",
-                //"<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
                 //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css"
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?t=<?php echo now();?>",
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?t=<?php echo now();?>"
             ],
             imageBrowser: {
                 transport: {

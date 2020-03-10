@@ -240,7 +240,7 @@
                                                                        role="button"></a>
                                          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"><a
                                                      class="dropdown-item edit-submitted-report"
-                                                     data-submissions-id="<?php echo $report['report_submissions_id']; ?>"
+                                                     data-report-submissions-id="<?php echo $report['report_submissions_id']; ?>"
                                                      data-target-month="<?php echo $report['target_month'] ?>"
                                                      data-target-year="<?php echo $report['target_year'] ?>"
                                                      data-table-prefix="<?php echo $table_prefix ?>"
@@ -268,7 +268,7 @@
                                                                     <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 edit-submitted-report <?php echo canEditReport($current_user->user_id) || $report['department_id'] == $current_user->department_id ? '' : 'd-none' ?>"
                                                                        href="#"
                                                                        data-table-prefix="<?php echo $table_prefix ?>"
-                                                                       data-submissions-id="<?php echo $report['report_submissions_id']; ?>"
+                                                                       data-report-submissions-id="<?php echo $report['report_submissions_id']; ?>"
                                                                        data-target-month="<?php echo $report['target_month'] ?>"
                                                                        data-target-year="<?php echo $report['target_year'] ?>"
                                                                     ><i class="fa fa-file-edit mr-0"></i> Edit</a>
