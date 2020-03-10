@@ -510,7 +510,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         url: `${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`,
                         dataType: "html",
                         success: (data) => {
-                            reportCache[cacheKey] = data;
+                            //reportCache[cacheKey] = data;
                             viewContent(data)
                         }
                     });
@@ -619,7 +619,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         dataType: "html",
                         success: (data) => {
                             viewContent(data);
-                            reportCache[cacheKey] = data;
+                            //reportCache[cacheKey] = data;
                         }
                     });
                 }

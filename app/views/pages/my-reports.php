@@ -30,6 +30,8 @@
                                                     <li data-expanded="true"
                                                         data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr') ?>"
                                                         data-table-prefix="nmr"
+                                                        data-target-month="<?php echo $report['target_month'] ?>"
+                                                        data-target-year="<?php echo $report['target_year'] ?>"
                                                         data-submission-closed="<?php echo $report['closed_status'] ?: '' ?>"
                                                         data-draft-id="<?php echo $report['draft_id'] ?>">
                                                         <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span>
@@ -39,6 +41,8 @@
                                                                 <a class="mx-1 k-button view-btn"
                                                                    data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr') ?>"
                                                                    data-table-prefix="nmr"
+                                                                   data-target-month="<?php echo $report['target_month'] ?>"
+                                                                   data-target-year="<?php echo $report['target_year'] ?>"
                                                                    data-draft-id="<?php echo $report['draft_id']; ?>"
                                                                    data-closed-status="<?php echo $report['closed_status'] ?: '' ?>">
                                                                     View
@@ -89,6 +93,8 @@
                                                     <li data-expanded="true"
                                                         data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr_fr') ?>"
                                                         data-table-prefix="nmr_fr"
+                                                        data-target-month="<?php echo $report['target_month'] ?>"
+                                                        data-target-year="<?php echo $report['target_year'] ?>"
                                                         data-submission-closed="<?php echo $report['closed_status'] ?: '' ?>"
                                                         data-draft-id="<?php echo $report['draft_id'] ?>">
                                                         <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span>
@@ -98,6 +104,8 @@
                                                                 <a class="mx-1 k-button view-fr-btn"
                                                                    data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr_fr') ?>"
                                                                    data-table-prefix="nmr_fr"
+                                                                   data-target-month="<?php echo $report['target_month'] ?>"
+                                                                   data-target-year="<?php echo $report['target_year'] ?>"
                                                                    data-draft-id="<?php echo $report['draft_id']; ?>"
                                                                    data-closed-status="<?php echo $report['closed_status'] ?: '' ?>">
                                                                     View
@@ -161,10 +169,11 @@
             modal: true,
             visible: false,
             width: "100%",
-            scrollable: true,
+            scrollable: false,
             title: {
                 encoded: false
             },
+            height: 1200
         }).data("kendoWindow");
 
         pdfViewer = jQSelectors.draftPreviewViewer.kendoPDFViewer({
@@ -174,6 +183,13 @@
             width: "100%",
             height: 800,
             scale: 1.27,
+            open(e) {
+                setTimeout(() => pdfViewer.activatePage(1), 1000);
+                draftWindow.center().open().maximize().title(e.closedStatus ? {
+                    encoded: false,
+                    text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"
+                } : '');
+            },
             toolbar: {
                 items: [
                     "pager", "zoom", "toggleSelection", "search", "download", "print",
@@ -182,7 +198,12 @@
                         type: "button",
                         text: "Submit Report",
                         icon: "upload",
-                        click: function () {
+                        click: function (e) {
+                            let currentTarget = $(e.currentTarget);
+                            let viewBtn = currentTarget.data('viewBtn');
+                            let reportSubmitted = viewBtn.data('reportSubmitted');
+                            let draftId = viewBtn.data('draftId');
+                            let title = viewBtn.data('title');
                             let submit = () => {
                                 let dfd = $.Deferred();
                                 let post = $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix, {
@@ -208,8 +229,7 @@
                             } else {
                                 submit().done(post => post.done(data => {
                                     progress('.content-wrapper');
-                                    reportSubmitted = 1;
-                                    currentTarget.data('reportSubmitted', 1);
+                                    viewBtn.data('reportSubmitted', 1);
                                     let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
                                     setTimeout(() => alert.close(), 1500);
                                 }));
@@ -229,6 +249,8 @@
             }
         }).getKendoPDFViewer();
 
+        jQSelectors.draftPreviewViewer.data('kendoPDFViewer').pageContainer.addClass('bg-gray');
+
         previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
             tools: [],
             stylesheets: [
@@ -236,22 +258,31 @@
             ]
         }).data("kendoEditor");
 
-        $(".view-btn").on("click", function (e) {
-            currentTarget = $(e.currentTarget);
-            draftId = currentTarget.data('draftId');
-            reportSubmitted = $(e.currentTarget).data('reportSubmitted');
-            tablePrefix = $(e.currentTarget).data('tablePrefix');
-            let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
+        $(".view-btn, .view-fr-btn").on("click", function (e) {
+            let currentTarget = $(e.currentTarget);
+            let targetMonth = currentTarget.data('targetMonth');
+            let targetYear = currentTarget.data('targetYear');
+            let draftId = currentTarget.data('draftId');
+            let tablePrefix = currentTarget.data('tablePrefix');
+            let closedStatus = currentTarget.data('closedStatus') == 1;
             let toolbar = pdfViewer.toolbar;
             let cacheKey = 'my_report_' + draftId;
+            let dataUriCacheKey = cacheKey + '_dataUri';
             window.previewDraftId = draftId;
+            if (closedStatus) {
+                toolbar.hide("#submitReport");
+            } else {
+                toolbar.wrapper.find('#submitReport').data({viewBtn: currentTarget});
+                toolbar.show("#submitReport");
+            }
+
             let viewContent = function (content) {
                 previewEditor.value(content);
                 progress('.content-wrapper', true);
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     allPages: true,
                     paperSize: 'A4',
-                    margin: "1cm",
+                    margin: tablePrefix == 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : 'nmr',
                     multipage: true,
                     scale: 0.7,
                     forcePageBreak: ".page-break",
@@ -260,64 +291,79 @@
                     return kendo.drawing.exportPDF(group, {});
                 }).done(function (data) {
                     progress('.content-wrapper');
-                    if (closedStatus)
-                        toolbar.hide("#submitReport");
-                    else
-                        toolbar.show("#submitReport");
-                    draftWindow.center().open().maximize().title(closedStatus ? {
-                        encoded: false,
-                        text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"
-                    } : '');
-                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                    setTimeout(() => pdfViewer.activatePage(1), 500)
+                    pdfViewer.fromFile({data: data.split(',')[1]});
+                    pdfViewer.setOptions({
+                        messages: {
+                            defaultFileName: targetMonth +  ' ' + targetYear + ' ' + (tablePrefix === 'nmr' ? 'FLASH REPORT DRAFT' : 'FULL REPORT DRAFT')
+                        }
+                    });
+                    pdfViewer.trigger('open', {
+                        closedStatus: closedStatus,
+                        targetMonth: targetMonth,
+                        targetYear: targetYear,
+                        viewBtn: currentTarget
+                    });
+                    reportCache[dataUriCacheKey] = data;
                 });
             };
+
             let cached = reportCache[cacheKey];
-            if (cached) {
-                viewContent(cached)
+            let dataUriCache = reportCache[dataUriCacheKey];
+            if (dataUriCache) {
+                pdfViewer.setOptions({
+                    messages: {
+                        defaultFileName: targetMonth +  ' ' + targetYear + ' ' + (tablePrefix === 'nmr' ? 'FLASH REPORT DRAFT' : 'FULL REPORT DRAFT')
+                    }
+                });
+                pdfViewer.fromFile({data: dataUriCache.split(',')[1]});
+                pdfViewer.trigger('open', {
+                    closedStatus: closedStatus,
+                    targetMonth: targetMonth,
+                    targetYear: targetYear
+                })
             } else {
                 $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + "/" + tablePrefix).done(function (data) {
                     viewContent(data);
-                    reportCache[cacheKey] = data;
+                    //reportCache[cacheKey] = data;
                 });
             }
         });
 
-        $(".view-fr-btn").on("click", function (e) {
-            currentTarget = $(e.currentTarget);
-            reportSubmitted = currentTarget.data('reportSubmitted');
-            draftId = $(e.currentTarget).data('draftId');
-            tablePrefix = $(e.currentTarget).data('tablePrefix');
-            let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
-            let toolbar = pdfViewer.toolbar;
-            window.previewDraftId = draftId;
-            progress('.content-wrapper', true);
-            $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + '/' + tablePrefix).done(function (data) {
-                previewEditor.value(data);
-                kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'A4',
-                    margin: {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"},
-                    scale: 0.7,
-                    forcePageBreak: ".page-break",
-                    multipage: true,
-                    template: $(`#page-template-body_${tablePrefix}`).html()
-                }).then(function (group) {
-                    return kendo.drawing.exportPDF(group, {});
-                }).done(function (data) {
-                    if (closedStatus)
-                        toolbar.hide("#submitReport");
-                    else
-                        toolbar.show("#submitReport");
-                    progress('.content-wrapper');
-                    draftWindow.center().open().maximize().title(closedStatus ? {
-                        encoded: false,
-                        text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"
-                    } : '');
-                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                    setTimeout(() => pdfViewer.activatePage(1), 500)
-                });
-            });
-        })
+        /* $(".view-fr-btn").on("click", function (e) {
+             currentTarget = $(e.currentTarget);
+             reportSubmitted = currentTarget.data('reportSubmitted');
+             draftId = $(e.currentTarget).data('draftId');
+             tablePrefix = $(e.currentTarget).data('tablePrefix');
+             let closedStatus = $(e.currentTarget).data('closedStatus') === 1;
+             let toolbar = pdfViewer.toolbar;
+             window.previewDraftId = draftId;
+             progress('.content-wrapper', true);
+             $.get(URL_ROOT + "/pages/fetchDraft/" + draftId + '/' + tablePrefix).done(function (data) {
+                 previewEditor.value(data);
+                 kendo.drawing.drawDOM($(previewEditor.body), {
+                     paperSize: 'A4',
+                     margin: {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"},
+                     scale: 0.7,
+                     forcePageBreak: ".page-break",
+                     multipage: true,
+                     template: $(`#page-template-body_${tablePrefix}`).html()
+                 }).then(function (group) {
+                     return kendo.drawing.exportPDF(group, {});
+                 }).done(function (data) {
+                     if (closedStatus)
+                         toolbar.hide("#submitReport");
+                     else
+                         toolbar.show("#submitReport");
+                     progress('.content-wrapper');
+                     draftWindow.center().open().maximize().title(closedStatus ? {
+                         encoded: false,
+                         text: "<span class=\"text-danger text-bold\">Report Submission Closed!</span>"
+                     } : '');
+                     pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                     setTimeout(() => pdfViewer.activatePage(1), 500)
+                 });
+             });
+         })*/
     });
 
     function adjustSize() {
