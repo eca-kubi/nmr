@@ -768,7 +768,7 @@ class Pages extends Controller
             $my_reports = $db->where('d.user_id', $current_user->user_id)
                 ->join('nmr_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
                 ->orderBy('month_no_year', 'DESC')
-                ->get('nmr_editor_draft d', null, 'd.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status');
+                ->get('nmr_editor_draft d', null, 'd.title, d.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status, d.spreadsheet_content');
             if (is_array($my_reports)) {
                 $my_reports = groupedMyReports($my_reports);
                 $payload['my_reports'] = $my_reports;
@@ -777,7 +777,7 @@ class Pages extends Controller
             $my_reports_fr = $db->where('d.user_id', $current_user->user_id)
                 ->join('nmr_fr_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
                 ->orderBy('month_no_year', 'DESC')
-                ->get('nmr_fr_editor_draft d', null, 'd.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status');
+                ->get('nmr_fr_editor_draft d', null, 'd.title, d.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status, d.spreadsheet_content');
             if (is_array($my_reports_fr)) {
                 $my_reports_fr = groupedMyReports($my_reports_fr);
                 $payload['my_reports_fr'] = $my_reports_fr;

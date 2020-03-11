@@ -41,8 +41,10 @@
                                                                 <a class="mx-1 k-button view-btn"
                                                                    data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr') ?>"
                                                                    data-table-prefix="nmr"
+                                                                   data-spreadsheet-content='<?php echo $report['spreadsheet_content'] ?>'
                                                                    data-target-month="<?php echo $report['target_month'] ?>"
                                                                    data-target-year="<?php echo $report['target_year'] ?>"
+                                                                   data-title="<?php echo $report['title']; ?>"
                                                                    data-draft-id="<?php echo $report['draft_id']; ?>"
                                                                    data-closed-status="<?php echo $report['closed_status'] ?: '' ?>">
                                                                     View
@@ -104,9 +106,11 @@
                                                                 <a class="mx-1 k-button view-fr-btn"
                                                                    data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr_fr') ?>"
                                                                    data-table-prefix="nmr_fr"
+                                                                   data-spreadsheet-content='<?php echo $report['spreadsheet_content'] ?>'
                                                                    data-target-month="<?php echo $report['target_month'] ?>"
                                                                    data-target-year="<?php echo $report['target_year'] ?>"
                                                                    data-draft-id="<?php echo $report['draft_id']; ?>"
+                                                                   data-title="<?php echo $report['title']; ?>"
                                                                    data-closed-status="<?php echo $report['closed_status'] ?: '' ?>">
                                                                     View
                                                                 </a>
@@ -209,18 +213,20 @@
                         text: "Submit Report",
                         icon: "upload",
                         click: function (e) {
-                            let currentTarget = $(e.currentTarget);
+                            let currentTarget = $(e.target);
                             let viewBtn = currentTarget.data('viewBtn');
                             let reportSubmitted = viewBtn.data('reportSubmitted');
                             let draftId = viewBtn.data('draftId');
                             let title = viewBtn.data('title');
+                            let tablePrefix = viewBtn.data('tablePrefix');
+                            let spreadsheetContent = viewBtn.data('spreadsheetContent');
                             let submit = () => {
                                 let dfd = $.Deferred();
                                 let post = $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix, {
                                     title: title,
                                     draft_id: draftId,
                                     content: previewEditor.value(),
-                                    spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                                    spreadsheet_content: JSON.stringify(spreadsheetContent)
                                 }, null, "json");
                                 draftWindow.close();
                                 dfd.resolve(post);
