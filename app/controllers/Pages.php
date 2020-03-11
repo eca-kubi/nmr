@@ -657,7 +657,7 @@ class Pages extends Controller
                     'target_year' => $current_sub_year,
                     'user_id' => $current_user->user_id,
                     'time_modified' => now(),
-                    'target_month_no' => monthNumber(now())
+                    'target_month_no' => monthNumber($current_sub_month)
                 ])) {
                     $payload['drafts'][$table_prefix] = $db->where('draft_id', $draft_id)->getOne($table_prefix . '_editor_draft');
                     // Create an entry into my reports
@@ -676,7 +676,7 @@ class Pages extends Controller
                     'target_year' => $current_sub_year,
                     'user_id' => $current_user->user_id,
                     'time_modified' => now(),
-                    'target_month_no' => monthNumber(now())
+                    'target_month_no' => monthNumber($current_sub_month)
                 ])) {
                     $payload['drafts'][$table_prefix] = $db->where('draft_id', $draft_id)->getOne($table_prefix . '_editor_draft');
                     // Create an entry into my reports
@@ -708,7 +708,7 @@ class Pages extends Controller
                     'target_year' => $current_sub_year,
                     'user_id' => $current_user->user_id,
                     'time_modified' => now(),
-                    'target_month_no' => monthNumber(now())
+                    'target_month_no' => monthNumber($current_sub_month)
                 ])) {
                     $payload['drafts'][$table_prefix] = $db->where('draft_id', $draft_id)->getOne($table_prefix . '_editor_draft');
                     $db->insert($table_prefix . '_my_reports', ['draft_id' => $draft_id]);
