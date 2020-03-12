@@ -23,15 +23,15 @@ table {
     border: 1px solid black;
 }
 
-ul {
+/*ul {
     list-style: none;
 }
 
 ul li:before {
     content: "•";
-    font-size: 150%; /* or whatever */
+    font-size: 150%; !* or whatever *!
     padding-right: 5px;
-}
+}*/
 
 img {
     max-width: 100%;
