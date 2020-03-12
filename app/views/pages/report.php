@@ -728,7 +728,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         table.find("tr td")
                             .each(function () {
                                 var currentStyle = $(this).attr("style");
-                                $(this).attr("style", "border: 1px solid black;");
+                                $(this).attr("style", currentStyle + ";border: 1px solid black;");
                             });
                         //table.attr("style", "border-collapse:collapse;");
                         table.attr("style", "border: 1px solid black;line-height:1;max-width: 716.0px");
@@ -743,7 +743,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 table.find("tr td")
                     .each(function () {
                         var currentStyle = $(this).attr("style");
-                        $(this).attr("style", "border: 1px solid black;");
+                        $(this).attr("style", currentStyle + ";border: 1px solid black;");
                     });
                 table.attr("style", "border: 1px solid black;line-height:1;max-width: 716.0px");
                 container.find('img').attr('style', 'max-width:100%; height: auto;margin-left:auto; margin-right:auto');
