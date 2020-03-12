@@ -57,7 +57,7 @@ img {
     border: 1px #D3D3D3 solid;
     background: white;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    font-size: small;
+    font-size: medium;
     line-height: 2;
     font-family: "Nunito Sans", Verdana, Helvetica, sans-serif;
 }
