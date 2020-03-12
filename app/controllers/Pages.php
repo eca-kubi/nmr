@@ -821,6 +821,7 @@ class Pages extends Controller
     {
         $db = Database::getDbh();
         $current_user = getUserSession();
+        $success = true;
         if (empty($current_user)) {
             echo json_encode(['success' => false, 'session_expired' => true]);
             return;
@@ -829,67 +830,63 @@ class Pages extends Controller
         $draft = $db->where('draft_id', $draft_id)->getOne($table_prefix . '_editor_draft');
         try {
             $draft_user = $db->where('user_id', $draft['user_id'])->objectBuilder()->join('departments d', 'd.department_id = u.department_id')->getOne('users u');
-            $send_email = !$db->where('department_id', $draft_user->department_id)
-                ->where('target_month', $target_month)
-                ->where('target_year', $target_year)->has($table_prefix . '_report_submissions');
-            if (isset($_POST['draft_id'])) $draft_id = $_POST['draft_id'];
-            $db->onDuplicate(['content', 'date_modified', 'spreadsheet_content']);
-            $success = $db->insert($table_prefix . '_report_submissions', [
-                'department_id' => $draft_user->department_id,
-                'user_id' => $draft_user->user_id,
-                'content' => $_POST['content'],
-                'spreadsheet_content' => $_POST['spreadsheet_content'],
-                'date_submitted' => now(),
-                'date_modified' => now(),
-                'target_month' => $target_month,
-                'target_year' => $target_year
-            ]);
-            if ($success) {
-                $report_submissions_id = $db->getInsertId();
-                if ($db->where('draft_id', $draft_id)->has($table_prefix . '_editor_draft')) {
-                    $success = $db->where('draft_id', $draft_id)->update($table_prefix . '_editor_draft', [
-                        'title' => $_POST['title'],
+            $has_report = $db->where('department_id', $draft_user->department_id)->where('target_month', $target_month)->where('target_year', $target_year)
+                ->has($table_prefix . '_report_submissions');
+            $send_email = !$has_report;
+            if (isset($_POST['dr[aft_id'])) $draft_id = $_POST['draft_id'];
+            if ($has_report) {
+               $success = $success &&  ($db->where('department_id', $draft_user->department_id)->where('target_month', $target_month)->where('target_year', $target_year)
+                    ->update($table_prefix . '_report_submissions', [
                         'content' => $_POST['content'],
                         'spreadsheet_content' => $_POST['spreadsheet_content'],
-                        'time_modified' => now()
-                    ]);
-                    if ($send_email) {
-                        // New submission, thus, notify GM
-                        $target_month_year = strtoupper($target_month . ' ' . $target_year);
-                        $gm = new User(getCurrentGM());
-                        $subject = 'Nzema Monthly ' . flashOrFull($table_prefix) . ' Report - ' . $target_month . ' ' . $target_year;
-                        $data = [
-                            'link' => URL_ROOT . '/pages/submitted-reports/?' . 'i=' . $report_submissions_id . '&s=true&d=' . $draft_user->department . '&fof=' . flashOrFull($table_prefix) . '&tmy=' . $target_month_year,
-                            'target_month_year' => $target_month_year,
-                            'target_month' => $target_month,
-                            'target_year' => $target_year,
-                            'department' => $draft_user->department,
-                            'flash_or_full' => flashOrFull($table_prefix)
-                        ];
-                        $body = get_include_contents('templates/email_templates/report_submitted_notify_gm', $data);
-                        $data['body'] = $body;
-                        $data['flash_or_full'] = flashOrFull($table_prefix);
-                        $email = get_include_contents('templates/email_templates/main', $data);
-                        if ($current_user->user_id !== $gm->user_id) {
-                            insertEmail($subject, $email, $gm->email);
-                        }
-                        // Send email to IT Manager and IT Support Officer (Me)
-                        insertEmail($subject, $email, IT_MANAGER_EMAIL);
-                        insertEmail($subject, $email, IT_SUPPORT_OFFICER_EMAIL);
+                        'date_modified' => now(),
+                    ]));
+            } else {
+                $success = $success && $db->insert($table_prefix . '_report_submissions', [
+                    'department_id' => $draft_user->department_id,
+                    'user_id' => $draft_user->user_id,
+                    'content' => $_POST['content'],
+                    'spreadsheet_content' => $_POST['spreadsheet_content'],
+                    'date_submitted' => now(),
+                    'date_modified' => now(),
+                    'target_month' => $target_month,
+                    'target_year' => $target_year
+                ]);
+            }
+            if ($success) {
+                // New submission, thus, notify GM
+                if ($send_email) {
+                    $report_submissions_id = $db->getInsertId();
+                    $target_month_year = strtoupper($target_month . ' ' . $target_year);
+                    $gm = new User(getCurrentGM());
+                    $subject = 'Nzema Monthly ' . flashOrFull($table_prefix) . ' Report - ' . $target_month . ' ' . $target_year;
+                    $data = [
+                        'link' => URL_ROOT . '/pages/submitted-reports/?' . 'i=' . $report_submissions_id . '&s=true&d=' . $draft_user->department . '&fof=' . flashOrFull($table_prefix) . '&tmy=' . $target_month_year,
+                        'target_month_year' => $target_month_year,
+                        'target_month' => $target_month,
+                        'target_year' => $target_year,
+                        'department' => $draft_user->department,
+                        'flash_or_full' => flashOrFull($table_prefix)
+                    ];
+                    $body = get_include_contents('templates/email_templates/report_submitted_notify_gm', $data);
+                    $data['body'] = $body;
+                    $data['flash_or_full'] = flashOrFull($table_prefix);
+                    $email = get_include_contents('templates/email_templates/main', $data);
+                    if ($current_user->user_id !== $gm->user_id) {
+                        insertEmail($subject, $email, $gm->email);
+                    }
+                    // Send email to IT Manager and IT Support Officer (Me)
+                    insertEmail($subject, $email, IT_MANAGER_EMAIL);
+                    insertEmail($subject, $email, IT_SUPPORT_OFFICER_EMAIL);
 
-                        // Send email to Applicant
-                        $body = get_include_contents('templates/email_templates/report_submitted_notify_applicant', $data);
-                        $data['body'] = $body;
-                        $data['flash_or_full'] = flashOrFull($table_prefix);
-                        $email = get_include_contents('templates/email_templates/main', $data);
-                        insertEmail($subject, $email, $current_user->email);
-                    }
-                    if ($success) {
-                        echo json_encode(['success' => true, 'draftId' => $draft_id]);
-                    } else {
-                        echo json_encode(['success' => false, 'draftId' => $draft_id]);
-                    }
+                    // Send email to Applicant
+                    $body = get_include_contents('templates/email_templates/report_submitted_notify_applicant', $data);
+                    $data['body'] = $body;
+                    $data['flash_or_full'] = flashOrFull($table_prefix);
+                    $email = get_include_contents('templates/email_templates/main', $data);
+                    insertEmail($subject, $email, $current_user->email);
                 }
+                echo json_encode(['success' => true, 'draftId' => $draft_id]);
             } else {
                 echo json_encode(['success' => false, 'draftId' => $draft_id]);
             }

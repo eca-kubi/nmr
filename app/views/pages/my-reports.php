@@ -28,12 +28,9 @@
                                             <ul>
                                                 <?php foreach ($reports as $report) { ?>
                                                     <li data-expanded="true"
-                                                        data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr') ?>"
                                                         data-table-prefix="nmr"
-                                                        data-target-month="<?php echo $report['target_month'] ?>"
                                                         data-target-year="<?php echo $report['target_year'] ?>"
-                                                        data-submission-closed="<?php echo $report['closed_status'] ?: '' ?>"
-                                                        data-draft-id="<?php echo $report['draft_id'] ?>">
+                                                    >
                                                         <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span>
                                                         <i class="mx-2 text-bold text-sm <?php echo $report['closed_status'] ? 'text-danger submission-closed' : 'text-success' ?>"><?php echo $report['closed_status'] ? '(Closed)' : '(Opened)' ?></i>
                                                         <ul>
@@ -93,12 +90,9 @@
                                             <ul>
                                                 <?php foreach ($reports as $report) { ?>
                                                     <li data-expanded="true"
-                                                        data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr_fr') ?>"
                                                         data-table-prefix="nmr_fr"
-                                                        data-target-month="<?php echo $report['target_month'] ?>"
                                                         data-target-year="<?php echo $report['target_year'] ?>"
-                                                        data-submission-closed="<?php echo $report['closed_status'] ?: '' ?>"
-                                                        data-draft-id="<?php echo $report['draft_id'] ?>">
+                                                        >
                                                         <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span>
                                                         <i class="mx-2 text-bold text-sm <?php echo $report['closed_status'] ? 'text-danger submission-closed' : 'text-success' ?>"><?php echo $report['closed_status'] ? '(Closed)' : '(Opened)' ?></i>
                                                         <ul>
