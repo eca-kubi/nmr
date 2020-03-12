@@ -176,7 +176,7 @@ echo $spreadsheet_templates; ?>'>
     let editPreloadedDraft = Boolean(<?php echo $edit_preloaded_draft ?? ''; ?>);
     let editSubmittedReport = Boolean(<?php echo $edit_submitted_report ?? ''; ?>);
     let editFinalReport = Boolean(<?php echo $edit_final_report ?? ''; ?>);
-    let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
+    //let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
     let tablePrefix = "<?php echo $table_prefix ?? 'nmr'; ?>";
     let clearedContents = "";
     let targetMonthYearsSubmissionStatus = JSON.parse('<?php echo json_encode(getTargetMonthYearClosedStatus($table_prefix ?? 'nmr')) ?>');

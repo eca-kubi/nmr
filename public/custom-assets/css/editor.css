@@ -1,3 +1,35 @@
+
+body {
+    width: 21cm;
+    min-height: 29.7cm;
+    padding: 1cm 1cm 2cm;
+    margin: 0.5cm auto;
+    /*border: 1px #D3D3D3 solid;
+    background: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);*/
+    font-size: 12px;
+    font-family: "Nunito Sans", Verdana, Helvetica, sans-serif;
+}
+
+body p {
+    margin-top: 100px;
+    margin-bottom: 100px;
+}
+
+table, table tr td {
+    border: 1px solid black;
+}
+
+ul {
+    list-style: none;
+}
+
+ul li:before {
+    content: "•";
+    font-size: 150%; /* or whatever */
+    padding-right: 5px;
+}
+
 span[lang] {
     font-style: normal;
 }

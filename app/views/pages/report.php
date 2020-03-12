@@ -26,7 +26,9 @@
     [data-role=spreadsheettoolbar] [data-tool], [data-role=editortoolbar] .k-tool-group, [data-role=borderpalette] a[role=button] {
         margin: 1px;
     }
-
+    .pane-content {
+        padding: 0 1px;
+    }
 
 </style>
 <?php include_once(APP_ROOT . '/views/includes/navbar.php'); ?>
@@ -104,7 +106,7 @@
                 <div class="box-footer d-none"></div>
                 <!-- /.box-footer-->
             </div>
-            <div class="box collapsed border-warning <?php echo isset($is_submission_closed) && $is_submission_closed ? 'd-none' : ''; ?>">
+            <div class="box collapsed border-warning <?php echo isset($is_submission_closed) && $is_submission_closed ? 'd-none' : ''; ?>" style="height: 700px">
                 <div class="box-header">
                     <h5 class="box-title text-bold"><span class="fa fa-chart-bar text-warning"></span> Charts</h5>
                     <div class="box-tools pull-right d-none">
@@ -114,8 +116,25 @@
                     </div>
                 </div>
                 <!-- /.box-header -->
-                <div class="box-body">
-                    <div class="row" id="chartsContainer">
+                <div class="box-body" style="height: 600px">
+                    <div id="chartsContainer" class="border-left-0 border-top-0" style="height:600px">
+                        <div class="pane-content" style="height:600px">
+                            <div class="w-100" style="height:600px">
+                                <div id="spreadSheet" class="w-100" ></div>
+                            </div>
+                        </div>
+                        <div class="pane-content" style="height:600px;overflow: hidden;">
+                            <div id="chartsTabstripHolder" style="height:600px;">
+                                <div id="chartsTabStrip" style="height:600px;" ></div>
+                                <span class="fa fa-10x fa-chart-bar text-gray" id="emptyChartPlaceHolder" style="
+    position: absolute;
+    top: 40%;
+    right: 40%;
+"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="row" id="chartsContainer">
                         <div class="col-md-6">
                             <div id="spreadSheet" class="w-100" style="height: 400px; width: 100%"></div>
                         </div>
@@ -127,7 +146,7 @@
     right: 40%;
 "></span>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer d-none"></div>
@@ -228,9 +247,16 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             tools: [],
             stylesheets: [
                 //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?f=<?php echo now() ?> "
             ]
         }).data("kendoEditor");
+
+        $("#chartsContainer").kendoSplitter({
+            panes: [
+                { collapsible: true },
+                { collapsible: true}
+            ]
+        });
 
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
 
@@ -240,59 +266,59 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             }, 1000)
         });
 
-       /* let previewContent = function (contentUrl, datafilter = false, fileName = "Nzema Monthly Report", template = "") {
-            if (template) pdfExportOptions.template = template;
-            let showPdfViewer = () => {
-                progress('.content-wrapper', true);
-                kendo.drawing.drawDOM($(previewEditor.body), pdfExportOptions).then(function (group) {
-                    return kendo.drawing.exportPDF(group, {});
-                }).done(function (data) {
-                    progress('.content-wrapper');
-                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                    setTimeout(() => pdfViewer.activatePage(1), 500)
-                });
-            };
-            let dataFilter = datafilter ? datafilter : (data, type) => JSON.parse(data).content;
-            if (!pdfViewer)
-                pdfViewer = $("#previewContent").kendoPDFViewer({
-                    messages: {
-                        defaultFileName: fileName
-                    },
-                    pdfjsProcessing: {
-                        file: ""
-                    },
-                    width: "100%",
-                    height: "29.7cm",
-                    scale: 1,
-                    toolbar: {
-                        items: [
-                            "pager", "zoom", "toggleSelection", "search", "download", "print", {
-                                id: "cancel",
-                                type: "button",
-                                text: "Cancel",
-                                icon: "cancel",
-                                click: function () {
-                                    window.history.back()
-                                },
-                                hidden: !isSubmissionClosed
-                            }
-                        ]
-                    }
-                }).getKendoPDFViewer();
-            if (contentUrl) {
-                $.get({
-                    url: contentUrl,
-                    dataType: "html",
-                    dataFilter: dataFilter,
-                    success: function (data) {
-                        previewEditor.value(data);
-                        showPdfViewer();
-                    }
-                });
-            } else {
-                showPdfViewer();
-            }
-        };*/
+        /* let previewContent = function (contentUrl, datafilter = false, fileName = "Nzema Monthly Report", template = "") {
+             if (template) pdfExportOptions.template = template;
+             let showPdfViewer = () => {
+                 progress('.content-wrapper', true);
+                 kendo.drawing.drawDOM($(previewEditor.body), pdfExportOptions).then(function (group) {
+                     return kendo.drawing.exportPDF(group, {});
+                 }).done(function (data) {
+                     progress('.content-wrapper');
+                     pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                     setTimeout(() => pdfViewer.activatePage(1), 500)
+                 });
+             };
+             let dataFilter = datafilter ? datafilter : (data, type) => JSON.parse(data).content;
+             if (!pdfViewer)
+                 pdfViewer = $("#previewContent").kendoPDFViewer({
+                     messages: {
+                         defaultFileName: fileName
+                     },
+                     pdfjsProcessing: {
+                         file: ""
+                     },
+                     width: "100%",
+                     height: "29.7cm",
+                     scale: 1,
+                     toolbar: {
+                         items: [
+                             "pager", "zoom", "toggleSelection", "search", "download", "print", {
+                                 id: "cancel",
+                                 type: "button",
+                                 text: "Cancel",
+                                 icon: "cancel",
+                                 click: function () {
+                                     window.history.back()
+                                 },
+                                 hidden: !isSubmissionClosed
+                             }
+                         ]
+                     }
+                 }).getKendoPDFViewer();
+             if (contentUrl) {
+                 $.get({
+                     url: contentUrl,
+                     dataType: "html",
+                     dataFilter: dataFilter,
+                     success: function (data) {
+                         previewEditor.value(data);
+                         showPdfViewer();
+                     }
+                 });
+             } else {
+                 showPdfViewer();
+             }
+         };*/
         if (editFinalReport) {
             let content = $("[name=content]").val();
             // Extract cover page and distribution list
@@ -336,6 +362,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         }
 
         pdfViewer = getPDFViewer();
+        pdfViewer.pageContainer.attr('style', 'background-color:#eeeeee;' +  pdfViewer.pageContainer.attr('style'));
 
         function getPage(page, targetMonth, targetYear) {
             return $.get({
@@ -704,7 +731,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 $(this).attr("style", currentStyle + " border: 1px solid black;");
                             });
                         //table.attr("style", "border-collapse:collapse;");
-                        table.attr("style", "border: 1px solid black; max-width: 716.097px!important; width:716.097px!important;");
+                        table.attr("style", "border: 1px solid black;");
                     }, 0);
                 }
             },
@@ -718,8 +745,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         var currentStyle = $(this).attr("style");
                         $(this).attr("style", currentStyle + " border: 1px solid black;");
                     });
-                table.attr("style", "border: 1px solid black; max-width: 716.097pxpx!important; width: 716.097px!important;");
-                container.find('img').attr('style', 'max-width:100%; height: auto');
+                table.attr("style", "border: 1px solid black;");
+                container.find('img').attr('style', 'max-width:100%; height: auto;margin-left:auto; margin-right:auto');
                 e.html = container.prop('innerHTML');
             },
             stylesheets: [
@@ -788,6 +815,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                  //`${URL_ROOT}/public/assets/js/displace/displace.min.js`,
              ]);*/
             editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
+            $(editor.document).find('html').attr('style', 'background-color:#eeeeee');
+            $(editor.wrapper).find('td.k-editable-area').addClass('p-0'); // padding: 0
             $(editor.body).addClass('document-editor');
         }
 
@@ -863,7 +892,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 )
             },
             selectSheet(e) {
-                 selectChartTab(e.sheet.name());
+                selectChartTab(e.sheet.name());
             }
         }).data("kendoSpreadsheet");
 
@@ -1225,8 +1254,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        }
-        else if (sheetName === (CHART_GOLD_RECOVERED_ARL_AND_TOLL)) {
+        } else if (sheetName === (CHART_GOLD_RECOVERED_ARL_AND_TOLL)) {
             let valueRange = sheet.range("B2:C5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1274,8 +1302,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        }
-        else if (sheetName === (CHART_GOLD_PRODUCTION)) {
+        } else if (sheetName === (CHART_GOLD_PRODUCTION)) {
             let valueRange = sheet.range("B2:M4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1357,8 +1384,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        }
-        else if (sheetName === CHART_TONS_MILLED_AND_GOLD_PRODUCED) {
+        } else if (sheetName === CHART_TONS_MILLED_AND_GOLD_PRODUCED) {
             let valueRange = sheet.range("B2:M5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1473,8 +1499,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
 
-        }
-        else if (sheetName === (CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
+        } else if (sheetName === (CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
             let valueRange = sheet.range("B2:C4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1534,8 +1559,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        }
-        else if (sheetName === (CHART_PLANNED_VRS_ACTUAL_METRES)) {
+        } else if (sheetName === (CHART_PLANNED_VRS_ACTUAL_METRES)) {
             let valueRange = sheet.range("B2:C4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1565,8 +1589,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        }
-        else if (sheetName === (CHART_CLOSING_STOCKPILE_BALANCE)) {
+        } else if (sheetName === (CHART_CLOSING_STOCKPILE_BALANCE)) {
             let valueRange = sheet.range("B2:C6");
             let fieldRange = sheet.range("A2:A6");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1650,8 +1673,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        }
-        else if (sheetName === (CHART_TOLL_DELIVERY)) {
+        } else if (sheetName === (CHART_TOLL_DELIVERY)) {
             let valueRange = sheet.range("B2:C8");
             let fieldRange = sheet.range("A2:A8");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1753,8 +1775,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        }
-        else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER_2)) {
+        } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER_2)) {
             sheet.range("B3:M5").format('#,###');
             sheet.range("B6:M6").format('#.0000');
             let valueRange = sheet.range("B2:C6");
@@ -1837,8 +1858,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        }
-        else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER)) {
+        } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER)) {
             sheet.range("B3:M5").format('#,###');
             let valueRange = sheet.range("B2:C6");
             let fieldRange = sheet.range("A2:G6");
@@ -2052,13 +2072,13 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 }
                 for (let i = 0; i < promises.length; i++) {
                     if (ignoreExisting) {
-                        promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;/*margin-left:auto;*/margin-right:auto;'/>"));
+                        promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;margin-left:auto;margin-right:auto;max-width:100%; height: auto;'/>"));
                     } else {
                         let imgs = editor.body.querySelectorAll("img[data-id='sheet_img_" + sheet.name() + "']");
                         if (imgs)
                             promises[i].done(data => $(imgs).attr("src", data));
                         else
-                            promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;/*margin-left:auto;*/margin-right:auto;'/>"));
+                            promises[i].done(data => editor.paste("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;margin-left:auto;margin-right:auto;max-width:100%; height: auto;'/>"));
                     }
                 }
             }
@@ -2070,11 +2090,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         let chart = charts[chartName];
         chart.exportImage().done(data => {
             if (ignoreExisting) {
-                editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;/*margin-left:auto;*/margin-right:auto;' />");
+                editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;margin-left:auto;margin-right:auto;max-width:100%; height: auto;' />");
             } else {
                 let imgs = editor.body.querySelectorAll("img[data-id='chart_img_" + chartName + "']");
                 if (!imgs) {
-                    editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;//**/*margin-left:auto;*/margin-right:auto;' />");
+                    editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;margin-left:auto;margin-right:auto;max-width:100%; height: auto;' />");
                 } else {
                     $(imgs).attr("src", data);
                 }
@@ -2122,7 +2142,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         postDfrPromise.done(function () {
             let draftId = $("#draftId");
             let title = $("#draftTitleInput").val();
-            $.post(URL_ROOT + "/pages/save-draft/" + targetMonth  + "/" + targetYear + "/" +  tablePrefix, {
+            $.post(URL_ROOT + "/pages/save-draft/" + targetMonth + "/" + targetYear + "/" + tablePrefix, {
                 title: title,
                 draft_id: draftId.val(),
                 content: editor.value(),
@@ -2357,7 +2377,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         let targetYear = $("#targetYear").val();
         progress('.content-wrapper', true);
         // Save draft explicitly
-        $.post(URL_ROOT + "/pages/save-draft/" + targetMonth  + "/" + targetYear + "/" + tablePrefix, {
+        $.post(URL_ROOT + "/pages/save-draft/" + targetMonth + "/" + targetYear + "/" + tablePrefix, {
             title: title,
             draft_id: draftId,
             content: editor.value(),
