@@ -709,6 +709,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 ],
                 kendo.ui.Editor.fn.options.fontName
             ),
+            pasteCleanup : {
+                none: true,
+                msAllFormatting: true,
+                span: true
+            },
             select(e) {
                 //console.log('select')
             },
@@ -736,7 +741,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 }
             },
             paste(e) {
-                let container = $('<div/>').append(e.html);
+                let container = $('<div/>').append(e.html + '<p></p>');
                 var table = container.find("table:not(.custom-table)");
                 table.addClass("custom-table");
                 table.attr("style", "border: 1px solid black;");
