@@ -252,6 +252,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             ]
         }).data("kendoEditor");
 
+        $(previewEditor.body).addClass('document-editor');
+
+
         $("#chartsContainer").kendoSplitter({
             panes: [
                 { collapsible: true },
@@ -463,7 +466,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 } : pdfOptions.margin = "1cm";
                 let content = editor ? editor.value() : previewEditor.value();
                 previewEditor.value(content);
-                drawing.drawDOM($(editor.body), pdfOptions).then(group => {
+                drawing.drawDOM($(previewEditor.body), pdfOptions).then(group => {
 
                     let content = new kendo.drawing.Group();
                     content.append(group);
@@ -483,19 +486,19 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             editorTabStrip = $("#editorTabStrip").kendoTabStrip({
                 select(e) {
                     // Hide resize handle when showing preview
-                    let resizeHandle = $(editor.body).find('.k-table-resize-handle-wrapper');
+                    //let resizeHandle = $(previewEditor.body).find('.k-table-resize-handle-wrapper');
                     if (e.contentElement.id === "previewTab") {
-                        resizeHandle.hide();
+                        //resizeHandle.hide();
                         /*$.post(URL_ROOT + "/pages/preview-content/", {
                             content: editor.value()
                         }, null, "html").done((data) => {
                             previewEditor.value(data);
                             previewContent();
                         });*/
-                        toggleNonPrintableElements();
+                        toggleNonPrintableElements(previewEditor);
                         contentPreview();
                     } else {
-                        resizeHandle.show();
+                        //resizeHandle.show();
                     }
                 }
             }).data('kendoTabStrip');
@@ -503,6 +506,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             editorTabStrip = $("#editorTabStrip").kendoTabStrip().data("kendoTabStrip");
             let previewEditorValue = `<?php echo $content ?? '' ?>`;
             previewEditor.value(previewEditorValue);
+            toggleNonPrintableElements(previewEditor);
             contentPreview();
         }
 
@@ -2476,7 +2480,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     /*
     * Hide non-printable elements and effects; For example, page break, box-shadow, etc...
     * */
-    function toggleNonPrintableElements() {
+    function toggleNonPrintableElements(editor) {
         let head = $(editor.document.head);
         let style = "<style id='nonPrintable'>.page-break { opacity: 0!important; height: 0!important} body.document-editor { border: 0;box-shadow: none;}</style>";
         if(head.find('style#nonPrintable').length) {
