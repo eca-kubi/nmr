@@ -430,16 +430,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
             jQSelectors.draftPreviewViewer.data('kendoPDFViewer').pageContainer.addClass('bg-gray');
 
-            previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
-                tools: [],
-                stylesheets: [
-                    //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
-                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?t=<?php echo now();?>",
-                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?t=<?php echo now();?>"
-                ]
-            }).data("kendoEditor");
-            toggleNonPrintableElements(previewEditor);
-
+            previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({}).data("kendoEditor");
 
             $("a.preview-btn").on("click", function (e) {
                 let target = $(e.currentTarget);
@@ -509,7 +500,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     });
                     pdfViewer.fromFile({data: dataUriCache.split(',')[1]});
                     pdfViewer.trigger('open')
-                } else {
+                }  else {
                     $.ajax({
                         url: `${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`,
                         dataType: "html",
