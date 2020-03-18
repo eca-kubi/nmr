@@ -35,7 +35,7 @@ let monthNames = kendo.cultures.current.calendars.standard.months.names;
 let pdfExportOptions = {
     allPages: true,
     paperSize: 'A4',
-    margin: {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"},
+    margin: {top: "3cm", right: "0cm", bottom: "1cm", left: "0cm"},
     scale: 0.7,
     multipage: true,
     forcePageBreak: '.page-break',

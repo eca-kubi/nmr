@@ -464,9 +464,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         paperSize: 'A4',
                         margin: tablePrefix === 'nmr_fr' ? {
                             top: "3cm",
-                            right: "1cm",
+                            right: "0cm",
                             bottom: "1cm",
-                            left: "1cm"
+                            left: "0cm"
                         } : "1cm",
                         multipage: true,
                         scale: 0.7,
@@ -545,9 +545,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         paperSize: 'A4',
                         margin: tablePrefix === 'nmr_fr' ? {
                             top: "3cm",
-                            right: "1cm",
+                            right: "0cm",
                             bottom: "1cm",
-                            left: "1cm"
+                            left: "0cm"
                         } : "1cm",
                         multipage: true,
                         scale: 0.7,
@@ -565,9 +565,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             paperSize: 'A4',
                             margin: tablePrefix === 'nmr_fr' ? {
                                 top: "3cm",
-                                right: "1cm",
+                                right: "0cm",
                                 bottom: "1cm",
-                                left: "1cm"
+                                left: "0cm"
                             } : "1cm",
                             multipage: true,
                             scale: 0.7,
@@ -580,9 +580,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 paperSize: 'A4',
                                 margin: tablePrefix === 'nmr_fr' ? {
                                     top: "3cm",
-                                    right: "1cm",
+                                    right: "0cm",
                                     bottom: "1cm",
-                                    left: "1cm"
+                                    left: "0cm"
                                 } : "1cm",
                                 multipage: true,
                                 scale: 0.7,
@@ -663,9 +663,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             paperSize: 'A4',
                             margin: tablePrefix === 'nmr_fr' ? {
                                 top: "3cm",
-                                right: "1cm",
+                                right: "0cm",
                                 bottom: "1cm",
-                                left: "1cm"
+                                left: "0cm"
                             } : "1cm",
                             multipage: true,
                             scale: 0.7,
@@ -684,9 +684,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 paperSize: 'A4',
                                 margin: tablePrefix === 'nmr_fr' ? {
                                     top: "3cm",
-                                    right: "1cm",
+                                    right: "0cm",
                                     bottom: "1cm",
-                                    left: "1cm"
+                                    left: "0cm"
                                 } : "1cm",
                                 multipage: true,
                                 scale: 0.7,
@@ -699,9 +699,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                     paperSize: 'A4',
                                     margin: tablePrefix === 'nmr_fr' ? {
                                         top: "3cm",
-                                        right: "1cm",
+                                        right: "0cm",
                                         bottom: "1cm",
-                                        left: "1cm"
+                                        left: "0cm"
                                     } : "1cm",
                                     multipage: true,
                                     scale: 0.7,
