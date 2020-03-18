@@ -1,26 +1,43 @@
-/*
-body
-{
-    !* Font *!
-    font-family: "Calibri Light", Calibri, sans-serif, Arial, Verdana, "Trebuchet MS";
-    font-size: 11pt;
-
-    !* Text color *!
-    color: #333;
-
-    !* Remove the background color to make it transparent *!
-    background-color: #fff;
-
-   !* margin: 20px;*!
+body, body.document-editor {
+    width: 21cm;
+    min-height: 29.7cm;
+    padding: 0.5cm 1cm;
+    /*
+    margin: 0.5cm auto; Replaced with the style below because it was causing row and column resize handles to not show
+    position: absolute;left: 50%; transform: translateX(-50%);
+    */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    font-size: medium;
+    line-height: 1.2;
+    font-family: "Times New Roman", Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, Verdana, Helvetica, sans-serif;
 }
-*/
 
-table, table tr td {
+body.document-editor {
+    border: 1px #D3D3D3 solid;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/*For responsive images*/
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+img:not(.header-logo) {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
+
+table:not(.page-template-header-logo) tr td {
     border: 1px solid black;
 }
 
 table {
-    border: 1px solid black;
+    border-collapse: collapse;
 }
 
 /*ul {
@@ -33,9 +50,21 @@ ul li:before {
     padding-right: 5px;
 }*/
 
-img {
-    max-width: 100%;
-    height: auto;
+/*
+Trying to fix word breaking in the middle of the word
+*/
+table:not(.page-template-header-logo) {
+    table-layout: auto;
+    width: 100%;
+    border: 1px solid black;
+}
+
+span[lang] {
+    font-style: normal;
+}
+
+.page-template .header {
+    color: #888;
 }
 
 .page-break {
@@ -49,19 +78,6 @@ img {
     cursor: default;
 }
 
-.document-editor {
-    width: 21cm;
-    min-height: 29.7cm;
-    padding: 1cm 1cm 2cm;
-    margin: 0.5cm auto;
-    border: 1px #D3D3D3 solid;
-    background: white;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    font-size: medium;
-    line-height: 2;
-    font-family: "Times New Roman", Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, Verdana, Helvetica, sans-serif;
-}
-
 @media print {
     .page-break {
         opacity: 0 !important;
@@ -70,6 +86,7 @@ img {
     body.document-editor {
         border: 0;
         box-shadow: none;
+        padding: 0;
     }
 }
 

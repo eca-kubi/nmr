@@ -247,6 +247,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             tools: [],
             stylesheets: [
                 //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?f=<?php echo now() ?> ",
                 "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?f=<?php echo now() ?> "
             ]
         }).data("kendoEditor");
@@ -386,7 +387,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
         function contentPreview() {
             let drawing = kendo.drawing;
-
             function mm(val) {
                 return val * 2.8347;
             }
@@ -457,13 +457,13 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 let pdfOptions = $.extend({template: template}, pdfExportOptions);
                 tablePrefix === 'nmr_fr' ? pdfOptions.margin = {
                     top: "3cm",
-                    right: "1cm",
+                    right: "0cm",
                     bottom: "1cm",
-                    left: "1cm"
+                    left: "0cm"
                 } : pdfOptions.margin = "1cm";
                 let content = editor ? editor.value() : previewEditor.value();
                 previewEditor.value(content);
-                drawing.drawDOM($(previewEditor.body), pdfOptions).then(group => {
+                drawing.drawDOM($(editor.body), pdfOptions).then(group => {
 
                     let content = new kendo.drawing.Group();
                     content.append(group);
@@ -482,14 +482,20 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         if (isSubmissionOpened(targetMonth, targetYear, tablePrefix)) {
             editorTabStrip = $("#editorTabStrip").kendoTabStrip({
                 select(e) {
+                    // Hide resize handle when showing preview
+                    let resizeHandle = $(editor.body).find('.k-table-resize-handle-wrapper');
                     if (e.contentElement.id === "previewTab") {
+                        resizeHandle.hide();
                         /*$.post(URL_ROOT + "/pages/preview-content/", {
                             content: editor.value()
                         }, null, "html").done((data) => {
                             previewEditor.value(data);
                             previewContent();
                         });*/
+                        toggleNonPrintableElements();
                         contentPreview();
+                    } else {
+                        resizeHandle.show();
                     }
                 }
             }).data('kendoTabStrip');
@@ -712,22 +718,25 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             pasteCleanup : {
                 none: true,
                 msAllFormatting: true,
-                span: true
+                span: true,
+                msTags: true,
+                css: false
             },
             select(e) {
                 //console.log('select')
             },
             pdfExport(e) {
-                $(editor.document.head).append("<style id='hide-page-break'>.page-break { opacity: 0!important; height: 0!important} body.document-editor { border: 0;box-shadow: none;}</style>");
+                toggleNonPrintableElements();
                 e.promise.done(() => {
-                    $(editor.document.head).find("#hide-page-break").remove();
+                    toggleNonPrintableElements()
                 });
             },
             execute: function (e) {
                 var editor = this;
                 if (e.name === "createtable") {
-                    setTimeout(function () {
-                        var table = $(editor.body).find("table:not(.custom-table)");
+                    /*setTimeout(function () {
+                        //var table = $(editor.body).find("table:not(.custom-table)");
+                        var table = container.find("table");
                         table.addClass("custom-table");
                         table.attr("style", "border: 1px solid black;");
                         table.find("tr td")
@@ -736,28 +745,40 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 $(this).attr("style", currentStyle + ";border: 1px solid black;");
                             });
                         //table.attr("style", "border-collapse:collapse;");
-                        table.attr("style", "border: 1px solid black;line-height:1;max-width: 716.0px");
-                    }, 0);
+                        table.attr("style", "border: 1px solid black;line-height:1;");
+                    }, 0);*/
                 }
             },
             paste(e) {
-                let container = $('<div/>').append(e.html + '<p></p>');
-                var table = container.find("table:not(.custom-table)");
-                table.addClass("custom-table");
-                table.attr("style", "border: 1px solid black;");
-                table.find("tr td")
-                    .each(function () {
-                        var currentStyle = $(this).attr("style");
-                        $(this).attr("style", currentStyle + ";border: 1px solid black;");
-                    });
-                table.attr("style", "border: 1px solid black;line-height:1;max-width: 716.0px");
+                let container = $('<div/>').append(e.html);
+                container.find("table").each(function () {
+                    // Wrap the table in a table (wrapperTable) with just a single column. This will ensure a uniform look in the editor and preview tab.
+                    let wrapperTable = $('<table class="k-table wrapper-table" style="border-style: none;"><tbody><tr style="height:100%;"><td class="wrapper-column" style="width: 100%; border-style: none;">﻿</td></tr></tbody></table>');
+                    let table = $(this);
+                    if (table.is('.wrapper-table') || table.parent('td').is('.wrapper-column')) {
+                        return true;
+                    } else {
+                        table.addClass("custom-table");
+                        table.attr("style", "border: 1px solid black;");
+                        table.find("tr td")
+                            .each(function () {
+                                let currentStyle = $(this).attr("style");
+                                $(this).attr("style", currentStyle + ";border: 1px solid black;");
+                            });
+                        table.attr("style", "border: 1px solid black;line-height:1;table-layout: auto;width:100%;border-collapse:collapse;");
+                        wrapperTable.find('td.wrapper-column').append(table.prop('outerHTML'));
+                        wrapperTable.insertAfter(table);
+                        table.remove();
+                    }
+                });
+
                 container.find('img').attr('style', 'max-width:100%; height: auto;margin-left:auto; margin-right:auto');
                 e.html = container.prop('innerHTML');
             },
             stylesheets: [
                 //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?t=<?php echo now();?>",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?t=<?php echo now();?>"
+               "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?t=<?php echo now();?>",
+               "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?t=<?php echo now();?>"
             ],
             imageBrowser: {
                 transport: {
@@ -822,6 +843,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             editor.document.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
             $(editor.document).find('html').attr('style', 'background-color:#eeeeee');
             $(editor.wrapper).find('td.k-editable-area').addClass('p-0'); // padding: 0
+            let randStr = random();
+            //appendStyleSheets(editor.document, [URL_ROOT + '/public/custom-assets/css/editor.css?t=' + randStr, URL_ROOT + '/public/custom-assets/css/k-editor.css?t=' + randStr ]);
             $(editor.body).addClass('document-editor');
         }
 
@@ -2448,6 +2471,19 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
         return textArea.value;
 
+    }
+
+    /*
+    * Hide non-printable elements and effects; For example, page break, box-shadow, etc...
+    * */
+    function toggleNonPrintableElements() {
+        let head = $(editor.document.head);
+        let style = "<style id='nonPrintable'>.page-break { opacity: 0!important; height: 0!important} body.document-editor { border: 0;box-shadow: none;}</style>";
+        if(head.find('style#nonPrintable').length) {
+           $('style#nonPrintable').remove();
+        } else {
+            head.append(style);
+        }
     }
 
 </script>

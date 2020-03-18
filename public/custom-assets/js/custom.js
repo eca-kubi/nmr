@@ -179,7 +179,7 @@ $.fn.outerHTML = function () {
         })(this[0]));
 };
 
-function kendoAlert(title, content, options={}) {
+function kendoAlert(title, content, options = {}) {
     let kAlert = $("<div/>").appendTo("body").kendoDialog({
         width: "300px",
         title: title,
@@ -268,6 +268,23 @@ function appendScriptsToEditor(document, urls) {
     }
 }
 
+function appendStyleSheets(document, urls) {
+    let body = document.body;
+
+    let appendStyleSheet = (url) => {
+        let link = $("<link />", {
+            rel: "stylesheet",
+            type: "text/css",
+            href: url
+        });
+        $(document.head).append(link);
+    };
+
+    for (let i = 0; i < urls.length; i++) {
+        appendStyleSheet(urls[i]);
+    }
+}
+
 function notify(message, type = 'success') {
     let notification = $('<span class="notification" />').appendTo('body').kendoNotification({
         position: {
@@ -348,17 +365,20 @@ function extractTag(tag, str) {
 }
 
 function getPageBreak() {
-return "<div class=\"page-break\" style=\"page-break-after:always;\"><span style=\"display:none;\">&nbsp;</span></div><p></p>";
+    return "<div class=\"page-break\" style=\"page-break-after:always;\"><span style=\"display:none;\">&nbsp;</span></div><p></p>";
 }
 
-String.prototype.insert = function(index, string) {
-    if (index > 0)
-    {
+String.prototype.insert = function (index, string) {
+    if (index > 0) {
         return this.substring(0, index) + string + this.substring(index, this.length);
     }
 
     return string + this;
 };
+
+function random() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
 
 /*
 $.when(showConfirmationWindow('Are you sure?')).then(function(confirmed){
