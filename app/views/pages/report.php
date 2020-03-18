@@ -404,7 +404,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     allPages: true,
                     paperSize: 'A4',
-                    margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "0cm", bottom: "1cm", left: "0cm"} : "1cm",
+                    margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
                     multipage: true,
                     scale: 0.7,
                     forcePageBreak: ".page-break",
@@ -421,9 +421,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             paperSize: 'A4',
                             margin: tablePrefix === 'nmr_fr' ? {
                                 top: "3cm",
-                                right: "0cm",
+                                right: "1cm",
                                 bottom: "1cm",
-                                left: "0cm"
+                                left: "1cm"
                             } : "1cm",
                             multipage: true,
                             scale: 0.7,
@@ -436,9 +436,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 paperSize: 'A4',
                                 margin: tablePrefix === 'nmr_fr' ? {
                                     top: "3cm",
-                                    right: "0cm",
+                                    right: "1cm",
                                     bottom: "1cm",
-                                    left: "0cm"
+                                    left: "1cm"
                                 } : "1cm",
                                 multipage: true,
                                 scale: 0.7,
@@ -457,9 +457,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 let pdfOptions = $.extend({template: template}, pdfExportOptions);
                 tablePrefix === 'nmr_fr' ? pdfOptions.margin = {
                     top: "3cm",
-                    right: "0cm",
+                    right: "1cm",
                     bottom: "1cm",
-                    left: "0cm"
+                    left: "1cm"
                 } : pdfOptions.margin = "1cm";
                 let content = editor ? editor.value() : previewEditor.value();
                 previewEditor.value(content);
@@ -701,7 +701,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             pdf: {
                 allPages: true,
                 paperSize: "A4",
-                margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "0cm", bottom: "1cm", left: "0cm"} : "1cm",
+                margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
                 forcePageBreak: '.page-break',
                 scale: 0.7,
                 fileName: "Nzema Monthly Report",
@@ -2255,7 +2255,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         progress('.content-wrapper', true);
         kendo.drawing.drawDOM($(previewEditor.body), {
             paperSize: 'A4',
-            margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "0cm", bottom: "1cm", left: "0cm"} : "1cm",
+            margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
             multipage: true,
             scale: 0.7,
             forcePageBreak: ".page-break"
