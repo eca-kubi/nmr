@@ -76,9 +76,9 @@ span[lang] {
     width: 100%;
     border-top: #999 1px dotted;
     border-bottom: #999 1px dotted;
-    padding: 1px;
+    padding: 1px 5px;
     height: 4px;
-    cursor: default;
+    cursor: text;
 }
 
 @media print {
