@@ -253,6 +253,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         }).data("kendoEditor");
 
         $(previewEditor.body).addClass('document-editor');
+        $(previewEditor.wrapper).find('td.k-editable-area').addClass('p-0'); // padding: 0
+
 
 
         $("#chartsContainer").kendoSplitter({
