@@ -438,6 +438,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?t=<?php echo now();?>"
                 ]
             }).data("kendoEditor");
+            toggleNonPrintableElements(previewEditor);
+
 
             $("a.preview-btn").on("click", function (e) {
                 let target = $(e.currentTarget);
@@ -507,7 +509,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     });
                     pdfViewer.fromFile({data: dataUriCache.split(',')[1]});
                     pdfViewer.trigger('open')
-                }  else {
+                } else {
                     $.ajax({
                         url: `${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`,
                         dataType: "html",
