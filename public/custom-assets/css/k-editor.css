@@ -40,15 +40,18 @@ table {
     border-collapse: collapse;
 }
 
-/*ul {
+/*
+Fix bullet circle very tiny and hardly visible in preview mode
+*/
+ul {
     list-style: none;
 }
 
 ul li:before {
     content: "•";
-    font-size: 150%; !* or whatever *!
+    font-size: 120%; /* or whatever */
     padding-right: 5px;
-}*/
+}
 
 /*
 Trying to fix word breaking in the middle of the word
