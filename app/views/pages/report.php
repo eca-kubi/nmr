@@ -457,9 +457,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 let pdfOptions = $.extend({template: template}, pdfExportOptions);
                 tablePrefix === 'nmr_fr' ? pdfOptions.margin = {
                     top: "3cm",
-                    right: "0cm",
+                    right: "1cm",
                     bottom: "1cm",
-                    left: "0cm"
+                    left: "1cm"
                 } : pdfOptions.margin = "1cm";
                 let content = editor ? editor.value() : previewEditor.value();
                 previewEditor.value(content);
