@@ -44,13 +44,15 @@ table {
 Fix bullet circle very tiny and hardly visible in preview mode
 */
 ul {
-    list-style: none;
+    list-style-type: none;
 }
 
 ul li:before {
     content: "•";
     font-size: 120%; /* or whatever */
-    padding-right: 5px;
+    /*padding-right: 5px;*/
+    margin-left: -20px;
+    margin-right: 13px;
 }
 
 /*
