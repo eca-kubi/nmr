@@ -394,7 +394,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 },
                 width: "100%",
                 height: 800,
-                scale: 1.27,
+                scale: 1.42,
                 open(e) {
                     setTimeout(() => pdfViewer.activatePage(1), 1000);
                     draftWindow.center().open().maximize();
