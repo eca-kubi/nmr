@@ -2479,18 +2479,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
     }
 
-    /*
-    * Hide non-printable elements and effects; For example, page break, box-shadow, etc...
-    * */
-    function toggleNonPrintableElements(editor) {
-        let head = $(editor.document.head);
-        let style = "<style id='nonPrintable'>.page-break { opacity: 0!important; height: 0!important} body.document-editor { border: 0;box-shadow: none;}</style>";
-        if(head.find('style#nonPrintable').length) {
-           $('style#nonPrintable').remove();
-        } else {
-            head.append(style);
-        }
-    }
 
 </script>
 </body>

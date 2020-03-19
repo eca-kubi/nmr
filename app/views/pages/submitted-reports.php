@@ -398,6 +398,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 open(e) {
                     setTimeout(() => pdfViewer.activatePage(1), 1000);
                     draftWindow.center().open().maximize();
+                    progress('.content-wrapper');
                 },
                 toolbar: {
                     items: [
@@ -430,9 +431,20 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
             jQSelectors.draftPreviewViewer.data('kendoPDFViewer').pageContainer.addClass('bg-gray');
 
-            previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({}).data("kendoEditor");
+            previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
+                stylesheets: [
+                    //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
+                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?f=<?php echo now() ?> ",
+                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?f=<?php echo now() ?> ",
+                ]
+            }).data("kendoEditor");
+            $(previewEditor.body).addClass('document-editor');
+            $(previewEditor.wrapper).find('td.k-editable-area').addClass('p-0'); // padding: 0
+
+            toggleNonPrintableElements(previewEditor);
 
             $("a.preview-btn").on("click", function (e) {
+                progress('.content-wrapper', true);
                 let target = $(e.currentTarget);
                 let tablePrefix = target.data('tablePrefix');
                 let department = target.data('department');
@@ -500,7 +512,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     });
                     pdfViewer.fromFile({data: dataUriCache.split(',')[1]});
                     pdfViewer.trigger('open')
-                }  else {
+                } else {
                     $.ajax({
                         url: `${URL_ROOT}/pages/get-submitted-report/${reportSubmissionsId}/${tablePrefix}`,
                         dataType: "html",
@@ -513,6 +525,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             });
 
             $(".preview-final-report-btn").on("click", e => {
+                progress('.content-wrapper', true);
                 let target = $(e.currentTarget);
                 let tablePrefix = window.tablePrefix = target.data('tablePrefix');
                 let targetMonth = window.targetMonth = target.data('targetMonth');
@@ -532,7 +545,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     pdfViewer.toolbar.hide("#editFinalReport");
 
                 let viewContent = function (content) {
-                    progress('.content-wrapper', true);
                     const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
                     previewEditor.value(COVER_PAGE);
                     kendo.drawing.drawDOM($(previewEditor.body), {

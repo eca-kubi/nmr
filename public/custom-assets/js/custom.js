@@ -380,6 +380,20 @@ function random() {
     return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
+
+/*
+* Hide non-printable elements and effects; For example, page break, box-shadow, etc...
+* */
+function toggleNonPrintableElements(editor) {
+    let head = $(editor.document.head);
+    let style = "<style id='nonPrintable'>.page-break { opacity: 0!important; height: 0!important} body.document-editor { border: 0;box-shadow: none;}</style>";
+    if(head.find('style#nonPrintable').length) {
+        $('style#nonPrintable').remove();
+    } else {
+        head.append(style);
+    }
+}
+
 /*
 $.when(showConfirmationWindow('Are you sure?')).then(function(confirmed){
 
