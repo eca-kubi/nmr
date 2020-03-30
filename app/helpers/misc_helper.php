@@ -1071,3 +1071,24 @@ function canEditReport ($user_id) {
 function getPageBreak () {
     return "<div class=\"page-break\" style=\"page-break-after:always;\"><span style=\"display:none;\">&nbsp;</span></div><p></p>";
 }
+
+function currentUser()
+{
+    $current_user = getUserSession();
+    return [
+        'name' => $current_user->first_name . ' ' . $current_user->last_name,
+        'email' => $current_user->email,
+        'department' => $current_user->department,
+        'department_id' => $current_user->department_id,
+        'is_it_admin' => isITAdmin($current_user->user_id)
+    ];
+}
+
+function getDmr ($department, $date) {
+    $db = Database::getDbh();
+    return $db->where("(department = ? and date=?)", [$department, $date])->getOne('dmr_report') ?? [];
+}
+
+function nowDate( ) {
+    return date('Y-m-d', strtotime(now()));
+}

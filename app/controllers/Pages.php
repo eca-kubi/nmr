@@ -835,23 +835,23 @@ class Pages extends Controller
             $send_email = !$has_report;
             if (isset($_POST['dr[aft_id'])) $draft_id = $_POST['draft_id'];
             if ($has_report) {
-               $success = $success &&  ($db->where('department_id', $draft_user->department_id)->where('target_month', $target_month)->where('target_year', $target_year)
-                    ->update($table_prefix . '_report_submissions', [
-                        'content' => $_POST['content'],
-                        'spreadsheet_content' => $_POST['spreadsheet_content'],
-                        'date_modified' => now(),
-                    ]));
+                $success = $success && ($db->where('department_id', $draft_user->department_id)->where('target_month', $target_month)->where('target_year', $target_year)
+                        ->update($table_prefix . '_report_submissions', [
+                            'content' => $_POST['content'],
+                            'spreadsheet_content' => $_POST['spreadsheet_content'],
+                            'date_modified' => now(),
+                        ]));
             } else {
                 $success = $success && $db->insert($table_prefix . '_report_submissions', [
-                    'department_id' => $draft_user->department_id,
-                    'user_id' => $draft_user->user_id,
-                    'content' => $_POST['content'],
-                    'spreadsheet_content' => $_POST['spreadsheet_content'],
-                    'date_submitted' => now(),
-                    'date_modified' => now(),
-                    'target_month' => $target_month,
-                    'target_year' => $target_year
-                ]);
+                        'department_id' => $draft_user->department_id,
+                        'user_id' => $draft_user->user_id,
+                        'content' => $_POST['content'],
+                        'spreadsheet_content' => $_POST['spreadsheet_content'],
+                        'date_submitted' => now(),
+                        'date_modified' => now(),
+                        'target_month' => $target_month,
+                        'target_year' => $target_year
+                    ]);
             }
             if ($success) {
                 // New submission, thus, notify GM
@@ -997,4 +997,64 @@ class Pages extends Controller
         }
         if ($ret) echo json_encode(['success' => true]);
     }
+
+    public function newDMR()
+    {
+        if (!isLoggedIn()) {
+            redirect('users/login/pages/new-dmr/');
+        }
+        $current_user = getUserSession();
+        $db = Database::getDbh();
+        $payload = [
+            'page_title' => 'New Daily Management Report',
+        ];
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (empty($current_user)) {
+                echo json_encode(['success' => false, 'message' => 'Your session has expired!']);
+                return;
+            }
+            $insertData = [
+                'content' => $_POST['content'],
+                'department' => $current_user->department
+            ];
+            $whereProp = "(department =? and date =?)";
+            $whereValues = [$current_user->department, date('Y-m-d', strtotime(now()))];
+            $ret = true;
+            if ($db->where($whereProp, $whereValues)->has('dmr_report')) {
+                if (isset($_POST['submitted'])) {
+                    $ret = $ret && $db->where($whereProp, $whereValues)->update('dmr_report', ['content' => $_POST['content'], 'submitted' => 1]);
+                } else {
+                    $ret = $ret && $db->where($whereProp, $whereValues)->update('dmr_report', ['content' => $_POST['content']]);
+                }
+            } else {
+                $ret = $ret && $db->insert('dmr_report', $insertData);
+            }
+            if ($ret) {
+                echo json_encode(['success' => true, 'message' => isset($_POST['submitted']) ? 'Report submitted successfully' : 'Report saved successfully!']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'An error occurred!']);
+            }
+        } else {
+            $this->view('pages/new-dmr', $payload);
+        }
+    }
+
+    public function submittedDMR($date = '')
+    {
+        if (!isLoggedIn()) {
+            redirect('users/login/pages/submitted-dmr/'. $date);
+        }
+        $db = Database::getDbh();
+        $date = $date ??  nowDate();
+        $payload = [
+            'page_title' => 'Daily Management Report',
+            'dmr' => [
+                'contents' => $db->join('departments d', 'd.department=dmr.department', 'LEFT')->where('date', $date)->where('submitted', 1)->get('dmr_report dmr', null, 'content'),
+                'date' => $date
+            ]
+        ];
+        $this->view('pages/submitted-dmr', $payload);
+    }
+
+
 }
