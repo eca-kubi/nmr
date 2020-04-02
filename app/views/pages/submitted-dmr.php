@@ -97,6 +97,394 @@
         postJson(undefined, postData);
     };
 
+    function submittedDmrs() {
+        let dmrArr = [];
+        let contentTemplate = {
+            "index": index,
+            "height": 109,
+            "cells": [
+                {
+                    "value": department,
+                    "color": "#000000",
+                    "fontFamily": "Calibri",
+                    "fontSize": 14.666666666667,
+                    "bold": true,
+                    "verticalAlign": "top",
+                    "borderLeft": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderRight": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderTop": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderBottom": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "index": 0
+                },
+                {
+                    "color": "#000000",
+                    "fontFamily": "Calibri",
+                    "fontSize": 14.666666666667,
+                    "verticalAlign": "top",
+                    "borderLeft": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderRight": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderTop": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderBottom": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "index": 1
+                },
+                {
+                    "color": "#000000",
+                    "fontFamily": "Calibri",
+                    "fontSize": 14.666666666667,
+                    "verticalAlign": "top",
+                    "borderLeft": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderRight": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderTop": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderBottom": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "index": 2
+                },
+                {
+                    "color": "#000000",
+                    "fontFamily": "Calibri",
+                    "fontSize": 14.666666666667,
+                    "verticalAlign": "top",
+                    "borderLeft": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderRight": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderTop": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderBottom": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "index": 3
+                },
+                {
+                    "color": "#000000",
+                    "fontFamily": "Calibri",
+                    "fontSize": 14.666666666667,
+                    "verticalAlign": "top",
+                    "borderLeft": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderRight": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderTop": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderBottom": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "index": 4
+                },
+                {
+                    "color": "#000000",
+                    "fontFamily": "Calibri",
+                    "fontSize": 14.666666666667,
+                    "verticalAlign": "top",
+                    "borderLeft": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderRight": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderTop": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderBottom": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "index": 5
+                },
+                {
+                    "color": "#000000",
+                    "fontFamily": "Calibri",
+                    "fontSize": 14.666666666667,
+                    "verticalAlign": "top",
+                    "borderLeft": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderRight": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderTop": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderBottom": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "index": 6
+                },
+                {
+                    "color": "#000000",
+                    "fontFamily": "Calibri",
+                    "fontSize": 14.666666666667,
+                    "verticalAlign": "top",
+                    "borderLeft": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderRight": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderTop": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderBottom": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "index": 7
+                },
+                {
+                    "color": "#000000",
+                    "fontFamily": "Calibri",
+                    "fontSize": 14.666666666667,
+                    "verticalAlign": "top",
+                    "borderLeft": {
+                        "size": 1,
+                        "color": "#000000"
+                    },
+                    "borderRight": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderTop": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "borderBottom": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "index": 8
+                },
+                {
+                    "verticalAlign": "top",
+                    "borderLeft": {
+                        "size": 2,
+                        "color": "#000000"
+                    },
+                    "index": 9
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 10
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 11
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 12
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 13
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 14
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 15
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 16
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 17
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 18
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 19
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 20
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 21
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 22
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 23
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 24
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 25
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 26
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 27
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 28
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 29
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 30
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 31
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 32
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 33
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 34
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 35
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 36
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 37
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 38
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 39
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 40
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 41
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 42
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 43
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 44
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 45
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 46
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 47
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 48
+                },
+                {
+                    "verticalAlign": "top",
+                    "index": 49
+                }
+            ]
+        };
+
+    }
+
     // overide kendo.spreadsheet.SheetsBar.prototype._createEditor to avoid showing rename editor for default sheet
     let SheetsBar = kendo.spreadsheet.SheetsBar;
     SheetsBar.prototype._createEditor = function () {
@@ -382,7 +770,7 @@
                             "height": 29,
                             "cells": [
                                 {
-                                    "value": "DATE: " + (dmr.date? moment(dmr.date).format('DD-MM-YYYY') : moment().format('DD-MM-YYYY')),
+                                    "value": "DATE: " + (dmr.date ? moment(dmr.date).format('DD-MM-YYYY') : moment().format('DD-MM-YYYY')),
                                     "background": "#f8cbad",
                                     "color": "#000000",
                                     "fontFamily": "Calibri",

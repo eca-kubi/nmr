@@ -17,7 +17,7 @@ define('DATE_FORMATS', [
     'num_sm' => 'Y/m/d',
     'num_xs' => 'Y/n/j',
 ]);
-const DEFAULT_DRAFT_MONTH = 'February';
+const DEFAULT_DRAFT_MONTH = 'March';
 const DEFAULT_DRAFT_YEAR = '2020';
 const IT_MANAGER_EMAIL = 'babimpong@adamusgh.com';
 const IT_SUPPORT_OFFICER_EMAIL = 'ecakubi@adamusgh.com';
