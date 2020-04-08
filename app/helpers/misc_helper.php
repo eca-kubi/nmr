@@ -1092,3 +1092,13 @@ function getDmr ($department, $date) {
 function nowDate( ) {
     return date('Y-m-d', strtotime(now()));
 }
+
+function getSubmittedDmrs ($date) {
+    $db = Database::getDbh();
+    $arr = [];
+    $dmrs = $db->where("(date=? and submitted=?)", [$date, 1])->get('dmr_report', null, 'department, content');
+    foreach ($dmrs as $dmr) {
+        $arr[$dmr['department']] = $dmr['content'];
+    }
+    return $arr;
+}

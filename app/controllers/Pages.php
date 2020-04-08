@@ -446,12 +446,13 @@ class Pages extends Controller
         $db = Database::getDbh();
         $target_month = $target_month ?: DEFAULT_DRAFT_MONTH;
         $target_year = $target_year ?: DEFAULT_DRAFT_YEAR;
-        $ret = $db->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 1]);
-        //$ret = $ret && $db->where('prop', $table_prefix . '_current_submission_month')->update('settings', ['value' => $target_month]);
-        //$ret = $ret && $db->where('prop', $table_prefix . '_current_submission_year')->update('settings', ['value' => $target_year]);
-        $ret = $ret && $db->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 0]);
-        $db->onDuplicate(['closed_status']);
-        $ret = $ret && $db->insert($table_prefix . '_target_month_year', ['target_year' => $target_year, 'target_month' => $target_month, 'closed_status' => 0]);
+        $ret = true;
+        if($db->where("(target_month = ? and target_year = ?)", [$target_month, $target_year])->has($table_prefix. '_target_month_year')){
+            $ret = $ret && $db->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 1]);
+            $ret = $ret && $db->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 0]);
+        } else {
+            $ret = $ret && $db->insert($table_prefix . '_target_month_year', ['target_year' => $target_year, 'target_month' => $target_month, 'closed_status' => 0]);
+        }
         if ($ret) {
             echo json_encode(['targetYear' => $target_year, 'targetMonth' => $target_month, 'tablePrefix' => $table_prefix, 'isSubmissionClosedByPowerUser' => false]);
         }
@@ -462,17 +463,16 @@ class Pages extends Controller
         $db = Database::getDbh();
         $target_month = $target_month ?: DEFAULT_DRAFT_MONTH;
         $target_year = $target_year ?: DEFAULT_DRAFT_YEAR;
-        /* if (currentSubmissionYear() === $target_year && (currentSubmissionMonth()) === $target_month) {
-             $ret = Database::getDbh()->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 0]);
-             $ret = $ret && Database::getDbh()->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 1]);
-             $ret = $ret && Database::getDbh()->where('prop', $table_prefix . '_current_submission_month')->update('settings', ['value' => '']);
-             $ret = $ret && Database::getDbh()->where('prop', $table_prefix . '_current_submission_year')->update('settings', ['value' => '']);
-         }*/
-        if ($db->where('target_month', $target_month)->where('target_year', $target_year)->update($table_prefix . '_target_month_year', ['closed_status' => 1])) {
+        $ret = true;
+        if($db->where("(target_month = ? and target_year = ?)", [$target_month, $target_year])->has($table_prefix. '_target_month_year')){
+            $ret = $ret && $db->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 0]);
             if (currentSubmissionYear() == $target_year && currentSubmissionMonth() == $target_month) {
-                $db->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 0]);
-                $db->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 1]);
+                $ret = $ret && $db->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 1]);
             }
+        } else {
+            $ret = $ret && $db->insert($table_prefix . '_target_month_year', ['target_year' => $target_year, 'target_month' => $target_month, 'closed_status' => 1]);
+        }
+        if ($ret) {
             echo json_encode(['isSubmissionClosedByPowerUser' => true, 'targetYear' => $target_year, 'targetMonth' => $target_month, 'tablePrefix' => $table_prefix, 'success' => true]);
         }
     }
@@ -1044,12 +1044,11 @@ class Pages extends Controller
         if (!isLoggedIn()) {
             redirect('users/login/pages/submitted-dmr/'. $date);
         }
-        $db = Database::getDbh();
-        $date = $date ??  nowDate();
+        $date = $date ? $date : nowDate();
         $payload = [
             'page_title' => 'Daily Management Report',
-            'dmr' => [
-                'contents' => $db->join('departments d', 'd.department=dmr.department', 'LEFT')->where('date', $date)->where('submitted', 1)->get('dmr_report dmr', null, 'content'),
+            'dmrs' => [
+                'submitted_dmrs' => getSubmittedDmrs($date),
                 'date' => $date
             ]
         ];
