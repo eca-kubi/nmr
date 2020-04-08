@@ -239,12 +239,12 @@
                                                                        data-toggle="dropdown"
                                                                        role="button"></a>
                                          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"><a
-                                                     class="dropdown-item edit-submitted-report"
+                                                     class="dropdown-item edit-submitted-reportt"
                                                      data-report-submissions-id="<?php echo $report['report_submissions_id']; ?>"
                                                      data-target-month="<?php echo $report['target_month'] ?>"
                                                      data-target-year="<?php echo $report['target_year'] ?>"
                                                      data-table-prefix="<?php echo $table_prefix ?>"
-                                                     href="#"
+                                                     href="<?php echo  URL_ROOT . '/pages/edit-submitted-report/' . $report['report_submissions_id']. '/' . $table_prefix ?>"
                                              ><i class="fa fa-file-edit"></i> Edit</a>
                                              <a class="dropdown-item preview-btn" href="#"><i
                                                          class="fa fa-play-circle-o"></i> View Report</a>
@@ -265,8 +265,8 @@
                                                                        data-target-year="<?php echo $report['target_year'] ?>"><i
                                                                                 class="fa fa-play-circle-o mr-0"></i>
                                                                         View Report</a>
-                                                                    <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 edit-submitted-report <?php echo canEditReport($current_user->user_id) || $report['department_id'] == $current_user->department_id ? '' : 'd-none' ?>"
-                                                                       href="#"
+                                                                    <a class="float-right text-sm font-poppins w3-text-dark-grey mr-4 edit-submitted-reportt <?php echo canEditReport($current_user->user_id) || $report['department_id'] == $current_user->department_id ? '' : 'd-none' ?>"
+                                                                       href="<?php echo  URL_ROOT . '/pages/edit-submitted-report/' . $report['report_submissions_id']. '/' . $table_prefix ?>"
                                                                        data-table-prefix="<?php echo $table_prefix ?>"
                                                                        data-report-submissions-id="<?php echo $report['report_submissions_id']; ?>"
                                                                        data-target-month="<?php echo $report['target_month'] ?>"
