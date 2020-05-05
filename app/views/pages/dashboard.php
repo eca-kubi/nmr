@@ -40,6 +40,14 @@
                                 <a href="#" class="small-box-footer" style="background-color: var(--orange)">
                                     <span class="fa fa-chevron-circle-right"></span>
                                 </a>
+                                <div class="dropdown-menu">
+                                    <button class="dropdown-item" type="button" data-id="draftReport"
+                                            data-table-prefix="nmr">Flash</button>
+                                    <button class="dropdown-item" type="button" data-id="draftReport"
+                                            data-table-prefix="nmr_fr">Full</button>
+                                    <button class="dropdown-item" type="button"
+                                            data-table-prefix="nmr_fr">Daily Mgt. Report</button>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">

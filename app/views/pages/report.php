@@ -258,6 +258,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
 
         $("#chartsContainer").kendoSplitter({
+            orientation: "vertical",
             panes: [
                 { collapsible: true },
                 { collapsible: true}
