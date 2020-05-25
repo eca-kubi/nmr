@@ -7,6 +7,8 @@
       <excludeFolder url="file://$MODULE_DIR$/app/uploads" />
       <excludeFolder url="file://$MODULE_DIR$/app/views/fr" />
       <excludeFolder url="file://$MODULE_DIR$/public/assets/ckfinder.old" />
+      <excludeFolder url="file://$MODULE_DIR$/public/reports" />
+      <excludeFolder url="file://$MODULE_DIR$/public/uploads" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/diversen/http-send-file" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/doctrine/inflector" />
