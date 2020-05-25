@@ -432,9 +432,13 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             jQSelectors.draftPreviewViewer.data('kendoPDFViewer').pageContainer.addClass('bg-gray');
 
             previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
+                pdf: $.extend({}, pdfExportOptions, {margin: "1cm", fileName: 'Nzema Report.pdf'}),
+                tools: [],
                 stylesheets: [
-                    //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
-                    "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?f=<?php echo now() ?> ",
+                    //"<?php echo URL_ROOT; ?>/public/assets/ckeditor/contents.css?f=<?php echo now() ?> ",
+                    //"<?php echo URL_ROOT; ?>/public/custom-assets/css/ckeditor-sample-file.css?f=<?php echo now() ?> ",
+                    //"<?php echo URL_ROOT; ?>/public/assets/ckeditor/plugins/pastefromword/pastefromword.css?f=<?php echo now() ?> ",
+                    "<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css?f=<?php echo now() ?> ",
                     "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?f=<?php echo now() ?> ",
                 ]
             }).data("kendoEditor");
@@ -464,6 +468,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     pdfViewer.toolbar.hide("#editSubmittedReport");
 
                 let viewContent = function (content) {
+                    toggleNonPrintableElements(previewEditor);
                     progress('.content-wrapper', true);
                     previewEditor.value(content);
                     kendo.drawing.drawDOM($(previewEditor.body), {
@@ -547,6 +552,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     pdfViewer.toolbar.hide("#editFinalReport");
 
                 let viewContent = function (content) {
+                    toggleNonPrintableElements(previewEditor);
                     const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
                     previewEditor.value(COVER_PAGE);
                     kendo.drawing.drawDOM($(previewEditor.body), {
@@ -682,6 +688,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             multipage: true,
                             scale: 0.7,
                             forcePageBreak: ".page-break",
+                            keepTogether: "li",
                             template: $(`#page-template-cover-toc_${tablePrefix}`).html()
                         }).done(function (group) {
                             // Remove  Cover and Distribution List
@@ -703,6 +710,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 multipage: true,
                                 scale: 0.7,
                                 forcePageBreak: ".page-break",
+                                keepTogether: "li",
                                 template: $(`#page-template-body_${tablePrefix}`).html()
                             }).done((group2) => {
                                 group.append(...group2.children);
@@ -717,7 +725,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                     } : "1cm",
                                     multipage: true,
                                     scale: 0.7,
-                                    forcePageBreak: ".page-break"
+                                    forcePageBreak: ".page-break",
+                                    keepTogether: "li"
                                 }).done(data2 => {
                                     $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`, {
                                         data_uri: data2,

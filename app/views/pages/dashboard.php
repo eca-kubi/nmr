@@ -25,28 +25,27 @@
                                 Draft Report
                             </h5>
                             <!-- small box -->
-                            <div class="small-box show border" style="cursor:pointer"
-                                 data-url="<?php echo URL_ROOT . '/pages/draft-reports/' ?>">
-                                <div class="inner">
+                            <div class="small-box border" style="cursor:pointer" >
+                                <div class="inner" data-toggle="dropdown">
                                     <h3 class="w3-hide-small ">Draft Report</h3>
                                     <h5 class="w3-hide-large w3-hide-medium text-bold">Draft Report</h5>
                                     <p>View and edit draft report</p>
                                 </div>
-                                <div class="icon text-success">
+                                <div class="icon text-success" data-toggle="dropdown">
                                     <span><svg class="fontastic-draft"
                                                style="fill: var(--orange); width: 78px; height: 90px"><use
                                                     xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use></svg></span>
                                 </div>
-                                <a href="#" class="small-box-footer" style="background-color: var(--orange)">
+                                <a href="#" class="small-box-footer" style="background-color: var(--orange)" data-toggle="dropdown">
                                     <span class="fa fa-chevron-circle-right"></span>
                                 </a>
                                 <div class="dropdown-menu">
-                                    <button class="dropdown-item" type="button" data-id="draftReport"
-                                            data-table-prefix="nmr">Flash</button>
-                                    <button class="dropdown-item" type="button" data-id="draftReport"
-                                            data-table-prefix="nmr_fr">Full</button>
-                                    <button class="dropdown-item" type="button"
-                                            data-table-prefix="nmr_fr">Daily Mgt. Report</button>
+                                    <a href="<?php echo URL_ROOT. '/pages/load-draft/nmr' ?>" class="dropdown-item" type="button"
+                                            data-table-prefix="nmr">Flash</a>
+                                    <a href="<?php echo URL_ROOT. '/pages/load-draft/nmr_fr' ?>"  class="dropdown-item" type="button"
+                                            data-table-prefix="nmr_fr">Full</a>
+                                    <a href="<?php echo URL_ROOT. '/pages/new-dmr/' ?>"  class="dropdown-item" type="button"
+                                            data-table-prefix="nmr_fr">Daily Mgt. Report</a>
                                 </div>
                             </div>
                         </div>
@@ -54,20 +53,24 @@
                             <h5 class="mb-2 text-nowrap">
                                 <i class="fa fa-file-user text-success"></i> My Reports
                             </h5>
-                            <!-- small box -->
-                            <div class="small-box show border" style="cursor:pointer"
-                                 data-url="<?php echo URL_ROOT ?>/pages/my-reports/">
-                                <div class="inner">
+                            <div class="small-box border" style="cursor:pointer" >
+                                <div class="inner" data-toggle="dropdown">
                                     <h3 class="w3-hide-small ">My Reports</h3>
                                     <h5 class="w3-hide-large w3-hide-medium text-bold">View My Reports</h5>
                                     <p>View and submit your reports.</p>
                                 </div>
-                                <div class="icon text-success">
+                                <div class="icon text-success" data-toggle="dropdown">
                                     <i class="fa fa-file-user"></i>
                                 </div>
-                                <a href="#" class="small-box-footer bg-success">
+                                <a href="#" class="small-box-footer bg-success" data-toggle="dropdown">
                                     <span class="fa fa-chevron-circle-right"></span>
                                 </a>
+                                <div class="dropdown-menu">
+                                    <a href="<?php echo URL_ROOT. '/pages/my-reports/nmr' ?>" class="dropdown-item" type="button"
+                                       data-table-prefix="nmr">Flash</a>
+                                    <a href="<?php echo URL_ROOT. '/pages/my-reports/nmr_fr' ?>"  class="dropdown-item" type="button"
+                                       data-table-prefix="nmr_fr">Full</a>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -75,21 +78,24 @@
                                 <i class="fa fa-check-double" style="color: goldenrod"></i> Submitted Reports
                                 (Departments)
                             </h5>
-                            <!-- small box -->
-                            <div class="small-box show border" style="cursor:pointer"
-                                 data-url="<?php echo URL_ROOT ?>/pages/submitted-reports/">
-                                <div class="inner">
+                            <div class="small-box show border" style="cursor:pointer">
+                                <div class="inner" data-toggle="dropdown">
                                     <h3 class="w3-hide-small text-wrap">Submitted Reports (Departments)</h3>
                                     <h5 class="w3-hide-large w3-hide-medium text-bold">Submitted Reports
                                         (Departments)</h5>
-                                    <!--<p>View reports submitted by departments</p>-->
                                 </div>
-                                <div class="icon" style="color: goldenrod">
+                                <div class="icon" style="color: goldenrod" data-toggle="dropdown">
                                     <i class="fa fa-check-double"></i>
                                 </div>
-                                <a href="#" class="small-box-footer" style="background-color: goldenrod">
+                                <a href="#" class="small-box-footer" style="background-color: goldenrod" data-toggle="dropdown">
                                     <span class="fa fa-chevron-circle-right"></span>
                                 </a>
+                                <div class="dropdown-menu">
+                                    <a href="<?php echo URL_ROOT. '/pages/submitted-reports/nmr' ?>" class="dropdown-item" type="button"
+                                       data-table-prefix="nmr">Flash</a>
+                                    <a href="<?php echo URL_ROOT. '/pages/submitted-reports/nmr_fr' ?>"  class="dropdown-item" type="button"
+                                       data-table-prefix="nmr_fr">Full</a>
+                                </div>
                             </div>
                         </div>
                         <?php if (isPowerUser($current_user->user_id)): ?>

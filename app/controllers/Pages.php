@@ -481,14 +481,14 @@ class Pages extends Controller
         }
     }
 
-    public function submittedReports(string $target_month = "", $target_year = "", $department_id = "")
+    public function submittedReports($table_prefix, string $target_month = "", $target_year = "", $department_id = "")
     {
         if (!isLoggedIn())
             redirect('users/login/pages/submitted-reports/');
         $db = Database::getDbh();
         $payload['page_title'] = 'Submitted Reports';
         $payload['is_power_user'] = isPowerUser(getUserSession()->user_id);
-        $table_prefixes = ['nmr', 'nmr_fr'];
+        $table_prefixes = [$table_prefix];
         foreach ($table_prefixes as $table_prefix) {
             $payload['cover_pages'][$table_prefix] = $db->where('name', 'cover_page')->getValue($table_prefix . '_report_parts', 'content');
             $payload['report_submissions'][$table_prefix] = array_reverse(groupedReportSubmissions(getReportSubmissions($target_month, $target_year, $department_id, $table_prefix)));
@@ -630,6 +630,75 @@ class Pages extends Controller
          redirect('pages/draft-report/' . $target_month . '/' . $target_year);
      }*/
 
+    /**
+     * Load current working draft for edition
+     */
+    public function loadDraft($table_prefix)
+    {
+        $db = Database::getDbh();
+        $current_user = getUserSession();
+        if (!isLoggedIn()) {
+            redirect('users/login/pages/load-draft/'.$table_prefix);
+        }
+        $current_sub_month = currentSubmissionMonth();
+        $current_sub_year = currentSubmissionYear();
+        $previous_month = explode(" ", getPreviousMonthYear($current_sub_month))[0];
+        $previous_year = explode(" ", getPreviousMonthYear($current_sub_month))[1];
+
+        if (hasDraftForTargetMonthYear($current_sub_month, $current_sub_year, $current_user->user_id, $table_prefix)) {
+            $draft_id = getDraftForTargetMonthYear($current_sub_month, $current_sub_year, $current_user->user_id, $table_prefix)['draft_id'];
+            redirect("pages/edit-draft/$draft_id/$table_prefix");
+        } else if (hasDraftForTargetMonthYear($previous_month, $previous_year, $current_user->user_id, $table_prefix)) {
+            // if a draft exists for the previous month create a new one based on it
+            $previous_draft = getDraftForTargetMonthYear($previous_month, $previous_year, $current_user->user_id, $table_prefix);
+            if ($draft_id = $db->insert($table_prefix . '_editor_draft', [
+                'content' => $previous_draft['content'],
+                'spreadsheet_content' => $previous_draft['spreadsheet_content'],
+                'target_month' => $current_sub_month,
+                'target_year' => $current_sub_year,
+                'user_id' => $current_user->user_id,
+                'time_modified' => now(),
+                'target_month_no' => monthNumber($current_sub_month)
+            ])) {
+                // Create an entry into my reports
+                $db->insert($table_prefix . '_my_reports', ['draft_id' => $draft_id]);
+                redirect("pages/edit-draft/$draft_id/$table_prefix");
+            }
+        } else if ($db->where('department_id', $current_user->department_id)
+            ->where('target_month', $previous_month)
+            ->where('target_year', $previous_year)
+            ->has($table_prefix . '_report_submissions')) {
+            // Get report submitted for the user's department in the previous year
+            $previous_draft = $db->where('department_id', $current_user->department_id)->where('target_month', $previous_month)->where('target_year', $previous_year)->getOne($table_prefix . '_report_submissions');
+            if ($draft_id = $db->insert($table_prefix . '_editor_draft', [
+                'content' => $previous_draft['content'],
+                'spreadsheet_content' => $previous_draft['spreadsheet_content'],
+                'target_month' => $current_sub_month,
+                'target_year' => $current_sub_year,
+                'user_id' => $current_user->user_id,
+                'time_modified' => now(),
+                'target_month_no' => monthNumber($current_sub_month)
+            ])) {
+                // Create an entry into my reports
+                $db->insert($table_prefix . '_my_reports', ['draft_id' => $draft_id]);
+                redirect("pages/edit-draft/$draft_id/$table_prefix");
+            }
+        } else {
+            // Create a new draft
+            if ($draft_id = $db->insert($table_prefix . '_editor_draft', [
+                'target_month' => $current_sub_month,
+                'target_year' => $current_sub_year,
+                'user_id' => $current_user->user_id,
+                'time_modified' => now(),
+                'target_month_no' => monthNumber($current_sub_month)
+            ])) {
+                $db->insert($table_prefix . '_my_reports', ['draft_id' => $draft_id]);
+                redirect("pages/edit-draft/$draft_id/$table_prefix");
+            }
+        }
+    }
+
+
     public function draftReports($target_month = '', $target_year = '')
     {
         $db = Database::getDbh();
@@ -668,7 +737,9 @@ class Pages extends Controller
                     $db->insert($table_prefix . '_my_reports', ['draft_id' => $draft_id]);
                 }
             } else if ($db->where('department_id', $current_user->department_id)
-                ->where('target_month', $previous_month)->where('target_year', $previous_year)->has($table_prefix . '_report_submissions')) {
+                ->where('target_month', $previous_month)
+                ->where('target_year', $previous_year)
+                ->has($table_prefix . '_report_submissions')) {
                 // Get report submitted for the user's department in the previous year
                 $previous_draft = $db->where('department_id', $current_user->department_id)->where('target_month', $previous_month)->where('target_year', $previous_year)->getOne($table_prefix . '_report_submissions');
                 $payload['target_month'] = $current_sub_month;
@@ -719,7 +790,7 @@ class Pages extends Controller
                 }
             }
         }
-        $this->view('pages/draft-report', $payload);
+        $this->view('pages/draft-reports', $payload);
     }
 
 
@@ -736,14 +807,14 @@ class Pages extends Controller
         $this->view('pages/preloaded-draft-reports', $payload);
     }
 
-    public function myReports()
+    public function myReports($table_prefix)
     {
         $db = Database::getDbh();
         $payload['my_reports'] = [];
         $payload['page_title'] = 'My Reports';
         $current_user = getUserSession();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/my-reports/');
+            redirect('users/login/pages/my-reports/'.$table_prefix);
         }
 
         //Old code
@@ -770,22 +841,23 @@ class Pages extends Controller
 
         try {
             $my_reports = $db->where('d.user_id', $current_user->user_id)
-                ->join('nmr_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
+                ->join($table_prefix .'_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
                 ->orderBy('month_no_year', 'DESC')
-                ->get('nmr_editor_draft d', null, 'd.title, d.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status, d.spreadsheet_content');
+                ->get($table_prefix.'_editor_draft d', null, 'd.title, d.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status, d.spreadsheet_content');
             if (is_array($my_reports)) {
                 $my_reports = groupedMyReports($my_reports);
                 $payload['my_reports'] = $my_reports;
+                $payload['table_prefix'] = $table_prefix;
             }
 
-            $my_reports_fr = $db->where('d.user_id', $current_user->user_id)
+           /* $my_reports_fr = $db->where('d.user_id', $current_user->user_id)
                 ->join('nmr_fr_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
                 ->orderBy('month_no_year', 'DESC')
                 ->get('nmr_fr_editor_draft d', null, 'd.title, d.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status, d.spreadsheet_content');
             if (is_array($my_reports_fr)) {
                 $my_reports_fr = groupedMyReports($my_reports_fr);
                 $payload['my_reports_fr'] = $my_reports_fr;
-            }
+            }*/
         } catch (Exception $e) {
         }
         $this->view('pages/my-reports', $payload);

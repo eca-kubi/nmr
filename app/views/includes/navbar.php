@@ -11,7 +11,7 @@
                 </li>
             </ul>
 
-<!--            <span id="submissionNotice" class="blockable d-none mx-auto text-bold animated flash slower infinite"><?php /*echo isSubmissionOpened()? '<p class="text-success p-1" style="margin: 0"><i class="fa fa-info-circle"></i> Report Submission is Opened for the Current Month</p>' : '<p class="text-danger "><i class="fa fa-info-circle"></i> Report Submission is Closed for the Current Month</p>'  */?></span>
+            <!--            <span id="submissionNotice" class="blockable d-none mx-auto text-bold animated flash slower infinite"><?php /*echo isSubmissionOpened()? '<p class="text-success p-1" style="margin: 0"><i class="fa fa-info-circle"></i> Report Submission is Opened for the Current Month</p>' : '<p class="text-danger "><i class="fa fa-info-circle"></i> Report Submission is Closed for the Current Month</p>'  */ ?></span>
 -->            <!-- Right navbar links -->
             <ul class="navbar-nav ml-auto">
                 <!-- Messages Dropdown Menu -->
@@ -168,24 +168,51 @@
                             <i class="fa fa-file"></i>
                             Reports
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownId"
-                            style="position:absolute">
-                            <li><a class="dropdown-item"
-                                   href="<?php echo site_url('pages/draft-reports') ?>"><i>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownId"
+                            style="position: absolute">
+                            <li class="dropdown">
+                                <a class="dropdown-toggle dropdown-item" id="dropdownId" href="#"
+                                   data-toggle="dropdown">
+                                    <i>
                                         <svg class="fontastic-draft"
                                              style="fill: currentColor; height: 14px; width: 14px">
-                                            <use
-                                                    xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use>
+                                            <use xlink:href="<?php echo ICON_PATH . '#fontastic-draft' ?>"></use>
                                         </svg>
-                                    </i> Draft Report</a>
+                                    </i> Draft Report
+                                </a>
+                                <ul class="dropdown-menu" style="position: absolute">
+                                    <li><a class="dropdown-item"
+                                           href="<?php echo URL_ROOT . '/pages/load-draft/nmr' ?>">Flash</a></li>
+                                    <li><a class="dropdown-item"
+                                           href="<?php echo URL_ROOT . '/pages/load-draft/nmr_fr' ?>">Full</a></li>
+                                    <li><a class="dropdown-item" href="<?php echo URL_ROOT . '/pages/new-dmr' ?>">Daily
+                                            Mgt.</a></li>
+                                </ul>
                             </li>
-                            <li><a class="dropdown-item"
-                                   href="<?php echo site_url('pages/my-reports/') ?>"><i
-                                            class="fa fa-file-user"></i> My Reports</a>
+                            <li class="dropdown">
+                                <a class="dropdown-item dropdown-toggle" href="#" data-toggle="dropdown">
+                                    <i class="fa fa-file-user"></i>
+                                    My Reports
+                                </a>
+                                <ul class="dropdown-menu" style="position: absolute">
+                                    <li><a class="dropdown-item"
+                                           href="<?php echo URL_ROOT . '/pages/my-reports/nmr' ?>">Flash</a></li>
+                                    <li><a class="dropdown-item"
+                                           href="<?php echo URL_ROOT . '/pages/my-reports/nmr_fr' ?>">Full</a></li>
+                                </ul>
                             </li>
-                            <li><a class="dropdown-item"
-                                   href="<?php echo site_url('pages/submitted-reports/') ?>"><i
-                                            class="fa fa-check-double"></i> Submitted Reports</a>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle dropdown-item" href="#" data-toggle="dropdown"><i
+                                            class="fa fa-check-double"></i>
+                                    Submitted Reports
+                                </a>
+                                <ul class="dropdown-menu" style="position: absolute">
+                                    <li><a class="dropdown-item"
+                                           href="<?php echo URL_ROOT . '/pages/submitted-reports/nmr' ?>">Flash</a></li>
+                                    <li><a class="dropdown-item"
+                                           href="<?php echo URL_ROOT . '/pages/submitted-reports/nmr_fr' ?>">Full</a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     </li>

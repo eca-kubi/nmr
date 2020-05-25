@@ -23,9 +23,11 @@
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte/box-widget.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/adminlte/adminlte-miscellaneous.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css"/>
-    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css"/>
     <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/kendo-ui/kendo.bootstrap-v4.min.css"/>
-<!--    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/css/toc/tocbot.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/bootnavbar/css/bootnavbar.css"/>
+    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css"/>
+
+    <!--    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/css/toc/tocbot.css"/>
 -->
 <!--    <link rel="stylesheet" href="<?php /*echo URL_ROOT; */?>/public/assets/ckeditor/contents.css"/>
 -->    <link rel="stylesheet" href="<?php echo URL_ROOT; ?>/public/custom-assets/css/custom.css"/>

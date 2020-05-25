@@ -3,6 +3,7 @@
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jquery-ui/effects-core.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/moment/moment.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/bootstrap/bootstrap.bundle.js"></script>
+<script src="<?php echo URL_ROOT; ?>/public/assets/bootnavbar/js/bootnavbar.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/adminlte/adminlte.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/jszip/jszip.min.js"></script>
 <script src="<?php echo URL_ROOT; ?>/public/assets/js/kendo-ui/kendo.all.min.js"></script>

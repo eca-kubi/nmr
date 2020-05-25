@@ -50,6 +50,10 @@ let pdfExportOptions = {
 //window.pdfExportOptions = pdfExportOptions;
 
 $(function () {
+    $('#navbar2').bootnavbar({
+
+    });
+
     $.blockUI.defaults.overlayCSS.opacity = 0.3;
     $.blockUI.defaults.overlayCSS.cursor = 'default';
     $.blockUI.defaults.message = "<i class='k-loading-mask k-loading-image'></i>";

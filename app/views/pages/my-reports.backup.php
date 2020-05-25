@@ -10,7 +10,7 @@
                 <div class="box-header border-bottom">
                     <div class="row p-1">
                         <h5 class="box-title text-bold"><span class="fa fa-file-user"></span>
-                            My Reports <span class="text-<?php echo $table_prefix === 'nmr'? 'primary' : 'warning'; ?>">( <?php echo flashOrFull($table_prefix)?> Report) </span>
+                            <?php echo 'My Reports <span class="text-primary">(Flash Report) </span>'; ?>
                         </h5>
                     </div>
 
@@ -28,16 +28,16 @@
                                             <ul>
                                                 <?php foreach ($reports as $report) { ?>
                                                     <li data-expanded="true"
-                                                        data-table-prefix="<?php echo $table_prefix; ?>"
+                                                        data-table-prefix="nmr"
                                                         data-target-year="<?php echo $report['target_year'] ?>"
                                                     >
                                                         <span class="fa fa-file-word"> <?php echo $report['target_month'] ?></span>
                                                         <i class="mx-2 text-bold text-sm <?php echo $report['closed_status'] ? 'text-danger submission-closed' : 'text-success' ?>"><?php echo $report['closed_status'] ? '(Closed)' : '(Opened)' ?></i>
                                                         <ul>
                                                             <li>
-                                                                <a class="mx-1 k-button <?php echo $table_prefix === 'nmr_fr' ? 'view-fr-btn' : 'view-btn'; ?>"
-                                                                   data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, $table_prefix) ?>"
-                                                                   data-table-prefix="<?php echo $table_prefix ?>"
+                                                                <a class="mx-1 k-button view-btn"
+                                                                   data-report-submitted="<?php echo isReportSubmitted($report['target_month'], $report['target_year'], $current_user->department_id, 'nmr') ?>"
+                                                                   data-table-prefix="nmr"
                                                                    data-spreadsheet-content='<?php echo $report['spreadsheet_content'] ?>'
                                                                    data-target-month="<?php echo $report['target_month'] ?>"
                                                                    data-target-year="<?php echo $report['target_year'] ?>"
@@ -58,7 +58,7 @@
                             </div>
 
                         <?php else: ?>
-                            <h5>No <?php echo flashOrFull($table_prefix) ?> Reports Available!</h5>
+                            <h5>No Flash Reports Available!</h5>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
      * @type {kendo.ui.PDFViewer}*/
     let pdfViewer;
     let reportCache = {};
-    let tablePrefix = "<?php echo $table_prefix; ?>";
+
 
     $(function () {
         kendo.bind('.k-content');
@@ -118,7 +118,7 @@
             },
             width: "100%",
             height: 800,
-            scale: 1.48,
+            scale: 1.27,
             open(e) {
                 setTimeout(() => pdfViewer.activatePage(1), 1000);
                 draftWindow.center().open().maximize().title(e.closedStatus ? {
@@ -200,14 +200,9 @@
         jQSelectors.draftPreviewViewer.data('kendoPDFViewer').pageContainer.addClass('bg-gray');
 
         previewEditor = jQSelectors.draftPreviewEditor.kendoEditor({
-            pdf: $.extend({}, pdfExportOptions, {margin: "1cm", fileName: tablePrefix === 'nmr' ? 'FLASH REPORT DRAFT' : 'FULL REPORT DRAFT'}),
             tools: [],
             stylesheets: [
-                //"<?php echo URL_ROOT; ?>/public/assets/ckeditor/contents.css?f=<?php echo now() ?> ",
-                //"<?php echo URL_ROOT; ?>/public/custom-assets/css/ckeditor-sample-file.css?f=<?php echo now() ?> ",
-                //"<?php echo URL_ROOT; ?>/public/assets/ckeditor/plugins/pastefromword/pastefromword.css?f=<?php echo now() ?> ",
-                "<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css?f=<?php echo now() ?> ",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?f=<?php echo now() ?> ",
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
             ]
         }).data("kendoEditor");
 
@@ -233,7 +228,6 @@
             }
 
             let viewContent = function (content) {
-                toggleNonPrintableElements(previewEditor);
                 previewEditor.value(content);
                 progress('.content-wrapper', true);
                 kendo.drawing.drawDOM($(previewEditor.body), {
