@@ -1,5 +1,9 @@
 <?php
 
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Shared\Html;
+
 class Pages extends Controller
 {
     public function index(): void
@@ -67,7 +71,7 @@ class Pages extends Controller
             }
         }
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
     }
 
     public function editDraft($draft_id, $table_prefix = 'nmr'): void
@@ -97,7 +101,7 @@ class Pages extends Controller
             $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
             $payload['edit_draft'] = true;
             $payload['table_prefix'] = $table_prefix;
-            isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+            isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
         } catch (Exception $e) {
         }
     }
@@ -122,7 +126,7 @@ class Pages extends Controller
         $target_year = $draft['target_year'];
         $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($target_month, $target_year, $table_prefix);
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
     }
 
     public function editSubmittedReport($report_submissions_id, $table_prefix = 'nmr'): void
@@ -158,7 +162,7 @@ class Pages extends Controller
             $payload['target_department_id'] = $submitted_report['department_id'];
             $payload['is_submission_closed'] = isSubmissionClosedByPowerUser($payload['target_month'], $payload['target_year'], $table_prefix);
             $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-            isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+            isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
         } catch (Exception $e) {
         }
     }
@@ -208,7 +212,7 @@ class Pages extends Controller
         $payload['title'] = $draft['title'];
         $payload['spreadsheet_templates'] = json_encode(getSpreadsheetTemplate());
         $payload['edit_preloaded_draft'] = true;
-        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
     }
 
     public function deleteDraft($draft_id)
@@ -447,7 +451,7 @@ class Pages extends Controller
         $target_month = $target_month ?: DEFAULT_DRAFT_MONTH;
         $target_year = $target_year ?: DEFAULT_DRAFT_YEAR;
         $ret = true;
-        if($db->where("(target_month = ? and target_year = ?)", [$target_month, $target_year])->has($table_prefix. '_target_month_year')){
+        if ($db->where("(target_month = ? and target_year = ?)", [$target_month, $target_year])->has($table_prefix . '_target_month_year')) {
             $ret = $ret && $db->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 1]);
             $ret = $ret && $db->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 0]);
         } else {
@@ -464,7 +468,7 @@ class Pages extends Controller
         $target_month = $target_month ?: DEFAULT_DRAFT_MONTH;
         $target_year = $target_year ?: DEFAULT_DRAFT_YEAR;
         $ret = true;
-        if($db->where("(target_month = ? and target_year = ?)", [$target_month, $target_year])->has($table_prefix. '_target_month_year')){
+        if ($db->where("(target_month = ? and target_year = ?)", [$target_month, $target_year])->has($table_prefix . '_target_month_year')) {
             $ret = $ret && $db->where('prop', $table_prefix . '_submission_opened')->update('settings', ['value' => 0]);
             if (currentSubmissionYear() == $target_year && currentSubmissionMonth() == $target_month) {
                 $ret = $ret && $db->where('prop', $table_prefix . '_submission_closed_by_power_user')->update('settings', ['value' => 1]);
@@ -540,7 +544,7 @@ class Pages extends Controller
         $payload['report_part_description'] = $report_part['description'];
         $payload['page_title'] = 'Edit ' . $report_part['description'];
         $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
     }
 
     public function addReportPart()
@@ -548,7 +552,7 @@ class Pages extends Controller
         $payload['page_title'] = 'New Report Part';
         $payload['add_report_part'] = true;
         $payload['spreadsheet_templates'] = json_encode(Database::getDbh()->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+        isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
     }
 
     public function reportComponents($target_month, $target_year, $table_prefix)
@@ -605,7 +609,7 @@ class Pages extends Controller
             $payload['target_year'] = $target_year;
             $payload['target_month'] = $target_month;
             $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
-            isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report', $payload);
+            isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
         } else {
             redirect('errors/index/404');
         }
@@ -826,6 +830,8 @@ class Pages extends Controller
             echo json_encode(['success' => false, 'session_expired' => true]);
             return;
         }
+        $target_month = $target_month ? $target_month : currentSubmissionMonth();
+        $target_year = $target_year ? $target_year : currentSubmissionYear();
         $draft_id = $_POST['draft_id'];
         $draft = $db->where('draft_id', $draft_id)->getOne($table_prefix . '_editor_draft');
         try {
@@ -1042,7 +1048,7 @@ class Pages extends Controller
     public function submittedDMR($date = '')
     {
         if (!isLoggedIn()) {
-            redirect('users/login/pages/submitted-dmr/'. $date);
+            redirect('users/login/pages/submitted-dmr/' . $date);
         }
         $date = $date ? $date : nowDate();
         $payload = [
@@ -1055,5 +1061,20 @@ class Pages extends Controller
         $this->view('pages/submitted-dmr', $payload);
     }
 
+    public function toWord()
+    {
+        // Creating the new document...
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+        $html = $_POST['content'];
+        //$html = '<p>Hello World </p>';
+        Html::addHtml($section, $html);
+        // Saving the document as OOXML file...
+        //$myTextElement = $section->addText('"Believe you can and you\'re halfway there." (Theodor Roosevelt)');
+
+        $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
+        //$objWriter->save(APP_ROOT . '/public/reports/' .'Nzema Report2.docx');
+        $objWriter->save('Nzema Report3.docx');
+    }
 
 }

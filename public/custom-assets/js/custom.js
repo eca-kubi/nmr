@@ -33,14 +33,21 @@ const CHART_MINE_SITE_EMPLOYEE_TURNOVER_2 = 'MINE SITE EMPLOYEE TURNOVER 2';
 
 let monthNames = kendo.cultures.current.calendars.standard.months.names;
 let pdfExportOptions = {
+    creator: 'Adamus IT',
+    author: 'Adamus IT',
+    subject: 'Nzema Monthly Report',
+    title: 'Nzema Monthly Report',
+    date: moment().toLocaleString(),
     allPages: true,
     paperSize: 'A4',
     margin: {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"},
     scale: 0.7,
     multipage: true,
     forcePageBreak: '.page-break',
-    keepTogether: "table"
+    keepTogether: "table, li"
 };
+
+//window.pdfExportOptions = pdfExportOptions;
 
 $(function () {
     $.blockUI.defaults.overlayCSS.opacity = 0.3;
@@ -74,12 +81,15 @@ $(function () {
 
 window.addEventListener("load", function () {
     setTimeout(() => {
-        $('.blockable').removeClass('d-none invisible');
-        $('footer').removeClass('d-none');
-        setTimeout(function () {
-            $.unblockUI();
-            $('.blockable').unblock({message: null});
-        }, 1000);
+        $('footer').removeClass('d-none invisible');
+        $('.blockable').removeClass('d-none invisible').unblock({message: null});
+        kendo.resize($("#chartsContainer"));
+        $.unblockUI();
+        //overlayScrollbarsInstances.body.scroll("-100%", 3300, {x: "linear", y: "easeOutBounce"});
+        overlayScrollbarsInstances.body.scroll({y: '-100%'}, 3500, {
+            x: 'swing',
+            y: 'swing'
+        });
     }, 500);
     console.log("All resources finished loading!");
 });
@@ -387,7 +397,7 @@ function random() {
 function toggleNonPrintableElements(editor) {
     let head = $(editor.document.head);
     let style = "<style id='nonPrintable'>.page-break { opacity: 0!important; height: 0!important} body.document-editor { border: 0;box-shadow: none;}</style>";
-    if(head.find('style#nonPrintable').length) {
+    if (head.find('style#nonPrintable').length) {
         $('style#nonPrintable').remove();
     } else {
         head.append(style);

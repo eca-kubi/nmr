@@ -2,7 +2,7 @@
 <?php include_once(APP_ROOT . '/views/includes/navbar.php'); ?>
 <?php include_once(APP_ROOT . '/views/includes/sidebar.php'); ?>
 <!-- .content-wrapper -->
-<div class="content-wrapper animated fadeInRight" style="margin-top: <?php //echo NAVBAR_MT; ?>">
+<div class="content-wrapper animated fadeInRight">
     <!-- content -->
     <section class="content blockable d-none">
         <div class="box-group pt-1" id="box_group">
@@ -30,45 +30,39 @@
                         <?php if (!(isset($is_submission_closed) && $is_submission_closed)): ?>
                             <div id="editorTab">
                                 <div id="editorActionToolbar"></div>
-                                <div style="padding: 30px;
-			display: flex;
-			align-items: center;
-			text-align: center;">
-                                    <div style="margin: 0 auto">
-                                        <form id="editorForm">
-                                    <textarea name="content" id="content" cols="30" rows="10"
-                                              style="height: 500px;"><?php echo $content ?? ''; ?></textarea>
-                                            <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
-                                                   value='<?php echo $spreadsheet_content ?? ''; ?>'>
-                                            <input type="hidden" id="title" name="title"
-                                                   value="<?php echo $title ?? ''; ?>">
-                                            <input type="hidden" id="draftId" name="draft_id"
-                                                   value="<?php echo $draft_id ?? ''; ?>">
-                                            <input type="hidden" id="draftTitleInput" name="draft_title_input"
-                                                   value="<?php echo $title ?? ''; ?>">
+                                <div id="editorWrapper" style="width: 100%">
+                                    <form id="editorForm">
+                                    <textarea name="content" id="editor" cols="30" rows="10"
+                                              style="height: 800px;"><?php echo $content ?? ''; ?></textarea>
+                                        <input type="hidden" id="spreadsheetContent" name="spreadsheet_content"
+                                               value='<?php echo $spreadsheet_content ?? ''; ?>'>
+                                        <input type="hidden" id="title" name="title"
+                                               value="<?php echo $title ?? ''; ?>">
+                                        <input type="hidden" id="draftId" name="draft_id"
+                                               value="<?php echo $draft_id ?? ''; ?>">
+                                        <input type="hidden" id="draftTitleInput" name="draft_title_input"
+                                               value="<?php echo $title ?? ''; ?>">
 
-                                            <input type="hidden" id="targetYear" name="target_year"
-                                                   value="<?php echo $target_year ?? ''; ?>">
-                                            <input type="hidden" id="targetMonth" name="target_month"
-                                                   value="<?php echo $target_month ?? ''; ?>">
-                                            <input type="hidden" id="departmentName" name="department_name">
-                                            <input type="hidden" id="reportSubmissionsId" name="report_submissions_id"
-                                                   value="<?php echo $report_submissions_id ?? ''; ?>">
-                                            <input type="hidden" id="editSubmittedReport" name="edit_submitted_report"
-                                                   value="<?php echo $edit_submitted_report ?? ''; ?>">
-                                            <input type="hidden" id="reportPartId" name="report_part_id"
-                                                   value="<?php echo $report_part_id ?? ''; ?>">
-                                            <input type="hidden" id="reportPartIdTemp" name="report_part_id_temp">
-                                            <input type="hidden" id="reportPartDescription"
-                                                   name="report_part_description"
-                                                   value="<?php echo $report_part_description ?? ''; ?>">
-                                            <input type="hidden" id="finalReportId" name="final_report_id"
-                                                   value="<?php echo $final_report_id ?? ''; ?>">
-
-                                        </form>
-                                    </div>
+                                        <input type="hidden" id="targetYear" name="target_year"
+                                               value="<?php echo $target_year ?? ''; ?>">
+                                        <input type="hidden" id="targetMonth" name="target_month"
+                                               value="<?php echo $target_month ?? ''; ?>">
+                                        <input type="hidden" id="targetDepartmentID" name="target_department_id"
+                                               value="<?php echo $target_department_id ?? ''; ?>">
+                                        <input type="hidden" id="departmentName" name="department_name">
+                                        <input type="hidden" id="reportSubmissionsId" name="report_submissions_id"
+                                               value="<?php echo $report_submissions_id ?? ''; ?>">
+                                        <input type="hidden" id="editSubmittedReport" name="edit_submitted_report"
+                                               value="<?php echo $edit_submitted_report ?? ''; ?>">
+                                        <input type="hidden" id="reportPartId" name="report_part_id"
+                                               value="<?php echo $report_part_id ?? ''; ?>">
+                                        <input type="hidden" id="reportPartIdTemp" name="report_part_id_temp">
+                                        <input type="hidden" id="reportPartDescription" name="report_part_description"
+                                               value="<?php echo $report_part_description ?? ''; ?>">
+                                        <input type="hidden" id="finalReportId" name="final_report_id"
+                                               value="<?php echo $final_report_id ?? ''; ?>">
+                                    </form>
                                 </div>
-
                             </div> <?php endif; ?>
                         <div id="previewTab">
                             <div id="previewContent"></div>
@@ -79,7 +73,8 @@
                 <div class="box-footer d-none"></div>
                 <!-- /.box-footer-->
             </div>
-            <div class="box collapsed border-warning <?php echo isset($is_submission_closed) && $is_submission_closed ? 'd-none' : ''; ?>">
+            <div class="box collapsed border-warning <?php echo isset($is_submission_closed) && $is_submission_closed ? 'd-none' : ''; ?>"
+                 style="height: 800px">
                 <div class="box-header">
                     <h5 class="box-title text-bold"><span class="fa fa-chart-bar text-warning"></span> Charts</h5>
                     <div class="box-tools pull-right d-none">
@@ -89,8 +84,25 @@
                     </div>
                 </div>
                 <!-- /.box-header -->
-                <div class="box-body">
-                    <div class="row">
+                <div class="box-body" style="height: 450px">
+                    <div id="chartsContainer" class="border-left-0 border-top-0" style="height:450px">
+                        <div class="pane-content" style="height:450px">
+                            <div class="w-100" style="height:450px">
+                                <div id="spreadSheet" class="w-100"></div>
+                            </div>
+                        </div>
+                        <div class="pane-content" style="height:450px;overflow: hidden;">
+                            <div id="chartsTabstripHolder" style="height:450px;">
+                                <div id="chartsTabStrip" style="height:450px;"></div>
+                                <span class="fa fa-10x fa-chart-bar text-gray" id="emptyChartPlaceHolder" style="
+    position: absolute;
+    top: 40%;
+    right: 40%;
+"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<div class="row" id="chartsContainer">
                         <div class="col-md-6">
                             <div id="spreadSheet" class="w-100" style="height: 400px; width: 100%"></div>
                         </div>
@@ -102,7 +114,7 @@
     right: 40%;
 "></span>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer d-none"></div>
@@ -120,36 +132,27 @@
 <?php include_once(APP_ROOT . '/templates/kendo-templates.html'); ?>
 <input type="hidden" id="spreadsheetTemplates" value='<?php /** @var string $spreadsheet_templates */
 echo $spreadsheet_templates; ?>'>
-<style>
-    .k-editor {
-        width: 842px;
-    }
-</style>
-<?php if (!isITAdmin($current_user->user_id)): ?>
-    <style>
-        [title='View HTML'] {
-            display: none !important;
-        }
-    </style>
-<?php endif; ?>
-<style>
-    #previewEditorParent .k-editor {
-        visibility: hidden;
-        z-index: -1;
-    }
+<?php
+$table_prefixes = ['nmr', 'nmr_fr'];
+$cover_pages = [];
+foreach ($table_prefixes as $tb_p) {
+    $cover_pages[$tb_p] = Database::getDbh()->where('name', 'cover_page')->getValue($tb_p . '_report_parts', 'content');
+}
+$distribution_list = Database::getDbh()->where('name', 'distribution_list')->getValue('nmr_report_parts', 'content');
+$blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_report_parts', 'content');
+?>
 
-    /* .cke_reset_all, .cke_panel {
-         z-index: 99999991 !important;
-     }
-
-     .cke_maximized {
-         z-index: 99999995 !important;
-     }*/
-
-</style>
 <script>
     const HEADER_BACKGROUND_COLOR = "#9c27b0";
     const HEADER_BORDER = {color: HEADER_BACKGROUND_COLOR, size: 2};
+    const COVER_PAGES = {
+        nmr: `<?php echo $cover_pages['nmr']; ?>`,
+        nmr_fr: `<?php echo $cover_pages['nmr_fr']; ?>`
+    };
+    const BLANK_PAGE = `<?php echo $blank_page; ?>`;
+
+    const DISTRIBUTION_LIST = `<?php echo $distribution_list ?>`;
+
     let spreadsheetTemplates;
     /**
      * @type {kendo.ui.Spreadsheet}
@@ -176,10 +179,12 @@ echo $spreadsheet_templates; ?>'>
     let editPreloadedDraft = Boolean(<?php echo $edit_preloaded_draft ?? ''; ?>);
     let editSubmittedReport = Boolean(<?php echo $edit_submitted_report ?? ''; ?>);
     let editFinalReport = Boolean(<?php echo $edit_final_report ?? ''; ?>);
-    //let isSubmissionClosed = Boolean(<?php echo $is_submission_closed ?? ''; ?>);
     let tablePrefix = "<?php echo $table_prefix ?? 'nmr'; ?>";
+    let targetMonth = "<?php echo $target_month ?? DEFAULT_DRAFT_MONTH; ?>";
+    let targetYear = "<?php echo $target_year ?? DEFAULT_DRAFT_YEAR; ?>";
+    let targetDepartmentID = "<?php echo $target_department_id ?? ''; ?>";
+
     let clearedContents = "";
-    let targetMonthYearsSubmissionStatus = JSON.parse('<?php echo json_encode(getTargetMonthYearClosedStatus($table_prefix ?? 'nmr')) ?>');
     /** @type {kendo.ui.ToolBar}*/
     let editorActionToolbar;
     let seriesColor = {
@@ -201,12 +206,12 @@ echo $spreadsheet_templates; ?>'>
     let pdfViewer;
     let userDepartmentId = "<?php echo $current_user->department_id; ?>";
     let previewEditor;
+    let contentCover;
+    let contentDistributionList;
+    let fontSizeVariable = "12";
+    let fontFamilyVariable = '"Times New Roman", sans-serif, Arial, Verdana, "Trebuchet MS"';
 
     $(function () {
-        $("body").on('click', 'a[href^="#"], a[href^="javascript:"]', function (e) {
-            e.preventDefault();
-        });
-
         CKEDITOR.editor.prototype.value = function () {
             return this.getData();
         };
@@ -223,42 +228,338 @@ echo $spreadsheet_templates; ?>'>
         CKEDITOR.editor.prototype.paste = function (content) {
             this.insertHtml(content);
         };
+
+
         CKEDITOR.on('instanceReady', (evt) => {
+            /**
+             * @type CKEDITOR.editor;
+             * */
             let editor = evt.editor;
 
             editor.document.$.querySelector('html').style.backgroundColor = "#eeeeee";
+            editor.document.$.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
+            $(editor.document.$.body).addClass("document-editor");
+
+            /*   editor.balloonToolbars.create({
+                    buttons: 'Link,Unlink,Image',
+                    widgets: 'image'
+                });
+    */
+            let items = {};
+
+            editor.addMenuGroup('InsertRowCol');
+
+            items.insertabove = {
+                label: 'Row Above',
+                group: 'InsertRowCol',
+                command: 'rowInsertBefore',
+                icon: URL_ROOT + '/public/assets/icons/insert/rowAbove.png',
+                order: 1
+            };
+
+            items.insertbelow = {
+                label: 'Row Below',
+                group: 'InsertRowCol',
+                command: 'rowInsertAfter',
+                icon: URL_ROOT + '/public/assets/icons/insert/rowBelow.png',
+                order: 2
+            };
+
+            items.insertleft = {
+                label: 'Column Left',
+                group: 'InsertRowCol',
+                command: 'columnInsertBefore',
+                icon: URL_ROOT + '/public/assets/icons/insert/columnLeft.png',
+                order: 3
+            };
+
+            items.insertright = {
+                label: 'Column Right',
+                group: 'InsertRowCol',
+                command: 'columnInsertAfter',
+                icon: URL_ROOT + '/public/assets/icons/insert/columnRight.png',
+                order: 4
+            };
+
+            editor.addMenuItems(items);
+
+
+            editor.ui.add('InsertRowCol', CKEDITOR.UI_MENUBUTTON, {
+                label: 'Insert',
+                // Disable in source mode.
+                modes: {
+                    wysiwyg: 1
+                },
+                icon: URL_ROOT + '/public/assets/icons/insert/rowBelow.png',
+                onMenu: function () {
+                    var active = {};
+
+                    // Make all items active.
+                    for (var p in items)
+                        active[p] = CKEDITOR.TRISTATE_OFF;
+
+                    return active;
+                }
+            });
+
+            editor.addMenuGroup('DeleteRowCol');
+
+            let items2 = {
+                deletecell: {
+                    label: 'Delete Cells',
+                    group: 'DeleteRowCol',
+                    command: 'cellDelete',
+                    icon: URL_ROOT + '/public/assets/icons/delete/cellDelete.png',
+                    order: 1
+                },
+                deletecol: {
+                    label: 'Delete Column',
+                    group: 'DeleteRowCol',
+                    command: 'columnDelete',
+                    icon: URL_ROOT + '/public/assets/icons/delete/columnDelete.png',
+                    order: 2
+                },
+                deleterow: {
+                    label: 'Delete Row',
+                    group: 'DeleteRowCol',
+                    command: 'rowDelete',
+                    icon: URL_ROOT + '/public/assets/icons/delete/rowDelete.png',
+                    order: 3
+                },
+                deletetable: {
+                    label: 'Delete Table',
+                    group: 'DeleteRowCol',
+                    command: 'tableDelete',
+                    icon: URL_ROOT + '/public/assets/icons/delete/tableDelete.png',
+                    order: 4
+                }
+            };
+
+            editor.addMenuItems(items2);
+
+            editor.ui.add('DeleteRowCol', CKEDITOR.UI_MENUBUTTON, {
+                label: 'Delete',
+                // Disable in source mode.
+                modes: {
+                    wysiwyg: 1
+                },
+                icon: URL_ROOT + '/public/assets/icons/delete/tableDelete.png',
+                onMenu: function () {
+                    var active = {};
+
+                    // Make all items active.
+                    for (var p in items2)
+                        active[p] = CKEDITOR.TRISTATE_OFF;
+
+                    return active;
+                }
+            });
+
+            //editor.ui.instances['InsertRowCol'] = editor.ui.items['InsertRowCol']
+            let imageBallonContext = editor.balloonToolbars.create({
+                buttons: 'Image,Link,Unlink',
+                widgets: 'image'
+            });
+
+            editor.ui.addButton('OpenLink', {
+                label: 'Open Link',
+                command: 'openLink',
+                toolbar: 'links,20',
+                icon: URL_ROOT + '/public/assets/ckeditor/plugins/openlink/icons/openLink.png'
+            });
+
+            let linkBallonContext = editor.balloonToolbars.create({
+                buttons: 'OpenLink,Link,Unlink',
+                cssSelector: 'a'
+            });
+
+            /*let openLinkButton = new CKEDITOR.ui.button({
+                name: 'OpenLink',
+                command: 'openLink',
+                icon: URL_ROOT + '/public/assets/ckeditor/plugins/openlink/icons/openLink.png'
+            });
+*/
+
+            linkBallonContext.toolbar.addItem('OpenLink', editor.ui.get('OpenLink'));
+
+            /* let tableBalloonContext = editor.balloonToolbars.create({
+                  buttons: 'Table',
+                  cssSelector: 'table'
+             });*/
+
+            //var balloonToolbar = new CKEDITOR.ui.balloonToolbar(editor);
+            let balloonToolbar = editor.balloonToolbars.create({}).toolbar;
+            //window.ballonToolbar = balloonToolbar;
+            //let toolbar = context.toolbar;
+            let BGColor = editor.ui.get('BGColor');
+            let TextColor = editor.ui.get('TextColor');
+            //BGColor._.feature.createPanel(editor);
+            //TextColor._.feature.createPanel(editor);
+            //BGColor._.panel._.definition.block.attributes ={ "aria-label": "Colors", role: "listbox"}
+            //TextColor._.panel._.definition.block.attributes = {"aria-label": "Colors", role: "listbox"}
+
+            balloonToolbar.addItems({
+                Font: editor.ui.create('Font'),
+                FontSize: editor.ui.create('FontSize'),
+                Format: editor.ui.create('Format'),
+                Bold: editor.ui.create('Bold'),
+                Italic: editor.ui.create('Italic'),
+                Underline: editor.ui.create('Underline'),
+                //TextColor: TextColor,
+                //BGColor:  BGColor,
+                NumberedList: editor.ui.create('NumberedList'),
+                BulletedList: editor.ui.create('BulletedList'),
+                //Table: editor.ui.get('Table'),
+                //Image: editor.ui.get('Image'),
+                //Link: editor.ui.get('Link'),
+                //Unlink: editor.ui.get('Unlink')
+            });
+
+            /*balloonToolbar._view.addShowListener(function () {
+                balloonToolbar.addItems({
+                    TextColor: CKEDITOR.tools.extend(editor.ui.create('TextColor'), editor.ui.get('TextColor')),
+                   // BGColor:  editor.ui.get('BGColor'),
+                })
+                //balloonToolbar._view.renderItems([TextColor, BGColor])
+            });*/
+
+            /*balloonToolbar._view.on('blur', function () {
+                balloonToolbar.deleteItem('TextColor')
+                balloonToolbar.deleteItem('BGColor')
+            })*/
+
+            editor.on('selectionChange', function (evt) {
+                var lastElement = evt.data.path.lastElement;
+                let path = evt.data.path;
+                let selection = evt.data.selection;
+
+                /*if (path.contains('table')) {
+                    toolbar.addItem('Table', editor.ui.get('Table'))
+                } else {
+                    toolbar.deleteItem('Table')
+                }*/
+                /*if (lastElement && !selection.isCollapsed()) {
+                    balloonToolbar.attach(lastElement)
+                    balloonToolbar.show()
+                } else {
+                    balloonToolbar.hide()
+                }*/
+            });
+
+            /*function toggleBallonToolbar() {
+                let selection = editor.getSelection();
+                let startElement = selection.getStartElement();
+                if (selection.getType() == CKEDITOR.SELECTION_NONE) {
+                    return;
+                }
+                if (!selection.isCollapsed() && !(CKEDITOR.plugins.widget.isDomWidgetWrapper(startElement) || CKEDITOR.plugins.widget.isDomWidgetElement(startElement))) {
+                    balloonToolbar.attach(startElement)
+                } else {
+                    balloonToolbar.hide()
+                }
+            }
+
+            // We'll use throttled function calls, because this event can be fired very, very frequently.
+            var throttledFunction = CKEDITOR.tools.eventsBuffer( 250, toggleBallonToolbar() );
+
+             editor.on('selectionCheck', throttledFunction.input);*/
+
+            editor.on('selectionCheck', function (evt) {
+                let selection = editor.getSelection();
+                let startElement = selection.getStartElement();
+                let startElementName = startElement.getName();
+                if (selection.getType() == CKEDITOR.SELECTION_NONE) {
+                    return;
+                }
+                if (!selection.isCollapsed() && !(CKEDITOR.plugins.widget.isDomWidgetWrapper(startElement) || CKEDITOR.plugins.widget.isDomWidgetElement(startElement))) {
+                    if (startElementName == 'td' || startElementName == 'th' || startElement.getParents().find((elem) => elem.getName() == 'td' || elem.getName() == 'th')) {
+                        balloonToolbar.addItem('InsertRowCol', editor.ui.create('InsertRowCol'));
+                        balloonToolbar.addItem('DeleteRowCol', editor.ui.create('DeleteRowCol'));
+                    } else {
+                        balloonToolbar.deleteItem('InsertRowCol');
+                        balloonToolbar.deleteItem('DeleteRowCol');
+                    }
+                    balloonToolbar.attach(startElement);
+                } else {
+                    balloonToolbar.hide()
+                }
+            });
+
+            //appendStyleSheets(editor.document.$, [URL_ROOT + '/public/assets/ckeditor/plugins/pastefromword/pastefromword.css']);
+            /*editor.dataProcessor.htmlFilter.addRules({
+                elements: {
+                    span: function (e) {
+                        e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
+                    },
+                    p: function (e) {
+                        e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
+                    }
+                }
+            });
+            editor.dataProcessor.dataFilter.addRules({
+                elements: {
+                    span: function (e) {
+                        e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
+                    },
+                    p: function (e) {
+                        e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
+                    }
+                }
+            });
+*/
+            loadDraft();
         });
+
         CKEDITOR.replace('content', {
-            removePlugins: 'save, forms, preview, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div',
-            extraPlugins: 'image, toc, tabletoolstoolbar, tableresize, tableresizerowandcolumn,pagebreak, pastebase64, uploadfile,saveaspdf',
+            qtRows: 8, // Count of rows
+            qtColumns: 10, // Count of columns
+            qtBorder: '1', // Border of inserted table
+            qtWidth: '100%', // Width of inserted table
+            qtStyle: {'border-collapse': 'collapse'},
+            qtClass: 'test', // Class of table
+            qtCellPadding: '0', // Cell padding table
+            qtCellSpacing: '0', // Cell spacing table
+            qtPreviewBorder: '1px solid gray', // preview table border
+            qtPreviewSize: '16px', // Preview table cell size
+            //qtPreviewBackground: '#c8def4', // preview table background (hover)
+            //removePlugins: 'save, forms, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div',
+            removePlugins: '', // Copy formatting prevents pastefromword from pasting tables properly
+            extraPlugins: 'autolink,saveaspdf,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
+
             allowedContent: true,
+            //extraAllowedContent: "img[width,height,align]",
+            //disallowedContent: "img{width,height,float}",
             format_tags: CKEDITOR.config.format_tags + ';div',
-            font_names: 'Calibri Light; Calibri;' + CKEDITOR.config.font_names,
+            font_names: 'Calibri Light; Calibri;Segoe UI Symbol;' + CKEDITOR.config.font_names,
+            //font_defaultLabel: 'Times New Roman',
+            //fontSize_defaultLabel: '11',
+            customConfig: "",
+            fontSize_sizes: '8/8pt;9/9pt;10/10pt;11/11pt;12/12pt;14/14pt;16/16pt;18/18pt;20/20pt;22/22pt;24/24pt;26/26pt;28/28pt;36/36pt;48/48pt;72/72pt',
             contentsCss: [
                 URL_ROOT + '/public/assets/ckeditor/contents.css',
                 URL_ROOT + '/public/custom-assets/css/ckeditor-sample-file.css',
-                //URL_ROOT + '/public/assets/fonts/font-face/css/fonts.css',
-                URL_ROOT + '/public/custom-assets/css/editor.css'
+                URL_ROOT + '/public/assets/ckeditor/plugins/pastefromword/pastefromword.css',
+                URL_ROOT + '/public/custom-assets/css/ckeditor-fixes.css'
             ],
             bodyClass: "document-editor",
-            height: "500px",
+            height: "500",
             title: "Nzema Monthly Report",
             toolbar: [
-                {name: 'document', items: ['saveaspdf']},
+                {name: 'document', items: ['saveaspdf'/*, 'Print'*/]},
                 {name: 'clipboard', items: ['Undo', 'Redo']},
                 {name: 'styles', items: ['Format', 'Font', 'FontSize']},
                 {
                     name: 'basicstyles',
-                    items: ['Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat', 'CopyFormatting']
+                    items: ['Bold', 'Italic', 'Underline', /*'Strike',*/ 'RemoveFormat', 'CopyFormatting']
                 },
                 {name: 'colors', items: ['TextColor', 'BGColor']},
                 {name: 'align', items: ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock']},
-                {name: 'links', items: ['toc', 'Link', 'Unlink', 'insertToc']},
+                {name: 'links', items: ['Link', 'Unlink']},
                 {
                     name: 'paragraph',
-                    items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote']
+                    items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'/*, '-', 'Blockquote'*/]
                 },
-                {name: 'insert', items: ['Image', 'Table']},
+                {name: 'insert', items: ['Image', 'Table', /*'HorizontalRule'*/]},
                 {name: 'tools', items: ['Maximize']},
                 {name: 'editing', items: ['PageBreak', isITAdmin ? 'Source' : '']}
             ],
@@ -269,119 +570,277 @@ echo $spreadsheet_templates; ?>'>
             //filebrowserImageUploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Images'
         });
 
-        editor = CKEDITOR.instances.content;
-
-        /*    editor.on('paste', function (ev) {
-                let imgs = $(ev.data.dataValue).find('img');
-                imgs.each(elem => {
-                    editor.widgets.initOn(this, 'image');
-                });
-            });
-            */
-        /*  editor.on('paste', function (ev) {
-              ev.data.html = ev.data.html.replace(/<img( [^>]*)?>/gi, '');
-          });*/
-
+        editor = CKEDITOR.instances.editor;
 
         previewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/> </div>").appendTo("body");
         previewEditor = $("#previewEditor").kendoEditor({
+            //pasteCleanup: {none: true},
+            pdf: $.extend({}, pdfExportOptions, {margin: "1cm", fileName: 'Nzema Report.pdf'}),
             tools: [],
-            pdf: {
-                allPages: true,
-                paperSize: "A4",
-                margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
-                forcePageBreak: '.page-break',
-                scale: 0.7,
-                fileName: "Nzema Monthly Report",
-                template: $(`#page-template-body_${tablePrefix}`).html()
-            },
             stylesheets: [
-                "<?php echo URL_ROOT; ?>/public/assets/css/bootstrap/bootstrap.css",
-                //"<?php echo URL_ROOT; ?>/public/assets/css/shards/shards.min.css",
-                "<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
-                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css"
+                //"<?php echo URL_ROOT; ?>/public/assets/ckeditor/contents.css?f=<?php echo now() ?> ",
+                //"<?php echo URL_ROOT; ?>/public/custom-assets/css/ckeditor-sample-file.css?f=<?php echo now() ?> ",
+                //"<?php echo URL_ROOT; ?>/public/assets/ckeditor/plugins/pastefromword/pastefromword.css?f=<?php echo now() ?> ",
+                "<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css?f=<?php echo now() ?> ",
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?f=<?php echo now() ?> ",
             ]
         }).data("kendoEditor");
 
-        spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
+        $(previewEditor.body).addClass('document-editor');
+        $(previewEditor.wrapper).find('td.k-editable-area').addClass('p-0'); // padding: 0
 
-        $(window).on("resize", function () {
-            kendo.resize($("#chartsTabstripHolder"));
-            spreadsheet.resize(true);
+
+        $("#chartsContainer").kendoSplitter({
+            //orientation: "vertical",
+            panes: [
+                {collapsible: true},
+                {collapsible: true}
+            ]
         });
 
-        let previewContent = function (contentUrl, datafilter = false, fileName = "Nzema Monthly Report") {
-            let showPdfViewer = () => {
-                progress('.content-wrapper', true);
+        spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
+
+        /* let previewContent = function (contentUrl, datafilter = false, fileName = "Nzema Monthly Report", template = "") {
+             if (template) pdfExportOptions.template = template;
+             let showPdfViewer = () => {
+                 progress('.content-wrapper', true);
+                 kendo.drawing.drawDOM($(previewEditor.body), pdfExportOptions).then(function (group) {
+                     return kendo.drawing.exportPDF(group, {});
+                 }).done(function (data) {
+                     progress('.content-wrapper');
+                     pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                     setTimeout(() => pdfViewer.activatePage(1), 500)
+                 });
+             };
+             let dataFilter = datafilter ? datafilter : (data, type) => JSON.parse(data).content;
+             if (!pdfViewer)
+                 pdfViewer = $("#previewContent").kendoPDFViewer({
+                     messages: {
+                         defaultFileName: fileName
+                     },
+                     pdfjsProcessing: {
+                         file: ""
+                     },
+                     width: "100%",
+                     height: "29.7cm",
+                     scale: 1,
+                     toolbar: {
+                         items: [
+                             "pager", "zoom", "toggleSelection", "search", "download", "print", {
+                                 id: "cancel",
+                                 type: "button",
+                                 text: "Cancel",
+                                 icon: "cancel",
+                                 click: function () {
+                                     window.history.back()
+                                 },
+                                 hidden: !isSubmissionClosed
+                             }
+                         ]
+                     }
+                 }).getKendoPDFViewer();
+             if (contentUrl) {
+                 $.get({
+                     url: contentUrl,
+                     dataType: "html",
+                     dataFilter: dataFilter,
+                     success: function (data) {
+                         previewEditor.value(data);
+                         showPdfViewer();
+                     }
+                 });
+             } else {
+                 showPdfViewer();
+             }
+         };*/
+
+        if (editFinalReport) {
+            let content = $("[name=content]").val();
+            // Extract cover page and distribution list
+            if (content) {
+                // Remove  Cover and Distribution List
+                content = removeTagAndContent('coverpage', content);
+                content = removeTagAndContent('distributionlist', content);
+                //update textarea
+                $("[name=content]").val(content);
+            }
+        }
+
+        function getPDFViewer() {
+            return typeof pdfViewer === 'undefined' ? $("#previewContent").kendoPDFViewer({
+                messages: {
+                    defaultFileName: 'Nzema Monthly Report'
+                },
+                pdfjsProcessing: {
+                    file: ""
+                },
+                width: "100%",
+                height: 800,
+                scale: 1.42,
+                toolbar: {
+                    items: [
+                        "pager", "zoom", "toggleSelection", "search", "download", "print",
+                        {
+                            id: "cancel",
+                            type: "button",
+                            text: "Cancel",
+                            icon: "cancel",
+                            click: function () {
+                                window.history.back()
+                            },
+                            hidden: isSubmissionClosed(targetMonth, targetYear, tablePrefix)
+                        }
+                    ]
+                }
+            }).getKendoPDFViewer() : pdfViewer;
+        }
+
+        pdfViewer = getPDFViewer();
+        pdfViewer.pageContainer.attr('style', 'background-color:#eeeeee;' + pdfViewer.pageContainer.attr('style'));
+
+        window.contentPreview = contentPreview;
+
+        function contentPreview(saveAsPDF = false) {
+            let drawing = kendo.drawing;
+
+            function mm(val) {
+                return val * 2.8347;
+            }
+
+            let PAGE_RECT = new kendo.geometry.Rect(
+                [0, 0], [mm(210 - 20), mm(297 - 20)]
+            );
+            if (editFinalReport) {
+                // first draw cover
+                let targetMonth = $("#targetMonth").val();
+                let targetYear = $("#targetYear").val();
+                previewEditor.value(COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear));
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     allPages: true,
                     paperSize: 'A4',
-                    scale: 0.7,
                     margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
                     multipage: true,
-                    forcePageBreak: '.page-break',
-                    template: $("#page-template").html()
-                }).then(function (group) {
-                    // Render the result as a PDF file
-                    return kendo.drawing.exportPDF(group, {});
-                }).done(function (data) {
-                    progress('.content-wrapper');
-                    pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                    setTimeout(() => pdfViewer.activatePage(1), 500)
-                });
-            };
-            let dataFilter = datafilter ? datafilter : (data, type) => JSON.parse(data).content;
-            if (!pdfViewer)
-                pdfViewer = $("#previewContent").kendoPDFViewer({
-                    messages: {
-                        defaultFileName: fileName
-                    },
-                    pdfjsProcessing: {
-                        file: ""
-                    },
-                    width: "100%",
-                    height: 800,
-                    scale: 1.5,
-                    toolbar: {
-                        items: [
-                            "pager", "zoom", "toggleSelection", "search", "download", "print", {
-                                id: "cancel",
-                                type: "button",
-                                text: "Cancel",
-                                icon: "cancel",
-                                click: function () {
-                                    window.history.back()
-                                },
-                                hidden: !isSubmissionClosed
-                            }
-                        ]
-                    }
-                }).getKendoPDFViewer();
-            if (contentUrl) {
-                $.get({
-                    url: contentUrl,
-                    dataType: "html",
-                    dataFilter: dataFilter,
-                    success: function (data) {
+                    scale: 0.7,
+                    forcePageBreak: ".page-break",
+                    keepTogether: 'table, li',
+                    template: $(`#page-template-cover-toc_${tablePrefix}`).html()
+                }).done(function (group) {
+                    progress('.content-wrapper', true);
+                    $.post({
+                        url: URL_ROOT + '/pages/preview-content',
+                        data: {content: editor.value()}
+                    }).done(function (data) {
                         previewEditor.value(data);
-                        showPdfViewer();
+                        kendo.drawing.drawDOM($(previewEditor.body), {
+                            allPages: true,
+                            paperSize: 'A4',
+                            margin: tablePrefix === 'nmr_fr' ? {
+                                top: "3cm",
+                                right: "1cm",
+                                bottom: "1cm",
+                                left: "1cm"
+                            } : "1cm",
+                            multipage: true,
+                            scale: 0.7,
+                            forcePageBreak: ".page-break",
+                            keepTogether: 'table, li',
+                            template: $(`#page-template-body_${tablePrefix}`).html()
+                        }).done((group2) => {
+                            group.append(...group2.children);
+                            kendo.drawing.exportPDF(group, {
+                                allPages: true,
+                                paperSize: 'A4',
+                                margin: tablePrefix === 'nmr_fr' ? {
+                                    top: "3cm",
+                                    right: "1cm",
+                                    bottom: "1cm",
+                                    left: "1cm"
+                                } : "1cm",
+                                multipage: true,
+                                scale: 0.7,
+                                keepTogether: 'table, li',
+                                forcePageBreak: ".page-break"
+                            }).done(data2 => {
+                                progress('.content-wrapper');
+                                pdfViewer.fromFile({data: data2.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
+                                console.log('preview')
+                                setTimeout(() => pdfViewer.activatePage(1), 1000)
+                            })
+                        })
+                    })
+
+                })
+            } else {
+                let template = $(`#page-template-body_${tablePrefix}`).html();
+                let pdfOptions = $.extend({template: template}, pdfExportOptions);
+                tablePrefix === 'nmr_fr' ? pdfOptions.margin = {
+                    top: "3cm",
+                    right: "1cm",
+                    bottom: "1cm",
+                    left: "1cm"
+                } : pdfOptions.margin = "1cm";
+                let content = editor ? editor.value() : previewEditor.value();
+                previewEditor.value(content);
+                drawing.drawDOM($(previewEditor.body), pdfOptions).then(group => {
+
+                    let content = new kendo.drawing.Group();
+                    content.append(group);
+                    kendo.drawing.fit(content, PAGE_RECT);
+
+                    return drawing.exportPDF(group, {});
+
+                }).done(data => {
+                    if (saveAsPDF) {
+                        kendo.saveAs({
+                            dataURI: data,
+                            fileName: "Nzema Report.pdf",
+                            //proxyURL: "https://demos.telerik.com/kendo-ui/service/export"
+                        });
+                    } else {
+                        pdfViewer.fromFile({data: data.split(',')[1]});
+                        setTimeout(() => pdfViewer.activatePage(1), 500);
                     }
                 });
-            } else {
-                showPdfViewer();
             }
-        };
+        }
 
-        if (!isSubmissionClosed) {
+        editorTabStrip = $("#editorTabStrip").kendoTabStrip({
+            select(e) {
+                // Hide resize handle when showing preview
+                //let resizeHandle = $(previewEditor.body).find('.k-table-resize-handle-wrapper');
+                if (e.contentElement.id === "previewTab") {
+                    //resizeHandle.hide();
+                    /*$.post(URL_ROOT + "/pages/preview-content/", {
+                        content: editor.value()
+                    }, null, "html").done((data) => {
+                        previewEditor.value(data);
+                        previewContent();
+                    });*/
+                    toggleNonPrintableElements(previewEditor);
+                    contentPreview();
+                } /*else {
+                    //resizeHandle.show();
+                }*/
+            }
+        }).data('kendoTabStrip');
+
+        /*if (isSubmissionOpened(targetMonth, targetYear, tablePrefix) || editFinalReport) {
             editorTabStrip = $("#editorTabStrip").kendoTabStrip({
                 select(e) {
+                    // Hide resize handle when showing preview
+                    //let resizeHandle = $(previewEditor.body).find('.k-table-resize-handle-wrapper');
                     if (e.contentElement.id === "previewTab") {
-                        $.post(URL_ROOT + "/pages/preview-content/", {
+                        //resizeHandle.hide();
+                        /!*$.post(URL_ROOT + "/pages/preview-content/", {
                             content: editor.value()
                         }, null, "html").done((data) => {
                             previewEditor.value(data);
                             previewContent();
-                        });
+                        });*!/
+                        toggleNonPrintableElements(previewEditor);
+                        contentPreview();
+                    } else {
+                        //resizeHandle.show();
                     }
                 }
             }).data('kendoTabStrip');
@@ -389,18 +848,18 @@ echo $spreadsheet_templates; ?>'>
             editorTabStrip = $("#editorTabStrip").kendoTabStrip().data("kendoTabStrip");
             let previewEditorValue = `<?php echo $content ?? '' ?>`;
             previewEditor.value(previewEditorValue);
-            previewContent();
-        }
+            toggleNonPrintableElements(previewEditor);
+            contentPreview();
+        }*/
 
         chartsTabStrip = $("#chartsTabStrip").kendoTabStrip({
             activate(e) {
                 let emptyChartPlaceholder = $("#emptyChartPlaceHolder");
                 spreadsheet.activeSheet(spreadsheet.sheetByName($(e.item).text()));
-                updateChartTabs();
                 if (e.contentElement.innerHTML.length)
-                    emptyChartPlaceholder.hide();
+                    emptyChartPlaceholder.addClass('d-none');
                 else
-                    emptyChartPlaceholder.show();
+                    emptyChartPlaceholder.removeClass('d-none');
             }
         }).data("kendoTabStrip");
 
@@ -470,7 +929,7 @@ echo $spreadsheet_templates; ?>'>
                     id: "submitReportBtn",
                     attributes: {"class": "submit-report-btn"},
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted($target_month ?? '', $target_year ?? '', $current_user->department_id, $table_prefix ?? 'nmr') ? 'true' : '' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted($target_month ?? '', $target_year ?? '', $department_id ?? '', $table_prefix ?? 'nmr') ? 'true' : '' ?>")
                 },
                 {
                     type: "button",
@@ -479,7 +938,7 @@ echo $spreadsheet_templates; ?>'>
                     attributes: {"class": "update-submitted-report-btn"},
                     text: "Update Submitted Report",
                     click: submitReport,
-                    hidden: Boolean("<?php echo isReportSubmitted($target_month ?? '', $target_year ?? '', $current_user->department_id, $table_prefix ?? 'nmr') ? '' : 'true' ?>")
+                    hidden: Boolean("<?php echo isReportSubmitted($target_month ?? '', $target_year ?? '', $department_id ?? '', $table_prefix ?? 'nmr') ? '' : 'true' ?>")
                 },
                 <?php endif; ?>
 
@@ -517,91 +976,73 @@ echo $spreadsheet_templates; ?>'>
             ]
         }).data("kendoToolBar");
 
-        function appendTocHTag(value) {
-            let randomId = value + 'tag_' + Date.now();
-            editor.exec('insertHtml', {value: `<${value} id=${randomId}></${value}>`});
-        }
+        let chartMenuCommand = {
+            template: kendo.template($("#chartsMenuTemplate").html())
+        };
 
-        /*
-        // Limit image upload size
-        $(".k-i-image").on('click', function () {
-            setTimeout(function(){
-                // Attach a select handler to the Upload embedded in the ImageBrowser.
-                $(".k-imagebrowser .k-upload").find("input").data("kendoUpload").bind("select", function (e) {
-                    // Prevent the event if the selected file exceeds the specified limit.
-                    if (e.files[0].size > 1048576) {
-                        e.preventDefault();
-                        alert("Maximum allowed file size: 1MB");
-                    }
-                });
-            });
-        });*/
+        let copyToEditor = {
+            template: kendo.template($("#copyToEditor").html())
+        };
 
         spreadsheet = $("#spreadSheet").kendoSpreadsheet({
             columnWidth: 50,
             toolbar: {
                 //home: [chartMenuCommand].concat(kendo.spreadsheet.ToolBar.fn.options.tools.home),
                 home: [
-                    {
-                        template: kendo.template($("#chartsMenuTemplate").html())
-                    },
-                    {
-                        template: kendo.template($("#copyToEditor").html())
-                    },
-                    {
-                        template: kendo.template($("#updateCharts").html())
-                    },
+                    chartMenuCommand,
+                    copyToEditor,
                     <?php if (isITAdmin($current_user->user_id)) : ?>
                     {
                         type: "button",
                         template: '<a href="#" id="#saveSpreadsheetBtn" data-role="button" tabindex="0" title="Save Spreadsheet as Template" data-tool="saveSheetTemplate" class="k-button k-button-icon"  data-overflow="auto" onclick="saveSpreadsheetTemplate(event)"><span class="k-icon k-i-save"></span></a>',
                     }, <?php endif; ?>
-                    //"open",
+                    "open",
                     "exportAs",
                     //["cut", "copy", "paste"],
                     ["bold", "italic", "underline"],
                     "fontSize",
                     "fontFamily",
                     "alignment",
+                    "textWrap",
+                    "borders",
+                    ["formatDecreaseDecimal", "formatIncreaseDecimal"],
                     "backgroundColor",
                     "textColor",
-                    "format"
+                    "format",
+                    "merge",
+                    "freeze",
+                    "filter",
+                    "insertImage",
+                    "insertComment",
+                    "hyperlink"
                 ],
-                insert: false,
-                data: false
+                //insert: false,
+                //data: false
             },
-            columns: 14,
-            rows: 8,
+            //columns: 14,
+            //rows: 8,
             removeSheet(e) {
                 chartsTabStrip.remove("li[aria-controls=" + chartTabs[e.sheet.name()] + "]");  //remove chart related to sheet
-                // updateChartTabs();
-                setTimeout(() => selectChartTab(this.activeSheet().name()), 100
-                )
+                updateChartTabs();
+                if (chartsTabStrip.items().length) {
+                    setTimeout(function () {
+                        $("#emptyChartPlaceHolder").addClass('d-none');
+                        selectChartTab(spreadsheet.activeSheet().name());
+                    }, 100)
+                } else {
+                    $("#emptyChartPlaceHolder").removeClass('d-none')
+                }
             },
             selectSheet(e) {
                 selectChartTab(e.sheet.name());
             }
         }).data("kendoSpreadsheet");
-        //spreadsheet.activeSheet().range("A:N").enable(false);
-        setTimeout(function () {
-            $(window).trigger("resize");
-            setTimeout(() => {
-                if (editor) editor.focus()
-            }, 1000);
-            setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {x: 'swing', y: 'swing'}), 500);
-        }, 1500);
-
         $("#copyToEditorButton").on("click", function () {
-            let name = spreadsheet.activeSheet().name();
-            if (charts[name]) {
-                appendChartSheetImage(name, true);
-            }
-        });
-
-        $("#updateChartsButton").on("click", function () {
-            let name = spreadsheet.activeSheet().name();
-            if (charts[name]) {
-                appendChartSheetImage(name);
+            let activeSheetName = spreadsheet.activeSheet().name();
+            if (charts[activeSheetName]) {
+                addChartImageToEditor(activeSheetName, true).done(function () {
+                    addSheetImageToEditor(activeSheetName, true);
+                });
             }
         });
 
@@ -618,7 +1059,7 @@ echo $spreadsheet_templates; ?>'>
                     description: e.description,
                     departmentId: e.department_id
                 }));
-                if (!(isITAdmin || isPowerUser)) {
+                if (!(isITAdmin)) {
                     ds = ds.filter(value => value.departmentId + "" === userDepartmentId);
                 }
                 if (ds.length === 0) chartMenuButton.hide();
@@ -650,22 +1091,22 @@ echo $spreadsheet_templates; ?>'>
             chartsMenuPopup.toggle();
         });
 
-        if (editDraft && !isSubmissionClosed) {
-            loadDraft();
-        }
+        if (editor) editor.focus();
+
     });
 
     function loadDraft() {
         let json = $("#spreadsheetContent").val();
-        if (json)
+        if (json) {
             spreadsheet.fromJSON(JSON.parse(json));
-        let sheets = spreadsheet.sheets();
-        for (let i = 0; i < sheets.length; i++) {
-            createChartFromSheet(sheets[i])
+            let sheets = spreadsheet.sheets();
+            for (let i = 0; i < sheets.length; i++) {
+                createChartFromSheet(sheets[i])
+            }
+            if (chartsTabStrip.items().length) {
+                chartsTabStrip.select("li:first");
+            }
         }
-        updateChartTabs();
-        if (sheets.length > 0)
-            selectChartTab(sheets[0].name());
     }
 
     function fetchData(sheet, valueRange, fieldRange) {
@@ -709,69 +1150,72 @@ echo $spreadsheet_templates; ?>'>
         /*  if (sheets.length > 0) {
               sheetJSON.name = sheetJSON.name + " " + (parseInt(sheets.length) + 1);
           }*/
-        if (firstSheetLoading) {
+        /*if (firstSheetLoading) {
+        This was necessary to replace Sheet1 which was loaded by default in the workbook
             firstSheetLoading = false;
             sheet = spreadsheet.activeSheet();
             sheet.fromJSON(sheetJSON);
         } else {
             sheet = spreadsheet.insertSheet({});
             sheet.fromJSON(sheetJSON);
-        }
+        }*/
+        sheet = spreadsheet.insertSheet({});
+        sheet.fromJSON(sheetJSON);
         spreadsheet.activeSheet(sheet);
         return sheet;
     }
 
-    $(document).mutationSummary("connect", {
-        callback: function (response) {
-            if (response[0].added.length > 0) {
-                adjustWindowHeight(response[0].added);
-                initOverlayScrollbars($(response[0].added).find("textarea"), {
-                    resize: "vertical",
-                    sizeAutoCapable: true,
-                    paddingAbsolute: true,
-                    scrollbars: {
-                        clickScrolling: true
-                    }
-                })
-            }
-            if (response[1].added.length > 0) {
-                let chartTab = response[1].added.filter((e) => $(e).parents("#chartsTabStrip").length !== 0);
-                if (chartTab.length !== 0)
-                    chartsTabStrip.activateTab($(chartTab));
-            }
+    /* $(document).mutationSummary("connect", {
+         callback: function (response) {
+             if (response[0].added.length > 0) {
+                 adjustWindowHeight(response[0].added);
+                 initOverlayScrollbars($(response[0].added).find("textarea"), {
+                     resize: "both",
+                     sizeAutoCapable: true,
+                     paddingAbsolute: true,
+                     scrollbars: {
+                         clickScrolling: true
+                     }
+                 })
+             }
+             /!*if (response[1].added.length > 0) {
+                 let chartTab = response[1].added.filter((e) => $(e).parents("#chartsTabStrip").length !== 0);
+                 if (chartTab.length !== 0)
+                     chartsTabStrip.activateTab($(chartTab));
+             }*!/
 
-            /*if (response[2].added.length > 0) {
-                response[2].added.forEach(function (e) {
-                    if (e.id === 'k-editor-accessibility-summary')
-                        initOverlayScrollbars(e, {
-                            resize: "vertical",
-                            sizeAutoCapable: true,
-                            paddingAbsolute: true,
-                            scrollbars: {
-                                clickScrolling: true
-                            }
-                        })
-                });
-                initOverlayScrollbars(response[2].added);
-            }
+             if (response[1].added.length > 0) {
+                 response[1].added.forEach(function (e) {
+                     if (e.id === 'k-editor-accessibility-summary')
+                         initOverlayScrollbars(e, {
+                             resize: "vertical",
+                             sizeAutoCapable: true,
+                             paddingAbsolute: true,
+                             scrollbars: {
+                                 clickScrolling: true
+                             }
+                         })
+                 });
+                 initOverlayScrollbars(response[2].added);
+             }
 
-            if (response[3].added.length > 0) {
-                let textarea = $(response[3].added).find('textarea');
-                textarea.attr('rows', 8);
-                $(response[3].added).find('.k-dialog-update').on('click', function (e) {
-                    editor.body().innerHTML = textarea.val();
-                    editor.update();
-                });
-            }*/
-        },
-        queries: [
-            {element: "[data-role=window]"},
-            {element: ".k-item[role=tab]"},
-            // {element: "textarea"},
-            //{element: '.k-viewhtml-dialog'}
-        ]
-    });
-
+             if (response[2].added.length > 0) {
+                 let textarea = $(response[3].added).find('textarea');
+                 textarea.attr('rows', 8);
+                 $(response[2].added).find('.k-dialog-update').on('click', function (e) {
+                     editor.body().innerHTML = textarea.val();
+                     editor.update();
+                 });
+             }
+         },
+         queries: [
+             {element: "[data-role=window]"},
+             //{element: ".k-item[role=tab]"},
+             {element: "textarea"},
+             {element: '.k-viewhtml-dialog'}
+         ]
+     });
+ */
     function adjustWindowHeight(w) {
         let overlayHeight = $(".k-overlay").height();
         let win = $(w);
@@ -787,19 +1231,16 @@ echo $spreadsheet_templates; ?>'>
         let data = [];
         let sheetName = sheet.name();
         let chart;
-        /* if (Array.prototype.map.call(chartsTabStrip.items(), (item => item.textContent)).includes(sheetName)) {
-             spreadsheet.activeSheet(sheet);
-             return;
-         }*/
         chartsTabStrip.append([{
             text: sheetName,
             content: '<div id="' + sheetName + '" class="spreadsheet-chart" style="height: 100%; width: 100%"></div>'
         }]);
         let div = $("[id='" + sheetName + "']");
         let divParent = div.parent("[role=tabpanel]");
-        chartsTabStrip.activateTab(divParent);
-        //chartTabs[sheetName] = divParent.attr("id");
-        //updateChartTabs();
+        chartTabs[sheetName] = divParent.attr("id");
+
+        selectChartTab(sheetName);
+
         /** @type {kendo.dataviz.ui.ChartOptions}*/
         let kendoChartOptions = {
             legend: {
@@ -849,37 +1290,6 @@ echo $spreadsheet_templates; ?>'>
             transitions: false
         };
         if (sheetName === (CHART_RECOVERY_HEAD_GRADE)) {
-            let valueRange = sheet.range("B2:M4");
-            let fieldRange = sheet.range("A2:A4");
-            data = fetchData(sheet, valueRange, fieldRange);
-            chart = div.kendoChart($.extend(kendoChartOptions, {
-                title: {
-                    text: CHART_RECOVERY_HEAD_GRADE
-                },
-                dataSource: {data: data},
-                series: [
-                    {
-                        // Notice the syntax for fields
-                        // that are not valid JS identifiers
-                        field: "['RECOVERY']",
-                        categoryField: categoryField,
-                        type: "column",
-                        name: "RECOVERY",
-                        color: seriesColor.goldProduced
-                    },
-                    {
-                        field: "['HEAD GRADE']",
-                        categoryField: categoryField,
-                        type: "line",
-                        name: "HEAD GRADE",
-                        color: seriesColor.budgetOunces
-                    }
-                ],
-            })).data("kendoChart");
-            charts[sheetName] = chart;
-            bindChart(chart, sheet, valueRange, fieldRange);
-
-        } else if (sheetName === (CHART_RECOVERY_HEAD_GRADE_2)) {
             let valueRange = sheet.range("B2:M5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -972,7 +1382,7 @@ echo $spreadsheet_templates; ?>'>
             bindChart(chart, sheet, valueRange, fieldRange);
 
         } else if (sheetName === (CHART_GOLD_RECOVERED_ARL_AND_TOLL)) {
-            let valueRange = sheet.range("B2:M5");
+            let valueRange = sheet.range("B2:C5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
@@ -1058,10 +1468,10 @@ echo $spreadsheet_templates; ?>'>
                     {
                         // Notice the syntax for fields
                         // that are not valid JS identifiers
-                        field: "['GOLD PRODUCED']",
+                        field: "['ACTUAL GOLD PRODUCED (Oz)']",
                         categoryField: categoryField,
                         type: "column",
-                        name: "GOLD PRODUCED",
+                        name: "ACTUAL GOLD PRODUCED (Oz)",
                         color: seriesColor.goldProduced
                     },
                     {
@@ -1101,7 +1511,7 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === CHART_PROCESSING) {
+        } else if (sheetName === CHART_TONS_MILLED_AND_GOLD_PRODUCED) {
             let valueRange = sheet.range("B2:M5");
             let fieldRange = sheet.range("A2:A5");
             data = fetchData(sheet, valueRange, fieldRange);
@@ -1133,7 +1543,7 @@ echo $spreadsheet_templates; ?>'>
                     }
                 },
                 title: {
-                    text: CHART_PROCESSING
+                    text: CHART_TONS_MILLED_AND_GOLD_PRODUCED
                 },
                 dataSource: {data: data},
                 series: [
@@ -1169,7 +1579,6 @@ echo $spreadsheet_templates; ?>'>
                     }
                 ],
                 valueAxis: [
-
                     {
                         line: {visible: false},
                         labels: {
@@ -1180,10 +1589,10 @@ echo $spreadsheet_templates; ?>'>
                         name: "tonnes",
                         title: {
                             text: "Tonnes Milled (t)",
-                            font: "10px sans-serif"
+                            font: "0.5em sans-serif"
                         },
                         labels: {
-                            font: "10px sans-serif",
+                            font: "0.5em sans-serif",
                             format: "{0:n}"
                         },
                         narrowRange: true
@@ -1193,10 +1602,10 @@ echo $spreadsheet_templates; ?>'>
                         name: "goldProduced",
                         title: {
                             text: "Gold Produced (oz)",
-                            font: "10px sans-serif",
+                            font: "0.5em sans-serif",
                         },
                         labels: {
-                            font: "10px sans-serif",
+                            font: "0.5em sans-serif",
                             format: "{0:n}"
                         },
                         narrowRange: true
@@ -1209,7 +1618,7 @@ echo $spreadsheet_templates; ?>'>
                         visible: false
                     },
                     labels: {
-                        font: "10px sans-serif"
+                        font: "0.5em sans-serif"
                     }
                 }
             })).data("kendoChart");
@@ -1217,7 +1626,7 @@ echo $spreadsheet_templates; ?>'>
             bindChart(chart, sheet, valueRange, fieldRange);
 
         } else if (sheetName === (CHART_GOLD_PRODUCED_BUDGET_OUNCES)) {
-            let valueRange = sheet.range("B2:M4");
+            let valueRange = sheet.range("B2:C4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
@@ -1277,7 +1686,7 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
         } else if (sheetName === (CHART_PLANNED_VRS_ACTUAL_METRES)) {
-            let valueRange = sheet.range("B2:M4");
+            let valueRange = sheet.range("B2:C4");
             let fieldRange = sheet.range("A2:A4");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
@@ -1307,7 +1716,7 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
         } else if (sheetName === (CHART_CLOSING_STOCKPILE_BALANCE)) {
-            let valueRange = sheet.range("B2:M6");
+            let valueRange = sheet.range("B2:C6");
             let fieldRange = sheet.range("A2:A6");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
@@ -1391,7 +1800,7 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
         } else if (sheetName === (CHART_TOLL_DELIVERY)) {
-            let valueRange = sheet.range("B2:M8");
+            let valueRange = sheet.range("B2:C8");
             let fieldRange = sheet.range("A2:A8");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
@@ -1435,7 +1844,7 @@ echo $spreadsheet_templates; ?>'>
                         categoryField: categoryField,
                         type: "line",
                         style: "normal",
-                        dashType: "dash",
+                        dashType: "solid",
                         name: "DELIVERY GRADE (g/t)",
                         color: seriesColor.deliveryTonnage,
                         markers: {
@@ -1460,7 +1869,7 @@ echo $spreadsheet_templates; ?>'>
                         categoryField: categoryField,
                         type: "line",
                         style: "normal",
-                        dashType: "longDashDotDot",
+                        dashType: "solid",
                         name: "MILLED GRADE (g/t)",
                         color: seriesColor.milledTonnage,
                         markers: {
@@ -1492,10 +1901,10 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER)) {
+        } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER_2)) {
             sheet.range("B3:M5").format('#,###');
             sheet.range("B6:M6").format('#.0000');
-            let valueRange = sheet.range("B2:M6");
+            let valueRange = sheet.range("B2:C6");
             let fieldRange = sheet.range("A2:M6");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
@@ -1575,9 +1984,9 @@ echo $spreadsheet_templates; ?>'>
             })).data("kendoChart");
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
-        } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER_2)) {
+        } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER)) {
             sheet.range("B3:M5").format('#,###');
-            let valueRange = sheet.range("B2:G6");
+            let valueRange = sheet.range("B2:C6");
             let fieldRange = sheet.range("A2:G6");
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
@@ -1663,17 +2072,6 @@ echo $spreadsheet_templates; ?>'>
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
         }
-        //scrollToChartsTabstrip();
-    }
-
-
-    function scrollToChartsTabstrip() {
-        setTimeout(function () {
-            overlayScrollbarsInstances['body'].scroll($("#chartsTabstripHolder"), 5500, {
-                x: "linear",
-                y: "easeOutBounce"
-            })
-        }, 1000)
     }
 
     function renderSolidDot(options = {}) {
@@ -1769,79 +2167,62 @@ echo $spreadsheet_templates; ?>'>
 
         function update() {
             chart.dataSource.data(fetchData(sheet, valueRange, fieldRange));
-            /*if ($(editor.body()).find("img[id='chart_img_" + sheet.name() + "']").length || $(editor.body()).find("img[id='sheet_img_" + sheet.name() + "']").length) {
-                appendChartSheet(sheet.name());
-            }*/
+            setTimeout(function () {
+                if ($(editor.body()).find("img[data-id='chart_img_" + sheet.name() + "']").length) {
+                    addChartImageToEditor(sheet.name());
+                }
+                if ($(editor.body()).find("img[data-id='sheet_img_" + sheet.name() + "']").length) {
+                    addSheetImageToEditor(sheet.name())
+                }
+            }, 1000)
+
         }
     }
 
-    function addSheetImageToEditor(name, ignoreExisting = false) {
+    function addSheetImageToEditor(name, insert = false) {
         let draw = kendo.drawing;
         let sheet = spreadsheet.sheetByName(name);
         let promises = [];
         sheet.draw({}, group => {
-            let imgs = editor.body().querySelectorAll("div[id='sheet_img_" + name + "'] img");
             if (group.children.length > 0) {
                 for (var i = 0; i < group.children.length; i++) {
                     promises.push(draw.exportImage(group.children[i], {}));
                 }
                 for (let i = 0; i < promises.length; i++) {
-                    if (ignoreExisting || !imgs) {
-                        promises[i].done(data => editor.paste("<div id='sheet_img_" + name + "'> <img src='" + data + "'   alt=''/> </div>"));
+                    if (insert) {
+                        promises[i].done(data => {
+                            var startRange = editor.getSelection(); //Cursor position
+                            var parent = startRange.getStartElement(); //The parent <p> or <span> of the cursor
+                            var node = CKEDITOR.dom.element.createFromHtml("<img class='my-1' src='" + data + "' data-id='sheet_img_" + sheet.name() + "' style='display:block;margin-left:auto;margin-right:auto;max-width:100%; height: auto;'/>");
+                            parent.insertBeforeMe(node); //Places new node before the specified node
+                            editor.widgets.initOn(node, 'image');
+                        });
                     } else {
-                        promises[i].done(data => $(imgs).attr("src", data));
+                        let imgs = editor.body().querySelectorAll("img[data-id='sheet_img_" + sheet.name() + "']");
+                        if (imgs) {
+                            promises[i].done(data => $(imgs).attr("src", data));
+                            promises[i].done(data => $(imgs).attr("data-cke-saved-src", data));
+                        }
                     }
                 }
             }
         })
     }
 
-    function appendChartSheetImage(name, insertNewImage = false) {
-        let draw = kendo.drawing;
-        let chart = charts[name];
-        let sheet = spreadsheet.sheetByName(name);
-        let dataUri = {};
-        sheet.draw({}, group => {
-            let exportChart = chart.exportImage().then(data => data);
-            let exportSheet = draw.exportImage(group, {}).then(data => data);
-            exportChart.done((data => {
-                dataUri.chart = data;
-                if (insertNewImage) {
-                    let chartImgElem = CKEDITOR.dom.element.createFromHtml("<img id='chart_img_" + name + "' src='" + dataUri.chart + "' alt='' />");
-                   setTimeout(function () {
-                       editor.insertElement(chartImgElem);
-                       editor.widgets.initOn(chartImgElem, 'image');
-                   },10);
-
-                }
-                exportSheet.done(data => {
-                    dataUri.sheet = data;
-                    if (insertNewImage) {
-                        let sheetImgElem = CKEDITOR.dom.element.createFromHtml("<img id='sheet_img_" + name + "' src='" + dataUri.sheet + "'   alt=''/>");
-                        setTimeout(function () {
-                            editor.insertElement(sheetImgElem);
-                            editor.widgets.initOn(sheetImgElem, 'image');
-                        },10)
-                    }
-                    let editorDataHtml = $(editor.getData());
-                    if (editorDataHtml.length) {
-                        $("img[id='sheet_img_" + name + "']", editorDataHtml).attr('src', dataUri.sheet);
-                        $("img[id='chart_img_" + name + "']", editorDataHtml).attr('src', dataUri.chart);
-                        editor.setData($('<div />').append(editorDataHtml).html());
-                    }
-                });
-            }));
-        });
-    }
-
-    function addChartImageToEditor(name, ignoreExisting) {
-        let chart = charts[name];
-        chart.exportImage().done(data => {
-            let imgs = editor.body().querySelectorAll("div[data-id='chart_img_" + name + "'] img");
-            if (ignoreExisting || !imgs) {
-                editor.paste("<div id='chart_img_" + name + "'><img  src='" + data + "' alt='' data-id='chart_img_" + name + "'/></div>");
+    function addChartImageToEditor(chartName, insert = false) {
+        let chart = charts[chartName];
+        return chart.exportImage().done(data => {
+            if (insert) {
+                var startRange = editor.getSelection(); //Cursor position
+                var parent = startRange.getStartElement(); //The parent <p> or <span> of the cursor
+                var node = CKEDITOR.dom.element.createFromHtml("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;margin-left:auto;margin-right:auto;max-width:100%; height: auto;' />");
+                parent.insertBeforeMe(node); //Places new node before the specified node
+                editor.widgets.initOn(node, 'image');
             } else {
+                let imgs = editor.body().querySelectorAll("img[data-id='chart_img_" + chartName + "']");
                 $(imgs).attr("src", data);
+                $(imgs).attr("data-cke-saved-src", data);
+
             }
         })
     }
@@ -1864,7 +2245,7 @@ echo $spreadsheet_templates; ?>'>
     function selectChartTab(tabName) {
         let tab = $(chartsTabStrip.items()).filter((index, element) => $(element).text() === tabName);
         if (tab.length > 0)
-            chartsTabStrip.activateTab(tab);
+            chartsTabStrip.select(tab[0]);
     }
 
     kendo.ui.Spreadsheet.prototype.getSheetNames = function () {
@@ -1880,28 +2261,33 @@ echo $spreadsheet_templates; ?>'>
     function saveDraft(e) {
         let postDfr = jQuery.Deferred();
         let postDfrPromise = postDfr.promise();
+        let targetMonth = $("#targetMonth").val();
+        let targetYear = $("#targetYear").val();
         progress('.content-wrapper', true);
         postDfrPromise.done(function () {
             let draftId = $("#draftId");
             let title = $("#draftTitleInput").val();
-            spreadsheet.saveJSON().then(function (data) {
-                $.post(URL_ROOT + "/pages/save-draft/" + tablePrefix, {
-                    title: title,
-                    draft_id: draftId.val(),
-                    content: editor.value(),
-                    spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                }, null, "json").done(function (response, textStatus, jQueryXHR) {
-                    progress('.content-wrapper');
-                    if (response.success) {
-                        let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
-                        if (response.draft_id)
-                            $('#draftId').val(response.draft_id);
-                        setTimeout(() => kAlert.close(), 1500);
-                    } else {
-                        let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
-                        setTimeout(() => kAlert.close(), 1500);
-                    }
-                });
+            $.post(URL_ROOT + "/pages/save-draft/" + targetMonth + "/" + targetYear + "/" + tablePrefix, {
+                title: title,
+                draft_id: draftId.val(),
+                content: editor.value(),
+                spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+            }, null, "json").done(function (response, textStatus, jQueryXHR) {
+                progress('.content-wrapper');
+                if (response['session_expired']) {
+                    let href = window.location.href.insert(URL_ROOT.length, '/users/login');
+                    kendoAlert('Session Expired!', `Your session has expired! Please login and try saving your draft again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                    return;
+                }
+                if (response.success) {
+                    let kAlert = kendoAlert('Save Draft', 'Draft saved successfully!');
+                    if (response.draft_id)
+                        $('#draftId').val(response.draft_id);
+                    setTimeout(() => kAlert.close(), 1500);
+                } else {
+                    let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
+                    setTimeout(() => kAlert.close(), 1500);
+                }
             });
         });
         postDfr.resolve();
@@ -1913,10 +2299,12 @@ echo $spreadsheet_templates; ?>'>
         let dfd = $.Deferred();
         let promise = dfd.promise();
         promise.done((description) => {
+            progress('.content-wrapper', true);
             $.post(`${URL_ROOT}/pages/save-report-part/${tablePrefix}/${reportPartId}`, {
                 content: editor.value(),
                 description: description
             }, null, "json").done(d => {
+                progress('.content-wrapper');
                 let alert = kendoAlert('Success!', description + ' saved successfully!');
                 setTimeout(() => alert.close(), 1500);
             });
@@ -1945,10 +2333,10 @@ echo $spreadsheet_templates; ?>'>
                         let kAlert = kendoAlert('Save Preloaded Draft', 'Draft saved successfully!');
                         if (response.draft_id)
                             $('#draftId').val(response.draft_id);
-                        setTimeout(() => kAlert.close(), 2500);
+                        setTimeout(() => kAlert.close(), 1500);
                     } else {
                         let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
-                        setTimeout(() => kAlert.close(), 2500);
+                        setTimeout(() => kAlert.close(), 1500);
                     }
                 });
             });
@@ -1961,10 +2349,12 @@ echo $spreadsheet_templates; ?>'>
         let targetYear = $("#targetYear").val();
         let html_content = editor.value();
         previewEditor.value(html_content);
+        progress('.content-wrapper', true);
         kendo.drawing.drawDOM($(previewEditor.body), {
-            paperSize: 'a3',
-            margin: "1.3cm",
+            paperSize: 'A4',
+            margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
             multipage: true,
+            scale: 0.7,
             forcePageBreak: ".page-break"
         }).then(function (group) {
             // Render the result as a PDF file
@@ -1973,8 +2363,14 @@ echo $spreadsheet_templates; ?>'>
             $.post(`${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`, {
                 html_content: editor.value(),
                 data_uri: dataURI
-            }, () => {
-                let alert = kendoAlert('Save Flash Report', `${targetMonth} ${targetYear} Flash Report saved successfully!`);
+            }, (data) => {
+                progress('.content-wrapper');
+                if (!data.success && data['session_expired']) {
+                    let href = window.location.href.insert(URL_ROOT.length, '/users/login');
+                    kendoAlert('Session Expired!', `Your session has expired! Please login and try saving the report again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                    return;
+                }
+                let alert = kendoAlert('Save Report', `${targetMonth} ${targetYear} Report saved successfully!`);
                 setTimeout(() => alert.close(), 1500);
             }, "json")
         });
@@ -1997,7 +2393,7 @@ echo $spreadsheet_templates; ?>'>
                         }).done(function (response, textStatus, jQueryXHR) {
                             if (response.success) {
                                 let kAlert = kendoAlert('Save Draft As Preloaded', 'Draft saved successfully!');
-                                setTimeout(() => kAlert.close(), 2500);
+                                setTimeout(() => kAlert.close(), 1500);
                             } else {
                                 let kAlert = kendoAlert('Save Draft', '<span class="text-danger">Draft failed to save!</span>');
                             }
@@ -2036,7 +2432,7 @@ echo $spreadsheet_templates; ?>'>
                 $.post({
                     url: URL_ROOT + '/pages/save-spreadsheet-template',
                     data: JSON.stringify({
-                        template: JSON.stringify(activeSheet.toJSON(), null, 2),
+                        template: activeSheet.toJSON(),
                         department: departmentName,
                         description: description
                     }, null, 2),
@@ -2054,6 +2450,7 @@ echo $spreadsheet_templates; ?>'>
         let reportSubmissionsId = $("#reportSubmissionsId").val();
         let targetMonth = $("#targetMonth").val();
         let targetYear = $("#targetYear").val();
+        progress('.content-wrapper', true);
         let submit = () => {
             let dfd = $.Deferred();
             let post = $.post(URL_ROOT + "/pages/update-submitted-report/" + reportSubmissionsId + "/" + tablePrefix, {
@@ -2065,76 +2462,94 @@ echo $spreadsheet_templates; ?>'>
         };
 
         submit().done(post => post.done(data => {
+            if (!data.success && data['session_expired']) {
+                let href = window.location.href.insert(URL_ROOT.length, '/users/login');
+                kendoAlert('Session Expired!', `Your session has expired! Please login and try saving again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                return;
+            }
             let url = `${URL_ROOT}/pages/final-report/${targetMonth}/${targetYear}/${tablePrefix}`;
-            $.get(url).done(html => {
+            progress('.content-wrapper');
+            let alert = kendoAlert("Report Saved!", "Report saved successfully.");
+            setTimeout(() => alert.close(), 1500);
+            // Don't Modify Final Report
+            /*$.get(url).done(html => {
                 previewEditor.value(html);
                 kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'a3',
-                    margin: "1.3cm",
+                    paperSize: 'A4',
+                    margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
                     multipage: true,
-                    forcePageBreak: '.page-break'
+                    forcePageBreak: '.page-break',
+                    scale: 0.7,
                 }).then(function (group) {
                     return kendo.drawing.exportPDF(group, {});
                 }).done(function (dataURI) {
+                    progress('.content-wrapper');
                     $.post(url, {data_uri: dataURI, html_content: html}, null, "json").done(() => {
                         let alert = kendoAlert("Report Saved!", "Report saved successfully.");
                         setTimeout(() => alert.close(), 1500);
                     });
                 });
-            });
+            });*/
         }));
     }
 
 
     function submitReport(e) {
-        let draftId = $("#draftId");
+        let $draftId = $("#draftId");
+        let draftId = $draftId.val();
         let title = $("#draftTitleInput").val();
         let targetMonth = $("#targetMonth").val();
         let targetYear = $("#targetYear").val();
-
+        progress('.content-wrapper', true);
         // Save draft explicitly
-        $.post(URL_ROOT + "/pages/save-draft/" + tablePrefix, {
+        $.post(URL_ROOT + "/pages/save-draft/" + targetMonth + "/" + targetYear + "/" + tablePrefix, {
             title: title,
-            draft_id: draftId.val(),
+            draft_id: draftId,
             content: editor.value(),
             spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-        }, null, "json");
-
-        if ($(e.target).hasClass('update-submitted-report-btn')) {
-            showWindow('This report has already been submitted. Are you sure you want to update it?')
-                .done(e => {
+        }, null, "json").always(function (data) {
+            progress('.content-wrapper');
+            if (!data.success && data['session_expired']) {
+                let href = window.location.href.insert(URL_ROOT.length, '/users/login');
+                kendoAlert('Session Expired!', `Your session has expired! Please login and try submission again. <br><a href="${href}" ><b><u>Click here to login.</u></b></a>`, 'danger');
+                return;
+            }
+            if ($(e.target).hasClass('update-submitted-report-btn')) {
+                showWindow('This report has already been submitted. Are you sure you want to update it?')
+                    .done(e => {
+                        progress('.content-wrapper', true);
+                        $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
+                            title: title,
+                            draft_id: draftId,
+                            content: editor.value(),
+                            spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
+                        }, null, "json")
+                            .done(data => {
+                                progress('.content-wrapper');
+                                $draftId.val(data.draftId);
+                                let alert = kendoAlert("Report Updated!", "Report updated successfully.");
+                                setTimeout(() => alert.close(), 1500);
+                            });
+                    });
+            } else if ($(e.target).hasClass("submit-report-btn")) {
+                showWindow('This report will be submitted. Are you sure you want to proceed?').done(function () {
                     progress('.content-wrapper', true);
                     $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
                         title: title,
-                        draft_id: draftId.val(),
+                        draft_id: draftId,
                         content: editor.value(),
                         spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                    }, null, "json")
-                        .done(data => {
-                            progress('.content-wrapper');
-                            draftId.val(data.draftId);
-                            let alert = kendoAlert("Report Updated!", "Report updated successfully.");
-                            setTimeout(() => alert.close(), 1500);
-                        });
+                    }, null, "json").done(data => {
+                        progress('.content-wrapper');
+                        $draftId.val(data.draftId);
+                        let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
+                        setTimeout(() => alert.close(), 1500);
+                        editorActionToolbar.hide(".submit-report-btn");
+                        editorActionToolbar.show(".update-submitted-report-btn");
+                    });
                 });
-        } else if ($(e.target).hasClass("submit-report-btn")) {
-            showWindow('This report will be submitted. Are you sure you want to proceed?').done(function () {
-                progress('.content-wrapper', true);
-                $.post(URL_ROOT + "/pages/submit-report/" + tablePrefix + "/" + targetMonth + "/" + targetYear, {
-                    title: title,
-                    draft_id: draftId.val(),
-                    content: editor.value(),
-                    spreadsheet_content: JSON.stringify(spreadsheet.toJSON())
-                }, null, "json").done(data => {
-                    progress('.content-wrapper');
-                    draftId.val(data.draftId);
-                    let alert = kendoAlert("Report Submitted!", "Report submitted successfully.");
-                    setTimeout(() => alert.close(), 1500);
-                    editorActionToolbar.hide(".submit-report-btn");
-                    editorActionToolbar.show(".update-submitted-report-btn");
-                });
-            });
-        }
+            }
+        });
     }
 
     function getArrayData() {
@@ -2153,6 +2568,18 @@ echo $spreadsheet_templates; ?>'>
 
     }
 
+    function getEditor() {
+        return CKEDITOR.instances.editor;
+    }
+
+    function toWord() {
+        $.post({
+            url: URL_ROOT + '/pages/toWord',
+            data: {content: editor.value()}
+        }).done(function () {
+            console.log('success');
+        });
+    }
 </script>
 </body>
 </html>

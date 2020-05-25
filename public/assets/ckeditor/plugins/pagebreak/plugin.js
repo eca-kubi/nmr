@@ -1,5 +1,5 @@
 ﻿/**
- * @license Copyright (c) 2003-2019, CKSource - Frederico Knabben. All rights reserved.
+ * @license Copyright (c) 2003-2020, CKSource - Frederico Knabben. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -76,11 +76,14 @@
 				htmlFilter.addRules( {
 					attributes: {
 						'class': function( value, element ) {
-							var className = value.replace( 'cke_pagebreak', 'page-break' );
+							var className = value.replace( 'cke_pagebreak', '' );
 							if ( className != value ) {
+								//var span = CKEDITOR.htmlParser.fragment.fromHtml( '<span style="display: none;">&nbsp;</span>' ).children[ 0 ];
 								var span = CKEDITOR.htmlParser.fragment.fromHtml( '<span style="display: none;">&nbsp;</span>' ).children[ 0 ];
+								var br = CKEDITOR.htmlParser.fragment.fromHtml( '<br clear="all" style="page-break-before:always;">' ).children[ 0 ];
 								element.children.length = 0;
 								element.add( span );
+								element.add( br );
 								var attrs = element.attributes;
 								delete attrs[ 'aria-label' ];
 								delete attrs.contenteditable;
@@ -166,11 +169,12 @@
 	function attributesSet( label ) {
 		return {
 			'aria-label': label,
-			'class': 'cke_pagebreak',
+			'class': 'cke_pagebreak page-break',
+			clear: 'all',
 			contenteditable: 'false',
 			'data-cke-display-name': 'pagebreak',
 			'data-cke-pagebreak': 1,
-			style: 'page-break-after: always',
+			style: 'page-break-after: always;',
 			title: label
 		};
 	}

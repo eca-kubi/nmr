@@ -6,18 +6,13 @@ body, body.document-editor {
     margin: 0.5cm auto; Replaced with the style below because it was causing row and column resize handles to not show
     position: absolute;left: 50%; transform: translateX(-50%);
     */
-    position: absolute;
+   /* position: absolute;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%);*/
     background: white;
-    font-size: medium;
-    line-height: 1.2;
-    font-family: "Times New Roman", Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, Verdana, Helvetica, sans-serif;
-}
-
-body.document-editor {
-    border: 1px #D3D3D3 solid;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    font-size: 12pt;
+    line-height: 1.6;
+    font-family: "Times New Roman", Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", "Segoe UI Symbol",  Roboto, "Helvetica Neue", Arial, Verdana, Helvetica, sans-serif;
 }
 
 /*For responsive images*/
@@ -55,6 +50,20 @@ ul li:before {
     margin-right: 13px;
 }
 
+ul ul li:before {
+    content: "○";
+    font-size: 80%;
+    margin-left: -20px;
+    margin-right: 13px;
+}
+
+ul ul ul li:before {
+    content: "▫";
+    font-size: 120%;
+    margin-left: -20px;
+    margin-right: 13px;
+}
+
 /*
 Trying to fix word breaking in the middle of the word
 */
@@ -81,6 +90,10 @@ span[lang] {
     padding: 1px 5px;
     height: 4px;
     cursor: text;
+}
+
+.wrapper-table {
+    border-style: none!important;
 }
 
 @media print {

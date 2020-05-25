@@ -49,6 +49,11 @@
         "Verdana|Bold" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/VerdanaBold.ttf'?>",
         "Verdana|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/VerdanaItalic.ttf'?>",
         "Verdana|Bold|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/verdanaz.ttf'?>",
+        "Georgia" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/georgia/Georgia Regular font.ttf'?>",
+        "Georgia|Bold" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/georgia/georgia bold.ttf'?>",
+        "Georgia|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/georgia/georgia italic.ttf'?>",
+        "Georgia|Bold|Italic" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/georgia/georgia bold italic.ttf'?>",
+        "Segoe UI Symbol" : "<?php echo URL_ROOT .'/public/assets/fonts/font-face/fonts/segoeuisymbol/segoe-ui-symbol.ttf'?>"
     });
 </script>
 <script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js?t=<?php echo now(); ?>"></script>

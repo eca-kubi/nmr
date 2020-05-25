@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2003-2016, CKSource - Frederico Knabben. All rights reserved.
+Copyright (c) 2003-2020, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or http://ckeditor.com/license
 */
 
@@ -207,8 +207,8 @@ a > img {
 
 body.document-editor {
     /*box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;*/
-    width: 21cm;
-    min-height: 29.7cm;
+    width: 17cm;
+    min-height: 21cm;
     padding: 1cm 2cm 2cm;
     margin: 0.5cm auto;
     border: 1px #D3D3D3 solid;
@@ -218,8 +218,8 @@ body.document-editor {
 
 @media print {
     body.document-editor {
-        border: 0;
-        box-shadow: none;
+        border: 0!important;
+        box-shadow: none!important;
     }
 }
 
@@ -237,25 +237,26 @@ body.document-editor table {
 }
 
 body.document-editor table td {
-    border-right: 1px solid #d0d0d0;
-    border-bottom: 1px solid #d0d0d0;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
 }
 
+
 body.document-editor table td:first-of-type {
-    border-left: 1px solid #d0d0d0;
+    border-left: 1px solid black;
 }
 
 body.document-editor table tr:first-of-type td {
-    border-top: 1px solid #d0d0d0;
+    border-top: 1px solid black;
 }
 
 body.document-editor table thead th {
-    border-top: 1px solid #d0d0d0;
-    border-right: 1px solid #d0d0d0;
+    border-top: 1px solid black;
+    border-right: 1px solid black;
 }
 
 body.document-editor table thead th:first-of-type {
-    border-left: 1px solid #d0d0d0;
+    border-left: 1px solid black;
 }
 
 body.article-editor,
@@ -263,9 +264,11 @@ body.document-editor,
 body.inline-editor {
     margin-top: 30px;
     margin-bottom: 30px;
-    font-size: 16px;
+    /*font-size: 16px;*/
     line-height: 24px;
-    font-family: "Nunito Sans", Verdana, Helvetica, sans-serif;
+    /*font-family: "Nunito Sans", Verdana, Helvetica, sans-serif;*/
+    font-family: Georgia, Times, "Times New Roman", serif;
+    font-size: 12pt;
 }
 
 body.article-editor {
@@ -395,3 +398,11 @@ body.spreadsheet-editor table:not( .htCore ) td {
     border: 1px solid #ccc;
     line-height: 21px;
 }
+
+/* Custom Css*/
+
+td p {
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+}
+/* // Custom CSS */

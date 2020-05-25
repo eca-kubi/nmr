@@ -1,40 +1,8 @@
 <?php include_once(APP_ROOT . '/views/includes/styles.php'); ?>
-<style>
-    /*.k-editor {
-        width: 842px;
-    }*/
-</style>
-<?php if (!isITAdmin(getUserSession()->user_id)): ?>
-    <style>
-        /*[title='View HTML'] {
-            display: none !important;
-        }*/
-    </style>
-<?php endif; ?>
-<style>
-    /*.page-break-btn {
-        display: none !important;
-    }*/
-
-    #previewEditorParent .k-editor {
-        /*visibility: hidden;
-        z-index: -1;*/
-        position: absolute;
-        left: -9999px;
-    }
-
-    [data-role=spreadsheettoolbar] [data-tool], [data-role=editortoolbar] .k-tool-group, [data-role=borderpalette] a[role=button] {
-        margin: 1px;
-    }
-    .pane-content {
-        padding: 0 1px;
-    }
-
-</style>
 <?php include_once(APP_ROOT . '/views/includes/navbar.php'); ?>
 <?php include_once(APP_ROOT . '/views/includes/sidebar.php'); ?>
 <!-- .content-wrapper -->
-<div class="content-wrapper animated fadeInRight" style="margin-top: <?php //echo NAVBAR_MT; ?>">
+<div class="content-wrapper animated fadeInRight">
     <!-- content -->
     <section class="content blockable d-none">
         <div class="box-group pt-1" id="box_group">
@@ -93,7 +61,6 @@
                                                value="<?php echo $report_part_description ?? ''; ?>">
                                         <input type="hidden" id="finalReportId" name="final_report_id"
                                                value="<?php echo $final_report_id ?? ''; ?>">
-
                                     </form>
                                 </div>
                             </div> <?php endif; ?>
@@ -106,7 +73,8 @@
                 <div class="box-footer d-none"></div>
                 <!-- /.box-footer-->
             </div>
-            <div class="box collapsed border-warning <?php echo isset($is_submission_closed) && $is_submission_closed ? 'd-none' : ''; ?>" style="height: 700px">
+            <div class="box collapsed border-warning <?php echo isset($is_submission_closed) && $is_submission_closed ? 'd-none' : ''; ?>"
+                 style="height: 800px">
                 <div class="box-header">
                     <h5 class="box-title text-bold"><span class="fa fa-chart-bar text-warning"></span> Charts</h5>
                     <div class="box-tools pull-right d-none">
@@ -120,12 +88,12 @@
                     <div id="chartsContainer" class="border-left-0 border-top-0" style="height:600px">
                         <div class="pane-content" style="height:600px">
                             <div class="w-100" style="height:600px">
-                                <div id="spreadSheet" class="w-100" ></div>
+                                <div id="spreadSheet" class="w-100"></div>
                             </div>
                         </div>
                         <div class="pane-content" style="height:600px;overflow: hidden;">
                             <div id="chartsTabstripHolder" style="height:600px;">
-                                <div id="chartsTabStrip" style="height:600px;" ></div>
+                                <div id="chartsTabStrip" style="height:600px;"></div>
                                 <span class="fa fa-10x fa-chart-bar text-gray" id="emptyChartPlaceHolder" style="
     position: absolute;
     top: 40%;
@@ -240,13 +208,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     let previewEditor;
     let contentCover;
     let contentDistributionList;
-    $(function () {
 
+    $(function () {
         previewEditor = $("<div id='previewEditorParent'><textarea id='previewEditor' style='width: 100%;'/> </div>").appendTo("body");
         previewEditor = $("#previewEditor").kendoEditor({
             tools: [],
             stylesheets: [
-                //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
                 "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?f=<?php echo now() ?> ",
                 "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?f=<?php echo now() ?> "
             ]
@@ -256,22 +223,15 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         $(previewEditor.wrapper).find('td.k-editable-area').addClass('p-0'); // padding: 0
 
 
-
         $("#chartsContainer").kendoSplitter({
             //orientation: "vertical",
             panes: [
-                { collapsible: true },
-                { collapsible: true}
+                {collapsible: true},
+                {collapsible: true}
             ]
         });
 
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
-
-        $(window).on("resize", function () {
-            setTimeout(function () {
-                kendo.resize($('#chartsContainer'));
-            }, 1000)
-        });
 
         /* let previewContent = function (contentUrl, datafilter = false, fileName = "Nzema Monthly Report", template = "") {
              if (template) pdfExportOptions.template = template;
@@ -326,6 +286,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                  showPdfViewer();
              }
          };*/
+
         if (editFinalReport) {
             let content = $("[name=content]").val();
             // Extract cover page and distribution list
@@ -336,7 +297,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 //update textarea
                 $("[name=content]").val(content);
             }
-
         }
 
         function getPDFViewer() {
@@ -369,30 +329,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         }
 
         pdfViewer = getPDFViewer();
-        pdfViewer.pageContainer.attr('style', 'background-color:#eeeeee;' +  pdfViewer.pageContainer.attr('style'));
-
-        function getPage(page, targetMonth, targetYear) {
-            return $.get({
-                url: `${URL_ROOT}/pages/getpage/${page}/${targetMonth}/${targetYear}/${tablePrefix}`,
-                dataType: "html"
-            }).then(content => content);
-        }
-
-        function drawPage(element, pdfOptions) {
-            pdfOptions = $.extend(pdfOptions, pdfExportOptions);
-            return kendo.drawing.drawDOM(element, pdfOptions).then(group => group);
-        }
-
-        function loadPreview(group) {
-            let pdfViewer = getPDFViewer();
-            kendo.drawing.exportPDF(group, {}).done(data => {
-                pdfViewer.fromFile({data: data.split(',')[1]});
-                setTimeout(() => pdfViewer.activatePage(1), 500)
-            });
-        }
+        pdfViewer.pageContainer.attr('style', 'background-color:#eeeeee;' + pdfViewer.pageContainer.attr('style'));
 
         function contentPreview() {
             let drawing = kendo.drawing;
+
             function mm(val) {
                 return val * 2.8347;
             }
@@ -404,9 +345,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 // first draw cover
                 let targetMonth = $("#targetMonth").val();
                 let targetYear = $("#targetYear").val();
-                const COVER_PAGE = COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear);
-                let content = COVER_PAGE;
-                previewEditor.value(content);
+                previewEditor.value(COVER_PAGES[tablePrefix].replace("#: monthYear #", targetMonth.toUpperCase() + ' ' + targetYear));
                 kendo.drawing.drawDOM($(previewEditor.body), {
                     allPages: true,
                     paperSize: 'A4',
@@ -484,7 +423,26 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             }
         }
 
-
+        editorTabStrip = $("#editorTabStrip").kendoTabStrip({
+            select(e) {
+                // Hide resize handle when showing preview
+                //let resizeHandle = $(previewEditor.body).find('.k-table-resize-handle-wrapper');
+                if (e.contentElement.id === "previewTab") {
+                    //resizeHandle.hide();
+                    /*$.post(URL_ROOT + "/pages/preview-content/", {
+                        content: editor.value()
+                    }, null, "html").done((data) => {
+                        previewEditor.value(data);
+                        previewContent();
+                    });*/
+                    toggleNonPrintableElements(previewEditor);
+                    contentPreview();
+                } /*else {
+                    //resizeHandle.show();
+                }*/
+            }
+        }).data('kendoTabStrip');
+/*
         if (isSubmissionOpened(targetMonth, targetYear, tablePrefix)) {
             editorTabStrip = $("#editorTabStrip").kendoTabStrip({
                 select(e) {
@@ -492,12 +450,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     //let resizeHandle = $(previewEditor.body).find('.k-table-resize-handle-wrapper');
                     if (e.contentElement.id === "previewTab") {
                         //resizeHandle.hide();
-                        /*$.post(URL_ROOT + "/pages/preview-content/", {
+                        /!*$.post(URL_ROOT + "/pages/preview-content/", {
                             content: editor.value()
                         }, null, "html").done((data) => {
                             previewEditor.value(data);
                             previewContent();
-                        });*/
+                        });*!/
                         toggleNonPrintableElements(previewEditor);
                         contentPreview();
                     } else {
@@ -512,17 +470,16 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             toggleNonPrintableElements(previewEditor);
             contentPreview();
         }
-
+*/
 
         chartsTabStrip = $("#chartsTabStrip").kendoTabStrip({
             activate(e) {
                 let emptyChartPlaceholder = $("#emptyChartPlaceHolder");
                 spreadsheet.activeSheet(spreadsheet.sheetByName($(e.item).text()));
-                updateChartTabs();
                 if (e.contentElement.innerHTML.length)
-                    emptyChartPlaceholder.hide();
+                    emptyChartPlaceholder.addClass('d-none');
                 else
-                    emptyChartPlaceholder.show();
+                    emptyChartPlaceholder.removeClass('d-none');
             }
         }).data("kendoTabStrip");
 
@@ -667,8 +624,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 "unlink",
                 "insertImage",
                 "insertFile",
-                "subscript",
-                "superscript",
+                //"subscript",
+                //"superscript",
                 "tableWizard",
                 "createTable",
                 "addRowAbove",
@@ -683,7 +640,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 "splitCellVertically",
                 "print",
                 "formatting",
-                "cleanFormatting",
+                //"cleanFormatting",
                 "fontName",
                 "fontSize",
                 "foreColor",
@@ -722,20 +679,13 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 ],
                 kendo.ui.Editor.fn.options.fontName
             ),
-            pasteCleanup : {
-                none: true,
-                msAllFormatting: true,
-                span: true,
-                msTags: true,
-                css: false
-            },
             select(e) {
                 //console.log('select')
             },
             pdfExport(e) {
-                toggleNonPrintableElements();
+                toggleNonPrintableElements(editor);
                 e.promise.done(() => {
-                    toggleNonPrintableElements()
+                    toggleNonPrintableElements(editor)
                 });
             },
             execute: function (e) {
@@ -784,8 +734,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             },
             stylesheets: [
                 //"<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css",
-               "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?t=<?php echo now();?>",
-               "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?t=<?php echo now();?>"
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/editor.css?t=<?php echo now();?>",
+                "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?t=<?php echo now();?>"
             ],
             imageBrowser: {
                 transport: {
@@ -827,20 +777,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             },
             encoded: false
         }).data("kendoEditor");
-        //$(editor.body).off("paste")
+
         if (editor) {
             let tocDropDown = $("#toc").kendoDropDownList({
                 select(e) {
                     appendTocHTag(this.value());
-                    /*if (this.value === 'h1') {
-                        editor.exec('insertHtml', {value: `<h1 id=${}></h1>`});
-                    } else if (this.value === 'h2') {
-                        editor.exec('insertHtml', {value: `<h2 id=${}></h2>`});
-                    } else if (this.value === 'h3') {
-                        editor.exec('insertHtml', {value: `<h3 id=${}></h3>`});
-                    } else if (this.value === 'h4') {
-                        editor.exec('insertHtml', {value: `<h4 id=${}></h4>`});
-                    }*/
                 }
             });
             /* appendScriptsToEditor(editor.document, [
@@ -854,8 +795,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             //appendStyleSheets(editor.document, [URL_ROOT + '/public/custom-assets/css/editor.css?t=' + randStr, URL_ROOT + '/public/custom-assets/css/k-editor.css?t=' + randStr ]);
             $(editor.body).addClass('document-editor');
         }
-
-
         /*
         // Limit image upload size
         $(".k-i-image").on('click', function () {
@@ -922,16 +861,20 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             //rows: 8,
             removeSheet(e) {
                 chartsTabStrip.remove("li[aria-controls=" + chartTabs[e.sheet.name()] + "]");  //remove chart related to sheet
-                // updateChartTabs();
-                setTimeout(() => selectChartTab(this.activeSheet().name()), 100
-                )
+                updateChartTabs();
+                if (chartsTabStrip.items().length) {
+                    setTimeout(function () {
+                        $("#emptyChartPlaceHolder").addClass('d-none');
+                        selectChartTab(spreadsheet.activeSheet().name());
+                    }, 100)
+                } else {
+                    $("#emptyChartPlaceHolder").removeClass('d-none')
+                }
             },
             selectSheet(e) {
                 selectChartTab(e.sheet.name());
             }
         }).data("kendoSpreadsheet");
-
-
         $("#copyToEditorButton").on("click", function () {
             let activeSheetName = spreadsheet.activeSheet().name();
             if (charts[activeSheetName]) {
@@ -939,17 +882,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 addSheetImageToEditor(activeSheetName, true);
             }
         });
-
-        setTimeout(function () {
-            kendo.resize($('#chartsContainer'));
-            //kendo.resize($('div.box'));
-            //overlayScrollbarsInstances.body.scroll($("#editorTabStrip"), 5000, {x: 'swing', y: 'swing'})
-            setTimeout(() => overlayScrollbarsInstances.body.scroll({y: '-100%'}, 1500, {
-                x: 'swing',
-                y: 'swing'
-            }), 1500);
-            if (editor) editor.focus();
-        }, 3000);
 
         let chartMenuButton = $("#chartsMenuButton");
         let chartsMenuPopup = $("#chartsMenuPopup").kendoPopup({
@@ -996,7 +928,10 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             chartsMenuPopup.toggle();
         });
 
+        if (editor) editor.focus();
+
         loadDraft();
+
     });
 
     function loadDraft() {
@@ -1007,9 +942,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             for (let i = 0; i < sheets.length; i++) {
                 createChartFromSheet(sheets[i])
             }
-            updateChartTabs();
-            if (sheets.length > 0) {
-                selectChartTab(sheets[0].name());
+            if (chartsTabStrip.items().length) {
+                chartsTabStrip.select("li:first");
             }
         }
     }
@@ -1083,14 +1017,14 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     }
                 })
             }
-            if (response[1].added.length > 0) {
+            /*if (response[1].added.length > 0) {
                 let chartTab = response[1].added.filter((e) => $(e).parents("#chartsTabStrip").length !== 0);
                 if (chartTab.length !== 0)
                     chartsTabStrip.activateTab($(chartTab));
-            }
+            }*/
 
-            if (response[2].added.length > 0) {
-                response[2].added.forEach(function (e) {
+            if (response[1].added.length > 0) {
+                response[1].added.forEach(function (e) {
                     if (e.id === 'k-editor-accessibility-summary')
                         initOverlayScrollbars(e, {
                             resize: "vertical",
@@ -1104,10 +1038,10 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 initOverlayScrollbars(response[2].added);
             }
 
-            if (response[3].added.length > 0) {
+            if (response[2].added.length > 0) {
                 let textarea = $(response[3].added).find('textarea');
                 textarea.attr('rows', 8);
-                $(response[3].added).find('.k-dialog-update').on('click', function (e) {
+                $(response[2].added).find('.k-dialog-update').on('click', function (e) {
                     editor.body.innerHTML = textarea.val();
                     editor.update();
                 });
@@ -1115,7 +1049,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         },
         queries: [
             {element: "[data-role=window]"},
-            {element: ".k-item[role=tab]"},
+            //{element: ".k-item[role=tab]"},
             {element: "textarea"},
             {element: '.k-viewhtml-dialog'}
         ]
@@ -1136,19 +1070,16 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         let data = [];
         let sheetName = sheet.name();
         let chart;
-        /* if (Array.prototype.map.call(chartsTabStrip.items(), (item => item.textContent)).includes(sheetName)) {
-             spreadsheet.activeSheet(sheet);
-             return;
-         }*/
         chartsTabStrip.append([{
             text: sheetName,
             content: '<div id="' + sheetName + '" class="spreadsheet-chart" style="height: 100%; width: 100%"></div>'
         }]);
         let div = $("[id='" + sheetName + "']");
         let divParent = div.parent("[role=tabpanel]");
-        chartsTabStrip.activateTab(divParent);
-        //chartTabs[sheetName] = divParent.attr("id");
-        //updateChartTabs();
+        chartTabs[sheetName] = divParent.attr("id");
+
+        selectChartTab(sheetName);
+
         /** @type {kendo.dataviz.ui.ChartOptions}*/
         let kendoChartOptions = {
             legend: {
@@ -1981,17 +1912,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             charts[sheetName] = chart;
             bindChart(chart, sheet, valueRange, fieldRange);
         }
-        //scrollToChartsTabstrip();
-    }
-
-
-    function scrollToChartsTabstrip() {
-        setTimeout(function () {
-            overlayScrollbarsInstances['body'].scroll($("#chartsTabstripHolder"), 1500, {
-                x: "linear",
-                y: "easeOutBounce"
-            })
-        }, 3000)
     }
 
     function renderSolidDot(options = {}) {
@@ -2087,12 +2007,15 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
         function update() {
             chart.dataSource.data(fetchData(sheet, valueRange, fieldRange));
-            if ($(editor.body).find("img[data-id='chart_img_" + sheet.name() + "']").length) {
-                addChartImageToEditor(sheet.name());
-            }
-            if ($(editor.body).find("img[data-id='sheet_img_" + sheet.name() + "']").length) {
-                addSheetImageToEditor(sheet.name())
-            }
+            setTimeout(function () {
+                if ($(editor.body).find("img[data-id='chart_img_" + sheet.name() + "']").length) {
+                    addChartImageToEditor(sheet.name());
+                }
+                if ($(editor.body).find("img[data-id='sheet_img_" + sheet.name() + "']").length) {
+                    addSheetImageToEditor(sheet.name())
+                }
+            }, 1000)
+
         }
     }
 
@@ -2120,7 +2043,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         })
     }
 
-
     function addChartImageToEditor(chartName, ignoreExisting) {
         let chart = charts[chartName];
         chart.exportImage().done(data => {
@@ -2128,11 +2050,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;margin-left:auto;margin-right:auto;max-width:100%; height: auto;' />");
             } else {
                 let imgs = editor.body.querySelectorAll("img[data-id='chart_img_" + chartName + "']");
-                if (!imgs) {
+                $(imgs).attr("src", data);
+                /*if (!imgs) {
                     editor.paste("<img class='my-1' src='" + data + "' data-id='chart_img_" + chartName + "' style='display:block;margin-left:auto;margin-right:auto;max-width:100%; height: auto;' />");
                 } else {
                     $(imgs).attr("src", data);
-                }
+                }*/
             }
         })
     }
@@ -2155,7 +2078,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     function selectChartTab(tabName) {
         let tab = $(chartsTabStrip.items()).filter((index, element) => $(element).text() === tabName);
         if (tab.length > 0)
-            chartsTabStrip.activateTab(tab);
+            chartsTabStrip.select(tab[0]);
     }
 
     kendo.ui.Spreadsheet.prototype.getSheetNames = function () {
@@ -2460,8 +2383,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 });
             }
         });
-
-
     }
 
     function getArrayData() {
@@ -2479,8 +2400,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         return textArea.value;
 
     }
-
-
 </script>
 </body>
 </html>

@@ -726,7 +726,26 @@ a:hover {
     text-decoration: none!important;
 }
 
+.k-editor-toolbar {
+    font-size: 10px;
+}
 
+#previewEditorParent .k-editor {
+    position: absolute;
+    left: -9999px;
+}
+
+[data-role=spreadsheettoolbar] [data-tool], [data-role=editortoolbar] .k-tool-group, [data-role=borderpalette] a[role=button] {
+    margin: 1px;
+}
+.pane-content {
+    padding: 0 1px;
+}
+
+.page-template {
+    background-color: green!important;
+    color: red!important;
+}
 /*Adapt Red theme*/
 
 /*[class~='fa'] {

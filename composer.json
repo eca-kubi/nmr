@@ -19,7 +19,8 @@
     "illuminate/support": "5.7.19",
     "rundiz/upload": "v2.0.4",
     "tecnickcom/tcpdf": "6.3.5",
-    "phpmailer/phpmailer": "v6.1.4"
+    "phpmailer/phpmailer": "v6.1.4",
+    "phpoffice/phpword": "0.17.0"
   }
   ,
   "require-dev": {

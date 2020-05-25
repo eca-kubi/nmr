@@ -478,6 +478,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         multipage: true,
                         scale: 0.7,
                         forcePageBreak: ".page-break",
+                        keepTogether: "table, li",
                         template: $(`#page-template-body_${tablePrefix}`).html()
                     }).done(function (group) {
                         kendo.drawing.exportPDF(group, {
@@ -486,6 +487,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             margin: "1cm",
                             multipage: true,
                             scale: 0.7,
+                            keepTogether: "table, li",
                             forcePageBreak: ".page-break"
                         }).done(data => {
                             progress('.content-wrapper');
@@ -559,6 +561,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         multipage: true,
                         scale: 0.7,
                         forcePageBreak: ".page-break",
+                        keepTogether: "table, li",
                         template: $(`#page-template-cover-toc_${tablePrefix}`).html()
                     }).done(function (group) {
                         // Remove  Cover and Distribution List
@@ -579,6 +582,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                             multipage: true,
                             scale: 0.7,
                             forcePageBreak: ".page-break",
+                            keepTogether: "table, li",
                             template: $(`#page-template-body_${tablePrefix}`).html()
                         }).done((group2) => {
                             group.append(...group2.children);
@@ -593,6 +597,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                                 } : "1cm",
                                 multipage: true,
                                 scale: 0.7,
+                                keepTogether: "table, li",
                                 forcePageBreak: ".page-break"
                             }).done(data2 => {
                                 progress('.content-wrapper');

@@ -4,7 +4,9 @@
         modes: {wysiwyg: 1},
         exec: function (editor) {
             if (previewEditor) {
-                previewEditor.value(editor.value());
+                editor.update();
+                previewEditor.value(editor.element.getValue());
+                toggleNonPrintableElements(previewEditor);
                 previewEditor.saveAsPDF()
             }
             return true;
