@@ -185,8 +185,7 @@
                                            href="<?php echo URL_ROOT . '/pages/load-draft/nmr' ?>">Flash</a></li>
                                     <li><a class="dropdown-item"
                                            href="<?php echo URL_ROOT . '/pages/load-draft/nmr_fr' ?>">Full</a></li>
-                                    <li><a class="dropdown-item" href="<?php echo URL_ROOT . '/pages/new-dmr' ?>">Daily
-                                            Mgt.</a></li>
+                                    <li class="d-none"><a class="dropdown-item" href="<?php echo URL_ROOT . '/pages/new-dmr' ?>">Daily Mgt.</a></li>
                                 </ul>
                             </li>
                             <li class="dropdown">

@@ -44,7 +44,7 @@
                                             data-table-prefix="nmr">Flash</a>
                                     <a href="<?php echo URL_ROOT. '/pages/load-draft/nmr_fr' ?>"  class="dropdown-item" type="button"
                                             data-table-prefix="nmr_fr">Full</a>
-                                    <a href="<?php echo URL_ROOT. '/pages/new-dmr/' ?>"  class="dropdown-item" type="button"
+                                    <a  href="<?php echo URL_ROOT. '/pages/new-dmr/' ?>"  class="dropdown-item d-none" type="button"
                                             data-table-prefix="nmr_fr">Daily Mgt. Report</a>
                                 </div>
                             </div>
