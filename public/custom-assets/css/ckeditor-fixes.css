@@ -1,3 +1,17 @@
+body, body.document-editor {
+    width: 19cm;
+}
+
+span[lang] {
+    font-style: normal;
+}
+
+table {
+    /*
+    width: 100%;
+    */
+}
+
 body.document-editor table td > p {
     margin-top: 0;
     margin-bottom: 0;

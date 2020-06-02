@@ -986,6 +986,11 @@ function getDepartments()
     return Database::getDbh()->get('departments');
 }
 
+function getDepartmentsAsTextValue()
+{
+    return Database::getDbh()->get('departments', null, 'department as text, department_id as value');
+}
+
 function hasDraftForTargetMonthYear($target_month, $target_year, $user_id, $table_prefix = 'nmr')
 {
     return Database::getDbh()->where('target_year', $target_year)

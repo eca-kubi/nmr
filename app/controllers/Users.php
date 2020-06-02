@@ -234,4 +234,44 @@ class Users extends Controller
 
         $this->view('choose_session/index', $payload);
     }
+
+    public function index() {
+        if (!isLoggedIn()) {
+            redirect('users/login/users');
+        }
+        $db = Database::getDbh();
+        //$payload['users'] = $db->objectBuilder()->get('users');
+        $payload['page_title'] = 'Users';
+        $this->view('users/index', $payload);
+    }
+
+    public function create()
+    {
+        if (!isLoggedIn()) {
+            // throw Session timed out error
+        }
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // Add new user to database
+
+        }
+    }
+
+    public function read()
+    {
+        if (!isLoggedIn()) {
+            // throw Session timed out error
+        }
+        $db = Database::getDbh();
+        $users = $db->join('departments', 'departments.department_id = users.department_id')->objectBuilder()->get('users', null, 'user_id, concat_ws(" ", first_name, last_name) as name, staff_id as username, users.department_id as department, job_title as position, email');
+        echo json_encode($users);
+    }
+
+    public function departments()
+    {
+        $db = Database::getDbh();
+        $departments  = $db->get('departments', null, 'department as text, department_id as value');
+        echo json_encode($departments);
+    }
+
+
 }
