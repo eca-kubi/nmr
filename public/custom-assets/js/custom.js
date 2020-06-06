@@ -399,10 +399,11 @@ function random() {
 * Hide non-printable elements and effects; For example, page break, box-shadow, etc...
 * */
 function toggleNonPrintableElements(editor) {
-    let head = $(editor.document.head);
+    let headSelector = editor.document.head? editor.document.head : editor.document.getHead().$;
+    let head = $(headSelector);
     let style = "<style id='nonPrintable'>.page-break { opacity: 0!important; height: 0!important} body.document-editor { border: 0;box-shadow: none;}</style>";
     if (head.find('style#nonPrintable').length) {
-        $('style#nonPrintable').remove();
+        head.find('style#nonPrintable').remove();
     } else {
         head.append(style);
     }

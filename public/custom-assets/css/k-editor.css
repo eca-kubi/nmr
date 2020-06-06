@@ -6,13 +6,13 @@ body, body.document-editor {
     margin: 0.5cm auto; Replaced with the style below because it was causing row and column resize handles to not show
     position: absolute;left: 50%; transform: translateX(-50%);
     */
-   /* position: absolute;
-    left: 50%;
-    transform: translateX(-50%);*/
+    /* position: absolute;
+     left: 50%;
+     transform: translateX(-50%);*/
     background: white;
     font-size: 12pt;
     line-height: 1.6;
-    font-family: "Times New Roman", Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", "Segoe UI Symbol",  Roboto, "Helvetica Neue", Arial, Verdana, Helvetica, sans-serif;
+    font-family: "Times New Roman", Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", "Segoe UI Symbol", Roboto, "Helvetica Neue", Arial, Verdana, Helvetica, sans-serif;
 }
 
 /*For responsive images*/
@@ -93,7 +93,17 @@ span[lang] {
 }
 
 .wrapper-table {
-    border-style: none!important;
+    border-style: none !important;
+}
+
+.page-break {
+    opacity: 0 !important;
+    height: 0 !important
+}
+
+body.document-editor {
+    border: 0;
+    box-shadow: none;
 }
 
 @media print {
@@ -107,4 +117,3 @@ span[lang] {
         padding: 0;
     }
 }
-
