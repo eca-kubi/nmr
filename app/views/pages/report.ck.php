@@ -526,9 +526,18 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             removePlugins: '', // Copy formatting prevents pastefromword from pasting tables properly
             extraPlugins: 'autolink,saveaspdf,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
 
-            allowedContent: true,
+           // allowedContent: true,
+            allowedContent: {
+                $1: {
+                    // Use the ability to specify elements as an object.
+                    elements: CKEDITOR.dtd,
+                    attributes: true,
+                    styles: true,
+                    classes: true
+                }
+            },
             //extraAllowedContent: "img[width,height,align]",
-            //disallowedContent: "img{width,height,float}",
+            disallowedContent: "img{width,height,float}; *{text-indent};",
             format_tags: CKEDITOR.config.format_tags + ';div',
             font_names: 'Calibri Light; Calibri;Segoe UI Symbol;' + CKEDITOR.config.font_names,
             //font_defaultLabel: 'Times New Roman',
