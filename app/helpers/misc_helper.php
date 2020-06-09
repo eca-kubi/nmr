@@ -885,8 +885,8 @@ function generateFinalReport(string $target_month, $target_year, $table_prefix =
         return $content . getPageBreak();
     };
 
-    $content =  "<coverpage>$cover_page</coverpage>" .
-        "<distributionlist>$distribution_list</distributionlist>".
+    $content =  /*"<coverpage>$cover_page</coverpage>" .*/
+       /* "<distributionlist>$distribution_list</distributionlist>".*/
         "<div class='content'>". array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year, $table_prefix)), $join, "") ."</div>";
     return substr($content, 0,  -strlen(getPageBreak()));
 }

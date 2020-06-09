@@ -1010,7 +1010,8 @@ class Pages extends Controller
 
     public function previewFinalReport($target_month, $target_year, $table_prefix = 'nmr')
     {
-        echo fetchFinalReportAsHtml($target_month, $target_year, $table_prefix) ?: generateFinalReport($target_month, $target_year, $table_prefix);
+        //echo fetchFinalReportAsHtml($target_month, $target_year, $table_prefix) ?: generateFinalReport($target_month, $target_year, $table_prefix);
+        echo generateFinalReport($target_month, $target_year, $table_prefix);
     }
 
     public function getFinalReport($final_report_id, $table_prefix = 'nmr')

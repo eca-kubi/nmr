@@ -620,7 +620,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     })
                 };
 
-                let cached = reportCache[cacheKey];
+               // let cached = reportCache[cacheKey];
                 let dataUriCache = reportCache[dataUriCacheKey];
 
                 if (dataUriCache) {
