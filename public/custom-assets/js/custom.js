@@ -401,7 +401,7 @@ function random() {
 function toggleNonPrintableElements(editor) {
     let headSelector = editor.document.head? editor.document.head : editor.document.getHead().$;
     let head = $(headSelector);
-    let style = "<style id='nonPrintable'>.page-break { opacity: 0!important; height: 0!important} body.document-editor { border: 0;box-shadow: none;}</style>";
+    let style = "<style id='nonPrintable'>.page-break { opacity: 0!important; height: 0!important; border-style: none !important;} body.document-editor { border: 0;box-shadow: none;}</style>";
     if (head.find('style#nonPrintable').length) {
         head.find('style#nonPrintable').remove();
     } else {

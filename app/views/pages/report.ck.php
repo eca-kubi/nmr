@@ -524,9 +524,9 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             //qtPreviewBackground: '#c8def4', // preview table background (hover)
             //removePlugins: 'save, forms, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div',
             removePlugins: '', // Copy formatting prevents pastefromword from pasting tables properly
-            extraPlugins: 'autolink,saveaspdf,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
+            extraPlugins: 'autolink,saveaspdf,saveasdocx,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
 
-           // allowedContent: true,
+            // allowedContent: true,
             allowedContent: {
                 $1: {
                     // Use the ability to specify elements as an object.
@@ -554,7 +554,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             height: "500",
             title: "Nzema Monthly Report",
             toolbar: [
-                {name: 'document', items: ['saveaspdf'/*, 'Print'*/]},
+                {name: 'document', items: ['saveaspdf', 'saveasdocx'/*, 'Print'*/]},
                 {name: 'clipboard', items: ['Undo', 'Redo']},
                 {name: 'styles', items: ['Format', 'Font', 'FontSize']},
                 {
@@ -2588,6 +2588,45 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         }).done(function () {
             console.log('success');
         });
+    }
+
+    function convertImagesToBase64(contentDocument) {
+        //contentDocument = tinymce.get('content').getDoc();
+        // tailored for ckeditor
+        progress(".content-wrapper", true);
+        var regularImages = contentDocument.querySelectorAll("img.cke_widget_element");
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        [].forEach.call(regularImages, function (imgElement) {
+            // preparing canvas for drawing
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.width = imgElement.width;
+            canvas.height = imgElement.height;
+            ctx.drawImage(imgElement, 0, 0);
+            // by default toDataURL() produces png image, but you can also export to jpeg
+            // checkout function's documentation for more details
+            var dataURL = canvas.toDataURL();
+            imgElement.setAttribute('src', dataURL);
+            imgElement.setAttribute('data-cke-saved-src', dataURL);
+        })
+        progress(".content-wrapper");
+        canvas.remove();
+    }
+
+    function saveAsDocx(contentDocument, orientation = "portrait") {
+        contentDocument = contentDocument? contentDocument : '<!DOCTYPE html>' + editor.document.$.documentElement.outerHTML
+        var converted = htmlDocx.asBlob(contentDocument, {
+            orientation: orientation,
+            margins: {
+                left: 720,
+                right: 720
+            }
+        });
+        kendo.saveAs({
+            dataURI: converted,
+            fileName: "Document.docx"
+        })
+        // saveAs(converted, 'Document.docx');
     }
 </script>
 </body>
