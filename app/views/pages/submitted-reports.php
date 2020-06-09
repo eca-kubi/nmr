@@ -338,7 +338,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     let pdfViewer;
 
     const COVER_PAGES = {
-        nmr: '<?php echo $cover_pages['nmr']; ?>',
+        nmr: `<?php echo $cover_pages['nmr']; ?>`,
         nmr_fr: `<?php echo $cover_pages['nmr_fr']; ?>`
     };
 
