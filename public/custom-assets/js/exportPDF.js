@@ -1,7 +1,6 @@
 docEditor = editor.body();
 kendo.drawing.drawDOM($(docEditor), {
         allPages: true,
-        paperSize: 'A4',
         margin: {left: "1cm", top: "1cm", right: "1cm", bottom: "1cm"},
         multipage: true,
         scale: 0.7,

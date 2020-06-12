@@ -33,3 +33,7 @@ php_value log_errors_max_len 0
  Deny from all
  Satisfy All
 </Files>
+
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Headers: "customKey1,customKey2, headers, Pragma, Origin, X-Requested-With, Content-Type, Accept, Accept-Encoding, Authorization"
+
