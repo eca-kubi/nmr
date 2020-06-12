@@ -486,27 +486,22 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             });
 
             //appendStyleSheets(editor.document.$, [URL_ROOT + '/public/assets/ckeditor/plugins/pastefromword/pastefromword.css']);
-            /*editor.dataProcessor.htmlFilter.addRules({
+           /* editor.dataProcessor.htmlFilter.addRules({
                 elements: {
-                    span: function (e) {
-                        e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
-                    },
-                    p: function (e) {
-                        e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
+                    $: function (e) {
+                        //e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
+                        e.attributes.style = styleFilter(e)
                     }
                 }
             });
             editor.dataProcessor.dataFilter.addRules({
                 elements: {
-                    span: function (e) {
-                        e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
-                    },
-                    p: function (e) {
-                        e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
+                    $: function (e) {
+                        //e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
+                        e.attributes.style = styleFilter(e);
                     }
                 }
-            });
-*/
+            });*/
             loadDraft();
         });
 
@@ -524,7 +519,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             //qtPreviewBackground: '#c8def4', // preview table background (hover)
             //removePlugins: 'save, forms, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div',
             removePlugins: '', // Copy formatting prevents pastefromword from pasting tables properly
-            extraPlugins: 'autolink,saveaspdf,saveasdocx,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
+            extraPlugins: 'spacingsliders,autolink,saveaspdf,saveasdocx,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
 
             // allowedContent: true,
             allowedContent: {
@@ -556,7 +551,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             toolbar: [
                 {name: 'document', items: ['saveaspdf', 'saveasdocx'/*, 'Print'*/]},
                 {name: 'clipboard', items: ['Undo', 'Redo']},
-                {name: 'styles', items: ['Format', 'Font', 'FontSize']},
+                {name: 'styles', items: ['Format', 'Font', 'FontSize', 'spacingsliders']},
                 {
                     name: 'basicstyles',
                     items: ['Bold', 'Italic', 'Underline', /*'Strike',*/ 'RemoveFormat', 'CopyFormatting']
@@ -2628,6 +2623,14 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         })
         // saveAs(converted, 'Document.docx');
     }
+
+    function styleFilter (element) {
+        let style = element.attributes.style;
+        if (!style)
+            return;
+        return style.replace(/font-size:(s)*small/gi, "font-size:12pt");
+    }
+
 </script>
 </body>
 </html>
