@@ -3,13 +3,10 @@
         canUndo: false,
         modes: {wysiwyg: 1},
         exec: function (editor) {
-            if (previewEditor) {
-                editor.update();
-                previewEditor.value(editor.element.getValue());
-                toggleNonPrintableElements(previewEditor);
-                saveAsDocx('<!DOCTYPE html>' + previewEditor.document.documentElement.outerHTML);
-                toggleNonPrintableElements(previewEditor);
-            }
+            editor.update()
+            toggleNonPrintableElements(editor)
+            saveAsDocx(editor)
+            toggleNonPrintableElements(editor)
             return true;
         }
     };

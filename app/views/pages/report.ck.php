@@ -2594,14 +2594,15 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         var ctx = canvas.getContext('2d');
         [].forEach.call(regularImages, function (imgElement) {
             // preparing canvas for drawing
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
             canvas.width = imgElement.width;
             canvas.height = imgElement.height;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             //imgElement.crossOrigin = "Anonymous";
             ctx.drawImage(imgElement, 0, 0);
             // by default toDataURL() produces png image, but you can also export to jpeg
             // checkout function's documentation for more details
             var dataURL = canvas.toDataURL();
+            //imgElement.width = "80%"
             imgElement.setAttribute('src', dataURL);
             imgElement.setAttribute('data-cke-saved-src', dataURL);
         })
@@ -2609,8 +2610,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         canvas.remove();
     }
 
-    function saveAsDocx(contentDocument, orientation = "portrait") {
-        contentDocument = contentDocument? contentDocument : '<!DOCTYPE html>' + editor.document.$.documentElement.outerHTML
+    function saveAsDocx(editor, orientation = "portrait") {
+        documentElement = editor.document.$? editor.document.$.documentElement : editor.document.documentElement;
+        docElemClone = documentElement.cloneNode(true);
+        //contentDocument = contentDocument? contentDocument : '<!DOCTYPE html>' + editor.document.$.documentElement.outerHTML
+        //convertImagesToBase64(documentElement)
+        contentDocument = '<!DOCTYPE html>' + documentElement.outerHTML
         var converted = htmlDocx.asBlob(contentDocument, {
             orientation: orientation,
             /*margins: {
@@ -2622,6 +2627,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             dataURI: converted,
             fileName: "Document.docx"
         })
+        //delete docElemClone;
         // saveAs(converted, 'Document.docx');
     }
 

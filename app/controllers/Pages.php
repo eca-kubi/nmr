@@ -1118,7 +1118,7 @@ class Pages extends Controller
         }
     }
 
-    public function submittedDMR($date = '')
+    public function DMRs($date = '')
     {
         if (!isLoggedIn()) {
             redirect('users/login/pages/submitted-dmr/' . $date);
