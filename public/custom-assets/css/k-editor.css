@@ -38,31 +38,35 @@ table {
 /*
 Fix bullet circle very tiny and hardly visible in preview mode
 */
-/*ul {
+
+ul {
     list-style-type: none;
+}
+
+ul li div {
+    display: inline!important;
 }
 
 ul li:before {
     content: "•";
-    font-size: 120%; !* or whatever *!
-    !*padding-right: 5px;*!
+    font-size: 120%; /* or whatever */
     margin-left: -20px;
-    margin-right: 13px;
+    margin-right: 11px;
 }
 
 ul ul li:before {
-    content: "○";
-    font-size: 80%;
+    content: "◦";
+    font-size: 120%;
     margin-left: -20px;
-    margin-right: 13px;
+    margin-right: 11px;
 }
 
 ul ul ul li:before {
-    content: "▫";
+    content: "▪";
     font-size: 120%;
     margin-left: -20px;
-    margin-right: 13px;
-}*/
+    margin-right: 11px;
+}
 
 /*
 Trying to fix word breaking in the middle of the word

@@ -1,0 +1,8 @@
+html.debug aside {
+    display: none;
+}
+
+html.debug table.k-editor {
+    left: 0!important;
+    height: 60%;
+}

@@ -17,3 +17,7 @@ body.document-editor table td > p {
     margin-bottom: 0;
     padding: 0;
 }
+
+ul, ol {
+    padding-left: 2.5em!important;
+}

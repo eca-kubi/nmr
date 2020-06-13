@@ -59,3 +59,4 @@
     });
 </script>
 <script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/custom.js?t=<?php echo now(); ?>"></script>
+<script src="<?php echo URL_ROOT; ?>/public/custom-assets/js/exportPDF.js?t=<?php echo now(); ?>"></script>

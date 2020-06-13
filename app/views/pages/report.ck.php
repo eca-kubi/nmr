@@ -2597,7 +2597,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             canvas.width = imgElement.width;
             canvas.height = imgElement.height;
-            imgElement.crossOrigin = "Anonymous";
+            //imgElement.crossOrigin = "Anonymous";
             ctx.drawImage(imgElement, 0, 0);
             // by default toDataURL() produces png image, but you can also export to jpeg
             // checkout function's documentation for more details
