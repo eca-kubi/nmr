@@ -446,8 +446,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 }*/
             });
 
-            /*function toggleBallonToolbar() {
-                let selection = editor.getSelection();
+            function toggleBallonToolbar() {
+                /*let selection = editor.getSelection();
                 let startElement = selection.getStartElement();
                 if (selection.getType() == CKEDITOR.SELECTION_NONE) {
                     return;
@@ -456,21 +456,14 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     balloonToolbar.attach(startElement)
                 } else {
                     balloonToolbar.hide()
-                }
-            }
-
-            // We'll use throttled function calls, because this event can be fired very, very frequently.
-            var throttledFunction = CKEDITOR.tools.eventsBuffer( 250, toggleBallonToolbar() );
-
-             editor.on('selectionCheck', throttledFunction.input);*/
-
-            editor.on('selectionCheck', function (evt) {
+                }*/
                 let selection = editor.getSelection();
-                let startElement = selection.getStartElement();
-                let startElementName = startElement.getName();
                 if (selection.getType() == CKEDITOR.SELECTION_NONE) {
                     return;
                 }
+                let startElement = selection.getStartElement();
+                let startElementName = startElement.getName();
+
                 if (!selection.isCollapsed() && !(CKEDITOR.plugins.widget.isDomWidgetWrapper(startElement) || CKEDITOR.plugins.widget.isDomWidgetElement(startElement))) {
                     if (startElementName == 'td' || startElementName == 'th' || startElement.getParents().find((elem) => elem.getName() == 'td' || elem.getName() == 'th')) {
                         balloonToolbar.addItem('InsertRowCol', editor.ui.create('InsertRowCol'));
@@ -483,6 +476,34 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 } else {
                     balloonToolbar.hide()
                 }
+            }
+
+            // We'll use throttled function calls, because this event can be fired very, very frequently.
+          //var throttledFunction = CKEDITOR.tools.eventsBuffer( 250, toggleBallonToolbar() );
+
+            //editor.on('selectionCheck', throttledFunction.input);
+
+            editor.on('selectionCheck', function (evt) {
+                toggleBallonToolbar();
+                /*let selection = editor.getSelection();
+                if (selection.getType() == CKEDITOR.SELECTION_NONE) {
+                    return;
+                }
+                let startElement = selection.getStartElement();
+                let startElementName = startElement.getName();
+
+                if (!selection.isCollapsed() && !(CKEDITOR.plugins.widget.isDomWidgetWrapper(startElement) || CKEDITOR.plugins.widget.isDomWidgetElement(startElement))) {
+                    if (startElementName == 'td' || startElementName == 'th' || startElement.getParents().find((elem) => elem.getName() == 'td' || elem.getName() == 'th')) {
+                        balloonToolbar.addItem('InsertRowCol', editor.ui.create('InsertRowCol'));
+                        balloonToolbar.addItem('DeleteRowCol', editor.ui.create('DeleteRowCol'));
+                    } else {
+                        balloonToolbar.deleteItem('InsertRowCol');
+                        balloonToolbar.deleteItem('DeleteRowCol');
+                    }
+                    balloonToolbar.attach(startElement);
+                } else {
+                    balloonToolbar.hide()
+                }*/
             });
 
             //appendStyleSheets(editor.document.$, [URL_ROOT + '/public/assets/ckeditor/plugins/pastefromword/pastefromword.css']);
