@@ -484,7 +484,7 @@ class Pages extends Controller
     public function submittedReports($table_prefix, string $target_month = "", $target_year = "", $department_id = "")
     {
         if (!isLoggedIn())
-            redirect('users/login/pages/submitted-reports/');
+            redirect('users/login/pages/submitted-reports/' . $table_prefix);
         $db = Database::getDbh();
         $payload['page_title'] = 'Submitted Reports';
         $payload['is_power_user'] = isPowerUser(getUserSession()->user_id);
@@ -1121,7 +1121,7 @@ class Pages extends Controller
     public function DMRs($date = '')
     {
         if (!isLoggedIn()) {
-            redirect('users/login/pages/submitted-dmr/' . $date);
+            redirect('users/login/pages/dmrs/' . $date);
         }
         $date = $date ? $date : nowDate();
         $payload = [
@@ -1131,7 +1131,7 @@ class Pages extends Controller
                 'date' => $date
             ]
         ];
-        $this->view('pages/submitted-dmr', $payload);
+        $this->view('pages/dmrs', $payload);
     }
 
     public function toWord()
@@ -1151,3 +1151,4 @@ class Pages extends Controller
     }
 
 }
+

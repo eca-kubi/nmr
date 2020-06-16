@@ -874,7 +874,7 @@ function generateFinalReport(string $target_month, $target_year, $table_prefix =
 {
     $db = Database::getDbh();
     $cover_page = $db->where('name', 'cover_page')->getValue($table_prefix . '_report_parts', 'content');
-    $cover_page = str_replace('#: monthYear #', strtoupper($target_month). ' '. $target_year, $cover_page);
+    $cover_page = str_replace('#: monthYear #', strtoupper($target_month) . ' ' . $target_year, $cover_page);
     $distribution_list = $db->where('name', 'distribution_list')->getValue($table_prefix . '_report_parts', 'content');
     $callback = function ($array) {
         return $array['content'];
@@ -886,9 +886,9 @@ function generateFinalReport(string $target_month, $target_year, $table_prefix =
     };
 
     $content =  /*"<coverpage>$cover_page</coverpage>" .*/
-       /* "<distributionlist>$distribution_list</distributionlist>".*/
-        "<div class='content'>". array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year, $table_prefix)), $join, "") ."</div>";
-    return substr($content, 0,  -strlen(getPageBreak()));
+        /* "<distributionlist>$distribution_list</distributionlist>".*/
+        "<div class='content'>" . array_reduce(array_map($callback, getSubmittedReports($target_month, $target_year, $table_prefix)), $join, "") . "</div>";
+    return substr($content, 0, -strlen(getPageBreak()));
 }
 
 function fetchFinalReportAsHtml(string $target_month, $target_year, $table_prefix = 'nmr')
@@ -1014,7 +1014,7 @@ function getNotSubmittedDepartments($target_month, $target_year, $table_prefix =
 {
     $db = Database::getDbh();
     $departments = $db->getValue('departments', 'department', null);
-    $exempted = $table_prefix == 'nmr'? NO_FLASH__REPORT_DEPT : NO_FULL_REPORT_DEPT;
+    $exempted = $table_prefix == 'nmr' ? NO_FLASH__REPORT_DEPT : NO_FULL_REPORT_DEPT;
     try {
         $submitted_departments = $db->where('s.target_month="' . $target_month . '"')
             ->where('s.target_year="' . $target_year . '"')
@@ -1058,7 +1058,8 @@ function regenerateBeforePreview($value = null)
     return $value && Database::getDbh()->where('prop', 'nmr_regenerate_before_preview')->update('settings', ['value' => $value]);
 }
 
-function file_get_contents_curl($url) {
+function file_get_contents_curl($url)
+{
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //Set curl to return the data instead of printing it to the browser.
@@ -1069,11 +1070,13 @@ function file_get_contents_curl($url) {
     return $data;
 }
 
-function canEditReport ($user_id) {
+function canEditReport($user_id)
+{
     return isITAdmin($user_id) || isPowerUser($user_id);
 }
 
-function getPageBreak () {
+function getPageBreak()
+{
     return "<div class=\"page-break\" style=\"page-break-after:always;\"><span style=\"display:none;\">&nbsp;</span></div><p></p>";
 }
 
@@ -1089,16 +1092,19 @@ function currentUser()
     ];
 }
 
-function getDmr ($department, $date) {
+function getDmr($department, $date)
+{
     $db = Database::getDbh();
     return $db->where("(department = ? and date=?)", [$department, $date])->getOne('dmr_report') ?? [];
 }
 
-function nowDate( ) {
+function nowDate()
+{
     return date('Y-m-d', strtotime(now()));
 }
 
-function getSubmittedDmrs ($date) {
+function getSubmittedDmrs($date)
+{
     $db = Database::getDbh();
     $arr = [];
     $dmrs = $db->where("(date=? and submitted=?)", [$date, 1])->get('dmr_report', null, 'department, content');
@@ -1106,4 +1112,14 @@ function getSubmittedDmrs ($date) {
         $arr[$dmr['department']] = $dmr['content'];
     }
     return $arr;
+}
+
+function getMinDmrDate()
+{
+    $db = Database::getDbh();
+    return $db->orderBy('date', 'ASC')->getValue('dmr_report','date');
+}
+
+function toJSDate($time) {
+    return (DateTime::createFromFormat('Y-m-d', $time))->format('d-m-Y');
 }

@@ -9,6 +9,12 @@
         padding: 0 1px;
     }
 
+    #selectDateCalendar,
+    #selectDateCalendar .k-calendar-view,
+    #selectDateCalendar .k-content {
+        width: 100%;
+    }
+
 </style>
 <?php include_once(APP_ROOT . '/views/includes/navbar.php'); ?>
 <?php include_once(APP_ROOT . '/views/includes/sidebar.php'); ?>
@@ -57,6 +63,11 @@
     }
 </style>
 <script>
+    const ROW_INDEX_OF_1ST_DEPARTMENT = 6;
+    const COL_INDEX_OF_1ST_DEPARTMENT = 0;
+    const TOTAL_NO_OF_DEPARTMENTS = 11; // row_count
+    const TOTAL_NO_OF_COLUMNS = 9; // col_count
+
     /**
      * @type {kendo.ui.Spreadsheet}
      * */
@@ -2673,6 +2684,50 @@
                     icon: "check",
                     click: submit
                 },
+                {
+                    id: "selectDate",
+                    type: "button",
+                    text: "Select Date",
+                    icon: "calendar",
+                    click() {
+                        var dialog = $("<div id='selectDateDialog'>").kendoDialog({
+                            width: "500px",
+                            buttonLayout: "normal",
+                            title: "Select Date",
+                            closable: true,
+                            modal: true,
+                            content: "<div id='selectDateCalendar'></div>",
+                            initOpen(e) {
+                                calendar = $("#selectDateCalendar").kendoCalendar({
+                                    componentType: 'modern',
+                                    min: new Date('<?php echo getMinDmrDate(); ?>'),
+                                    max: new Date('<?php echo now(); ?>'),
+                                    value: new Date(),
+                                    change(e) {
+                                        date = this.value().toISOString().replace(/T.*Z/gi,''); // Strip off ISOTime (Thh:mm:ss)
+                                        location.href = URL_ROOT + '/pages/dmrs/' + date;
+                                    },
+                                    /*disableDates: function (date) {
+                                        if (date <= new Date()) {
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    }*/
+                                }).data("kendoCalendar");
+                            },
+                            close(e) {
+                                dialog.destroy();
+                            }
+                            /*actions: [
+                                { text: 'Skip this version' },
+                                { text: 'Remind me later' },
+                                { text: 'Install update', primary: true }
+                            ]*/
+                        }).data("kendoDialog");
+                        dialog.open();
+                    }
+                }
                 <?php if (isITAdmin($current_user->user_id)): ?>
 
                 <?php endif; ?>
@@ -3692,6 +3747,20 @@
                 }
             }
         }).data("kendoSpreadsheet");
+
+        // Make all departments readonly except user's department if user is not a DMR Power User
+        if (true) {
+            // offset 6,0 is the index of the cell for the first department (Security). row_count = 11, col_count = 9
+            activeSheet = spreadsheet.activeSheet();
+            activeSheet.range(ROW_INDEX_OF_1ST_DEPARTMENT, COL_INDEX_OF_1ST_DEPARTMENT, TOTAL_NO_OF_DEPARTMENTS, TOTAL_NO_OF_COLUMNS).enable(false);
+
+            // find the row for current user's department and enable the row for editing
+            targetRow = activeSheet.range(ROW_INDEX_OF_1ST_DEPARTMENT, COL_INDEX_OF_1ST_DEPARTMENT, TOTAL_NO_OF_DEPARTMENTS)
+                .values()
+                .flat()
+                .findIndex((d) => d == currentUser.department) +  ROW_INDEX_OF_1ST_DEPARTMENT;
+            activeSheet.range(targetRow,0,1,TOTAL_NO_OF_COLUMNS).enable(true);
+        }
 
         //spreadsheet.activeSheet().range("A:A").enable(false);
         //spreadsheet.activeSheet().range("1:6").enable(false);
