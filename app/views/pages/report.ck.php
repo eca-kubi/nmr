@@ -1587,7 +1587,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         categoryField: categoryField,
                         type: "column",
                         name: "BUDGET TONNES MILLED (t)",
-                        color: seriesColor.budgetTonnesMilled
+                        color: seriesColor.budgetTonnesMilled,
+                        axis: "tonnes"
                     },
                     {
                         field: "['ACTUAL GOLD PRODUCED (oz)']",
