@@ -540,8 +540,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             //qtPreviewBackground: '#c8def4', // preview table background (hover)
             //removePlugins: 'save, forms, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div',
             removePlugins: '', // Copy formatting prevents pastefromword from pasting tables properly
-            extraPlugins: 'spacingsliders,autolink,saveaspdf,saveasdocx,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
-
+            extraPlugins: 'autosave,spacingsliders,autolink,saveaspdf,saveasdocx,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
+            autosave: {
+                delay: 15,
+                diffType: "inline",
+                saveDetectionSelectors: "[id*='btnSave'], [id*='updateSubmittedReportBtn'], [id*='submitReportBtn']"
+            },
             // allowedContent: true,
             allowedContent: {
                 $1: {
@@ -891,6 +895,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         editorActionToolbar = $("#editorActionToolbar").kendoToolBar({
             items: [
                 {
+                    id: "btnSaveDraft",
                     type: "button",
                     text: "Save Draft",
                     icon: "save",
@@ -899,6 +904,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     //hidden: true
                 },
                 {
+                    id: "btnSave",
                     type: "button",
                     text: "Save",
                     icon: "save",
@@ -906,6 +912,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     hidden: "<?php echo isset($edit_report_part) ? '' : 'true' ?>"
                 },
                 {
+                    id: "btnSaveFinalReport",
                     type: "button",
                     text: "Save Final Report",
                     icon: "save",
@@ -913,6 +920,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     hidden: "<?php echo isset($edit_final_report) ? '' : 'true' ?>"
                 },
                 {
+                    id: "btnSave",
                     type: "button",
                     text: "Save",
                     icon: "save",
@@ -969,6 +977,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
                 <?php if (isITAdmin($current_user->user_id)): ?>
                 {
+                    id: "btnSave",
                     type: "button",
                     text: "Save",
                     icon: "save",
@@ -976,6 +985,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     hidden: editPreloadedDraft ? '' : true
                 },
                 {
+                    id: "btnSaveReportPart",
                     type: "button",
                     text: "Save",
                     icon: "save",
@@ -983,6 +993,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     hidden: addReportPart ? '' : true
                 },
                 {
+                    id: "btnSaveAsPreloaded",
                     type: "button",
                     text: "Save as Preloaded",
                     icon: "launch",
@@ -1067,6 +1078,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             if (charts[activeSheetName]) {
                 addChartImageToEditor(activeSheetName, true).done(function () {
                     addSheetImageToEditor(activeSheetName, true);
+                    editor.fire('change');
                 });
             }
         });
