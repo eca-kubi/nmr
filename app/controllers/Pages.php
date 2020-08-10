@@ -311,7 +311,7 @@ class Pages extends Controller
                 'title' => $_POST['title'],
                 'content' => $_POST['content'],
                 'time_modified' => now(),
-                'spreadsheet_content' => $_POST['spreadsheet_content']
+                'spreadsheet_content' => $_POST['spreadsheet_content'] ?? ''
             ];
 
             //Use the following code if users must work on separate drafts

@@ -539,8 +539,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             qtPreviewSize: '16px', // Preview table cell size
             //qtPreviewBackground: '#c8def4', // preview table background (hover)
             //removePlugins: 'save, forms, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div',
-            removePlugins: '', // Copy formatting prevents pastefromword from pasting tables properly
-            extraPlugins: 'autosave,spacingsliders,autolink,saveaspdf,saveasdocx,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
+            removePlugins: 'uploadimage', // Copy formatting prevents pastefromword from pasting tables properly
+            extraPlugins: 'pastebase64,autosave,spacingsliders,autolink,saveaspdf,saveasdocx,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
             autosave: {
                 delay: 15,
                 diffType: "inline",
