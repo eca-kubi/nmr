@@ -590,7 +590,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 },
                 {name: 'insert', items: ['Image', 'Table', /*'HorizontalRule'*/]},
                 {name: 'tools', items: ['Maximize']},
-                {name: 'editing', items: ['PageBreak', isITAdmin ? 'Source' : '']}
+                //{name: 'editing', items: ['PageBreak', isITAdmin ? 'Source' : '']}
+                {name: 'editing', items: ['PageBreak', 'Source']}
             ],
             uploadUrl: URL_ROOT + '/ckfinder/?command=QuickUpload&type=Files&responseType=json',
             filebrowserBrowseUrl: URL_ROOT + '/ckfinder/browse/',
