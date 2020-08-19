@@ -74,7 +74,7 @@ class Pages extends Controller
         isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
     }
 
-    public function editDraft($draft_id, $table_prefix = 'nmr'): void
+    public function editDraft($draft_id, $table_prefix = 'nmr', $editor= "ck"): void
     {
         $db = Database::getDbh();
         if (!isLoggedIn()) {
@@ -101,7 +101,7 @@ class Pages extends Controller
             $payload['spreadsheet_templates'] = json_encode($db->get(TABLE_NMR_SPREADSHEET_TEMPLATES));
             $payload['edit_draft'] = true;
             $payload['table_prefix'] = $table_prefix;
-            isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
+            $this->view('pages/report.' . $editor, $payload);
         } catch (Exception $e) {
         }
     }

@@ -240,274 +240,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             editor.document.$.title = "NZEMA MONTHLY REPORT " + moment().format("Y");
             $(editor.document.$.body).addClass("document-editor");
 
-            /*   editor.balloonToolbars.create({
-                    buttons: 'Link,Unlink,Image',
-                    widgets: 'image'
-                });
-    */
-            let items = {};
-
-            editor.addMenuGroup('InsertRowCol');
-
-            items.insertabove = {
-                label: 'Row Above',
-                group: 'InsertRowCol',
-                command: 'rowInsertBefore',
-                icon: URL_ROOT + '/public/assets/icons/insert/rowAbove.png',
-                order: 1
-            };
-
-            items.insertbelow = {
-                label: 'Row Below',
-                group: 'InsertRowCol',
-                command: 'rowInsertAfter',
-                icon: URL_ROOT + '/public/assets/icons/insert/rowBelow.png',
-                order: 2
-            };
-
-            items.insertleft = {
-                label: 'Column Left',
-                group: 'InsertRowCol',
-                command: 'columnInsertBefore',
-                icon: URL_ROOT + '/public/assets/icons/insert/columnLeft.png',
-                order: 3
-            };
-
-            items.insertright = {
-                label: 'Column Right',
-                group: 'InsertRowCol',
-                command: 'columnInsertAfter',
-                icon: URL_ROOT + '/public/assets/icons/insert/columnRight.png',
-                order: 4
-            };
-
-            editor.addMenuItems(items);
-
-
-            editor.ui.add('InsertRowCol', CKEDITOR.UI_MENUBUTTON, {
-                label: 'Insert',
-                // Disable in source mode.
-                modes: {
-                    wysiwyg: 1
-                },
-                icon: URL_ROOT + '/public/assets/icons/insert/rowBelow.png',
-                onMenu: function () {
-                    var active = {};
-
-                    // Make all items active.
-                    for (var p in items)
-                        active[p] = CKEDITOR.TRISTATE_OFF;
-
-                    return active;
-                }
-            });
-
-            editor.addMenuGroup('DeleteRowCol');
-
-            let items2 = {
-                deletecell: {
-                    label: 'Delete Cells',
-                    group: 'DeleteRowCol',
-                    command: 'cellDelete',
-                    icon: URL_ROOT + '/public/assets/icons/delete/cellDelete.png',
-                    order: 1
-                },
-                deletecol: {
-                    label: 'Delete Column',
-                    group: 'DeleteRowCol',
-                    command: 'columnDelete',
-                    icon: URL_ROOT + '/public/assets/icons/delete/columnDelete.png',
-                    order: 2
-                },
-                deleterow: {
-                    label: 'Delete Row',
-                    group: 'DeleteRowCol',
-                    command: 'rowDelete',
-                    icon: URL_ROOT + '/public/assets/icons/delete/rowDelete.png',
-                    order: 3
-                },
-                deletetable: {
-                    label: 'Delete Table',
-                    group: 'DeleteRowCol',
-                    command: 'tableDelete',
-                    icon: URL_ROOT + '/public/assets/icons/delete/tableDelete.png',
-                    order: 4
-                }
-            };
-
-            editor.addMenuItems(items2);
-
-            editor.ui.add('DeleteRowCol', CKEDITOR.UI_MENUBUTTON, {
-                label: 'Delete',
-                // Disable in source mode.
-                modes: {
-                    wysiwyg: 1
-                },
-                icon: URL_ROOT + '/public/assets/icons/delete/tableDelete.png',
-                onMenu: function () {
-                    var active = {};
-
-                    // Make all items active.
-                    for (var p in items2)
-                        active[p] = CKEDITOR.TRISTATE_OFF;
-
-                    return active;
-                }
-            });
-
-            //editor.ui.instances['InsertRowCol'] = editor.ui.items['InsertRowCol']
-            let imageBallonContext = editor.balloonToolbars.create({
-                buttons: 'Image,Link,Unlink',
-                widgets: 'image'
-            });
-
-            editor.ui.addButton('OpenLink', {
-                label: 'Open Link',
-                command: 'openLink',
-                toolbar: 'links,20',
-                icon: URL_ROOT + '/public/assets/ckeditor/plugins/openlink/icons/openLink.png'
-            });
-
-            let linkBallonContext = editor.balloonToolbars.create({
-                buttons: 'OpenLink,Link,Unlink',
-                cssSelector: 'a'
-            });
-
-            /*let openLinkButton = new CKEDITOR.ui.button({
-                name: 'OpenLink',
-                command: 'openLink',
-                icon: URL_ROOT + '/public/assets/ckeditor/plugins/openlink/icons/openLink.png'
-            });
-*/
-
-            linkBallonContext.toolbar.addItem('OpenLink', editor.ui.get('OpenLink'));
-
-            /* let tableBalloonContext = editor.balloonToolbars.create({
-                  buttons: 'Table',
-                  cssSelector: 'table'
-             });*/
-
-            //var balloonToolbar = new CKEDITOR.ui.balloonToolbar(editor);
-            let balloonToolbar = editor.balloonToolbars.create({}).toolbar;
-            //window.ballonToolbar = balloonToolbar;
-            //let toolbar = context.toolbar;
-            let BGColor = editor.ui.get('BGColor');
-            let TextColor = editor.ui.get('TextColor');
-            //BGColor._.feature.createPanel(editor);
-            //TextColor._.feature.createPanel(editor);
-            //BGColor._.panel._.definition.block.attributes ={ "aria-label": "Colors", role: "listbox"}
-            //TextColor._.panel._.definition.block.attributes = {"aria-label": "Colors", role: "listbox"}
-
-            balloonToolbar.addItems({
-                Font: editor.ui.create('Font'),
-                FontSize: editor.ui.create('FontSize'),
-                Format: editor.ui.create('Format'),
-                Bold: editor.ui.create('Bold'),
-                Italic: editor.ui.create('Italic'),
-                Underline: editor.ui.create('Underline'),
-                //TextColor: TextColor,
-                //BGColor:  BGColor,
-                NumberedList: editor.ui.create('NumberedList'),
-                BulletedList: editor.ui.create('BulletedList'),
-                //Table: editor.ui.get('Table'),
-                //Image: editor.ui.get('Image'),
-                //Link: editor.ui.get('Link'),
-                //Unlink: editor.ui.get('Unlink')
-            });
-
-            /*balloonToolbar._view.addShowListener(function () {
-                balloonToolbar.addItems({
-                    TextColor: CKEDITOR.tools.extend(editor.ui.create('TextColor'), editor.ui.get('TextColor')),
-                   // BGColor:  editor.ui.get('BGColor'),
-                })
-                //balloonToolbar._view.renderItems([TextColor, BGColor])
-            });*/
-
-            /*balloonToolbar._view.on('blur', function () {
-                balloonToolbar.deleteItem('TextColor')
-                balloonToolbar.deleteItem('BGColor')
-            })*/
-
-            editor.on('selectionChange', function (evt) {
-                var lastElement = evt.data.path.lastElement;
-                let path = evt.data.path;
-                let selection = evt.data.selection;
-
-                /*if (path.contains('table')) {
-                    toolbar.addItem('Table', editor.ui.get('Table'))
-                } else {
-                    toolbar.deleteItem('Table')
-                }*/
-                /*if (lastElement && !selection.isCollapsed()) {
-                    balloonToolbar.attach(lastElement)
-                    balloonToolbar.show()
-                } else {
-                    balloonToolbar.hide()
-                }*/
-            });
-
-            function toggleBallonToolbar() {
-                /*let selection = editor.getSelection();
-                let startElement = selection.getStartElement();
-                if (selection.getType() == CKEDITOR.SELECTION_NONE) {
-                    return;
-                }
-                if (!selection.isCollapsed() && !(CKEDITOR.plugins.widget.isDomWidgetWrapper(startElement) || CKEDITOR.plugins.widget.isDomWidgetElement(startElement))) {
-                    balloonToolbar.attach(startElement)
-                } else {
-                    balloonToolbar.hide()
-                }*/
-                let selection = editor.getSelection();
-                if (selection.getType() == CKEDITOR.SELECTION_NONE) {
-                    return;
-                }
-                let startElement = selection.getStartElement();
-                let startElementName = startElement.getName();
-
-                if (!selection.isCollapsed() && !(CKEDITOR.plugins.widget.isDomWidgetWrapper(startElement) || CKEDITOR.plugins.widget.isDomWidgetElement(startElement))) {
-                    if (startElementName == 'td' || startElementName == 'th' || startElement.getParents().find((elem) => elem.getName() == 'td' || elem.getName() == 'th')) {
-                        balloonToolbar.addItem('InsertRowCol', editor.ui.create('InsertRowCol'));
-                        balloonToolbar.addItem('DeleteRowCol', editor.ui.create('DeleteRowCol'));
-                    } else {
-                        balloonToolbar.deleteItem('InsertRowCol');
-                        balloonToolbar.deleteItem('DeleteRowCol');
-                    }
-                    balloonToolbar.attach(startElement);
-                } else {
-                    balloonToolbar.hide()
-                }
-            }
-
-            // We'll use throttled function calls, because this event can be fired very, very frequently.
-          //var throttledFunction = CKEDITOR.tools.eventsBuffer( 250, toggleBallonToolbar() );
-
-            //editor.on('selectionCheck', throttledFunction.input);
-
-            editor.on('selectionCheck', function (evt) {
-                toggleBallonToolbar();
-                /*let selection = editor.getSelection();
-                if (selection.getType() == CKEDITOR.SELECTION_NONE) {
-                    return;
-                }
-                let startElement = selection.getStartElement();
-                let startElementName = startElement.getName();
-
-                if (!selection.isCollapsed() && !(CKEDITOR.plugins.widget.isDomWidgetWrapper(startElement) || CKEDITOR.plugins.widget.isDomWidgetElement(startElement))) {
-                    if (startElementName == 'td' || startElementName == 'th' || startElement.getParents().find((elem) => elem.getName() == 'td' || elem.getName() == 'th')) {
-                        balloonToolbar.addItem('InsertRowCol', editor.ui.create('InsertRowCol'));
-                        balloonToolbar.addItem('DeleteRowCol', editor.ui.create('DeleteRowCol'));
-                    } else {
-                        balloonToolbar.deleteItem('InsertRowCol');
-                        balloonToolbar.deleteItem('DeleteRowCol');
-                    }
-                    balloonToolbar.attach(startElement);
-                } else {
-                    balloonToolbar.hide()
-                }*/
-            });
-
-            //appendStyleSheets(editor.document.$, [URL_ROOT + '/public/assets/ckeditor/plugins/pastefromword/pastefromword.css']);
-           /* editor.dataProcessor.htmlFilter.addRules({
+            /* editor.dataProcessor.htmlFilter.addRules({
                 elements: {
                     $: function (e) {
                         //e.attributes.style = 'font-size:' + fontSizeVariable + 'pt; font-family:' + fontFamilyVariable + ';';
@@ -536,11 +269,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             qtCellPadding: '0', // Cell padding table
             qtCellSpacing: '0', // Cell spacing table
             qtPreviewBorder: '1px solid gray', // preview table border
-            qtPreviewSize: '16px', // Preview table cell size
+            qtPreviewSize: '16px', // Preview table cell size,
+            pasteFromWordNumberedHeadingToList: true,
             //qtPreviewBackground: '#c8def4', // preview table background (hover)
             //removePlugins: 'save, forms, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div',
-            removePlugins: 'uploadimage', // Copy formatting prevents pastefromword from pasting tables properly
-            extraPlugins: 'pastebase64,autosave,spacingsliders,autolink,saveaspdf,saveasdocx,pagebreak,balloontoolbar,openlink,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
+            removePlugins: 'uploadimage,link', // Copy formatting prevents pastefromword from pasting tables properly
+            extraPlugins: 'pastebase64,autosave,spacingsliders,saveaspdf,saveasdocx,pagebreak,balloontoolbar,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
             autosave: {
                 delay: 15,
                 diffType: "inline",
@@ -560,8 +294,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             disallowedContent: "img{width,height,float}; *{text-indent};",
             format_tags: CKEDITOR.config.format_tags + ';div',
             font_names: 'Calibri Light; Calibri;Segoe UI Symbol;' + CKEDITOR.config.font_names,
-            //font_defaultLabel: 'Times New Roman',
-            //fontSize_defaultLabel: '11',
+            font_defaultLabel: 'Times New Roman',
+            fontSize_defaultLabel: '16',
             customConfig: "",
             fontSize_sizes: '8/8pt;9/9pt;10/10pt;11/11pt;12/12pt;14/14pt;16/16pt;18/18pt;20/20pt;22/22pt;24/24pt;26/26pt;28/28pt;36/36pt;48/48pt;72/72pt',
             contentsCss: [
@@ -608,9 +342,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             pdf: $.extend({}, pdfExportOptions, {margin: "1cm", fileName: 'Nzema Report.pdf'}),
             tools: [],
             stylesheets: [
-                //"<?php echo URL_ROOT; ?>/public/assets/ckeditor/contents.css?f=<?php echo now() ?> ",
-                //"<?php echo URL_ROOT; ?>/public/custom-assets/css/ckeditor-sample-file.css?f=<?php echo now() ?> ",
-                //"<?php echo URL_ROOT; ?>/public/assets/ckeditor/plugins/pastefromword/pastefromword.css?f=<?php echo now() ?> ",
                 "<?php echo URL_ROOT; ?>/public/assets/fonts/font-face/css/fonts.css?f=<?php echo now() ?> ",
                 "<?php echo URL_ROOT; ?>/public/custom-assets/css/k-editor.css?f=<?php echo now() ?> ",
             ]
@@ -629,60 +360,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         });
 
         spreadsheetTemplates = JSON.parse($("#spreadsheetTemplates").val());
-
-        /* let previewContent = function (contentUrl, datafilter = false, fileName = "Nzema Monthly Report", template = "") {
-             if (template) pdfExportOptions.template = template;
-             let showPdfViewer = () => {
-                 progress('.content-wrapper', true);
-                 kendo.drawing.drawDOM($(previewEditor.body), pdfExportOptions).then(function (group) {
-                     return kendo.drawing.exportPDF(group, {});
-                 }).done(function (data) {
-                     progress('.content-wrapper');
-                     pdfViewer.fromFile({data: data.split(',')[1]}); // For versions prior to R2 2019 SP1, use window.atob(data.split(',')[1])
-                     setTimeout(() => pdfViewer.activatePage(1), 500)
-                 });
-             };
-             let dataFilter = datafilter ? datafilter : (data, type) => JSON.parse(data).content;
-             if (!pdfViewer)
-                 pdfViewer = $("#previewContent").kendoPDFViewer({
-                     messages: {
-                         defaultFileName: fileName
-                     },
-                     pdfjsProcessing: {
-                         file: ""
-                     },
-                     width: "100%",
-                     height: "29.7cm",
-                     scale: 1,
-                     toolbar: {
-                         items: [
-                             "pager", "zoom", "toggleSelection", "search", "download", "print", {
-                                 id: "cancel",
-                                 type: "button",
-                                 text: "Cancel",
-                                 icon: "cancel",
-                                 click: function () {
-                                     window.history.back()
-                                 },
-                                 hidden: !isSubmissionClosed
-                             }
-                         ]
-                     }
-                 }).getKendoPDFViewer();
-             if (contentUrl) {
-                 $.get({
-                     url: contentUrl,
-                     dataType: "html",
-                     dataFilter: dataFilter,
-                     success: function (data) {
-                         previewEditor.value(data);
-                         showPdfViewer();
-                     }
-                 });
-             } else {
-                 showPdfViewer();
-             }
-         };*/
 
         if (editFinalReport) {
             let content = $("[name=content]").val();
@@ -836,51 +513,12 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
         editorTabStrip = $("#editorTabStrip").kendoTabStrip({
             select(e) {
-                // Hide resize handle when showing preview
-                //let resizeHandle = $(previewEditor.body).find('.k-table-resize-handle-wrapper');
                 if (e.contentElement.id === "previewTab") {
-                    //resizeHandle.hide();
-                    /*$.post(URL_ROOT + "/pages/preview-content/", {
-                        content: editor.value()
-                    }, null, "html").done((data) => {
-                        previewEditor.value(data);
-                        previewContent();
-                    });*/
                     toggleNonPrintableElements(previewEditor);
                     contentPreview();
-                } /*else {
-                    //resizeHandle.show();
-                }*/
+                }
             }
         }).data('kendoTabStrip');
-
-        /*if (isSubmissionOpened(targetMonth, targetYear, tablePrefix) || editFinalReport) {
-            editorTabStrip = $("#editorTabStrip").kendoTabStrip({
-                select(e) {
-                    // Hide resize handle when showing preview
-                    //let resizeHandle = $(previewEditor.body).find('.k-table-resize-handle-wrapper');
-                    if (e.contentElement.id === "previewTab") {
-                        //resizeHandle.hide();
-                        /!*$.post(URL_ROOT + "/pages/preview-content/", {
-                            content: editor.value()
-                        }, null, "html").done((data) => {
-                            previewEditor.value(data);
-                            previewContent();
-                        });*!/
-                        toggleNonPrintableElements(previewEditor);
-                        contentPreview();
-                    } else {
-                        //resizeHandle.show();
-                    }
-                }
-            }).data('kendoTabStrip');
-        } else {
-            editorTabStrip = $("#editorTabStrip").kendoTabStrip().data("kendoTabStrip");
-            let previewEditorValue = `<?php echo $content ?? '' ?>`;
-            previewEditor.value(previewEditorValue);
-            toggleNonPrintableElements(previewEditor);
-            contentPreview();
-        }*/
 
         chartsTabStrip = $("#chartsTabStrip").kendoTabStrip({
             activate(e) {
@@ -1074,6 +712,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 selectChartTab(e.sheet.name());
             }
         }).data("kendoSpreadsheet");
+
         $("#copyToEditorButton").on("click", function () {
             let activeSheetName = spreadsheet.activeSheet().name();
             if (charts[activeSheetName]) {
@@ -1185,18 +824,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         let sheet;
         let sheets = spreadsheet.sheets().filter((s) => s.name().startsWith(sheetTemplate.description));
         let sheetJSON = JSON.parse(sheetTemplate.template);
-        /*  if (sheets.length > 0) {
-              sheetJSON.name = sheetJSON.name + " " + (parseInt(sheets.length) + 1);
-          }*/
-        /*if (firstSheetLoading) {
-        This was necessary to replace Sheet1 which was loaded by default in the workbook
-            firstSheetLoading = false;
-            sheet = spreadsheet.activeSheet();
-            sheet.fromJSON(sheetJSON);
-        } else {
-            sheet = spreadsheet.insertSheet({});
-            sheet.fromJSON(sheetJSON);
-        }*/
         sheet = spreadsheet.insertSheet({});
         sheet.fromJSON(sheetJSON);
         spreadsheet.activeSheet(sheet);
@@ -1254,6 +881,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
          ]
      });
  */
+
     function adjustWindowHeight(w) {
         let overlayHeight = $(".k-overlay").height();
         let win = $(w);
@@ -2444,16 +2072,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     $("#draftTitleInput, #title").removeClass('no-title').val(title);
                     postDfr.resolve(title);
                 });
-                /*if (draftTitleInput.hasClass('no-title')) {
-                    kendo.prompt("Enter a title for your draft.", departmentName).done(function (title) {
-                        $("#draftTitleInput, #title").removeClass('no-title').val(title);
-                        postDfr.resolve(title);
-                    });
-                } else {
-                    let title = draftTitleInput.val();
-                    $("#title").val(title);
-                    postDfr.resolve(title);
-                }*/
             }
         });
     }
@@ -2510,25 +2128,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             progress('.content-wrapper');
             let alert = kendoAlert("Report Saved!", "Report saved successfully.");
             setTimeout(() => alert.close(), 1500);
-            // Don't Modify Final Report
-            /*$.get(url).done(html => {
-                previewEditor.value(html);
-                kendo.drawing.drawDOM($(previewEditor.body), {
-                    paperSize: 'A4',
-                    margin: tablePrefix === 'nmr_fr' ? {top: "3cm", right: "1cm", bottom: "1cm", left: "1cm"} : "1cm",
-                    multipage: true,
-                    forcePageBreak: '.page-break',
-                    scale: 0.7,
-                }).then(function (group) {
-                    return kendo.drawing.exportPDF(group, {});
-                }).done(function (dataURI) {
-                    progress('.content-wrapper');
-                    $.post(url, {data_uri: dataURI, html_content: html}, null, "json").done(() => {
-                        let alert = kendoAlert("Report Saved!", "Report saved successfully.");
-                        setTimeout(() => alert.close(), 1500);
-                    });
-                });
-            });*/
         }));
     }
 

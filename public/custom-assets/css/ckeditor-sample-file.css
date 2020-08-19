@@ -17,7 +17,9 @@ body
 
     margin: 20px;
 }
-
+/*body p {
+    line-height: 2;
+}*/
 .cke_editable
 {
     font-size: 13px;
@@ -59,7 +61,8 @@ blockquote
 
 a
 {
-    color: #0782C1;
+    /*color: #0782C1;*/
+    color: black;
 }
 
 ol,ul,dl
@@ -72,7 +75,10 @@ ol,ul,dl
 
 h1,h2,h3,h4,h5,h6
 {
+    /*
     font-weight: normal;
+    */
+    font-weight: bold;
     line-height: 1.2;
 }
 

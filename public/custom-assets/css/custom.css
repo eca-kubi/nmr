@@ -562,6 +562,10 @@ a.k-link.k-state-active {
 }*/
 /* shim */
 
+div#ckf-modal {
+    z-index: 9996!important;
+}
+
 /* Portrait phones and smaller */
 
 @media (min-width: 320px) and (max-width: 374px) {
