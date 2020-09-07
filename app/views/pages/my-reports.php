@@ -72,9 +72,10 @@
 </div>
 <style>
     .k-editor {
-        z-index: -1 !important;
+        opacity: 0!important;
+        /*z-index: -1 !important;
         position: absolute;
-        left: -9999px;
+        left: -9999px;*/
     }
 </style>
 <!-- /.content-wrapper -->

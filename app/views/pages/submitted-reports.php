@@ -301,8 +301,9 @@
 </div>
 <style>
     .k-editor {
-        position: absolute;
-        left: -9999px;
+        opacity: 0!important;
+        /*position: absolute;
+        left: -9999px;*/
     }
 </style>
 <!-- /.content-wrapper -->
