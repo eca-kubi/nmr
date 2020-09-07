@@ -735,8 +735,9 @@ a:hover {
 }
 
 #previewEditorParent .k-editor {
-    position: absolute;
-    left: -9999px;
+	opacity: 0!important
+    /*position: absolute;
+    left: -9999px; */
 }
 
 [data-role=spreadsheettoolbar] [data-tool], [data-role=editortoolbar] .k-tool-group, [data-role=borderpalette] a[role=button] {
@@ -750,6 +751,7 @@ a:hover {
     background-color: green!important;
     color: red!important;
 }
+
 /*Adapt Red theme*/
 
 /*[class~='fa'] {

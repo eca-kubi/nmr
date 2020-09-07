@@ -27,9 +27,9 @@
         var found = false;
         var imageType = /^image/;
 
-        if (!clipboardData) {
+        /*if (!clipboardData) {
             return;
-        }
+        }*/
 
         return Array.prototype.forEach.call(clipboardData.types, function (type, i) {
             if (found) {

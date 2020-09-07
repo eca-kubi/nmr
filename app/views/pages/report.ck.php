@@ -273,8 +273,8 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             pasteFromWordNumberedHeadingToList: true,
             //qtPreviewBackground: '#c8def4', // preview table background (hover)
             //removePlugins: 'save, forms, language, styles, iframe, specialchar, flash, about, bidi, newpage, stylescombo, div',
-            removePlugins: 'uploadimage,link', // Copy formatting prevents pastefromword from pasting tables properly
-            extraPlugins: 'pastebase64,autosave,spacingsliders,saveaspdf,saveasdocx,pagebreak,balloontoolbar,quicktable,selectallcontextmenu,tableresizerowandcolumn,texttransform',
+            removePlugins: 'link', // Copy formatting prevents pastefromword from pasting tables properly
+            extraPlugins: 'autosave,saveaspdf,saveasdocx,pagebreak,balloontoolbar,quicktable,selectallcontextmenu,tableresizerowandcolumn',
             autosave: {
                 delay: 15,
                 diffType: "inline",
