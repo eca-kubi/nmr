@@ -2,6 +2,13 @@
 class Users extends Controller
 {
     private array $payload;
+    private $_db;
+    
+    public function __construct()
+    {
+        $this->_db = Database::getDbh();
+    }
+
     public function login(string $redirect_url=''): void
     {
         $payload['title'] = 'NMR Login';
@@ -250,9 +257,24 @@ class Users extends Controller
         if (!isLoggedIn()) {
             // throw Session timed out error
         }
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            // Add new user to database
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $_POST = json_decode(file_get_contents('php://input'), true, 512, JSON_THROW_ON_ERROR);
+                
+            } catch (JsonException $e) {
+            }
+            $ret = [];
+            $insert_data = [];
+            $record_added_id = $this->_db->insert('users', $insert_data);
+            if ($record_added_id) {
 
+            } else {
+                $ret['errors'] = [['message' => 'Failed to add record.', 'code' => ERROR_UNSPECIFIED_ERROR]];
+                try {
+                    echo json_encode($ret, JSON_THROW_ON_ERROR, 512);
+                } catch (JsonException $e) {
+                }
+            }
         }
     }
 
@@ -273,5 +295,60 @@ class Users extends Controller
         echo json_encode($departments);
     }
 
+    /* A sanitization check for the account password */
+    public function isPasswdValid(string $passwd): bool
+    {
+        /* Initialize the return variable */
+        $valid = TRUE;
 
+        /* Example check: the length must be between 8 and 16 chars */
+        $len = mb_strlen($passwd);
+
+        if (($len < 8) || ($len > 16))
+        {
+            $valid = FALSE;
+        }
+
+        /* You can add more checks here */
+
+        return $valid;
+    }
+
+    /* A sanitization check for the account username */
+    public function isNameValid(string $name): bool
+    {
+        /* Initialize the return variable */
+        $valid = TRUE;
+
+        /* Example check: the length must be between 8 and 16 chars */
+        $len = mb_strlen($name);
+
+        if (($len < 8) || ($len > 16) || $this->_db->where('username', $name)->has('users'))
+        {
+            $valid = FALSE;
+        }
+
+        /* You can add more checks here */
+
+        return $valid;
+    }
+    
+    public function isPostValid(array $post)
+    {
+        $valid = true;
+
+
+        return $valid;
+    }
+
+    public function isRequiredSet(array $post)
+    {
+        $required_fields = ['username', 'password', 'email', 'first_name', 'last_name', 'role', 'job_title'];
+        foreach ($required_fields as $required_field) {
+            $field_name = ucwords(str_replace("_", " ", $required_field));
+            if (!key_exists($required_field, $post)) {
+                throw new Exception("$field_name is required!");
+            }
+        }
+    }
 }
