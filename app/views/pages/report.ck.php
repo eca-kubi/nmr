@@ -154,6 +154,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
     const DISTRIBUTION_LIST = `<?php echo $distribution_list ?>`;
 
     let spreadsheetTemplates;
+    let draftLoaded;
     /**
      * @type {kendo.ui.Spreadsheet}
      * */
@@ -739,7 +740,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 if (!(isITAdmin)) {
                     ds = ds.filter(value => value.departmentId + "" === userDepartmentId);
                 }
-                if (ds.length === 0) chartMenuButton.hide();
+                if (ds.length === 0) {
+                    //chartMenuButton.hide();
+                    //Hide the Charts Window
+                    $("#chartsContainer").parents(".box").hide()
+                }
                 return ds.sort((a, b) => a.description.localeCompare(b.description));
             })(),
             dataTextField: "description",
@@ -748,6 +753,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 chartsMenuPopup.close();
                 $("#chartsTabstripHolder").removeClass("invisible");
                 let id = this.dataItem(this.select()).id;
+                let description = this.dataItem(this.select()).description
                 this.clearSelection();
                 let sheetTemplate = getSheetFromTemplate(id);
                 if (sheetTemplate) {
@@ -927,8 +933,6 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                         } else if (type === "column") {
                             return renderLegend(label, labelColor, color, 10)
                         }
-
-
                         return e.createVisual();
                     }
                 }
@@ -1653,8 +1657,11 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
             bindChart(chart, sheet, valueRange, fieldRange);
         } else if (sheetName === (CHART_MINE_SITE_EMPLOYEE_TURNOVER)) {
             sheet.range("B3:M5").format('#,###');
-            let valueRange = sheet.range("B2:C6");
-            let fieldRange = sheet.range("A2:G6");
+            //let valueRange = sheet.range("B2:C6");
+            let numOfMonths = (new Date()).getMonth();
+            let valueRange = sheet.range(1,1,5, numOfMonths);
+            //let fieldRange = sheet.range("A2:G6");
+            let fieldRange = sheet.range(1,0, numOfMonths, 0);
             data = fetchData(sheet, valueRange, fieldRange);
             chart = div.kendoChart($.extend(kendoChartOptions, {
                 title: {
@@ -1850,6 +1857,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         let draw = kendo.drawing;
         let sheet = spreadsheet.sheetByName(name);
         let promises = [];
+        let dataId = `sheet_img_${name}`;
         sheet.draw({}, group => {
             if (group.children.length > 0) {
                 for (var i = 0; i < group.children.length; i++) {
@@ -1867,8 +1875,16 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     } else {
                         let imgs = editor.body().querySelectorAll("img[data-id='sheet_img_" + sheet.name() + "']");
                         if (imgs) {
-                            promises[i].done(data => $(imgs).attr("src", data));
-                            promises[i].done(data => $(imgs).attr("data-cke-saved-src", data));
+                            promises[i].done(data =>  {
+                                $(imgs).attr("src", data);
+                                $(imgs).data("cke-saved-src", data);
+                                // Update widget data
+                                for (const [key, widget] of Object.entries(editor.widgets.instances)) {
+                                    if (widget.element.$.dataset.id === dataId) {
+                                        widget.setData('src', data);
+                                    }
+                                }
+                            });
                         }
                     }
                 }
@@ -1878,6 +1894,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
 
     function addChartImageToEditor(chartName, insert = false) {
         let chart = charts[chartName];
+        let dataId = `chart_img_${chartName}`;
         return chart.exportImage().done(data => {
             if (insert) {
                 var startRange = editor.getSelection(); //Cursor position
@@ -1887,9 +1904,16 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                 editor.widgets.initOn(node, 'image');
             } else {
                 let imgs = editor.body().querySelectorAll("img[data-id='chart_img_" + chartName + "']");
-                $(imgs).attr("src", data);
-                $(imgs).attr("data-cke-saved-src", data);
-
+                if (imgs) {
+                    $(imgs).attr("src", data);
+                    $(imgs).data("cke-saved-src", data);
+                    // Update widget data
+                    for (const [key, widget] of Object.entries(editor.widgets.instances)) {
+                        if (widget.element.$.dataset.id === dataId) {
+                            widget.setData('src', data);
+                        }
+                    }
+                }
             }
         })
     }
