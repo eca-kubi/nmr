@@ -251,9 +251,9 @@
                                         </div>
                                     </span>
                                                                     <span class="text-sm"><i
-                                                                                class="fa fa-calendar"></i> <?php echo echoDateOfficial($report['date_submitted'], true); ?></span>
+                                                                                class="fa fa-calendar"></i> <?php echo echoDateOfficial($report['date_modified'], true); ?></span>
                                                                     <span style="font-size: 0.7rem;display: block"><i
-                                                                                class="fa fa-clock-o"></i> <?php echo getTime($report['date_submitted']); ?></span>
+                                                                                class="fa fa-clock-o"></i> <?php echo getTime($report['date_modified']); ?></span>
 
                                                                     <a href="#"
                                                                        class="float-right text-sm font-poppins w3-text-dark-grey preview-btn"
