@@ -1150,5 +1150,24 @@ class Pages extends Controller
         $objWriter->save('Nzema Report3.docx');
     }
 
+    public function getoauthtoken()
+    {
+        $this->view('pages/get_oauth_token', []);
+    }
+
+    public function getprofile()
+    {
+        $this->view('pages/get_profile', []);
+    }
+
+    public function getaccesstoken()
+    {
+        $this->view('pages/get_access_token', []);
+    }
+
+    public function sendmail()
+    {
+        $this->view('pages/send_mail', []);
+    }
 }
 
