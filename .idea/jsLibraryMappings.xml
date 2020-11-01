@@ -3,5 +3,7 @@
   <component name="JavaScriptLibraryMappings">
     <file url="PROJECT" libraries="{@types/jquery, @types/kendo-ui, @types/overlayscrollbars, kendo-ui}" />
     <includedPredefinedLibrary name="Node.js Core" />
+    <excludedPredefinedLibrary name="nmr/node_modules" />
+    <excludedPredefinedLibrary name="nmr/public/assets/node_modules" />
   </component>
 </project>

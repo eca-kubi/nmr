@@ -14,10 +14,11 @@ class Errors extends Controller
             500 => array('500', 'The request was unsuccessful due to an unexpected condition encountered by the server.'),
             502 => array('502', 'The server received an invalid response from the upstream server while trying to fulfill the request.'),
             504 => array('504', 'The upstream server failed to send a request in the time allowed by the server.'),
+            1000 => array('1000', 'A required view is missing.'),
         );
 
         [$title] = $codes[$status];
-        [$payload['page_title'], $payload['message']]=  $codes[$status];
+        [$payload['page_title'], $payload['message']] =  $codes[$status];
         ob_start();
         header("HTTP/1.1 $title");
         $this->view('errors/index', $payload);

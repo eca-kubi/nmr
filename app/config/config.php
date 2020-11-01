@@ -1,10 +1,18 @@
 <?php
+const OAUTH_APP_ID = '8655f59d-68a8-45b0-a2b0-027a2712eedf';
+const OAUTH_APP_PASSWORD = 'L-bQ0tq~38t~a96ii7EU-U.dKGJWPLM8YB';
+const OAUTH_REDIRECT_URI = 'https://local.arlgh.com/nmr/pages/getoauthtoken';
+const OAUTH_SCOPES = 'openid profile email offline_access Mail.Send Mail.Send.Shared SMTP.Send User.Read';
+const OAUTH_AUTHORITY = 'https://login.microsoftonline.com/common';
+const OAUTH_AUTHORIZE_ENDPOINT = '/oauth2/v2.0/authorize';
+const OAUTH_TOKEN_ENDPOINT = '/oauth2/v2.0/token';
+
 // DB Params
 define('DB_HOST', 'localhost');
-define('DB_USER', 'appiahmakuta');
-define('DB_PASS', 'gmail300');
+define('DB_USER', 'sms_db_admin');
+define('DB_PASS', 'Gmail@3000');
 define('DB_NAME', 'sms');
-define('DB_PARAMS', ['db' => DB_NAME, 'host'=> DB_HOST, 'username'=>DB_USER, 'password' => DB_PASS, 'charset' => 'utf8mb4']);
+define('DB_PARAMS', ['db' => DB_NAME, 'host' => DB_HOST, 'username' => DB_USER, 'password' => DB_PASS, 'charset' => 'utf8mb4']);
 define('APP_ROOT', dirname(__FILE__, 2));
 define('SITE_NAME', 'Nzema Monthly Report');
 define('APP_NAME', 'NMR');
@@ -23,7 +31,8 @@ const IT_MANAGER_EMAIL = 'babimpong@adamusgh.com';
 const IT_SUPPORT_OFFICER_EMAIL = 'ecakubi@adamusgh.com';
 const NO_FLASH__REPORT_DEPT = ['Accra Office', 'IT', 'Supply', 'Commercial', 'SRD', 'Security'];
 const NO_FULL_REPORT_DEPT = ['Accra Office', 'IT', 'Supply', 'Commercial'];
-const DISTRIBUTION_LIST_EMAILS = [['ecakubi@adamusgh.com', 'Eric'], ['babimpong@adamusgh.com', 'Bernard'],/* ['sopoku@adamusgh.com', 'Seth' ]*/ ['anyamekye@adamusgh.com', 'Anthony']];
+const DISTRIBUTION_LIST_EMAILS = [['ecakubi@adamusgh.com', 'Eric'], ['babimpong@adamusgh.com', 'Bernard'],/* ['sopoku@adamusgh.com', 'Seth' ]*/
+    ['anyamekye@adamusgh.com', 'Anthony']];
 const NO_PROFILE = 'no_profile.jpg';
 const DEFAULT_PROFILE_PIC = 'no_profile.jpg';
 const INTRANET = 'http://intranet.arlgh.com';

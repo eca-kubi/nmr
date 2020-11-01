@@ -1021,7 +1021,7 @@ class Pages extends Controller
 
     public function phpinfo(): void
     {
-        echo phpinfo();
+        $this->renderView('phpinfo', 'Pages', []);
     }
 
     public function fetchDraft($draft_id, $table_prefix = 'nmr')

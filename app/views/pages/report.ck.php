@@ -535,6 +535,14 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
         editorActionToolbar = $("#editorActionToolbar").kendoToolBar({
             items: [
                 {
+                    type: "button",
+                    id: "uploadBtn",
+                    icon: "upload",
+                    attributes: {"class": "upload-btn"},
+                    text: "Upload",
+                    click: e => {},
+                },
+                {
                     id: "btnSaveDraft",
                     type: "button",
                     text: "Save Draft",
@@ -649,6 +657,7 @@ $blank_page = Database::getDbh()->where('name', 'blank_page')->getValue('nmr_rep
                     text: "Cancel",
                     click: e => history.back(),
                 }
+
             ]
         }).data("kendoToolBar");
 
