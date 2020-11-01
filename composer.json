@@ -23,7 +23,8 @@
     "phpoffice/phpword": "0.17.0",
     "stevenmaguire/oauth2-microsoft": "^2.2",
     "thenetworg/oauth2-azure": "^2.0",
-    "socketlabs/email-delivery": "^1.1.0"
+    "socketlabs/email-delivery": "^1.1.0",
+    "ext-curl": "*"
   }
   ,
   "require-dev": {
