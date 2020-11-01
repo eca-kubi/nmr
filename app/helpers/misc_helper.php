@@ -1123,3 +1123,13 @@ function getMinDmrDate()
 function toJSDate($time) {
     return (DateTime::createFromFormat('Y-m-d', $time))->format('d-m-Y');
 }
+
+function loadCustomScript(array $script_paths) {
+    foreach ($script_paths as $script_path) {
+        $script = ($script_path == '/')?  APP_ROOT ."/views/includes/custom-scripts/custom.js.php" :
+            APP_ROOT ."/views/includes/custom-scripts/" . $script_path . "/custom.js.php";
+        if (file_exists($script)) {
+            echo "<script>"; require_once $script; echo "</script>";
+        }
+    }
+}
