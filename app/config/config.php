@@ -66,3 +66,10 @@ const TABLE_NMR_SAVED_SPREADSHEETS = 'nmr_saved_spreadsheets';
 const ICON_PATH = URL_ROOT . '/public/assets/images/icons/icons.svg';
 const PAGE_TITLE_DRAFT_REPORT = 'Draft Report';
 const CKFILEFINDER_CONNECTOR_PATH = "/public/assets/js/ckfinder/core/connector/php/connector.php";
+
+// For Azure and Microsoft Graph API
+const AZURE_TENANT_ID = '3a652cac-c74f-4bd7-9144-a937afc5b541';
+const AZURE_ADAMUS_APPS_CLIENT_ID = 'b72205b0-8882-4bb0-96b8-386132efbeab';
+const AZURE_ADAMUS_APPS_CLIENT_SECRET = 'aif-A9bXM9L8Hn3TDyOC~3~bNaDhO69_m3';
+const USER_ID_ECAKUBI = '590dc027-8292-45a7-b76d-16d36c0d2e13';
+const USER_ID_WEBSERVICES = '163bbe6b-8953-43d3-acc8-4f615efada89';
