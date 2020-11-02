@@ -229,22 +229,22 @@ function getDepartmentHod($department_id)
 
 /**
  * @param $subject string
- * @param $body string
+ * @param string $content
  * @param $recipient_address string
  * @param $recipient_name string
  * @param string $attachment
  * @return bool
  */
-function insertEmail($subject, $body, $recipient_address, $recipient_name = '', $attachment = "")
+function insertEmail(string $subject, string $content, string $recipient_address, string $recipient_name = '', string $attachment = "")
 {
-    $email_model = new EmailModel();
-    return $email_model->add([
+    $email_db_model =  new EmailDbModel([
         'subject' => $subject,
-        'body' => $body,
+        'content' => $content,
         'recipient_address' => $recipient_address,
         'recipient_name' => $recipient_name,
         'attachment' => $attachment
     ]);
+    return $email_db_model->insert();
 }
 
 /**

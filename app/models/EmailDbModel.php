@@ -81,7 +81,9 @@ class EmailDbModel extends DbModel
     public function update()
     {
         try {
-            return $this->db->update($this->table, (array)$this->getSingle());
+            $email = $this->getSingle();
+            unset($email->email_id);
+            return $this->db->update($this->table, (array)$email);
         } catch (Exception $e) {
         }
         return false;

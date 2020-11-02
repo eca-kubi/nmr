@@ -27,12 +27,12 @@ define('DATE_FORMATS', [
 ]);
 const DEFAULT_DRAFT_MONTH = 'July';
 const DEFAULT_DRAFT_YEAR = '2020';
-const IT_MANAGER_EMAIL = 'babimpong@adamusgh.com';
+const IT_MANAGER_EMAIL = 'ecakubi@adamusgh.com';
 const IT_SUPPORT_OFFICER_EMAIL = 'ecakubi@adamusgh.com';
 const NO_FLASH__REPORT_DEPT = ['Accra Office', 'IT', 'Supply', 'Commercial', 'SRD', 'Security'];
 const NO_FULL_REPORT_DEPT = ['Accra Office', 'IT', 'Supply', 'Commercial'];
-const DISTRIBUTION_LIST_EMAILS = [['ecakubi@adamusgh.com', 'Eric'], ['babimpong@adamusgh.com', 'Bernard'],/* ['sopoku@adamusgh.com', 'Seth' ]*/
-    ['anyamekye@adamusgh.com', 'Anthony']];
+const DISTRIBUTION_LIST_EMAILS = [['ecakubi@adamusgh.com', 'Eric'], ['ecakubi@adamusgh.com', 'Bernard'],/* ['sopoku@adamusgh.com', 'Seth' ]*/
+    ['ecakubi@adamusgh.com', 'Anthony']];
 const NO_PROFILE = 'no_profile.jpg';
 const DEFAULT_PROFILE_PIC = 'no_profile.jpg';
 const INTRANET = 'http://intranet.arlgh.com';

@@ -949,20 +949,20 @@ class Pages extends Controller
                     $body = get_include_contents('templates/email_templates/report_submitted_notify_gm', $data);
                     $data['body'] = $body;
                     $data['flash_or_full'] = flashOrFull($table_prefix);
-                    $email = get_include_contents('templates/email_templates/main', $data);
+                    $content = get_include_contents('templates/email_templates/main', $data);
                     if ($current_user->user_id !== $gm->user_id) {
-                        insertEmail($subject, $email, $gm->email);
+                        insertEmail($subject, $content, $gm->email);
                     }
                     // Send email to IT Manager and IT Support Officer (Me)
-                    insertEmail($subject, $email, IT_MANAGER_EMAIL);
-                    insertEmail($subject, $email, IT_SUPPORT_OFFICER_EMAIL);
+                    insertEmail($subject, $content, IT_MANAGER_EMAIL);
+                    insertEmail($subject, $content, IT_SUPPORT_OFFICER_EMAIL);
 
                     // Send email to Applicant
                     $body = get_include_contents('templates/email_templates/report_submitted_notify_applicant', $data);
                     $data['body'] = $body;
                     $data['flash_or_full'] = flashOrFull($table_prefix);
-                    $email = get_include_contents('templates/email_templates/main', $data);
-                    insertEmail($subject, $email, $current_user->email);
+                    $content = get_include_contents('templates/email_templates/main', $data);
+                    insertEmail($subject, $content, $current_user->email);
                 }
                 echo json_encode(['success' => true, 'draftId' => $draft_id]);
             } else {
