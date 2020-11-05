@@ -81,9 +81,8 @@ class EmailDbModel extends DbModel
     public function update()
     {
         try {
-            $email = $this->getSingle();
-            unset($email->email_id);
-            return $this->db->update($this->table, (array)$email);
+            $email = $this->getSingle()->removeProperties(['email_id']);
+            return $this->db->where('email_id', $this->email_id)->update($this->table, (array)$email);
         } catch (Exception $e) {
         }
         return false;

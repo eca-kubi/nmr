@@ -74,7 +74,7 @@ class Pages extends Controller
         isset($_GET['use_ck_editor']) ? $this->view('pages/report.ck', $payload) : $this->view('pages/report.ck', $payload);
     }
 
-    public function editDraft($draft_id, $table_prefix = 'nmr', $editor= "ck"): void
+    public function editDraft($draft_id, $table_prefix = 'nmr', $editor = "ck"): void
     {
         $db = Database::getDbh();
         if (!isLoggedIn()) {
@@ -638,7 +638,7 @@ class Pages extends Controller
         $db = Database::getDbh();
         $current_user = getUserSession();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/load-draft/'.$table_prefix);
+            redirect('users/login/pages/load-draft/' . $table_prefix);
         }
         $current_sub_month = currentSubmissionMonth();
         $current_sub_year = currentSubmissionYear();
@@ -814,7 +814,7 @@ class Pages extends Controller
         $payload['page_title'] = 'My Reports';
         $current_user = getUserSession();
         if (!isLoggedIn()) {
-            redirect('users/login/pages/my-reports/'.$table_prefix);
+            redirect('users/login/pages/my-reports/' . $table_prefix);
         }
 
         //Old code
@@ -841,23 +841,23 @@ class Pages extends Controller
 
         try {
             $my_reports = $db->where('d.user_id', $current_user->user_id)
-                ->join($table_prefix .'_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
+                ->join($table_prefix . '_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
                 ->orderBy('month_no_year', 'DESC')
-                ->get($table_prefix.'_editor_draft d', null, 'd.title, d.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status, d.spreadsheet_content');
+                ->get($table_prefix . '_editor_draft d', null, 'd.title, d.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status, d.spreadsheet_content');
             if (is_array($my_reports)) {
                 $my_reports = groupedMyReports($my_reports);
                 $payload['my_reports'] = $my_reports;
                 $payload['table_prefix'] = $table_prefix;
             }
 
-           /* $my_reports_fr = $db->where('d.user_id', $current_user->user_id)
-                ->join('nmr_fr_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
-                ->orderBy('month_no_year', 'DESC')
-                ->get('nmr_fr_editor_draft d', null, 'd.title, d.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status, d.spreadsheet_content');
-            if (is_array($my_reports_fr)) {
-                $my_reports_fr = groupedMyReports($my_reports_fr);
-                $payload['my_reports_fr'] = $my_reports_fr;
-            }*/
+            /* $my_reports_fr = $db->where('d.user_id', $current_user->user_id)
+                 ->join('nmr_fr_target_month_year t', 't.target_month=d.target_month and t.target_year=d.target_year')
+                 ->orderBy('month_no_year', 'DESC')
+                 ->get('nmr_fr_editor_draft d', null, 'd.title, d.draft_id, d.time_modified, d.target_year, d.target_month, concat(d.target_year, d.target_month_no) as month_no_year, t.closed_status, d.spreadsheet_content');
+             if (is_array($my_reports_fr)) {
+                 $my_reports_fr = groupedMyReports($my_reports_fr);
+                 $payload['my_reports_fr'] = $my_reports_fr;
+             }*/
         } catch (Exception $e) {
         }
         $this->view('pages/my-reports', $payload);
@@ -939,7 +939,7 @@ class Pages extends Controller
                     $gm = new User(getCurrentGM());
                     $subject = 'Nzema Monthly ' . flashOrFull($table_prefix) . ' Report - ' . $target_month . ' ' . $target_year;
                     $data = [
-                        'link' => URL_ROOT . '/pages/submitted-reports/' . $table_prefix  . '/?i=' . $report_submissions_id . '&s=true&d=' . $draft_user->department . '&fof=' . flashOrFull($table_prefix) . '&tmy=' . $target_month_year,
+                        'link' => URL_ROOT . '/pages/submitted-reports/' . $table_prefix . '/?i=' . $report_submissions_id . '&s=true&d=' . $draft_user->department . '&fof=' . flashOrFull($table_prefix) . '&tmy=' . $target_month_year,
                         'target_month_year' => $target_month_year,
                         'target_month' => $target_month,
                         'target_year' => $target_year,
@@ -953,9 +953,12 @@ class Pages extends Controller
                     if ($current_user->user_id !== $gm->user_id) {
                         insertEmail($subject, $content, $gm->email);
                     }
-                    // Send email to IT Manager and IT Support Officer (Me)
+                    // Send email to IT Manager and IT Admins
                     insertEmail($subject, $content, IT_MANAGER_EMAIL);
-                    insertEmail($subject, $content, IT_SUPPORT_OFFICER_EMAIL);
+                    $it_admin_emails = explode(';', IT_ADMIN_EMAILS);
+                    foreach ($it_admin_emails as $it_admin_email) {
+                        insertEmail($subject, $content, $it_admin_email);
+                    }
 
                     // Send email to Applicant
                     $body = get_include_contents('templates/email_templates/report_submitted_notify_applicant', $data);

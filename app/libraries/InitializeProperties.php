@@ -10,4 +10,18 @@ trait InitializeProperties
             $this->{$property} = $value;
         }
     }
+
+    public function setProperties(array $properties)
+    {
+        $this->initialize($properties);
+        return $this;
+    }
+
+    public function removeProperties(array $properties)
+    {
+        foreach ($properties as $property) {
+            unset($this->$property);
+        }
+        return $this;
+    }
 }
