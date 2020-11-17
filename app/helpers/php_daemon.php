@@ -31,15 +31,15 @@ define('DB_USER', 'sms_db_admin');
 define('DB_PASS', 'Gmail@3000');
 define('DB_NAME', 'sms');
 define('EMAIL_TABLE', 'emails');
+$mail = new PHPMailer(true); // Passing `true` enables exceptions
 try {
-    $mail = new PHPMailer(true); // Passing `true` enables exceptions
     //Server settings
     $mail->SMTPDebug = 0; // Enable verbose debug output
     $mail->isSMTP(); // Set mailer to use SMTP
-    $mail->Host = 'west.exch027.serverdata.net;west.exch027.serverdata.net'; // Specify main and backup SMTP servers
+    $mail->Host = 'smtp.office365.com'; // Specify main and backup SMTP servers
     $mail->SMTPAuth = true; // Enable SMTP authentication
     $mail->Username = 'webservices@adamusgh.com'; // SMTP username
-    $mail->Password = '@1234NzGh'; // SMTP password
+    $mail->Password = '!123456ab'; // SMTP password
     $mail->SMTPSecure = 'tls'; // Enable TLS encryption, `ssl` also accepted
     $mail->Port = 587; // TCP port to connect to
     $mail->setFrom('webservices@adamusgh.com', 'Adamus Web Services');
@@ -52,7 +52,7 @@ try {
             //$mail->MessageID = '<' . $mail->Subject . '@cms>';
             //$mail->addCustomHeader('In-Reply-To', '<' . $email->subject . '@cms>');
             //$mail->addCustomHeader('References', '<' . $email->subject . '@cms>');
-            $mail->Body = $email->body;
+            $mail->Body = $email->content;
             if ($email->attachment) $mail->addAttachment($email->attachment);
 
             if ($mail->send()) {
@@ -64,6 +64,7 @@ try {
     }
 } catch (Exception $e) {
     //echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+   error_log('Message could not be sent. Mailer Error: ' . $mail->ErrorInfo);
 }
 
 function fetch_email(): array
