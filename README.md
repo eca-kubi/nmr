@@ -1,3 +1,1 @@
-Nzema Monthly Report (NMR):
-A web app for creating and managing montly reports for various departments within an organization. 
-The app is powered by a custom-built PHP MVC framework.
+A comprehensive software solution for creating and consolidating monthly business reports from multiple sections of the organization. This software streamlines the report generation process, saving valuable time and effort. It also enables the seamless integration of data from various departments, resulting in accurate and insightful reports that facilitate data-driven decision-making. As a result, the software has reduced report preparation time by 50% and improved the overall efficiency of the reporting process, enabling better strategic planning and resource allocation. Stack used: PHP, JavaScript, HTML, CSS, MySQL.
