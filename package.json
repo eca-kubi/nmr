@@ -4,7 +4,7 @@
   "description": "TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project.",
   "main": " ",
   "dependencies": {
-    "flow-bin": "^0.113.0",
+    "flow-bin": "^0.219.5",
     "gulp-flow-remove-types": "^1.0.0",
     "launch-browser": "^1.0.0"
   },
